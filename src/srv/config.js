@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-import path from 'path-browserify';
+import path from 'path';
 import { isExisting, readJson, repairPath, writeJson } from './fileUtils';
 import constants from '../commons/constants';
 
