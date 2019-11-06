@@ -86,6 +86,11 @@
     "webcodesk-srv": "webcodesk-srv.js"
   },
   "main": "webcodesk-srv.js",
+  "files": [
+    "build",
+    "server",
+    "webcodesk-srv.js"
+  ],
   "browserslist": [
     ">0.2%",
     "not dead",
