@@ -20,12 +20,9 @@ module.exports = {
   AUTHOR_COPYRIGHT: 'Alex Pustovalov',
   DATE_COPYRIGHT: '2018 - 2020',
 
-  URL_WEBCODESK_SERVICE: 'https://webcodesk.com/service',
-  URL_WEBCODESK_APP: 'https://webcodesk.com/app/user_profile',
-  URL_WEBCODESK_SITE: 'https://webcodesk.com',
-  URL_WEBCODESK_TUTORIAL: 'https://webcodesk.com/documentation/tutorial',
-  URL_WEBCODESK_ISSUE_TRACKER: 'https://github.com/webcodesk/webcodesk-app/issues',
-  URL_WEBCODESK_USER_GUIDE: 'https://webcodesk.com/documentation',
+  URL_WEBCODESK_TUTORIAL: 'https://github.com/webcodesk/webcodesk-srv',
+  URL_WEBCODESK_ISSUE_TRACKER: 'https://github.com/webcodesk/webcodesk-srv/issues',
+  URL_WEBCODESK_USER_GUIDE: 'https://github.com/webcodesk/webcodesk-srv',
 
   URL_GITHUB: 'https://github.com',
   URL_GITHUB_API: 'https://api.github.com',
@@ -33,11 +30,6 @@ module.exports = {
 
   MARKET_NEW_PROJECTS_TYPE: 'MARKET_NEW_PROJECTS_TYPE',
   MARKET_NEW_PACKAGES_TYPE: 'MARKET_NEW_PACKAGES_TYPE',
-
-  CURRENT_CREATE_REACT_APP: 'create-react-app@3.0.1',
-  CURRENT_WEBCODESK_REACT_SCRIPTS: '@webcodesk/react-scripts@3.0.1',
-  CURRENT_REACT_SCRIPTS_VERSION: '3.0.1',
-  CURRENT_CROSS_ENV_VERSION: '5.2.0',
 
   // Used in project configuration initialization.
   // When the values are changed, change GRAPH_MODEL_DIR_* values accordingly.
