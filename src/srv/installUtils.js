@@ -19,7 +19,6 @@ import nodeProcess from 'process';
 import child_process from 'child_process';
 import { StringDecoder } from 'string_decoder';
 import * as dirUtils from './dirUtils';
-import * as config from './config';
 import { readJson, removeFile, repairPath, unpackTarGz } from './fileUtils';
 import * as constants from '../commons/constants';
 
