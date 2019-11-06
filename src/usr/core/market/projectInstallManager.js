@@ -12,7 +12,11 @@ export function writeNewPackageFile(packageFileData, dirPath) {
     .then(existingPackageConfig => {
       const newPackageConfig = merge(packageFileData, existingPackageConfig);
       return writeFile(packageFilePath, JSON.stringify(newPackageConfig, null, 2));
-    });
+    })
+    .catch(error => {
+      // there is no package.json in the project dir
+      return writeFile(packageFilePath, JSON.stringify(packageFileData, null, 2));
+    })
 }
 
 export function downloadPackage(downloadURL, dirPath) {
