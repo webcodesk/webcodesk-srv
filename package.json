@@ -9,9 +9,10 @@
     "type": "git",
     "url": "https://github.com/webcodesk/webcodesk-srv.git"
   },
-  "version": "2.0.0-alpha.3",
+  "version": "2.0.0-alpha.4",
   "license": "Apache-2.0",
   "dependencies": {
+    "@babel/runtime": "7.7.1",
     "chokidar": "2.0.4",
     "express": "4.17.1",
     "fix-path": "2.1.0",
