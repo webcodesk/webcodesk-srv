@@ -1,0 +1,137 @@
+path.link_debug {
+  fill: none;
+  stroke: #81D4FA;
+  stroke-width: 3px;
+}
+
+path.link_debug.blank {
+  stroke: #7d7d7d;
+  stroke-width: 1px;
+  stroke-dasharray: 10,2;
+}
+
+g.node_debug {
+  cursor: pointer;
+}
+
+g.property_debug {
+  cursor: pointer;
+}
+
+rect.node_debug.component {
+  fill: #2196F3;
+}
+
+rect.node_debug.function {
+  fill: #26A69A;
+}
+
+rect.node_debug.application {
+  fill: #90A4AE;
+}
+
+rect.node_debug.page {
+  fill: #5C6BC0;
+}
+
+rect.node_debug.undefined {
+  fill: #54b6ff;
+}
+
+rect.node_debug.blank {
+  fill: #ffffff;
+  stroke: #7d7d7d;
+  stroke-width: 1px;
+  stroke-dasharray: 10,2;
+}
+
+rect.node_debug.selected {
+  stroke: #263238;
+  stroke-width: 4px;
+}
+
+circle.property_debug {
+  fill: #81D4FA;
+}
+
+circle.property_debug.selected {
+  fill: #FF3D00;
+  stroke: #263238;
+  stroke-width: 3px;
+}
+
+circle.property_debug.caughtException {
+  fill: #FFC107;
+}
+
+circle.property_debug.blank {
+  fill: #ffffff;
+  stroke: #7d7d7d;
+  stroke-width: 1px;
+  stroke-dasharray: 10,2;
+}
+
+path.header.component {
+  fill: #1565C0;
+}
+
+path.header.function {
+  fill: #00796B;
+}
+
+path.header.application {
+  fill: #607D8B;
+}
+
+path.header.page {
+  fill: #3949AB;
+}
+
+path.header.selected {
+  fill: #263238;
+}
+
+text.title_debug {
+  font-size: 20px;
+  fill: #ffffff;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+text.title_debug.blank {
+  font-size: 20px;
+  fill: #7d7d7d;
+  font-weight: normal;
+}
+
+text.subtitle_debug {
+  font-size: 16px;
+  fill: #ffffff;
+  font-weight: normal;
+}
+
+text.subtitle_debug.blank {
+  font-size: 16px;
+  fill: #7d7d7d;
+  font-weight: normal;
+}
+
+text.property_debug {
+  font-size: 16px;
+  fill: #ffffff;
+}
+
+text.property_debug.blank {
+  font-size: 16px;
+  fill: #7d7d7d;
+}
+
+text.property_debug.selected {
+  fill: #263238;
+  stroke-width: 1px;
+}
+
+text.property_debug.caughtException {
+  fill: #FFC107;
+}
+

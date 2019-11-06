@@ -1,0 +1,172 @@
+{
+  "type": "PAGE_COMPONENT_TYPE",
+  "props": {
+    "componentName": "usr.probe.components.ProbeLayer"
+  },
+  "children": [
+    {
+      "type": "COMPONENT_PROPERTY_ARRAY_OF_TYPE",
+      "props": {
+        "propertyName": "cells",
+        "propertyRequired": true
+      },
+      "children": [
+        {
+          "type": "COMPONENT_PROPERTY_ELEMENT_TYPE",
+          "props": {
+            "componentName": "__PlaceHolder"
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_ELEMENT_TYPE",
+          "props": {
+            "componentName": "__PlaceHolder"
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_ELEMENT_TYPE",
+          "props": {
+            "componentName": "__PlaceHolder"
+          }
+        }
+      ]
+    },
+    {
+      "type": "COMPONENT_PROPERTY_ELEMENT_TYPE",
+      "props": {
+        "propertyName": "extraCell",
+        "componentName": "__PlaceHolder"
+      }
+    },
+    {
+      "type": "COMPONENT_PROPERTY_SHAPE_TYPE",
+      "props": {
+        "propertyName": "gridStyle",
+        "propertyRequired": true
+      },
+      "children": [
+        {
+          "type": "COMPONENT_PROPERTY_ONE_OF_TYPE",
+          "props": {
+            "propertyName": "alignItems",
+            "propertyValue": "center",
+            "propertyValueVariants": [
+              {
+                "stringValue": "center"
+              },
+              {
+                "stringValue": "top"
+              },
+              {
+                "stringValue": "bottom"
+              }
+            ]
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_STRING_TYPE",
+          "props": {
+            "propertyName": "display",
+            "propertyValue": "grid"
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_SHAPE_TYPE",
+          "props": {
+            "propertyName": "displayObject"
+          },
+          "children": [
+            {
+              "type": "COMPONENT_PROPERTY_STRING_TYPE",
+              "props": {
+                "propertyName": "newText"
+              }
+            },
+            {
+              "type": "COMPONENT_PROPERTY_STRING_TYPE",
+              "props": {
+                "propertyName": "text"
+              }
+            }
+          ]
+        },
+        {
+          "type": "COMPONENT_PROPERTY_SHAPE_TYPE",
+          "props": {
+            "propertyName": "displayText"
+          },
+          "children": [
+            {
+              "type": "COMPONENT_PROPERTY_STRING_TYPE",
+              "props": {
+                "propertyName": "newText"
+              }
+            },
+            {
+              "type": "COMPONENT_PROPERTY_STRING_TYPE",
+              "props": {
+                "propertyName": "text"
+              }
+            }
+          ]
+        },
+        {
+          "type": "COMPONENT_PROPERTY_STRING_TYPE",
+          "props": {
+            "propertyName": "gridGap",
+            "propertyValue": "1em"
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_STRING_TYPE",
+          "props": {
+            "propertyName": "gridTemplateColumns",
+            "propertyValue": "1fr"
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_STRING_TYPE",
+          "props": {
+            "propertyName": "gridTemplateRows",
+            "propertyValue": "minmax(20px, 1fr)"
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_ONE_OF_TYPE",
+          "props": {
+            "propertyName": "justifyContent",
+            "propertyValue": "center",
+            "propertyValueVariants": [
+              {
+                "stringValue": "center"
+              },
+              {
+                "stringValue": "top"
+              },
+              {
+                "stringValue": "bottom"
+              }
+            ]
+          }
+        },
+        {
+          "type": "COMPONENT_PROPERTY_ONE_OF_TYPE",
+          "props": {
+            "propertyName": "possibleCellsAmount",
+            "propertyValueVariants": [
+              {
+                "numberValue": 2
+              },
+              {
+                "numberValue": 8
+              },
+              {
+                "numberValue": 12
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,544 @@
+{
+  "key": "etc/pages",
+  "type": "directory",
+  "props": {
+    "displayName": "pages",
+    "resourceType": "pages",
+    "importPath": "etc/pages",
+    "indexImportPath": "etc/pages",
+    "name": "pages",
+    "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages"
+  },
+  "children": [
+    {
+      "key": "etc/pages/page.json",
+      "type": "file",
+      "props": {
+        "displayName": "page.json",
+        "resourceType": "pages",
+        "name": "page",
+        "importPath": "etc/pages/page",
+        "indexImportPath": "etc/pages/page",
+        "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages/page.json"
+      },
+      "children": [
+        {
+          "key": "etc.pages.page.0",
+          "type": "pageVariant",
+          "props": {
+            "name": "auto",
+            "displayName": "page (auto)",
+            "variantName": "auto",
+            "pageName": "page",
+            "mediaQuery": {
+              "minWidth": 992
+            },
+            "componentsTree": {
+              "key": "node35",
+              "type": "_PageGrid",
+              "props": {
+                "_rowsCount": 1,
+                "_columnsCount": 3,
+                "_rowsHeights": [
+                  376.5
+                ],
+                "_columnsWidths": [
+                  301.34375,
+                  423.328125,
+                  242.328125
+                ],
+                "rows": "376.5px",
+                "columns": "301.34375px 423.328125px 242.328125px",
+                "minRowHeight": "20px",
+                "gap": "0px"
+              },
+              "children": [
+                {
+                  "key": "node36",
+                  "type": "_PageCell",
+                  "props": {
+                    "width": 1,
+                    "height": 1,
+                    "left": 1,
+                    "top": 1,
+                    "isSelected": false,
+                    "isMultipleSelected": false
+                  },
+                  "children": [
+                    {
+                      "key": "node14",
+                      "type": "usr.components.ControlPanel.ControlPanel",
+                      "instance": "controlPanel1",
+                      "props": {}
+                    }
+                  ]
+                },
+                {
+                  "key": "node38",
+                  "type": "_PageCell",
+                  "props": {
+                    "width": 1,
+                    "height": 1,
+                    "left": 2,
+                    "top": 1,
+                    "isSelected": true,
+                    "isMultipleSelected": false
+                  },
+                  "children": [
+                    {
+                      "key": "node3",
+                      "type": "usr.components.extra.UserPanel.UserPanel",
+                      "instance": "userPanel",
+                      "props": {}
+                    }
+                  ]
+                },
+                {
+                  "key": "node40",
+                  "type": "_PageCell",
+                  "props": {
+                    "width": 1,
+                    "height": 1,
+                    "left": 3,
+                    "top": 1,
+                    "isSelected": false,
+                    "isMultipleSelected": false
+                  },
+                  "children": [
+                    {
+                      "key": "node41",
+                      "type": "usr.components.ViewPanel.ViewPanel",
+                      "instance": "viewPanel2",
+                      "props": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "key": "etc.pages.page.0.0",
+              "type": "componentInstance",
+              "props": {
+                "name": "controlPanel1",
+                "displayName": "controlPanel1",
+                "componentName": "usr.components.ControlPanel.ControlPanel",
+                "componentInstance": "controlPanel1"
+              }
+            },
+            {
+              "key": "etc.pages.page.0.1",
+              "type": "componentInstance",
+              "props": {
+                "name": "userPanel",
+                "displayName": "userPanel",
+                "componentName": "usr.components.extra.UserPanel.UserPanel",
+                "componentInstance": "userPanel"
+              }
+            },
+            {
+              "key": "etc.pages.page.0.2",
+              "type": "componentInstance",
+              "props": {
+                "name": "viewPanel2",
+                "displayName": "viewPanel2",
+                "componentName": "usr.components.ViewPanel.ViewPanel",
+                "componentInstance": "viewPanel2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "etc/pages/probes",
+      "type": "directory",
+      "props": {
+        "displayName": "probes",
+        "resourceType": "pages",
+        "importPath": "etc/pages/probes",
+        "indexImportPath": "etc/pages/probes",
+        "name": "probes",
+        "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages/probes"
+      },
+      "children": [
+        {
+          "key": "etc/pages/probes/test1.json",
+          "type": "file",
+          "props": {
+            "displayName": "test1.json",
+            "resourceType": "pages",
+            "name": "test1",
+            "importPath": "etc/pages/probes/test1",
+            "indexImportPath": "etc/pages/probes/test1",
+            "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages/probes/test1.json"
+          },
+          "children": [
+            {
+              "key": "etc.pages.probes.test1.0",
+              "type": "pageVariant",
+              "props": {
+                "name": "auto",
+                "displayName": "test1 (auto)",
+                "variantName": "auto",
+                "pageName": "test1",
+                "mediaQuery": {
+                  "minWidth": 992
+                },
+                "componentsTree": {
+                  "type": "_PageGrid",
+                  "props": {
+                    "_rowsCount": 1,
+                    "_columnsCount": 3,
+                    "_rowsHeights": [
+                      -1
+                    ],
+                    "_columnsWidths": [
+                      -1,
+                      -1,
+                      -1
+                    ],
+                    "rows": "repeat(1, auto)",
+                    "columns": "repeat(3, 1fr)",
+                    "minRowHeight": "20px",
+                    "gap": "0px"
+                  },
+                  "children": [
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 1,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 2,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 3,
+                        "top": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "etc/pages/probes/test2.json",
+          "type": "file",
+          "props": {
+            "displayName": "test2.json",
+            "resourceType": "pages",
+            "name": "test2",
+            "importPath": "etc/pages/probes/test2",
+            "indexImportPath": "etc/pages/probes/test2",
+            "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages/probes/test2.json"
+          },
+          "children": [
+            {
+              "key": "etc.pages.probes.test2.0",
+              "type": "pageVariant",
+              "props": {
+                "name": "auto",
+                "displayName": "test2 (auto)",
+                "variantName": "auto",
+                "pageName": "test2",
+                "mediaQuery": {
+                  "minWidth": 992
+                },
+                "componentsTree": {
+                  "type": "_PageGrid",
+                  "props": {
+                    "_rowsCount": 1,
+                    "_columnsCount": 3,
+                    "_rowsHeights": [
+                      -1
+                    ],
+                    "_columnsWidths": [
+                      -1,
+                      -1,
+                      -1
+                    ],
+                    "rows": "repeat(1, auto)",
+                    "columns": "repeat(3, 1fr)",
+                    "minRowHeight": "20px",
+                    "gap": "0px"
+                  },
+                  "children": [
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 1,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 2,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 3,
+                        "top": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "etc/pages/probes/test3.json",
+          "type": "file",
+          "props": {
+            "displayName": "test3.json",
+            "resourceType": "pages",
+            "name": "test3",
+            "importPath": "etc/pages/probes/test3",
+            "indexImportPath": "etc/pages/probes/test3",
+            "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages/probes/test3.json"
+          },
+          "children": [
+            {
+              "key": "etc.pages.probes.test3.0",
+              "type": "pageVariant",
+              "props": {
+                "name": "auto",
+                "displayName": "test3 (auto)",
+                "variantName": "auto",
+                "pageName": "test3",
+                "mediaQuery": {
+                  "minWidth": 992
+                },
+                "componentsTree": {
+                  "type": "_PageGrid",
+                  "props": {
+                    "_rowsCount": 1,
+                    "_columnsCount": 3,
+                    "_rowsHeights": [
+                      -1
+                    ],
+                    "_columnsWidths": [
+                      -1,
+                      -1,
+                      -1
+                    ],
+                    "rows": "repeat(1, auto)",
+                    "columns": "repeat(3, 1fr)",
+                    "minRowHeight": "20px",
+                    "gap": "0px"
+                  },
+                  "children": [
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 1,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 2,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 3,
+                        "top": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "etc/pages/probes/test4.json",
+          "type": "file",
+          "props": {
+            "displayName": "test4.json",
+            "resourceType": "pages",
+            "name": "test4",
+            "importPath": "etc/pages/probes/test4",
+            "indexImportPath": "etc/pages/probes/test4",
+            "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages/probes/test4.json"
+          },
+          "children": [
+            {
+              "key": "etc.pages.probes.test4.0",
+              "type": "pageVariant",
+              "props": {
+                "name": "auto",
+                "displayName": "test4 (auto)",
+                "variantName": "auto",
+                "pageName": "test4",
+                "mediaQuery": {
+                  "minWidth": 992
+                },
+                "componentsTree": {
+                  "type": "_PageGrid",
+                  "props": {
+                    "_rowsCount": 1,
+                    "_columnsCount": 3,
+                    "_rowsHeights": [
+                      -1
+                    ],
+                    "_columnsWidths": [
+                      -1,
+                      -1,
+                      -1
+                    ],
+                    "rows": "repeat(1, auto)",
+                    "columns": "repeat(3, 1fr)",
+                    "minRowHeight": "20px",
+                    "gap": "0px"
+                  },
+                  "children": [
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 1,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 2,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 3,
+                        "top": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "etc/pages/probes/test5.json",
+          "type": "file",
+          "props": {
+            "displayName": "test5.json",
+            "resourceType": "pages",
+            "name": "test5",
+            "importPath": "etc/pages/probes/test5",
+            "indexImportPath": "etc/pages/probes/test5",
+            "absolutePath": "/Users/ipselon/Development/projects/webcodesk/github/react-app-framework/src/etc/pages/probes/test5.json"
+          },
+          "children": [
+            {
+              "key": "etc.pages.probes.test5.0",
+              "type": "pageVariant",
+              "props": {
+                "name": "auto",
+                "displayName": "test5 (auto)",
+                "variantName": "auto",
+                "pageName": "test5",
+                "mediaQuery": {
+                  "minWidth": 992
+                },
+                "componentsTree": {
+                  "type": "_PageGrid",
+                  "props": {
+                    "_rowsCount": 1,
+                    "_columnsCount": 3,
+                    "_rowsHeights": [
+                      -1
+                    ],
+                    "_columnsWidths": [
+                      -1,
+                      -1,
+                      -1
+                    ],
+                    "rows": "repeat(1, auto)",
+                    "columns": "repeat(3, 1fr)",
+                    "minRowHeight": "20px",
+                    "gap": "0px"
+                  },
+                  "children": [
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 1,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 2,
+                        "top": 1
+                      }
+                    },
+                    {
+                      "type": "_PageCell",
+                      "props": {
+                        "width": 1,
+                        "height": 1,
+                        "left": 3,
+                        "top": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

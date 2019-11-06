@@ -1,0 +1,74 @@
+import globalStore from '../core/config/globalStore';
+import * as projectManager from '../core/project/projectManager';
+import * as storage from '../core/config/storage';
+import * as constants from '../../commons/constants';
+
+export const testProjectConfiguration = () => async (dispatch) => {
+  try {
+    const validPaths = await projectManager.testProjectConfiguration();
+    let projectName;
+    let projectDirPath;
+    if (validPaths) {
+      projectName = validPaths.projectName;
+      projectDirPath = validPaths.testProjectDirPath;
+    }
+    dispatch('projectConfigStatus', {projectName, projectDirPath, ready: true});
+  } catch (e) {
+    console.error(e);
+    dispatch('projectConfigStatus', {ready: false});
+    dispatch('error', {message: e.message});
+  }
+};
+
+export const testError = (error) => dispatch => {
+  if (error && error.message) {
+    dispatch('success', error);
+  }
+};
+
+export const openExistingProject = () => async (dispatch) => {
+  globalStore.clear();
+  try {
+    await projectManager.initProjectConfiguration();
+  } catch (e) {
+    console.info(e);
+  }
+  // dispatch('infoMessage', 'Reading source files. Please wait...');
+  try {
+    await projectManager.watchUsrSourceDir();
+    dispatch('success');
+    // dispatch('successMessage', 'Project initialised successfully');
+  } catch (e) {
+    console.info(e);
+  }
+};
+
+export const closeExistingProject = () => dispatch => {
+  globalStore.clear();
+  dispatch('activeEditorTabIndex', -1);
+  dispatch('resourceEditorTabs', []);
+  dispatch('selectedResourceKey', null);
+  dispatch('selectedResource', null);
+  dispatch('selectedVirtualPath', '');
+  dispatch('success');
+};
+
+export const getInfo = () => async dispatch => {
+  // const welcomeInfo = await storage.getWelcomeInfo();
+  // dispatch('showWelcomeDialog', welcomeInfo ? welcomeInfo.showWelcomeDialog : true);
+};
+
+export const showTutorial = (doNotShowAgain) => async (dispatch) => {
+  projectManager.openUrlInExternalBrowser(constants.URL_WEBCODESK_TUTORIAL);
+  if (doNotShowAgain) {
+    await storage.saveWelcomeInfo({showWelcomeDialog: !doNotShowAgain});
+  }
+  dispatch('showWelcomeDialog', false);
+};
+
+export const closeWelcome = (doNotShowAgain) => async (dispatch) => {
+  if (doNotShowAgain) {
+    await storage.saveWelcomeInfo({showWelcomeDialog: !doNotShowAgain});
+  }
+  dispatch('showWelcomeDialog', false);
+};

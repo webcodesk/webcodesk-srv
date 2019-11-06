@@ -1,0 +1,365 @@
+{
+  "userFunctions": {
+    "type": "rootType",
+    "props": {
+      "displayName": "Functions"
+    },
+    "key": "root",
+    "children": [
+      {
+        "type": "directory",
+        "props": {
+          "displayName": "usr",
+          "importPath": "usr"
+        },
+        "key": "usr",
+        "children": [
+          {
+            "type": "directory",
+            "props": {
+              "displayName": "api",
+              "importPath": "usr/api"
+            },
+            "key": "usr/api",
+            "children": [
+              {
+                "type": "file",
+                "props": {
+                  "displayName": "controlPanelActions.js",
+                  "importPath": "usr/api/controlPanelActions"
+                },
+                "key": "usr/api/controlPanelActions.js",
+                "children": [
+                  {
+                    "type": "userFunction",
+                    "props": {
+                      "displayName": "eyrtiu",
+                      "functionName": "usr.api.eyrtiu",
+                      "dispatches": [
+                        {
+                          "name": "dsfksjd"
+                        }
+                      ]
+                    },
+                    "key": "usr.api.eyrtiu"
+                  },
+                  {
+                    "type": "userFunction",
+                    "props": {
+                      "displayName": "setDoubleStrings",
+                      "functionName": "usr.api.setDoubleStrings",
+                      "dispatches": [
+                        {
+                          "name": "firstStringD"
+                        },
+                        {
+                          "name": "secondStringD"
+                        }
+                      ]
+                    },
+                    "key": "usr.api.setDoubleStrings"
+                  },
+                  {
+                    "type": "userFunction",
+                    "props": {
+                      "displayName": "setFirstString",
+                      "functionName": "usr.api.setFirstString",
+                      "dispatches": [
+                        {
+                          "name": "firstString"
+                        }
+                      ]
+                    },
+                    "key": "usr.api.setFirstString"
+                  },
+                  {
+                    "type": "userFunction",
+                    "props": {
+                      "displayName": "setSecondString",
+                      "functionName": "usr.api.setSecondString",
+                      "dispatches": [
+                        {
+                          "name": "secondString"
+                        }
+                      ]
+                    },
+                    "key": "usr.api.setSecondString"
+                  }
+                ]
+              },
+              {
+                "type": "directory",
+                "props": {
+                  "displayName": "exposed",
+                  "importPath": "usr/api/exposed"
+                },
+                "key": "usr/api/exposed",
+                "children": [
+                  {
+                    "type": "file",
+                    "props": {
+                      "displayName": "aboutPanelActions.js",
+                      "importPath": "usr/api/exposed/aboutPanelActions"
+                    },
+                    "key": "usr/api/exposed/aboutPanelActions.js",
+                    "children": [
+                      {
+                        "type": "userFunction",
+                        "props": {
+                          "displayName": "firstMethodInChain",
+                          "functionName": "usr.api.exposed.firstMethodInChain",
+                          "dispatches": [
+                            {
+                              "name": "returnValue1"
+                            }
+                          ]
+                        },
+                        "key": "usr.api.exposed.firstMethodInChain"
+                      },
+                      {
+                        "type": "userFunction",
+                        "props": {
+                          "displayName": "secondMethodInChain",
+                          "functionName": "usr.api.exposed.secondMethodInChain",
+                          "dispatches": [
+                            {
+                              "name": "returnValue2"
+                            }
+                          ],
+                          "parameters": [
+                            {
+                              "name": "authorData"
+                            }
+                          ]
+                        },
+                        "key": "usr.api.exposed.secondMethodInChain"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "file",
+                    "props": {
+                      "displayName": "controlPanelActions.js",
+                      "importPath": "usr/api/exposed/controlPanelActions"
+                    },
+                    "key": "usr/api/exposed/controlPanelActions.js",
+                    "children": [
+                      {
+                        "type": "userFunction",
+                        "props": {
+                          "displayName": "setDoubleStrings",
+                          "functionName": "usr.api.exposed.setDoubleStrings",
+                          "dispatches": [
+                            {
+                              "name": "firstStringD"
+                            },
+                            {
+                              "name": "secondStringD"
+                            }
+                          ]
+                        },
+                        "key": "usr.api.exposed.setDoubleStrings"
+                      },
+                      {
+                        "type": "userFunction",
+                        "props": {
+                          "displayName": "setFirstString",
+                          "functionName": "usr.api.exposed.setFirstString",
+                          "dispatches": [
+                            {
+                              "name": "firstString"
+                            }
+                          ]
+                        },
+                        "key": "usr.api.exposed.setFirstString"
+                      },
+                      {
+                        "type": "userFunction",
+                        "props": {
+                          "displayName": "setSecondString",
+                          "functionName": "usr.api.exposed.setSecondString",
+                          "dispatches": [
+                            {
+                              "name": "secondString"
+                            }
+                          ]
+                        },
+                        "key": "usr.api.exposed.setSecondString"
+                      },
+                      {
+                        "type": "userFunction",
+                        "props": {
+                          "displayName": "testNewMethod",
+                          "functionName": "usr.api.exposed.testNewMethod",
+                          "dispatches": []
+                        },
+                        "key": "usr.api.exposed.testNewMethod"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "userComponents": {
+    "type": "rootType",
+    "props": {
+      "displayName": "Components"
+    },
+    "key": "root",
+    "children": [
+      {
+        "type": "directory",
+        "props": {
+          "displayName": "usr",
+          "importPath": "usr"
+        },
+        "key": "usr",
+        "children": [
+          {
+            "type": "directory",
+            "props": {
+              "displayName": "components",
+              "importPath": "usr/components"
+            },
+            "key": "usr/components",
+            "children": [
+              {
+                "type": "file",
+                "props": {
+                  "displayName": "AboutPanel.js",
+                  "importPath": "usr/components/AboutPanel"
+                },
+                "key": "usr/components/AboutPanel.js",
+                "children": [
+                  {
+                    "type": "component",
+                    "props": {
+                      "displayName": "AboutPanel",
+                      "componentName": "usr.components.AboutPanel",
+                      "properties": [
+                        {
+                          "name": "authorData",
+                          "type": "object"
+                        },
+                        {
+                          "name": "onRunMethodsChain",
+                          "type": "function"
+                        }
+                      ]
+                    },
+                    "key": "usr.components.AboutPanel"
+                  }
+                ]
+              },
+              {
+                "type": "file",
+                "props": {
+                  "displayName": "ControlPanel.js",
+                  "importPath": "usr/components/ControlPanel"
+                },
+                "key": "usr/components/ControlPanel.js",
+                "children": [
+                  {
+                    "type": "component",
+                    "props": {
+                      "displayName": "ControlPanel",
+                      "componentName": "usr.components.ControlPanel",
+                      "properties": [
+                        {
+                          "name": "onFirstClick",
+                          "type": "function"
+                        },
+                        {
+                          "name": "onSecondClick",
+                          "type": "function"
+                        },
+                        {
+                          "name": "firstDataString",
+                          "type": "object"
+                        },
+                        {
+                          "name": "secondDataString",
+                          "type": "object"
+                        },
+                        {
+                          "name": "onDirectPassIn",
+                          "type": "function"
+                        },
+                        {
+                          "name": "subControlPanel",
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "key": "usr.components.ControlPanel"
+                  }
+                ]
+              },
+              {
+                "type": "file",
+                "props": {
+                  "displayName": "SubControlPanel.js",
+                  "importPath": "usr/components/SubControlPanel"
+                },
+                "key": "usr/components/SubControlPanel.js",
+                "children": [
+                  {
+                    "type": "component",
+                    "props": {
+                      "displayName": "SubControlPanel",
+                      "componentName": "usr.components.SubControlPanel",
+                      "properties": [
+                        {
+                          "name": "onGoToAbout",
+                          "type": "function"
+                        }
+                      ]
+                    },
+                    "key": "usr.components.SubControlPanel"
+                  }
+                ]
+              },
+              {
+                "type": "file",
+                "props": {
+                  "displayName": "ViewPanel.js",
+                  "importPath": "usr/components/ViewPanel"
+                },
+                "key": "usr/components/ViewPanel.js",
+                "children": [
+                  {
+                    "type": "component",
+                    "props": {
+                      "displayName": "ViewPanel",
+                      "componentName": "usr.components.ViewPanel",
+                      "properties": [
+                        {
+                          "name": "firstDataString",
+                          "type": "object"
+                        },
+                        {
+                          "name": "secondDataString",
+                          "type": "object"
+                        },
+                        {
+                          "name": "thirdDataString",
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "key": "usr.components.ViewPanel"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

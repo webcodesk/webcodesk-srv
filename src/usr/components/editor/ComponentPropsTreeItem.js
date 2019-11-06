@@ -1,0 +1,496 @@
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
+import values from 'lodash/values';
+import cloneDeep from 'lodash/cloneDeep';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+import TextFields from '@material-ui/icons/TextFields';
+import Image from '@material-ui/icons/Image';
+import Wallpaper from '@material-ui/icons/Wallpaper';
+import Delete from '@material-ui/icons/Delete';
+import Button from '@material-ui/core/Button';
+import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
+
+import * as constants from '../../../commons/constants';
+
+import PropertyNumericField from '../commons/PropertyNumericField';
+import PropertyTextField from '../commons/PropertyTextField';
+import PropertySelect from '../commons/PropertySelect';
+import PropertyCheckbox from '../commons/PropertyCheckbox';
+
+const styles = theme => ({
+  listItemPrefixSector: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '2px',
+  },
+  listItemContent: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    width: '100%'
+  },
+  buttonIcon: {
+    fontSize: '12px'
+  },
+  listItemEditorIcon: {
+    fontSize: '12px'
+  },
+  title: {
+    flexGrow: 2,
+  },
+  titleContainer: {
+    width: '100%',
+  },
+  titleText: {
+    fontWeight: 400,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    }
+  },
+  mutedText: {
+    color: theme.palette.text.disabled,
+  },
+  errorText: {
+    color: '#D50000',
+    whiteSpace: 'nowrap'
+  },
+  editorWrapper: {
+    width: '100%',
+    border: '1px solid #dcdcdc',
+    borderRadius: '4px',
+    marginTop: '5px'
+  },
+  selectWrapper: {
+    width: '100%',
+    marginTop: '5px'
+  },
+  propertyEditorContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width: '100%'
+  },
+  extraButtonDelete: {
+    borderColor: '#ff8a80',
+  },
+  htmlPopper: {
+    opacity: 1,
+  },
+  htmlTooltip: {
+    backgroundColor: '#fff9c4',
+    border: '1px solid #dddddd',
+  },
+});
+
+const ComponentPropsTreeListItem = withStyles(theme => ({
+  root: {
+    alignItems: 'flex-start',
+    position: 'relative',
+    cursor: 'default',
+    // '&:hover': {
+    //   backgroundColor: theme.palette.action.hover,
+    // },
+    userSelect: 'none',
+  },
+  dense: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
+    margin: '5px 0',
+  }
+}))(ListItem);
+
+const ComponentPropsTreeListItemText = withStyles({
+  root: {
+    padding: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+  }
+})(ListItemText);
+
+export const ComponentPropsTreeItemExtraButton = withStyles({
+  root: {
+    padding: 0,
+    fontSize: '12px',
+    border: '1px solid #dddddd',
+    backgroundColor: '#f5f5f5',
+    marginLeft: '5px'
+  }
+})(IconButton);
+
+const ComponentPropsTreeListItemIcon = withStyles({
+  root: {
+    marginRight: 0,
+    padding: '2px 3px 2px 0',
+  }
+})(ListItemIcon);
+
+export const ComponentPropsTreeItemButton = withStyles(theme => ({
+  sizeSmall: {
+    padding: '2px 8px',
+    borderRadius: '16px',
+    textTransform: 'none',
+    fontWeight: 'normal',
+    minHeight: '24px',
+    whiteSpace: 'nowrap',
+    backgroundColor: '#f5f5f5'
+  }
+}))(Button);
+
+class ComponentPropsTreeItem extends React.Component {
+  static propTypes = {
+    name: PropTypes.string,
+    propertyModel: PropTypes.object,
+    paddingLeft: PropTypes.string,
+    onPropertyUpdate: PropTypes.func,
+    onDeleteComponentProperty: PropTypes.func,
+    onErrorClick: PropTypes.func,
+    onEditJson: PropTypes.func,
+  };
+
+  static defaultProps = {
+    name: null,
+    propertyModel: {},
+    paddingLeft: '0px',
+    onPropertyUpdate: () => {
+      console.info('ComponentPropsTreeItem.onPropertyUpdate is not set');
+    },
+    onDeleteComponentProperty: () => {
+      console.info('ComponentPropsTreeItem.onDeleteComponentProperty is not set');
+    },
+    onErrorClick: () => {
+      console.info('ComponentPropsTreeItem.onErrorClick is not set');
+    },
+    onEditJson: () => {
+      console.info('ComponentPropsTreeItem.onEditJson is not set');
+    },
+  };
+
+  constructor (props, context) {
+    super(props, context);
+    const { propertyModel } = this.props;
+    this.state = {
+      localPropertyModel: propertyModel ? cloneDeep(propertyModel) : {},
+    };
+  }
+
+  shouldComponentUpdate (nextProps, nextState) {
+    const { name, propertyModel, paddingLeft } = this.props;
+    const { localPropertyModel } = this.state;
+    return name !== nextProps.name
+      || (
+        nextProps.propertyModel
+        && propertyModel !== nextProps.propertyModel
+        && !isEqual(nextProps.propertyModel, localPropertyModel)
+      )
+      || paddingLeft !== nextProps.paddingLeft
+      || localPropertyModel !== nextState.localPropertyModel;
+  }
+
+  componentDidUpdate (prevProps, prevState, snapshot) {
+    const { propertyModel } = this.props;
+    const { localPropertyModel } = this.state;
+    if (propertyModel && propertyModel !== prevProps.propertyModel) {
+      this.setState({
+        localPropertyModel: cloneDeep(propertyModel),
+      });
+
+    }
+    if (localPropertyModel !== prevState.localPropertyModel) {
+      const { onPropertyUpdate } = this.props;
+      onPropertyUpdate(localPropertyModel);
+    }
+  }
+
+  handlePropertyValueChange = (value) => {
+    const newPropertyModel = { ...this.state.localPropertyModel };
+    newPropertyModel.props = newPropertyModel.props || {};
+    newPropertyModel.props.propertyValue = value;
+    this.setState({ localPropertyModel: newPropertyModel });
+  };
+
+  handleDeleteComponentProperty = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { onDeleteComponentProperty, propertyModel } = this.props;
+    if (propertyModel) {
+      onDeleteComponentProperty(propertyModel.key);
+    }
+  };
+
+  handleEditJson = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { onEditJson } = this.props;
+    const { localPropertyModel } = this.state;
+    if (localPropertyModel) {
+      onEditJson(localPropertyModel);
+    }
+  };
+
+  handleErrorClick = () => {
+    const { propertyModel, onErrorClick } = this.props;
+    if (propertyModel && propertyModel.props && propertyModel.props.errors) {
+      onErrorClick(values(propertyModel.props.errors).map(error => ({ message: error })));
+    }
+  };
+
+  handleClick = () => {
+
+  };
+
+  render () {
+    const {
+      classes,
+      paddingLeft,
+      name,
+    } = this.props;
+    const { localPropertyModel } = this.state;
+    let editorElement;
+    let editorElementIcon;
+    const { type, props } = localPropertyModel;
+    if (!props) {
+      return (
+        <ComponentPropsTreeListItemText
+          primary={
+            <span className={classes.errorText}>unknown property</span>
+          }
+        />
+      );
+    }
+    const {
+      propertyName,
+      propertyComment,
+      propertyValue,
+      componentName,
+      componentInstance,
+      errors,
+      propertyValueVariants
+    } = props;
+    switch (type) {
+      case constants.COMPONENT_PROPERTY_ELEMENT_TYPE:
+        editorElementIcon = (
+          <Wallpaper
+            color="disabled"
+            className={classes.listItemEditorIcon}
+          />
+        );
+        editorElement = (
+          <ComponentPropsTreeItemButton
+            color="default"
+            size="small"
+            disabled={true}
+            fullWidth={true}
+          >
+            Empty element
+          </ComponentPropsTreeItemButton>
+        );
+        break;
+      case constants.PAGE_COMPONENT_TYPE:
+        editorElementIcon = (
+          <Image
+            className={classes.listItemEditorIcon}
+            color="disabled"
+          />
+        );
+        editorElement = (
+          <ComponentPropsTreeItemButton
+            color="default"
+            size="small"
+            fullWidth={true}
+            title={`Select the ${componentName} component's instance on the page`}
+            onClick={() => {}}
+          >
+            {componentInstance}
+          </ComponentPropsTreeItemButton>
+        );
+        break;
+      case constants.COMPONENT_PROPERTY_OBJECT_TYPE:
+      case constants.COMPONENT_PROPERTY_ARRAY_TYPE:
+        editorElementIcon = (
+          <TextFields
+            color="disabled"
+            className={classes.listItemEditorIcon}
+          />
+        );
+        editorElement = (
+          <ComponentPropsTreeItemButton
+            color="default"
+            size="small"
+            title="Click to edit value"
+            fullWidth={true}
+            onClick={this.handleEditJson}
+          >
+            {type === constants.COMPONENT_PROPERTY_OBJECT_TYPE && (
+              <span>{'{ object }'}</span>
+            )}
+            {type === constants.COMPONENT_PROPERTY_ARRAY_TYPE && (
+              <span>{'[ a,r,r,a,y ]'}</span>
+            )}
+          </ComponentPropsTreeItemButton>
+        );
+        break;
+      case constants.COMPONENT_PROPERTY_ONE_OF_TYPE:
+        editorElementIcon = (
+          <TextFields
+            color="disabled"
+            className={classes.listItemEditorIcon}
+          />
+        );
+        editorElement = (
+          <div className={classes.editorWrapper}>
+            <div style={{ marginLeft: '5px' }}>
+              <PropertySelect
+                value={propertyValue}
+                values={propertyValueVariants ? propertyValueVariants.map(variant => variant.value) : []}
+                onChange={this.handlePropertyValueChange}
+              />
+            </div>
+          </div>
+        );
+        break;
+      case constants.COMPONENT_PROPERTY_NUMBER_TYPE:
+        editorElementIcon = (
+          <TextFields
+            color="disabled"
+            className={classes.listItemEditorIcon}
+          />
+        );
+        editorElement = (
+          <div className={classes.editorWrapper}>
+            <div style={{ marginLeft: '5px' }}>
+              <PropertyNumericField
+                value={propertyValue}
+                onChange={this.handlePropertyValueChange}
+              />
+            </div>
+          </div>
+        );
+        break;
+      case constants.COMPONENT_PROPERTY_BOOL_TYPE:
+        editorElementIcon = (
+          <TextFields
+            color="disabled"
+            className={classes.listItemEditorIcon}
+          />
+        );
+        editorElement = (
+          <PropertyCheckbox
+            value={propertyValue}
+            onChange={this.handlePropertyValueChange}
+          />
+        );
+        break;
+      default:
+        editorElementIcon = (
+          <TextFields
+            color="disabled"
+            className={classes.listItemEditorIcon}
+          />
+        );
+        editorElement = (
+          <div className={classes.editorWrapper}>
+            <div style={{ marginLeft: '5px' }}>
+              <PropertyTextField
+                text={propertyValue}
+                onChange={this.handlePropertyValueChange}
+              />
+            </div>
+          </div>
+        );
+        break;
+    }
+    const isError = errors && !isEmpty(errors);
+    return (
+      <ComponentPropsTreeListItem
+        style={{ paddingLeft }}
+        button={false}
+        onClick={!isEmpty(errors) ? this.handleErrorClick : this.handleClick}
+      >
+        <div className={classes.listItemPrefixSector}/>
+        <div className={classes.listItemContent}>
+          <ComponentPropsTreeListItemIcon>
+            {editorElementIcon}
+          </ComponentPropsTreeListItemIcon>
+          <div className={classes.propertyEditorContainer}>
+            {name && (
+              <div className={classes.titleContainer}>
+                <ComponentPropsTreeListItemText
+                  disableTypography={true}
+                  title={propertyComment}
+                  primary={
+                    <React.Fragment>
+                      <Tooltip
+                        enterDelay={500}
+                        classes={{
+                          popper: classes.htmlPopper,
+                          tooltip: classes.htmlTooltip,
+                        }}
+                        title=
+                          {propertyComment
+                            ? (
+                              <Typography>{propertyComment}</Typography>
+                            )
+                            : (
+                              <React.Fragment>
+                                <Typography variant="caption">There is no comment for this property. Please add a line before the property name:</Typography>
+                                <Typography>{'// Comment text explaining what this is'}</Typography>
+                              </React.Fragment>
+                            )
+                          }
+                      >
+                        <div className={classes.title}>
+                          <span
+                            className={isError ? classes.errorText : classes.titleText}
+                          >
+                            {name}
+                          </span>
+                        </div>
+                      </Tooltip>
+                      {!propertyName && (
+                        <ComponentPropsTreeItemExtraButton
+                          title="Remove this item from the array"
+                          className={classes.extraButtonDelete}
+                          onClick={this.handleDeleteComponentProperty}
+                        >
+                          <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
+                        </ComponentPropsTreeItemExtraButton>
+                      )}
+                      {isError && (
+                        <ComponentPropsTreeItemExtraButton
+                          title="Remove the property"
+                          className={classes.errorText}
+                          onClick={this.handleDeleteComponentProperty}
+                        >
+                          <Delete className={classes.buttonIcon} color="disabled"/>
+                        </ComponentPropsTreeItemExtraButton>
+                      )}
+                    </React.Fragment>
+                  }
+                />
+              </div>
+            )}
+            {editorElement}
+          </div>
+        </div>
+      </ComponentPropsTreeListItem>
+    );
+  }
+}
+
+export default withStyles(styles)(ComponentPropsTreeItem);

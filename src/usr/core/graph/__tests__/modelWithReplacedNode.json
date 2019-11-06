@@ -1,0 +1,60 @@
+{
+  "type": "Page",
+  "props": {
+    "name": "New Page",
+    "path": "new-page"
+  },
+  "children": [
+    {
+      "type": "h1",
+      "props": {},
+      "children": [
+        {
+          "type": "span",
+          "text": "New page"
+        }
+      ]
+    },
+    {
+      "type": "div",
+      "props": {},
+      "children": [
+        {
+          "type": "NewComponent",
+          "props": {
+            "name": "My Name is NewComponent"
+          }
+        },
+        {
+          "type": "div",
+          "props": {
+            "style": {
+              "width": "100%"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "div",
+      "props": {},
+      "children": [
+        {
+          "type": "div",
+          "props": {
+            "style": {
+              "width": "100%",
+              "display": "block"
+            }
+          }
+        },
+        {
+          "type": "TestComponent",
+          "props": {
+            "name": "My Name is TestComponent"
+          }
+        }
+      ]
+    }
+  ]
+}
