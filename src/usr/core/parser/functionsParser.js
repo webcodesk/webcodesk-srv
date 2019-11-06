@@ -26,13 +26,15 @@ import { makeResourceModelCanonicalKey, makeResourceModelKey } from '../utils/re
 function getAbsoluteImportPath (sourceImportPath, rootDirPath, currentFilePath) {
   let absoluteImportPath = sourceImportPath;
   if (absoluteImportPath.charAt(0) === '.') {
+    // use this as a workaround for win32 when the resolving gives the leading slash in the absolute path.
+    const absoluteRootDirPath = path.resolve(rootDirPath);
     // we have relative import path
     const fileDirPath = path.dirname(currentFilePath);
     // need to resolve it to the absolute path
     absoluteImportPath = path.resolve(fileDirPath, absoluteImportPath);
     // remove project root dir path part from the absolute path
     absoluteImportPath = absoluteImportPath
-      .replace(`${rootDirPath}${constants.FILE_SEPARATOR}`, '');
+      .replace(`${absoluteRootDirPath}${constants.FILE_SEPARATOR}`, '');
   }
   return absoluteImportPath;
 }
