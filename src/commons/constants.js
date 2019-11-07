@@ -16,9 +16,9 @@
 
 module.exports = {
 
-  CURRENT_APPLICATION_VERSION: '2.0.0-alpha',
+  CURRENT_APPLICATION_VERSION: '2.0.0-beta',
   AUTHOR_COPYRIGHT: 'Alex Pustovalov',
-  DATE_COPYRIGHT: '2018 - 2020',
+  DATE_COPYRIGHT: '2018-2020',
 
   URL_WEBCODESK_TUTORIAL: 'https://github.com/webcodesk/webcodesk-srv',
   URL_WEBCODESK_ISSUE_TRACKER: 'https://github.com/webcodesk/webcodesk-srv/issues',
