@@ -70,7 +70,7 @@ export function post(url, token, body) {
 
 export function download2(url, destDirPath) {
   return invokeServer('download', {url, destDirPath})
-    .then(err => {
+    .catch(err => {
       console.error(`Error downloading from URL ${url} into ${destDirPath}. `, err);
     });
 }

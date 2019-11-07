@@ -52,7 +52,7 @@ export let projectSettings;
 
 export const getCurrentDirPath = () => {
   return invokeServer('getProjectDirPath')
-    .then(err => {
+    .catch(err => {
       console.error(`Error getting current dir path. `, err);
     });
 };

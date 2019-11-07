@@ -135,7 +135,7 @@ export async function mergeProjectSettings (newSettings) {
 
 export function restartProjectServer () {
   invokeServer('restartProjectServer')
-    .then(err => {
+    .catch(err => {
       console.error(`Error restarting the project server. `, err);
     });
 
@@ -143,7 +143,7 @@ export function restartProjectServer () {
 
 export function stopProjectServer() {
   invokeServer('stopProjectServer')
-    .then(err => {
+    .catch(err => {
       console.error(`Error stopping the project server. `, err);
     });
 }

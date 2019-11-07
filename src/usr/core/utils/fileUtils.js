@@ -21,77 +21,77 @@ const wrongWin32AbsolutePathPrefix = new RegExp(/^\/[A-Za-z]:(.*?)/);
 
 export function ensureFilePath (filePath) {
   return invokeServer('ensureFilePath', filePath)
-    .then(err => {
+    .catch(err => {
       console.error(`Error ensuring path ${filePath}. `, err);
     });
 }
 
 export function ensureDirPath (dirPath) {
   return invokeServer('ensureDirPath', dirPath)
-    .then(err => {
+    .catch(err => {
       console.error(`Error ensuring directory ${dirPath}. `, err);
     });
 }
 
 export function readFile (filePath) {
   return invokeServer('readFile', filePath)
-    .then(err => {
+    .catch(err => {
       console.error(`Error reading file ${filePath}. `, err);
     });
 }
 
 export function writeFile (filePath, fileData) {
   return invokeServer('writeFile', {filePath, fileData})
-    .then(err => {
+    .catch(err => {
       console.error(`Error writing file ${filePath}. `, err);
     });
 }
 
 export function copyFile (srcFilePath, destFilePath) {
   return invokeServer('copyFile', {srcFilePath, destFilePath})
-    .then(err => {
+    .catch(err => {
       console.error(`Error copying file ${srcFilePath} to ${destFilePath}. `, err);
     });
 }
 
 export function isExisting (filePath) {
   return invokeServer('isExisting', filePath)
-    .then(err => {
+    .catch(err => {
       console.error(`Error checking existence of file ${filePath}. `, err);
     });
 }
 
 export function checkDirIsEmpty (dirPath) {
   return invokeServer('checkDirIsEmpty', dirPath)
-    .then(err => {
+    .catch(err => {
       console.error(`Error checking directory is empty ${dirPath}. `, err);
     });
 }
 
 export function readJson (filePath) {
   return invokeServer('readJson', filePath)
-    .then(err => {
+    .catch(err => {
       console.error(`Error reading JSON file ${filePath}. `, err);
     });
 }
 
 export function writeJson (filePath, jsonObj) {
   return invokeServer('writeJson', {filePath, jsonObj})
-    .then(err => {
+    .catch(err => {
       console.error(`Error writing JSON file ${filePath}. `, err);
     });
 }
 
 export function removeFile (filePath) {
   return invokeServer('removeFile', filePath)
-    .then(err => {
+    .catch(err => {
       console.error(`Error deleting file ${filePath}. `, err);
     });
 }
 
 export function isFile (filePath) {
   return invokeServer('isFile', filePath)
-    .then(() => {
+    .catch(() => {
       // silently accept that this is not a file
       return false;
     });
@@ -99,21 +99,21 @@ export function isFile (filePath) {
 
 export function removeFileAndEmptyDir (filePath, stopDirPath) {
   return invokeServer('removeFileAndEmptyDir', {filePath, stopDirPath})
-    .then(err => {
+    .catch(err => {
       console.error(`Error deleting files and empty directories ${filePath}. `, err);
     });
 }
 
 export function writeFileWhenDifferent (filePath, fileBody) {
   return invokeServer('writeFileWhenDifferent', {filePath, fileBody})
-    .then(err => {
+    .catch(err => {
       console.error(`Error writing files if the content is different ${filePath}. `, err);
     });
 }
 
 export function unpackTarGz (srcFilePath, destDirPath) {
   return invokeServer('unpackTarGz', {srcFilePath, destDirPath})
-    .then(err => {
+    .catch(err => {
       console.error(`Error unpacking tar.gz file ${srcFilePath} to ${destDirPath}. `, err);
     });
 }
