@@ -87,23 +87,23 @@ circle.property_debug.blank {
   stroke-dasharray: 10,2;
 }
 
-path.header.component {
+path.header_debug.component {
   fill: #1565C0;
 }
 
-path.header.function {
+path.header_debug.function {
   fill: #00796B;
 }
 
-path.header.application {
+path.header_debug.application {
   fill: #607D8B;
 }
 
-path.header.page {
+path.header_debug.page {
   fill: #3949AB;
 }
 
-path.header.selected {
+path.header_debug.selected {
   fill: #263238;
 }
 

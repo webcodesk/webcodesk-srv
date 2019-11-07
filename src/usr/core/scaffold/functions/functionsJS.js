@@ -21,7 +21,7 @@ import { checkFileExists } from '../utils';
 import { format } from '../../utils/textUtils';
 
 const templateContent = `
-// @param {SampleFunctionInputOptionsTypes from ./generalFunctions.props.js}
+// @param {SampleFunctionInputOptionsTypes from ./<%= fileName %>.props.js}
 export const sampleFunction = (options) => dispatch => {
   // do something here with options;
   const { text, extraOptions } = options;
@@ -32,7 +32,7 @@ export const sampleFunction = (options) => dispatch => {
       extraFlag: extraOptions.extraFlag,
     }
   };
-  // @param {SampleFunctionDispatchTypes from ./generalFunctions.props.js}
+  // @param {SampleFunctionDispatchTypes from ./<%= fileName %>.props.js}
   dispatch('optionsFromInput', dispatchOptions);
 };
 `;
@@ -99,15 +99,15 @@ export async function createFiles (fileName, dirName, destDirPath, fileExtension
   }
   fileObjects.push({
     filePath: functionsFilePath,
-    fileData: format(template(templateContent)())
+    fileData: format(template(templateContent)({fileName}))
   });
   fileObjects.push({
     filePath: functionsPropsFilePath,
-    fileData: format(template(templateContentProps)())
+    fileData: format(template(templateContentProps)({fileName}))
   });
   fileObjects.push({
     filePath: functionsReadmeFilePath,
-    fileData: template(templateContentReadme)()
+    fileData: template(templateContentReadme)({fileName})
   });
   return fileObjects;
 }

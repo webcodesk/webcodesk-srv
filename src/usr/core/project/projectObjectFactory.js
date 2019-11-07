@@ -61,11 +61,17 @@ export function createResourcesTreeViewObject() {
 
   return {
     flows,
+    flowsCount: projectResourcesManager.getFlowsCount(),
     pages,
+    pagesCount: projectResourcesManager.getPagesCount(),
     userComponents,
+    userComponentsCount: projectResourcesManager.getUserComponentsCount(),
     userFunctions,
+    userFunctionsCount: projectResourcesManager.getUserFunctionsCount(),
     clipboardItems,
+    clipboardItemsCount: projectResourcesManager.getClipboardItemsCount(),
     templates,
+    templatesCount: projectResourcesManager.getTemplatesCount(),
   }
 }
 

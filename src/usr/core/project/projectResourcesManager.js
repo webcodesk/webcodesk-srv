@@ -178,20 +178,40 @@ export function getUserFunctionsTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE, startKey);
 }
 
+export function getUserFunctionsCount() {
+  return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE);
+}
+
 export function getUserComponentsTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_COMPONENTS_TYPE, startKey);
+}
+
+export function getUserComponentsCount() {
+  return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_COMPONENTS_TYPE);
 }
 
 export function getPagesTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_PAGES_TYPE, startKey);
 }
 
+export function getPagesCount() {
+  return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_PAGES_TYPE);
+}
+
 export function getTemplatesTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_TEMPLATES_TYPE, startKey);
 }
 
+export function getTemplatesCount() {
+  return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_TEMPLATES_TYPE);
+}
+
 export function getFlowsTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_FLOWS_TYPE, startKey);
+}
+
+export function getFlowsCount() {
+  return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_FLOWS_TYPE);
 }
 
 export function getPropTypesTree (startKey = null) {
@@ -200,6 +220,10 @@ export function getPropTypesTree (startKey = null) {
 
 export function getClipboardTree (startKey = null) {
   return projectResourcesUtils.getResourceTreeOrderedByKey(constants.RESOURCE_IN_CLIPBOARD_TYPE, startKey, 'desc');
+}
+
+export function getClipboardItemsCount() {
+  return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_CLIPBOARD_TYPE);
 }
 
 export function getAllPagesList() {

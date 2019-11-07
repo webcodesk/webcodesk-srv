@@ -55,17 +55,13 @@ export function copyFile (srcFilePath, destFilePath) {
 }
 
 export function isExisting (filePath) {
-  return invokeServer('isExisting', filePath)
-    .catch(err => {
-      console.error(`Error checking existence of file ${filePath}. `, err);
-    });
+  // the caller should catch the error to be sure that file exists
+  return invokeServer('isExisting', filePath);
 }
 
 export function checkDirIsEmpty (dirPath) {
-  return invokeServer('checkDirIsEmpty', dirPath)
-    .catch(err => {
-      console.error(`Error checking directory is empty ${dirPath}. `, err);
-    });
+  // the caller should catch the error to be sure that dir is empty
+  return invokeServer('checkDirIsEmpty', dirPath);
 }
 
 export function readJson (filePath) {

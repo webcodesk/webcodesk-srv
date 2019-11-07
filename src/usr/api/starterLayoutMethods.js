@@ -47,7 +47,7 @@ export const openExistingProject = () => async (dispatch) => {
   try {
     await projectManager.initProjectConfiguration();
   } catch (e) {
-    console.info(e);
+    console.error(e);
   }
   // dispatch('infoMessage', 'Reading source files. Please wait...');
   try {
@@ -55,7 +55,7 @@ export const openExistingProject = () => async (dispatch) => {
     dispatch('success');
     // dispatch('successMessage', 'Project initialised successfully');
   } catch (e) {
-    console.info(e);
+    console.error(e);
   }
 };
 

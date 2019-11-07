@@ -15,6 +15,7 @@
  */
 
 import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -40,6 +41,7 @@ import ToolbarButton from '../commons/ToolbarButton';
 import constants from '../../../commons/constants';
 import DraggableWrapper from './DraggableWrapper';
 import ScriptView from '../commons/ScriptView';
+import {spaceStr} from "codemirror/src/util/misc";
 
 const TREE_VIEW_INDENT = '21px';
 const FIRST_LIST_INDENT = '17px';
@@ -150,6 +152,10 @@ const styles = theme => ({
   },
   subheaderText: {
     flexGrow: 1,
+  },
+  subheaderItemsCountText: {
+    color: '#7d7d7d',
+    fontSize: '12px'
   },
   subheaderButton: {
     flexGrow: 0,
@@ -1295,17 +1301,41 @@ class ResourcesTreeView extends React.Component {
 
   render () {
     const { resourcesTreeViewObject, classes } = this.props;
+    if (!resourcesTreeViewObject || isEmpty(resourcesTreeViewObject)) {
+      return (<span />);
+    }
     const rootLists = [];
     let maxWidth = 0;
-    const { clipboardItems, templates, flows, pages, userComponents, userFunctions } = resourcesTreeViewObject;
+    const {
+      clipboardItems,
+      clipboardItemsCount,
+      templates,
+      templatesCount,
+      flows,
+      flowsCount,
+      pages,
+      pagesCount,
+      userComponents,
+      userComponentsCount,
+      userFunctions,
+      userFunctionsCount
+    } = resourcesTreeViewObject;
     // sort roots in the custom order
-    [clipboardItems, templates, pages, flows, userComponents, userFunctions].forEach(resourceObject => {
-      if (resourceObject) {
-        const { totalLevels, rootResourceItem, list } = this.createRootList(resourceObject);
+    [
+      {object: clipboardItems, count: clipboardItemsCount},
+      {object: templates, count: templatesCount},
+      {object: pages, count: pagesCount},
+      {object: flows, count: flowsCount},
+      {object: userComponents, count: userComponentsCount},
+      {object: userFunctions, count: userFunctionsCount}
+    ].forEach(resourceObject => {
+      if (resourceObject.object) {
+        const { totalLevels, rootResourceItem, list } = this.createRootList(resourceObject.object);
         maxWidth = maxWidth < totalLevels ? totalLevels : maxWidth;
         rootLists.push({
           rootResourceItem,
           list,
+          itemsCount: resourceObject.count,
         });
       }
     });
@@ -1409,7 +1439,6 @@ class ResourcesTreeView extends React.Component {
                 className={subheaderClass}
                 color="primary"
                 disableGutters={true}
-                // onContextMenu={this.handleContextItem(key, '')}
               >
                 <div className={classes.subheaderContainer}>
                   <ResourceListItemExpandedIcon onClick={this.handleToggleExpandItem(key)}>
@@ -1428,10 +1457,16 @@ class ResourcesTreeView extends React.Component {
                       ? (
                         <ResourceSubheaderErrorBadge badgeContent={' '} color="secondary">
                           <span>{props.displayName}</span>
+                          &nbsp;
+                          <span className={classes.subheaderItemsCountText}>{`(${rootListItem.itemsCount})`}</span>
                         </ResourceSubheaderErrorBadge>
                       )
                       : (
-                        <span>{props.displayName}</span>
+                        <React.Fragment>
+                          <span>{props.displayName}</span>
+                          &nbsp;
+                          <span className={classes.subheaderItemsCountText}>{`(${rootListItem.itemsCount})`}</span>
+                        </React.Fragment>
                       )}
                   </div>
                   {subheaderButtons}

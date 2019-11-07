@@ -300,7 +300,7 @@ export const decorateNodeEnter = (node, options) => {
       if (item.data.hasData) {
         nodeGroup
           .append('svg:path')
-          .attr('class', 'header')
+          .attr('class', 'header_debug')
           .attr('d', topRoundedRect(0, titleHeight - 5, rectWidth, titleHeight - 5, 8))
           .on('click', function() {
             if (item.data.hasData && options.onClick) {
@@ -361,7 +361,7 @@ export const decorateNodeUpdate = (node, nodeEnter) => {
     });
 
   decoratedNode
-    .select('path.header')
+    .select('path.header_debug')
     .each(function(item) {
       const { data:{ type, props: {isSelected} } } = item;
       d3.select(this)

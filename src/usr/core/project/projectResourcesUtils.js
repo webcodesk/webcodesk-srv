@@ -325,6 +325,26 @@ const visitToFindByText = (text) => ({nodeModel}) => {
   return result;
 };
 
+const countableTypes = [
+  constants.GRAPH_MODEL_CLIPBOARD_ITEM_TYPE,
+  constants.GRAPH_MODEL_COMPONENT_TYPE,
+  constants.GRAPH_MODEL_USER_FUNCTION_TYPE,
+  constants.GRAPH_MODEL_FLOW_TYPE,
+  constants.GRAPH_MODEL_PAGE_TYPE,
+  constants.GRAPH_MODEL_TEMPLATE_TYPE
+];
+
+const visitToFindCountableItem = ({nodeModel}) => {
+  const result = [];
+  if (nodeModel) {
+    const {type} = nodeModel;
+    if (countableTypes.indexOf(type) >= 0) {
+      result.push(1);
+    }
+  }
+  return result;
+};
+
 export function findResourcesKeysByText (text) {
   let keys = [];
   let graphModel;
@@ -341,6 +361,16 @@ export function getResourceTree (resourceType, resourceKey = null) {
     return graphModel.extractModel(resourceKey, false, resourceModelComparator);
   }
   return graphModel.getModel(false, resourceModelComparator);
+}
+
+export function getResourceTreeItemCount(resourceType) {
+  const graphModel = getGraphByResourceType(resourceType);
+  if (graphModel) {
+    let accumulator = [];
+    accumulator = accumulator.concat(graphModel.traverse(visitToFindCountableItem));
+    return accumulator.length;
+  }
+  return 0;
 }
 
 export function getResourceTreeOrderedByKey (resourceType, resourceKey = null, order = 'asc') {
