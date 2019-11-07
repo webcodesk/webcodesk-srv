@@ -73,7 +73,7 @@
     "build": "yarn run cross-env GENERATE_SOURCEMAP=false react-scripts build && yarn run build-server",
     "build-server": "gulp --gulpfile ./gulpfile.js build",
     "eject": "cross-env react-scripts eject",
-    "server": "cross-env node ./webcodesk-srv.js -p 8080 -d ../test-project",
+    "server": "cross-env node ./webcodesk-srv.js -p 8080 -d D:/Alexander/projects/webcodesk/test/probe1",
     "start": "cross-env BROWSER=none react-scripts start",
     "test": "cross-env react-scripts test --env=jsdom --modulePaths=src"
   },

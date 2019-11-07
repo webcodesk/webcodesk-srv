@@ -116,9 +116,15 @@ export function removeDownloadDir(dirPath) {
 }
 
 function unpackPackagesInDownloadDir(dirPath) {
-  return invokeServer('unpackPackagesInDir', dirPath);
+  return invokeServer('unpackPackagesInDir', dirPath)
+    .then(err => {
+      console.error(`Error unpacking packages in ${dirPath}. `, err);
+    });
 }
 
 function install(destDirPath, dependencies, isDevelopment) {
-  return invokeServer('install', {destDirPath, dependencies, isDevelopment});
+  return invokeServer('install', {destDirPath, dependencies, isDevelopment})
+    .then(err => {
+      console.error(`Error modules installation in dir ${destDirPath}. `, err);
+    });
 }

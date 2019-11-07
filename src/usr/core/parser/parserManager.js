@@ -161,7 +161,7 @@ const parseDir = async (dirPath) => {
   try {
     foundFiles = await readDir(dirPath);
   } catch (e) {
-    console.error(e);
+    console.error(`Error reading directory ${dirPath}. `, e);
   }
   let declarationsInFiles = [];
   const parseFileTasks = [];

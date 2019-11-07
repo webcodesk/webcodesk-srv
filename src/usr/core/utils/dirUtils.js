@@ -17,5 +17,8 @@
 import { invokeServer } from './serverUtils';
 
 export function readDir(path) {
-  return invokeServer('readDir', path);
+  return invokeServer('readDir', path)
+    .then(err => {
+      console.error(`Error reading directory ${path}. `, err);
+    });
 }

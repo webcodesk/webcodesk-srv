@@ -51,11 +51,19 @@ export let packageDownloadDirPath;
 export let projectSettings;
 
 export const getCurrentDirPath = () => {
-  return invokeServer('getProjectDirPath');
+  return invokeServer('getProjectDirPath')
+    .then(err => {
+      console.error(`Error getting current dir path. `, err);
+    });
 };
 
 export const checkProjectPaths = async () => {
-  const validPaths = await invokeServer('checkProjectPaths');
+  let validPaths = null;
+  try {
+    validPaths = await invokeServer('checkProjectPaths');
+  } catch (e) {
+    console.error(`Error check project paths. `, e);
+  }
   if (!validPaths) {
     throw Error('Wrong project file structure');
   }
@@ -101,6 +109,10 @@ export const initProjectPaths = async () => {
 
 export const mergeProjectSettings = async (newSettings) => {
   const newProjectSettings = {...projectSettings, ...newSettings};
-  await invokeServer('saveProjectSettings', newProjectSettings);
+  try {
+    await invokeServer('saveProjectSettings', newProjectSettings);
+  } catch (e) {
+    console.error(`Error saving project settings. `, e);
+  }
   projectSettings = newProjectSettings;
 };

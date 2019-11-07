@@ -65,12 +65,34 @@ function get(url) {
 function post(url, body) {
   return getInstance()
     .post(url, body)
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      if (error.response) {
+        /*
+         * The request was made and the server responded with a
+         * status code that falls out of the range of 2xx
+         */
+        throw Error(error.response.data);
+        // console.log(error.response.data);
+        // console.log(error.response.status);
+        // console.log(error.response.headers);
+      } else if (error.request) {
+        /*
+         * The request was made but no response was received, `error.request`
+         * is an instance of XMLHttpRequest in the browser and an instance
+         * of http.ClientRequest in Node.js
+         */
+        throw Error(`The response is not received: ${error.request}`);
+        // console.log(error.request);
+      } else {
+        // Something happened in setting up the request and triggered an Error
+        throw Error(error.message);
+        // console.log('Error', error.message);
+      }
+      // console.log(error);
+    });
 }
 
 export function invokeServer(methodName, data) {
-  return post('/invoke', {
-    methodName,
-    data
-  });
+  return post('/invoke', { methodName, data });
 }

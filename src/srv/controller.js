@@ -90,8 +90,10 @@ export function initServer (options) {
   api.restartProjectServer();
 
   appServer.listen(portNumber, hostname, () => {
+    console.log();
     console.log(`The Webcodesk server has been started successfully on port: ${portNumber}`);
     console.log(`Open in the browser: http://${hostname}:${portNumber}`);
+    console.log();
   });
 }
 

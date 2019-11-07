@@ -22,19 +22,18 @@ import path from 'path-browserify';
 import { getWcdAnnotations } from '../utils/commentsUtils';
 import constants from '../../../commons/constants';
 import { makeResourceModelCanonicalKey, makeResourceModelKey } from '../utils/resourceUtils';
+import { repairPath } from "../utils/fileUtils";
 
 function getAbsoluteImportPath (sourceImportPath, rootDirPath, currentFilePath) {
   let absoluteImportPath = sourceImportPath;
   if (absoluteImportPath.charAt(0) === '.') {
-    // use this as a workaround for win32 when the resolving gives the leading slash in the absolute path.
-    const absoluteRootDirPath = path.resolve(rootDirPath);
     // we have relative import path
     const fileDirPath = path.dirname(currentFilePath);
     // need to resolve it to the absolute path
-    absoluteImportPath = path.resolve(fileDirPath, absoluteImportPath);
+    absoluteImportPath = repairPath(path.resolve(fileDirPath, absoluteImportPath));
     // remove project root dir path part from the absolute path
     absoluteImportPath = absoluteImportPath
-      .replace(`${absoluteRootDirPath}${constants.FILE_SEPARATOR}`, '');
+      .replace(`${rootDirPath}${constants.FILE_SEPARATOR}`, '');
   }
   return absoluteImportPath;
 }
