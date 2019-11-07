@@ -25,7 +25,6 @@ import PagesList from './PagesList';
 import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import ToolbarButton from '../commons/ToolbarButton';
 import ToolbarField from "../commons/ToolbarField";
-// import OpenInBrowser from "@material-ui/core/SvgIcon/SvgIcon";
 
 const styles = theme => ({
   root: {
@@ -74,7 +73,6 @@ class LivePreview extends React.Component {
     onOpenUrl: PropTypes.func,
     onSearchRequest: PropTypes.func,
     onError: PropTypes.func,
-    onExportApp: PropTypes.func,
   };
 
   static defaultProps = {
@@ -89,9 +87,6 @@ class LivePreview extends React.Component {
     },
     onError: () => {
       console.info('LivePreview.onError is not set');
-    },
-    onExportApp: () => {
-      console.info('LivePreview.onExportApp is not set');
     },
   };
 
@@ -110,7 +105,6 @@ class LivePreview extends React.Component {
       }
     }
     this.state = {
-      isDevToolsOpen: false,
       iFrameWidth: 'auto',
       isRecordingFrameworkMessages: false,
       isDebugFlowOpen: false,
@@ -121,29 +115,13 @@ class LivePreview extends React.Component {
       frameUrl: null,
       selectedDebugTitle: null,
       selectedDebugClass: null,
-      isExportStarted: false,
       initializationDebugMessageCount: 0,
     };
-  }
-
-  componentDidUpdate (prevProps, prevState, snapshot) {
-    const { isDevToolsOpen, initializationDebugMessageCount, isExportStarted } = this.state;
-    if (isDevToolsOpen !== prevState.isDevToolsOpen) {
-      if (isDevToolsOpen) {
-        this.handleOpenDevTools();
-      } else {
-        this.handleCloseDevTools();
-      }
-    }
-    if (initializationDebugMessageCount !== prevState.initializationDebugMessageCount && isExportStarted) {
-      this.handleContinueExportApp();
-    }
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { isVisible, pages, serverPort } = this.props;
     const {
-      isDevToolsOpen,
       iFrameWidth,
       isRecordingFrameworkMessages,
       isDebugFlowOpen,
@@ -154,11 +132,9 @@ class LivePreview extends React.Component {
       frameUrl,
       selectedDebugTitle,
       selectedDebugClass,
-      isExportStarted,
       initializationDebugMessageCount
     } = this.state;
-    return isDevToolsOpen !== nextState.isDevToolsOpen
-      || iFrameWidth !== nextState.iFrameWidth
+    return iFrameWidth !== nextState.iFrameWidth
       || isRecordingFrameworkMessages !== nextState.isRecordingFrameworkMessages
       || activePage !== nextState.activePage
       || activeUrl !== nextState.activeUrl
@@ -168,26 +144,11 @@ class LivePreview extends React.Component {
       || frameUrl !== nextState.frameUrl
       || selectedDebugTitle !== nextState.selectedDebugTitle
       || selectedDebugClass !== nextState.selectedDebugClass
-      || isExportStarted !== nextState.isExportStarted
       || initializationDebugMessageCount !== nextState.initializationDebugMessageCount
       || isVisible !== nextProps.isVisible
       || pages !== nextProps.pages
       || serverPort !== nextProps.serverPort;
   }
-
-  handleToggleDevTools = (event) => {
-    this.setState({
-      isDevToolsOpen: !this.state.isDevToolsOpen,
-    });
-  };
-
-  handleDevToolsCloseManually = () => {
-    if (this.state.isDevToolsOpen && this.props.isVisible) {
-      this.setState({
-        isDevToolsOpen: false,
-      });
-    }
-  };
 
   handleReload = () => {
     if (this.iFrameRef.current) {
@@ -199,30 +160,6 @@ class LivePreview extends React.Component {
     this.setState({
       iFrameWidth: width,
     });
-  };
-
-  handleOpenDevTools = () => {
-    // if (this.iFrameRef.current) {
-    //   this.iFrameRef.current.openDevTools();
-    // }
-  };
-
-  handleCloseDevTools = () => {
-    // if (this.iFrameRef.current) {
-    //   this.iFrameRef.current.closeDevTools();
-    // }
-  };
-
-  handleGoForward = () => {
-    // if (this.iFrameRef.current) {
-    //   this.iFrameRef.current.goForward();
-    // }
-  };
-
-  handleGoBack = () => {
-    // if (this.iFrameRef.current) {
-    //   this.iFrameRef.current.goBack();
-    // }
   };
 
   handleFrameworkMessage = (message) => {
@@ -329,42 +266,6 @@ class LivePreview extends React.Component {
     });
   };
 
-  handleExportApp = () => {
-    if (this.iFrameRef.current && !this.waitResponseTimeout) {
-      this.iFrameRef.current.sendMessage({
-        type: constants.WEBCODESK_MESSAGE_START_LISTENING_TO_FRAMEWORK
-      });
-      this.setState({
-        isExportStarted: true,
-      });
-      this.waitResponseTimeout = setTimeout(() => {
-        this.waitResponseTimeout = undefined;
-        this.handleContinueExportApp(true);
-      }, 5000);
-    }
-  };
-
-  handleContinueExportApp = (failed = false) => {
-    if (!failed) {
-      if (this.waitResponseTimeout) {
-        clearTimeout(this.waitResponseTimeout);
-        this.waitResponseTimeout = undefined;
-      }
-      this.props.onExportApp({
-        actionSequences: this.actionSequences,
-        targetProperties: this.targetProperties
-      });
-    } else {
-      this.props.onError('The application is not responding. Please check out the server status.');
-    }
-    this.iFrameRef.current.sendMessage({
-      type: constants.WEBCODESK_MESSAGE_STOP_LISTENING_TO_FRAMEWORK
-    });
-    this.setState({
-      isExportStarted: false,
-    });
-  };
-
   render () {
     const {
       classes,
@@ -373,7 +274,6 @@ class LivePreview extends React.Component {
       serverPort
     } = this.props;
     const {
-      isDevToolsOpen,
       iFrameWidth,
       isRecordingFrameworkMessages,
       isDebugFlowOpen,
@@ -454,35 +354,20 @@ class LivePreview extends React.Component {
                     />
                   )
                 }
-                {/*<ToolbarButton*/}
-                {/*  iconType="Unarchive"*/}
-                {/*  onClick={this.handleExportApp}*/}
-                {/*  title="Export"*/}
-                {/*  disabled={isRecordingFrameworkMessages || isExportStarted}*/}
-                {/*  tooltip="Export the application's source code"*/}
-                {/*/>*/}
                 <CommonToolbarDivider />
                 <ToolbarButton
                   iconType="Refresh"
+                  title="Reload"
                   onClick={this.handleReload}
                   disabled={isRecordingFrameworkMessages}
                   tooltip="Reload the entire page"
                 />
                 <ToolbarButton
-                  iconType="ArrowBack"
-                  onClick={this.handleGoBack}
-                  tooltip="Go back"
-                />
-                <ToolbarButton
-                  iconType="ArrowForward"
-                  onClick={this.handleGoForward}
-                  tooltip="Go forward"
-                />
-                <ToolbarButton
-                  iconType="BugReport"
-                  switchedOn={isDevToolsOpen}
-                  onClick={this.handleToggleDevTools}
-                  tooltip={isDevToolsOpen ? 'Close DevTools window' : 'Open DevTools window'}
+                  iconType="OpenInBrowser"
+                  title="Open URL"
+                  disabled={isRecordingFrameworkMessages}
+                  tooltip="Open the current page URL in the browser"
+                  onClick={this.handleOpenExternal}
                 />
                 <CommonToolbarDivider />
                 <ToolbarButton
@@ -514,20 +399,11 @@ class LivePreview extends React.Component {
                   iconType="OpenInBrowser"
                   disabled={!frameUrl}
                   text={frameUrl || 'Loading...'}
-                  buttonTitle="Open the current page URL in the external browser"
+                  buttonTitle="Open the current page URL in the browser"
                   placeholderText="Page path"
                   onSubmit={this.handleChangeActiveUrl}
                   onButtonClick={this.handleOpenExternal}
                 />
-                {/*<ToolbarButton*/}
-                  {/*iconType="OpenInBrowser"*/}
-                  {/*switchedOn={true}*/}
-                  {/*disabled={!frameUrl}*/}
-                  {/*title={frameUrl || 'Loading...'}*/}
-                  {/*titleLengthLimit={50}*/}
-                  {/*tooltip="Open the current page URL in the browser"*/}
-                  {/*onClick={this.handleOpenExternal}*/}
-                {/*/>*/}
               </CommonToolbar>
             )
           }
@@ -569,8 +445,6 @@ class LivePreview extends React.Component {
                       ref={this.iFrameRef}
                       width={iFrameWidth}
                       url={`http://localhost:${serverPort}${activeUrl}`}
-                      isDevToolsOpen={isVisible && isDevToolsOpen}
-                      onDevToolClosedManually={this.handleDevToolsCloseManually}
                       onIFrameMessage={this.handleFrameworkMessage}
                       onIFrameReady={this.handleFrameReady}
                     />
