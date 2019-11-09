@@ -1,6 +1,6 @@
 ## Webcodesk (server)
 
-A Web application builder: a low-code visual development environment for rapid application development.
+A low-code visual development environment for the rapid Web application development.
 
 ### Installation
 
