@@ -657,13 +657,6 @@ class PageComposer extends React.Component {
                 onClick={this.handleDeleteComponentInstance}
                 tooltip="Remove the selected component instance from the page (Delete | Back Space)"
               />
-              <ToolbarButton
-                iconType="Widgets"
-                title="Save Template"
-                disabled={!selectedComponentModel}
-                onClick={this.handleSaveAsTemplate}
-                tooltip="Save the selected element as a template"
-              />
               <CommonToolbarDivider />
               <ToolbarButton
                 iconType="Cached"
@@ -686,6 +679,14 @@ class PageComposer extends React.Component {
                 title="Reload"
                 onClick={this.handleReload}
                 tooltip="Reload the entire page (⌘+r | ctrl+r)"
+              />
+              <CommonToolbarDivider />
+              <ToolbarButton
+                iconType="Widgets"
+                title="Save Template"
+                disabled={!selectedComponentModel}
+                onClick={this.handleSaveAsTemplate}
+                tooltip="Save the selected element as a template"
               />
               <CommonToolbarDivider />
               <ToolbarButton

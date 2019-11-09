@@ -315,6 +315,9 @@ class TemplateComposer extends React.Component {
         if (type === constants.FRAMEWORK_MESSAGE_PAGE_CELL_WAS_SELECTED) {
           const { targetKey } = payload;
           this.pageComposerManager.selectCell(targetKey);
+          if (this.iFrameRef.current) {
+            this.iFrameRef.current.setFocus();
+          }
           this.updateLocalState();
         } else if (type === constants.FRAMEWORK_MESSAGE_COMPONENT_ITEM_WAS_DROPPED) {
           // source is taken from the dragItem.draggingModel when we start dragging

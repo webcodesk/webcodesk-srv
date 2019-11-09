@@ -406,12 +406,6 @@ class ComponentView extends React.Component {
                   onClick={this.undoUpdateLocalState}
                   tooltip="Undo the last change of the property"
                 />
-                <ToolbarButton
-                  iconType="Widgets"
-                  title="Save Template"
-                  onClick={this.handleSaveAsTemplate}
-                  tooltip="Save the component with current settings as a template"
-                />
                 <CommonToolbarDivider/>
                 <ToolbarButton
                   iconType="Edit"
@@ -424,6 +418,13 @@ class ComponentView extends React.Component {
                   title="Reload"
                   onClick={this.handleReload}
                   tooltip="Reload the entire page"
+                />
+                <CommonToolbarDivider/>
+                <ToolbarButton
+                  iconType="Widgets"
+                  title="Save Template"
+                  onClick={this.handleSaveAsTemplate}
+                  tooltip="Save the component with current settings as a template"
                 />
                 <CommonToolbarDivider/>
                 <ToolbarButton
