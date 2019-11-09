@@ -54,7 +54,6 @@ class IFrame extends React.Component {
     left: PropTypes.string,
     padding: PropTypes.string,
     onIFrameReady: PropTypes.func,
-    onDevToolClosedManually: PropTypes.func,
   };
 
   static defaultProps = {
@@ -64,9 +63,6 @@ class IFrame extends React.Component {
     },
     onIFrameReady: () => {
       console.info('IFrame.onIFrameReady is not set');
-    },
-    onDevToolClosedManually: () => {
-      console.info('IFrame.onDevToolClosedManually is not set');
     },
   };
 
@@ -107,10 +103,6 @@ class IFrame extends React.Component {
     // do nothing?
   };
 
-  handleDevtoolClosed = () => {
-    this.props.onDevToolClosedManually();
-  };
-
   sendMessage (message) {
     if (this.frameWindow.current) {
       this.frameWindow.current.contentWindow.postMessage(message, '*');
@@ -129,7 +121,7 @@ class IFrame extends React.Component {
       // this.frameWindow.current.src = '';
       setTimeout(() => {
         this.frameWindow.current.src = url;
-      }, 500);
+      }, 1);
     }
   };
 

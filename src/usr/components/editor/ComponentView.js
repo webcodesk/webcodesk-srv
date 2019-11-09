@@ -508,7 +508,6 @@ class ComponentView extends React.Component {
                           width={iFrameWidth}
                           url={`http://localhost:${serverPort}/webcodesk__component_view`}
                           onIFrameReady={this.handleIFrameReady}
-                          onDevToolClosedManually={this.handleDevToolsCloseManually}
                           onIFrameMessage={this.handleFrameworkMessage}
                         />
                       )}

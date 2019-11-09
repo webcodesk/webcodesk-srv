@@ -135,9 +135,9 @@ class TemplateComposer extends React.Component {
       showPropertyEditor: true,
       showPanelCover: false,
       showIframeDropPanelCover: false,
-      isDevToolsOpen: false,
       iFrameWidth: 'auto',
       structureTabActiveIndex: 0,
+      isPreviewMode: false,
     };
   }
 
@@ -147,8 +147,8 @@ class TemplateComposer extends React.Component {
       localComponentsTree,
       sendMessageCounter,
       sendUpdateCounter,
-      isDevToolsOpen,
       selectedComponentModel,
+      isPreviewMode
     } = this.state;
     const { data } = this.props;
     if (iFrameReadyCounter > 0 && iFrameReadyCounter !== prevState.iFrameReadyCounter) {
@@ -177,7 +177,7 @@ class TemplateComposer extends React.Component {
       });
     }
     const { isDraggingItem, draggedItem, isVisible } = this.props;
-    if (isVisible) {
+    if (isVisible && !isPreviewMode) {
       if (isDraggingItem && !prevProps.isDraggingItem && draggedItem) {
         if (
           draggedItem.isComponent
@@ -204,12 +204,6 @@ class TemplateComposer extends React.Component {
     }
     if (prevProps.isVisible !== isVisible) {
       if (!isVisible) {
-        if (isDevToolsOpen) {
-          this.handleCloseDevTools();
-          this.setState({
-            isDevToolsOpen: false,
-          });
-        }
         // we save all recent changes if there were some
         if (sendUpdateCounter !== 0) {
           this.sendUpdate();
@@ -311,38 +305,6 @@ class TemplateComposer extends React.Component {
     if (this.iFrameRef.current) {
       this.iFrameRef.current.reloadPage();
       this.iFrameRef.current.setFocus();
-    }
-  };
-
-  handleOpenDevTools = () => {
-    if (this.iFrameRef.current) {
-      this.iFrameRef.current.openDevTools();
-    }
-  };
-
-  handleCloseDevTools = () => {
-    if (this.iFrameRef.current) {
-      this.iFrameRef.current.closeDevTools();
-    }
-  };
-
-  handleToggleDevTools = (event) => {
-    const {isDevToolsOpen} = this.state;
-    if (isDevToolsOpen) {
-      this.handleCloseDevTools();
-    } else {
-      this.handleOpenDevTools();
-    }
-    this.setState({
-      isDevToolsOpen: !isDevToolsOpen,
-    });
-  };
-
-  handleDevToolsCloseManually = () => {
-    if (this.state.isDevToolsOpen && this.props.isVisible) {
-      this.setState({
-        isDevToolsOpen: false,
-      });
     }
   };
 
@@ -560,6 +522,16 @@ class TemplateComposer extends React.Component {
     this.debouncedSendMessage({x: e.pageX, y: e.pageY});
   };
 
+  handleTogglePreviewMode = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    this.setState({
+      isPreviewMode: !this.state.isPreviewMode
+    });
+  };
+
   render () {
     if (!this.pageComposerManager) {
       return (
@@ -576,6 +548,7 @@ class TemplateComposer extends React.Component {
       recentUpdateHistory,
       iFrameWidth,
       structureTabActiveIndex,
+      isPreviewMode
     } = this.state;
     const {
       classes,
@@ -676,6 +649,17 @@ class TemplateComposer extends React.Component {
               />
               <CommonToolbarDivider />
               <ToolbarButton
+                iconType="SlowMotionVideo"
+                title="Preview"
+                switchedOn={isPreviewMode}
+                onClick={this.handleTogglePreviewMode}
+                tooltip={isPreviewMode
+                  ? "Switch to edit mode"
+                  : "Switch to live preview mode"
+                }
+              />
+              <CommonToolbarDivider />
+              <ToolbarButton
                 iconType="SettingsOverscan"
                 switchedOn={iFrameWidth === constants.MEDIA_QUERY_WIDTH_AUTO_NAME}
                 onClick={this.handleToggleWidth(constants.MEDIA_QUERY_WIDTH_AUTO_NAME)}
@@ -764,10 +748,12 @@ class TemplateComposer extends React.Component {
                     <IFrame
                       ref={this.iFrameRef}
                       width={iFrameWidth}
-                      url={`http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`}
+                      url={isPreviewMode
+                        ? `http://localhost:${serverPort}/webcodesk__component_view`
+                        : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
+                      }
                       onIFrameReady={this.handleIFrameReady}
                       onIFrameMessage={this.handleIFrameMessage}
-                      onDevToolClosedManually={this.handleDevToolsCloseManually}
                     />
                   )}
                 </div>
