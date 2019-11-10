@@ -7,7 +7,7 @@ A low-code visual development environment for the rapid Web application developm
 * Initialize a new project's directory:
 
 ```
-npx @webcodesk/init <directory name>
+npx @webcodesk/install-webcodesk <directory name>
 ```
 
 * Go inside the newly created directory and run command:
