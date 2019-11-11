@@ -223,10 +223,6 @@ class ComponentPropsTreeItem extends React.Component {
       });
 
     }
-    if (localPropertyModel !== prevState.localPropertyModel) {
-      const { onPropertyUpdate } = this.props;
-      onPropertyUpdate(localPropertyModel);
-    }
   }
 
   handlePropertyValueChange = (value) => {
@@ -234,6 +230,8 @@ class ComponentPropsTreeItem extends React.Component {
     newPropertyModel.props = newPropertyModel.props || {};
     newPropertyModel.props.propertyValue = value;
     this.setState({ localPropertyModel: newPropertyModel });
+    const { onPropertyUpdate } = this.props;
+    onPropertyUpdate(newPropertyModel);
   };
 
   handleDeleteComponentProperty = (e) => {

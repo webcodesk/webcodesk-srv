@@ -46,11 +46,25 @@ class GraphModel {
     if (refreshKey) {
       nodeKey = this.globallyUniqueKeys ? uniqueId('node') : `node${++this.idCounter}`;
     } else {
-      nodeKey = key || (this.globallyUniqueKeys ? uniqueId('node') : `node${++this.idCounter}`);
-    }
-    if (!this.globallyUniqueKeys && key) {
-      const newIdCounterValue = parseInt(nodeKey.replace('node', ''));
-      this.idCounter = newIdCounterValue > this.idCounter ? newIdCounterValue : this.idCounter;
+      if (!this.globallyUniqueKeys) {
+        if (key) {
+          if (key.indexOf('node') === 0) {
+            const newIdCounterValue = parseInt(key.replace('node', ''));
+            if (newIdCounterValue <= this.idCounter) {
+              nodeKey = `node${++this.idCounter}`;
+            } else if (newIdCounterValue > this.idCounter) {
+              this.idCounter = newIdCounterValue;
+              nodeKey = key;
+            }
+          } else {
+            nodeKey = key;
+          }
+        } else {
+          nodeKey = `node${++this.idCounter}`;
+        }
+      } else {
+        nodeKey = key || uniqueId('node');
+      }
     }
     this.graphInstance.setNode(
       nodeKey,

@@ -228,17 +228,6 @@ class PageComposer extends React.Component {
         localComponentsTree,
         localMetaData,
       } = state;
-      let newRecentUpdateHistory = null;
-      if (sendMessageCounter > 0) {
-        newRecentUpdateHistory =
-          [
-            ...recentUpdateHistory,
-            {
-              componentsTree: localComponentsTree,
-              metaData: localMetaData,
-            }
-          ];
-      }
       const newState = {
         localComponentsTree: this.pageComposerManager.getModel(),
         localMetaData: this.pageComposerManager.getMetaData(),
@@ -246,8 +235,15 @@ class PageComposer extends React.Component {
         selectedComponentModel: this.pageComposerManager.getSelectedNode(),
       };
       if (doSendUpdate) {
-        if (newRecentUpdateHistory) {
-          newState.recentUpdateHistory = newRecentUpdateHistory;
+        if (sendMessageCounter > 0) {
+          newState.recentUpdateHistory =
+            [
+              ...recentUpdateHistory,
+              {
+                componentsTree: localComponentsTree,
+                metaData: localMetaData,
+              }
+            ];
         }
         newState.sendUpdateCounter = sendUpdateCounter + 1;
       }
@@ -789,7 +785,6 @@ class PageComposer extends React.Component {
                       url={`http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`}
                       onIFrameReady={this.handleIFrameReady}
                       onIFrameMessage={this.handleIFrameMessage}
-                      onDevToolClosedManually={this.handleDevToolsCloseManually}
                     />
                   )}
                 </div>

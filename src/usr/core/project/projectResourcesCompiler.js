@@ -165,7 +165,7 @@ export function compileResources () {
   const flowsGraphModel =
     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_FLOWS_TYPE);
 
-  // We have to gather all instances into the single map that let us check if there is such an instance
+  // We have to gather all instances into a single map that let us check if there is such an instance
   componentInstanceModelsMap.clear();
   if (pagesGraphModel) {
     const componentInstanceModels = pagesGraphModel.traverse(componentInstancesResourceVisitor);

@@ -220,23 +220,19 @@ class TemplateComposer extends React.Component {
         recentUpdateHistory,
         localComponentsTree,
       } = state;
-      let newRecentUpdateHistory = null;
-      if (sendMessageCounter > 0) {
-        newRecentUpdateHistory = [
-          ...recentUpdateHistory,
-          {
-            componentsTree: localComponentsTree,
-          }
-        ];
-      }
       const newState = {
         localComponentsTree: this.pageComposerManager.getModel(),
         sendMessageCounter: sendMessageCounter + 1,
         selectedComponentModel: this.pageComposerManager.getSelectedNode(),
       };
       if (doSendUpdate) {
-        if (newRecentUpdateHistory) {
-          newState.recentUpdateHistory = newRecentUpdateHistory;
+        if (sendMessageCounter > 0) {
+          newState.recentUpdateHistory = [
+            ...recentUpdateHistory,
+            {
+              componentsTree: localComponentsTree,
+            }
+          ];
         }
         newState.sendUpdateCounter = sendUpdateCounter + 1;
       }

@@ -27,10 +27,12 @@ import './index.css';
 import './usr/css/fa/css/all.min.css';
 import './usr/css/github-markdown.css';
 
-console.warn = consoleError;
-console.log = consoleError;
-console.error = consoleError;
-console.info = consoleError;
+if (process.env.NODE_ENV === 'production') {
+  console.warn = consoleError;
+  console.log = consoleError;
+  console.error = consoleError;
+  console.info = consoleError;
+}
 
 clearConsoleErrors().then(() => {
   const theme = createMuiTheme({

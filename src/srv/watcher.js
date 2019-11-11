@@ -19,6 +19,7 @@ const chokidar = require('chokidar');
 const appWindowMessages = require('../commons/appWindowMessages');
 
 let watcher;
+let watcherIsReady;
 
 const validFileExtensions = {
   '.js': true, '.jsx': true, '.ts': true, '.tsx': true, '.json': true, '.md': true
@@ -30,6 +31,7 @@ function stopWatchingFiles() {
     watcher.close();
     watcher = undefined;
   }
+  watcherIsReady = false;
 }
 
 function startWatchingFiles(filePaths, sendMainWindowMessage) {
@@ -42,28 +44,35 @@ function startWatchingFiles(filePaths, sendMainWindowMessage) {
     depth: 20,
   });
   watcher
-    // .on('ready', () => {
-    //   console.info(watcher.getWatched());
-    // })
+    .on('ready', () => {
+      watcherIsReady = true;
+      // console.info(watcher.getWatched());
+    })
     .on('add', filePath => {
-      const extName = path.extname(filePath);
-      if (validFileExtensions[extName]) {
-        // console.info(`File ${filePath} was added.`);
-        sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_ADDED, {path: filePath});
+      if (watcherIsReady) {
+        const extName = path.extname(filePath);
+        if (validFileExtensions[extName]) {
+          console.info(`File ${filePath} was added.`);
+          sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_ADDED, { path: filePath });
+        }
       }
     })
     .on('change', filePath => {
-      const extName = path.extname(filePath);
-      if (validFileExtensions[extName]) {
-        // console.info(`File ${filePath} was changed`);
-        sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_CHANGED, {path: filePath});
+      if (watcherIsReady) {
+        const extName = path.extname(filePath);
+        if (validFileExtensions[extName]) {
+          console.info(`File ${filePath} was changed`);
+          sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_CHANGED, { path: filePath });
+        }
       }
     })
     .on('unlink', filePath => {
-      const extName = path.extname(filePath);
-      if (validFileExtensions[extName]) {
-        // console.info(`File ${filePath} was removed`);
-        sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_REMOVED, {path: filePath});
+      if (watcherIsReady) {
+        const extName = path.extname(filePath);
+        if (validFileExtensions[extName]) {
+          console.info(`File ${filePath} was removed`);
+          sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_REMOVED, { path: filePath });
+        }
       }
     });
 }

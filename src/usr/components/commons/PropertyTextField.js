@@ -91,12 +91,6 @@ class PropertyTextField extends React.Component {
     };
   }
 
-  componentDidMount () {
-    this.debounceOnChange = debounce((newInputText) => {
-      this.props.onChange(newInputText);
-    }, 500);
-  }
-
   componentWillUnmount () {
     this.debounceOnChange.cancel();
   }
@@ -114,6 +108,10 @@ class PropertyTextField extends React.Component {
       });
     }
   }
+
+  debounceOnChange = debounce((newInputText) => {
+    this.props.onChange(newInputText);
+  }, 500);
 
   handleOnChange = () => {
     this.setState({
