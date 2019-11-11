@@ -52,7 +52,7 @@ function startWatchingFiles(filePaths, sendMainWindowMessage) {
       if (watcherIsReady) {
         const extName = path.extname(filePath);
         if (validFileExtensions[extName]) {
-          console.info(`File ${filePath} was added.`);
+          // console.info(`File ${filePath} was added.`);
           sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_ADDED, { path: filePath });
         }
       }
@@ -61,7 +61,7 @@ function startWatchingFiles(filePaths, sendMainWindowMessage) {
       if (watcherIsReady) {
         const extName = path.extname(filePath);
         if (validFileExtensions[extName]) {
-          console.info(`File ${filePath} was changed`);
+          // console.info(`File ${filePath} was changed`);
           sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_CHANGED, { path: filePath });
         }
       }
@@ -70,7 +70,7 @@ function startWatchingFiles(filePaths, sendMainWindowMessage) {
       if (watcherIsReady) {
         const extName = path.extname(filePath);
         if (validFileExtensions[extName]) {
-          console.info(`File ${filePath} was removed`);
+          // console.info(`File ${filePath} was removed`);
           sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_REMOVED, { path: filePath });
         }
       }
