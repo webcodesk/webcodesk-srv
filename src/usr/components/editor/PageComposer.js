@@ -142,7 +142,7 @@ class PageComposer extends React.Component {
       showPropertyEditor: true,
       showPanelCover: false,
       showIframeDropPanelCover: false,
-      iFrameWidth: 'auto',
+      iFrameWidthIndex: 0,
       structureTabActiveIndex: 0,
     };
   }
@@ -497,9 +497,9 @@ class PageComposer extends React.Component {
     });
   };
 
-  handleToggleWidth = (width) => () => {
+  handleToggleWidth = (widthIndex) => () => {
     this.setState({
-      iFrameWidth: width,
+      iFrameWidthIndex: widthIndex,
     });
   };
 
@@ -576,7 +576,7 @@ class PageComposer extends React.Component {
       localComponentsTree,
       localMetaData,
       recentUpdateHistory,
-      iFrameWidth,
+      iFrameWidthIndex,
       structureTabActiveIndex,
     } = this.state;
     const {
@@ -686,28 +686,18 @@ class PageComposer extends React.Component {
               />
               <CommonToolbarDivider />
               <ToolbarButton
-                iconType="SettingsOverscan"
-                switchedOn={iFrameWidth === constants.MEDIA_QUERY_WIDTH_AUTO_NAME}
-                onClick={this.handleToggleWidth(constants.MEDIA_QUERY_WIDTH_AUTO_NAME)}
-                tooltip="100% width viewport"
-              />
-              <ToolbarButton
-                iconType="DesktopMac"
-                switchedOn={iFrameWidth === constants.MEDIA_QUERY_WIDTH_DESKTOP_NAME}
-                onClick={this.handleToggleWidth(constants.MEDIA_QUERY_WIDTH_DESKTOP_NAME)}
-                tooltip="Desktop width viewport"
-              />
-              <ToolbarButton
-                iconType="TabletMac"
-                switchedOn={iFrameWidth === constants.MEDIA_QUERY_WIDTH_TABLET_NAME}
-                onClick={this.handleToggleWidth(constants.MEDIA_QUERY_WIDTH_TABLET_NAME)}
-                tooltip="Tablet width viewport"
-              />
-              <ToolbarButton
-                iconType="PhoneIphone"
-                switchedOn={iFrameWidth === constants.MEDIA_QUERY_WIDTH_MOBILE_NAME}
-                onClick={this.handleToggleWidth(constants.MEDIA_QUERY_WIDTH_MOBILE_NAME)}
-                tooltip="Mobile width viewport"
+                iconType={constants.MEDIA_WIDTHS[iFrameWidthIndex].iconType}
+                title={constants.MEDIA_WIDTHS[iFrameWidthIndex].label}
+                tooltip={constants.MEDIA_WIDTHS[iFrameWidthIndex].tooltip}
+                titleLengthLimit={200}
+                menuItems={constants.MEDIA_WIDTHS.map((mediaWidthItem, itemIndex) => {
+                  return {
+                    label: mediaWidthItem.label,
+                    iconType: mediaWidthItem.iconType,
+                    tooltip: mediaWidthItem.tooltip,
+                    onClick: this.handleToggleWidth(itemIndex),
+                  }
+                })}
               />
             </CommonToolbar>
           </div>
@@ -781,7 +771,7 @@ class PageComposer extends React.Component {
                   {serverPort > 0 && (
                     <IFrame
                       ref={this.iFrameRef}
-                      width={iFrameWidth}
+                      width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
                       url={`http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`}
                       onIFrameReady={this.handleIFrameReady}
                       onIFrameMessage={this.handleIFrameMessage}

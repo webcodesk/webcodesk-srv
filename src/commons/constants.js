@@ -205,41 +205,93 @@ module.exports = {
   WEBCODESK_MESSAGE_COMPONENT_ITEM_DRAG_END: 'WEBCODESK_MESSAGE_COMPONENT_ITEM_DRAG_END',
   WEBCODESK_MESSAGE_COMPONENT_ITEM_DRAG_MOVE: 'WEBCODESK_MESSAGE_COMPONENT_ITEM_DRAG_MOVE',
 
-  MEDIA_QUERY_WIDTH_AUTO_NAME: 'auto',
-  MEDIA_QUERY_WIDTH_DESKTOP_NAME: 'desktop',
-  MEDIA_QUERY_WIDTH_TABLET_NAME: 'tablet',
-  MEDIA_QUERY_WIDTH_MOBILE_NAME: 'mobile',
-
-  MEDIA_QUERIES: {
-    'auto': {
-      minWidth: 768,
-    },
-    'desktop': {
-      minWidth: 768,
-    },
-    'tablet': {
-      minWidth: 768,
-      maxWidth: 991,
-    },
-    mobile: {
-      maxWidth: 767
-    }
-  },
-
-  LIVE_PREVIEWS: {
-    'auto': {
+  MEDIA_WIDTHS: [
+    {
+      label: 'Auto, 100%',
+      iconType: 'SettingsOverscan', // Auto
       width: '100%',
     },
-    'desktop': {
-      width: '1920px',
+    {
+      label: 'Handset, 0-359 (4 columns)',
+      iconType: 'StayCurrentPortrait', // Phone Portrait
+      width: '359px',
     },
-    'tablet': {
-      width: '991px',
+    {
+      label: 'Handset, 360-399 (4 columns)',
+      iconType: 'StayCurrentPortrait', // Phone Portrait
+      width: '399px',
     },
-    mobile: {
-      width: '667px'
-    }
-  },
+    {
+      label: 'Handset, 400-479 (4 columns)',
+      iconType: 'StayCurrentPortrait', // Phone Portrait
+      width: '479px',
+    },
+    {
+      label: 'Handset, 480-599 (4 columns)',
+      iconType: 'StayCurrentPortrait', // Phone Landscape
+      width: '599px',
+    },
+    {
+      label: 'Handset, 600-719 (8 columns)',
+      iconType: 'StayCurrentLandscape', // Phone Landscape
+      width: '719px',
+    },
+    {
+      label: 'Handset, 720-839 (8 columns)',
+      iconType: 'StayCurrentLandscape', // Phone Landscape
+      width: '839px',
+    },
+    {
+      label: 'Handset, 840-959 (12 columns)',
+      iconType: 'StayCurrentLandscape', // Phone Landscape
+      width: '959px',
+    },
+    {
+      label: 'Tablet, 600-719 (8 columns)',
+      iconType: 'StayCurrentPortrait', // Tablet Portrait
+      width: '719px',
+    },
+    {
+      label: 'Tablet, 720-839 (8 columns)',
+      iconType: 'StayCurrentPortrait', // Tablet Portrait
+      width: '839px',
+    },
+    {
+      label: 'Tablet, 840-959 (12 columns)',
+      iconType: 'StayCurrentPortrait', // Tablet Portrait
+      width: '959px',
+    },
+    {
+      label: 'Tablet, 960-1023 (12 columns)',
+      iconType: 'StayCurrentLandscape', // Tablet Landscape
+      width: '1023px',
+    },
+    {
+      label: 'Tablet, 1024-1279 (12 columns)',
+      iconType: 'StayCurrentLandscape', // Tablet Landscape
+      width: '1279px',
+    },
+    {
+      label: 'Tablet, 1280-1439 (12 columns)',
+      iconType: 'StayCurrentLandscape', // Tablet Landscape
+      width: '1439px',
+    },
+    {
+      label: 'Desktop, 1440-1599 (12 columns)',
+      iconType: 'DesktopMac', // Desktop
+      width: '1599px',
+    },
+    {
+      label: 'Desktop, 1600-1919 (12 columns)',
+      iconType: 'DesktopMac', // Desktop
+      width: '1919px',
+    },
+    {
+      label: 'Desktop, 1920+ (12 columns)',
+      iconType: 'DesktopMac', // Desktop
+      width: '1200px',
+    },
+  ],
 
   // do not change values - they are used in the framework
   DEBUG_MSG_APPLICATION_START_EVENT: 'onApplicationStart',

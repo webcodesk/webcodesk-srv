@@ -524,7 +524,6 @@ class ResourcesTreeView extends React.Component {
                 <ToolbarButton
                   iconType="MoreVert"
                   primary={true}
-                  onClick={this.handleCreateNewResourceByType(resourceType, '')}
                   tooltip="More actions"
                   menuItems={[
                     {

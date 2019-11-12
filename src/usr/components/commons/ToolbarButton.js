@@ -73,6 +73,8 @@ import Adjust from '@material-ui/icons/Adjust';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChromeReaderMode from '@material-ui/icons/ChromeReaderMode';
 import Receipt from '@material-ui/icons/Receipt';
+import StayCurrentPortrait from '@material-ui/icons/StayCurrentPortrait';
+import StayCurrentLandscape from '@material-ui/icons/StayCurrentLandscape';
 
 import { CommonToolbarButton, CommonToolbarIconButton, CommonErrorBadge } from './Commons.parts';
 
@@ -214,6 +216,8 @@ const icons = {
   MenuIcon,
   ChromeReaderMode,
   Receipt,
+  StayCurrentPortrait,
+  StayCurrentLandscape,
 
   // fa icons
   CopyToClipboard,
@@ -340,6 +344,7 @@ class ToolbarButton extends React.Component {
           menuItemsElements.push(
             <ToolbarButtonMenuItem
               key={`${menuItem.label}_${menuItemIdx}`}
+              title={menuItem.tooltip}
               onClick={this.handleMenuItemClick(menuItem.onClick)}
             >
               { menuItemIcon && (

@@ -16,7 +16,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import constants from '../../../commons/constants';
 import { getOffset } from '../../core/utils/windowUtils';
 
 const containerStyle = {
@@ -57,7 +56,7 @@ class IFrame extends React.Component {
   };
 
   static defaultProps = {
-    width: constants.MEDIA_QUERY_WIDTH_AUTO_NAME,
+    width: '100%',
     onIFrameMessage: (message) => {
       console.info('IFrame received the message: ', message);
     },
@@ -146,7 +145,7 @@ class IFrame extends React.Component {
   render () {
     const { url, width } = this.props;
     let innerContainerStyle;
-    if (width === constants.MEDIA_QUERY_WIDTH_AUTO_NAME) {
+    if (width === "100%") {
       innerContainerStyle = defaultInnerContainerStyle;
     } else {
       innerContainerStyle = {
@@ -154,7 +153,7 @@ class IFrame extends React.Component {
         top: 0,
         left: 0,
         bottom: 0,
-        width: constants.LIVE_PREVIEWS[width].width,
+        width,
         padding: '16px',
         backgroundColor: containerStyle.backgroundColor,
       };
