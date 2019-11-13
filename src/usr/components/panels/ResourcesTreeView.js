@@ -639,6 +639,7 @@ class ResourcesTreeView extends React.Component {
                   onClick={this.handleDoubleClickItem(key)}
                 >
                   <ResourceListItemText
+                    title="Click to open in the tab."
                     primary={
                       highlightedResourceKeys[key]
                         ? <span className={classes.highlightedText}>{props.displayName}</span>
