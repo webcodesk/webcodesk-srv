@@ -99,11 +99,11 @@ export async function checkProjectPaths() {
   // check app dir path in the project
   const testAppSourceDir =
     repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_APP));
-  // try {
-  //   await isExisting(testAppSourceDir);
-  // } catch (e) {
-  //   throw Error(`App source code dir is missing. Please check "src/app" directory exists in ${testProjectDirPath}.`);
-  // }
+  try {
+    await isExisting(testAppSourceDir);
+  } catch (e) {
+    throw Error(`App source code dir is missing. Please check "src/app" directory exists in ${testProjectDirPath}.`);
+  }
   // check app indices dir path in the project
   const testAppIndicesSourceDir =
     repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_APP, constants.DIR_NAME_INDICES));
