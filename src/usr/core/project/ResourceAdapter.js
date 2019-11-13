@@ -303,6 +303,14 @@ class ResourceAdapter {
             return undefined;
           }
         },
+        'isTest': {
+          get: function () {
+            if (this.props) {
+              return this.props.isTest;
+            }
+            return undefined;
+          }
+        },
         'pagePath': {
           get: function () {
             if (this.props) {

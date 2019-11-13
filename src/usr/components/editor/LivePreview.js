@@ -269,7 +269,6 @@ class LivePreview extends React.Component {
   render () {
     const {
       classes,
-      isVisible,
       pages,
       serverPort
     } = this.props;

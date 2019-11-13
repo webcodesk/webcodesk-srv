@@ -49,6 +49,7 @@ import TreeView_Delete_Flow from './TreeView_Delete_Flow';
 import TreeView_Delete_Page from './TreeView_Delete_Page';
 import TreeView_Delete_Template from './TreeView_Delete_Template';
 import TreeView_Toggle_Flow from './TreeView_Toggle_Flow';
+import TreeView_Toggle_Is_Test from './TreeView_Toggle_Is_Test';
 
 export default {
   Cancel_Search_Item_By_Text,
@@ -86,4 +87,5 @@ export default {
   TreeView_Delete_Page,
   TreeView_Delete_Template,
   TreeView_Toggle_Flow,
+  TreeView_Toggle_Is_Test,
 };

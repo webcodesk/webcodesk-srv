@@ -42,11 +42,12 @@ export function findFlowDeclarations (sourceCode) {
   const declarations = [];
   try {
     const pageJSON = isString(sourceCode) ? JSON.parse(sourceCode) : sourceCode;
-    const { flowName, model, isDisabled } = pageJSON;
+    const { flowName, model, isDisabled, isTest } = pageJSON;
     const flowComposerManager = new FlowComposerManager(model);
     const flowDeclaration = {
       flowName,
       isDisabled,
+      isTest,
       model,
       flowParticles: flowComposerManager.getFlowParticles(),
     };

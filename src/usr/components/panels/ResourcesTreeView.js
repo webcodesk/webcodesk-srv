@@ -25,6 +25,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import green from '@material-ui/core/colors/green';
 import ResourceIcon from '../commons/ResourceIcon';
 import {
   ResourceList,
@@ -41,7 +42,6 @@ import ToolbarButton from '../commons/ToolbarButton';
 import constants from '../../../commons/constants';
 import DraggableWrapper from './DraggableWrapper';
 import ScriptView from '../commons/ScriptView';
-import {spaceStr} from "codemirror/src/util/misc";
 
 const TREE_VIEW_INDENT = '21px';
 const FIRST_LIST_INDENT = '17px';
@@ -145,6 +145,10 @@ const styles = theme => ({
     textDecoration: 'line-through',
     color: theme.palette.grey['600'],
   },
+  testItemText: {
+    // fontWeight: 700,
+    color: green['700'],
+  },
   subheaderContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -245,6 +249,7 @@ class ResourcesTreeView extends React.Component {
     onCopyFlow: PropTypes.func,
     onEditFlow: PropTypes.func,
     onToggleFlow: PropTypes.func,
+    onToggleIsTest: PropTypes.func,
     onDeletePage: PropTypes.func,
     onDeleteFlow: PropTypes.func,
     onDeleteTemplate: PropTypes.func,
@@ -304,6 +309,9 @@ class ResourcesTreeView extends React.Component {
     },
     onToggleFlow: () => {
       console.info('ResourcesTreeView.onToggleFlow is not set');
+    },
+    onToggleIsTest: () => {
+      console.info('ResourcesTreeView.onToggleIsTest is not set');
     },
     onDeletePage: () => {
       console.info('ResourcesTreeView.onDeletePage is not set');
@@ -447,6 +455,14 @@ class ResourcesTreeView extends React.Component {
     this.props.onToggleFlow({resourceKey, isDisabled: !isDisabled});
   };
 
+  handleToggleIsTest = (resourceKey, isTest) => (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    this.props.onToggleIsTest({resourceKey, isTest: !isTest});
+  };
+
   handleClearClipboard = () => {
 
   };
@@ -527,7 +543,7 @@ class ResourcesTreeView extends React.Component {
                   tooltip="More actions"
                   menuItems={[
                     {
-                      label: `Create new`,
+                      label: 'Create new',
                       onClick: this.handleCreateNewResourceByType(resourceType, parentVirtualPath),
                     }
                   ]}
@@ -741,6 +757,13 @@ class ResourcesTreeView extends React.Component {
             </ResourceListItem>
           );
         } else if (type === constants.GRAPH_MODEL_PAGE_TYPE) {
+          let itemTextClassNames = '';
+          if (props.isTest) {
+            itemTextClassNames = classes.testItemText;
+          }
+          if (highlightedResourceKeys[key]) {
+            itemTextClassNames += ' ' + classes.highlightedText;
+          }
           list.push(
             <ResourceListItem
               key={elementKey}
@@ -790,11 +813,7 @@ class ResourcesTreeView extends React.Component {
                       : (
                         <ResourceListItemText
                           title="Click to open in the tab, or drag & drop into the flow."
-                          primary={
-                            highlightedResourceKeys[key]
-                              ? <span className={classes.highlightedText}>{props.displayName}</span>
-                              : props.displayName
-                          }
+                          primary={<span className={itemTextClassNames}>{props.displayName}</span>}
                         />
                       )
                     }
@@ -807,14 +826,23 @@ class ResourcesTreeView extends React.Component {
                   tooltip="More actions"
                   menuItems={[
                     {
-                      label: `Copy "${props.displayName}" page`,
+                      label: 'Copy page',
                       onClick: this.handleCopyResource(key, resourceType, virtualPath),
                     },
                     {
                       label: 'divider'
                     },
                     {
-                      label: `Delete "${props.displayName}" page`,
+                      label: props.isTest
+                        ? 'Mark as regular page'
+                        : 'Mark as test page',
+                      onClick: this.handleToggleIsTest(key, props.isTest),
+                    },
+                    {
+                      label: 'divider'
+                    },
+                    {
+                      label: 'Delete page',
                       onClick: this.handleDeleteSelected(key, resourceType),
                     }
                   ]}
@@ -887,14 +915,14 @@ class ResourcesTreeView extends React.Component {
                   tooltip="More actions"
                   menuItems={[
                     {
-                      label: `Copy "${props.displayName}" template`,
+                      label: 'Copy template',
                       onClick: this.handleCopyResource(key, resourceType, virtualPath),
                     },
                     {
                       label: 'divider'
                     },
                     {
-                      label: `Delete "${props.displayName}" template`,
+                      label: 'Delete template',
                       onClick: this.handleDeleteSelected(key, resourceType),
                     }
                   ]}
@@ -945,6 +973,8 @@ class ResourcesTreeView extends React.Component {
           let itemTextClassNames = '';
           if (props.isDisabled) {
             itemTextClassNames = classes.strikeThroughText;
+          } else if (props.isTest) {
+            itemTextClassNames = classes.testItemText;
           }
           if (highlightedResourceKeys[key]) {
             itemTextClassNames += ' ' + classes.highlightedText;
@@ -1004,20 +1034,29 @@ class ResourcesTreeView extends React.Component {
                   tooltip="More actions"
                   menuItems={[
                     {
-                      label: `Copy "${props.displayName}" flow`,
+                      label: 'Copy flow',
                       onClick: this.handleCopyResource(key, resourceType, virtualPath),
-                    },
-                    {
-                      label: props.isDisabled
-                        ? `Enable "${props.displayName}" flow`
-                        : `Disable "${props.displayName}" flow`,
-                      onClick: this.handleToggleFlow(key, props.isDisabled),
                     },
                     {
                       label: 'divider'
                     },
                     {
-                      label: `Delete "${props.displayName}" flow`,
+                      label: props.isDisabled
+                        ? 'Enable flow'
+                        : 'Disable flow',
+                      onClick: this.handleToggleFlow(key, props.isDisabled),
+                    },
+                    {
+                      label: props.isTest
+                        ? 'Mark as regular flow'
+                        : 'Mark as test flow',
+                      onClick: this.handleToggleIsTest(key, props.isTest),
+                    },
+                    {
+                      label: 'divider'
+                    },
+                    {
+                      label: 'Delete flow',
                       onClick: this.handleDeleteSelected(key, resourceType),
                     }
                   ]}

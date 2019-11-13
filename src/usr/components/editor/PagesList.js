@@ -20,6 +20,7 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import green from '@material-ui/core/colors/green';
 
 const PagesListItem = withStyles(theme => ({
   root: {
@@ -44,7 +45,11 @@ const styles = theme => ({
   root: {
     padding: '10px',
     minWidth: '200px',
-  }
+  },
+  testItemText: {
+    // fontWeight: 700,
+    color: green['700'],
+  },
 });
 
 class PagesList extends React.Component {
@@ -72,6 +77,10 @@ class PagesList extends React.Component {
     const list = [];
     if (pages && pages.length > 0) {
       pages.forEach((page, index) => {
+        let itemTextClassNames = '';
+        if (page.isTest) {
+          itemTextClassNames = classes.testItemText;
+        }
         list.push(
           <PagesListItem
             key={`pageItem_${page.pagePath}`}
@@ -79,7 +88,7 @@ class PagesList extends React.Component {
             selected={selectedPage.pagePath === page.pagePath}
             onClick={this.handleListItemClick(index)}
           >
-            <PagesListItemText primary={`/${page.pagePath}`} />
+            <PagesListItemText primary={<span className={itemTextClassNames}>{`/${page.pagePath}`}</span>} />
           </PagesListItem>
         );
         // list.push(

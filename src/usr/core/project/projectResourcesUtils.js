@@ -296,8 +296,9 @@ export function getResource (resourceKey, specificResourceType = null) {
 function visitForPages ({nodeModel}) {
   const result = [];
   if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_PAGE_TYPE) {
-    const {props: {pagePath, pageName, metaData}} = nodeModel;
+    const {props: {pagePath, pageName, metaData, isTest}} = nodeModel;
     result.push({
+      isTest,
       pagePath,
       pageName,
       metaData,

@@ -18,6 +18,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
+import green from '@material-ui/core/colors/green';
 import {
   ResourceTab,
   ResourceTabCloseButton,
@@ -68,6 +69,9 @@ const styles = theme => ({
   resourceTabTextError: { color: '#D50000' },
   resourceTabTextStrike: {
     textDecoration: 'line-through'
+  },
+  resourceTabTextTestItem: {
+    color: green['700'],
   },
 });
 
@@ -257,6 +261,8 @@ class ResourceEditor extends React.Component {
               }
               if (resourceObject.isDisabled) {
                 textClassName = ' ' + classes.resourceTabTextStrike;
+              } else if (resourceObject.isTest) {
+                textClassName = ' ' + classes.resourceTabTextTestItem;
               }
               return (
                 <ResourceTab

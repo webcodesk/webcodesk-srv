@@ -124,7 +124,7 @@ export function createPropTypesModels (modelKey, declarationsInFile) {
 export function createPageModels(modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(pageDeclaration => {
-    const { pageName, pagePath, componentsTree, metaData, componentInstances } = pageDeclaration;
+    const { pageName, pagePath, componentsTree, metaData, isTest, componentInstances } = pageDeclaration;
     const pageModel = {
       key: pagePath, // set page path as a key in order to find the resource from any place
       type: constants.GRAPH_MODEL_PAGE_TYPE,
@@ -132,6 +132,7 @@ export function createPageModels(modelKey, declarationsInFile) {
         displayName: pageName,
         pageName,
         pagePath,
+        isTest,
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
         componentsTree: cloneDeep(componentsTree),
         metaData: cloneDeep(metaData),
@@ -187,7 +188,7 @@ export function createTemplateModels(modelKey, declarationsInFile) {
 export function createFlowModels(modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(declaration => {
-    const { flowName, model, isDisabled, flowParticles } = declaration;
+    const { flowName, model, isDisabled, isTest, flowParticles } = declaration;
     const flowModel = {
       key: modelKey,
       type: constants.GRAPH_MODEL_FLOW_TYPE,
@@ -195,6 +196,7 @@ export function createFlowModels(modelKey, declarationsInFile) {
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
         flowName: flowName,
         isDisabled,
+        isTest,
         displayName: flowName,
         flowTree: cloneDeep(model),
       },

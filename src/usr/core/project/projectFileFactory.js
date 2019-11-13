@@ -101,6 +101,7 @@ export function createFileObjectWithNewData (resource, data) {
         pageName: resource.pageName,
         pagePath: resource.pagePath,
         metaData,
+        isTest: resource.isTest,
         componentsTree: dataComponentsTree
       });
     }
@@ -120,6 +121,8 @@ export function createFileObjectWithNewData (resource, data) {
     const parentResource = projectResourcesManager.getResourceByKey(resource.parentKey);
     fileObject.filePath = parentResource.absolutePath;
     fileObject.fileData = JSON.stringify({
+      isDisabled: resource.isDisabled,
+      isTest: resource.isTest,
       flowName: resource.displayName,
       model: flowTree,
     });

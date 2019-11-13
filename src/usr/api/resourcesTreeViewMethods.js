@@ -425,6 +425,16 @@ export const toggleFlow = ({ resourceKey, isDisabled }) => async (dispatch) => {
   dispatch('fileObject', fileObject);
 };
 
+export const toggleIsTest = ({ resourceKey, isTest }) => async (dispatch) => {
+  let foundResource = projectResourcesManager.getResourceByKey(resourceKey);
+  const fileObject = projectFileFactory.createFileObject(foundResource, { isTest });
+  const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
+  if (newResources.updatedResources && newResources.updatedResources.length > 0) {
+    dispatch('resourceUpdatedSuccessfully');
+  }
+  dispatch('fileObject', fileObject);
+};
+
 export const toggleExpandedResourceKey = (key) => (dispatch) => {
   let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
   expandedResourceKeys = { ...expandedResourceKeys, ...{ [key]: !expandedResourceKeys[key] } };
