@@ -75,7 +75,13 @@ class FlowComposerManager {
   };
 
   getSerializableFlowModel = () => {
-    return this.graphModel.getModel(false, flowModelComparator, ['acceptableTypes']);
+    // return this.graphModel.getModel(false, flowModelComparator, ['acceptableTypes']);
+    return this.graphModel.getModel(false, flowModelComparator, (model) => {
+      if (model && model.props) {
+        delete model.props['acceptableTypes'];
+      }
+      return false;
+    });
   };
 
   appendNew = (destKey, model) => {

@@ -88,16 +88,11 @@ class GraphModel {
     throw Error('The new model prototype is null.');
   }
 
-  extractModel(rootNodeKey, noKeys = false, comparator = null, excludeProps = null, excludeTypes = null) {
+  extractModel(rootNodeKey, noKeys = false, comparator = null, excludeTestCallback = null) {
     const nodeObject = this.graphInstance.node(rootNodeKey);
     const model = nodeObject ? cloneDeep(pickBy(nodeObject, i => !isUndefined(i))) : {};
-    if (excludeTypes && excludeTypes.length > 0) {
-      if (excludeTypes.indexOf(model.type) >= 0) {
-        return null;
-      }
-    }
-    if (model.props && excludeProps && excludeProps.length > 0) {
-      model.props = omit(model.props, excludeProps);
+    if (excludeTestCallback && excludeTestCallback(model)) {
+      return null;
     }
     if (noKeys) {
       delete model.key;
@@ -107,7 +102,7 @@ class GraphModel {
       const unOrderedChildren = [];
       let childModel;
       childrenKeys.forEach(childKey => {
-        childModel = this.extractModel(childKey, noKeys, comparator, excludeProps, excludeTypes);
+        childModel = this.extractModel(childKey, noKeys, comparator, excludeTestCallback);
         if (childModel) {
           unOrderedChildren.push(childModel);
         }
@@ -124,16 +119,16 @@ class GraphModel {
     this.rootNodeKey = this.mapModel(jsonModel);
   }
 
-  getModel(noKeys = false, comparator = null, excludeProps = null, excludeTypes = null) {
+  getModel(noKeys = false, comparator = null, excludeTestCallback = null) {
     if (this.rootNodeKey) {
-      return this.extractModel(this.rootNodeKey, noKeys, comparator, excludeProps, excludeTypes);
+      return this.extractModel(this.rootNodeKey, noKeys, comparator, excludeTestCallback);
     }
     throw Error('GraphModel.initModel: can not find root node key');
   }
 
-  getSerializableModel(comparator = null, excludeProps = null, excludeTypes = null) {
+  getSerializableModel(comparator = null, excludeTestCallback = null) {
     if (this.rootNodeKey) {
-      return this.extractModel(this.rootNodeKey, true, comparator, excludeProps, excludeTypes);
+      return this.extractModel(this.rootNodeKey, true, comparator, excludeTestCallback);
     }
     throw Error('GraphModel.initModel: can not find root node key');
   }
