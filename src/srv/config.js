@@ -99,11 +99,11 @@ export async function checkProjectPaths() {
   // check app dir path in the project
   const testAppSourceDir =
     repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_APP));
-  try {
-    await isExisting(testAppSourceDir);
-  } catch (e) {
-    throw Error(`App source code dir is missing. Please check "src/app" directory exists in ${testProjectDirPath}.`);
-  }
+  // try {
+  //   await isExisting(testAppSourceDir);
+  // } catch (e) {
+  //   throw Error(`App source code dir is missing. Please check "src/app" directory exists in ${testProjectDirPath}.`);
+  // }
   // check app indices dir path in the project
   const testAppIndicesSourceDir =
     repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_APP, constants.DIR_NAME_INDICES));
@@ -115,27 +115,27 @@ export async function checkProjectPaths() {
   // check pages config dir path in the project
   const testEtcPagesSourceDir =
     repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_ETC, constants.DIR_NAME_PAGES));
-  try {
-    await isExisting(testEtcPagesSourceDir);
-  } catch (e) {
-    throw Error(`Pages configurations dir is missing. Please check "src/etc/pages" directory exists in ${testProjectDirPath}.`);
-  }
+  // try {
+  //   await isExisting(testEtcPagesSourceDir);
+  // } catch (e) {
+  //   throw Error(`Pages configurations dir is missing. Please check "src/etc/pages" directory exists in ${testProjectDirPath}.`);
+  // }
   // check flows config dir path in the project
   const testEtcFlowsSourceDir =
     repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_ETC, constants.DIR_NAME_FLOWS));
-  try {
-    await isExisting(testEtcFlowsSourceDir);
-  } catch (e) {
-    throw Error(`Data flows configurations dir is missing. Please check "src/etc/flows" directory exists in ${testProjectDirPath}.`);
-  }
+  // try {
+  //   await isExisting(testEtcFlowsSourceDir);
+  // } catch (e) {
+  //   throw Error(`Data flows configurations dir is missing. Please check "src/etc/flows" directory exists in ${testProjectDirPath}.`);
+  // }
   // check templates config dir path in the project
   const testEtcTemplatesSourceDir =
     repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_ETC, constants.DIR_NAME_TEMPLATES));
-  try {
-    await isExisting(testEtcTemplatesSourceDir);
-  } catch (e) {
-    throw Error(`Templates configurations dir is missing. Please check "src/etc/templates" directory exists in ${testProjectDirPath}.`);
-  }
+  // try {
+  //   await isExisting(testEtcTemplatesSourceDir);
+  // } catch (e) {
+  //   throw Error(`Templates configurations dir is missing. Please check "src/etc/templates" directory exists in ${testProjectDirPath}.`);
+  // }
 
   // check yarn lock file existing
   let testProjectYarnLockFile =
