@@ -35,6 +35,8 @@ import Star from '@material-ui/icons/Star';
 import ChromeReaderMode from '@material-ui/icons/ChromeReaderMode';
 import GroupWork from '@material-ui/icons/GroupWork';
 import GroupWorkOutlined from '@material-ui/icons/GroupWorkOutlined';
+import Dns from '@material-ui/icons/Dns';
+import DnsOutlined from '@material-ui/icons/DnsOutlined';
 
 class ResourceIcon extends React.Component {
   static propTypes = {
@@ -88,11 +90,8 @@ class ResourceIcon extends React.Component {
         break;
       case constants.GRAPH_MODEL_FUNCTIONS_TYPE:
         result = isOutlined
-          ? (<FolderOutlined fontSize="inherit" style={{color: '#90a4ae'}} />)
-          : (<Folder fontSize="inherit" style={{color: '#90a4ae'}} />);
-        // result = isOutlined
-        //   ? (<DnsOutlined fontSize="inherit" style={{color: '#006064'}} />)
-        //   : (<Dns fontSize="inherit" style={{color: '#006064'}} />);
+          ? (<DnsOutlined fontSize="inherit" style={{color: '#006064'}} />)
+          : (<Dns fontSize="inherit" style={{color: '#006064'}} />);
         break;
       case constants.GRAPH_MODEL_USER_FUNCTION_TYPE:
       case constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE:

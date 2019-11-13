@@ -634,7 +634,10 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div className={classes.listItemTextContainer}>
+                <div
+                  className={classes.listItemTextContainerClickable}
+                  onClick={this.handleDoubleClickItem(key)}
+                >
                   <ResourceListItemText
                     primary={
                       highlightedResourceKeys[key]
@@ -674,10 +677,7 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div
-                  className={classes.listItemTextContainerDraggable}
-                  onClick={this.handleDoubleClickItem(key)}
-                >
+                <div className={classes.listItemTextContainerDraggable}>
                   <DraggableWrapper
                     onDragStart={this.handleItemDragStart}
                     onDragEnd={this.handleItemDragEnd}
