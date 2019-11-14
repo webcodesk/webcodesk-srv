@@ -93,7 +93,6 @@ class LivePreview extends React.Component {
   constructor (props) {
     super(props);
     this.actionSequences = {};
-    this.targetProperties = {};
     this.actionLog = [];
     this.iFrameRef = React.createRef();
     let indexPage;
@@ -166,15 +165,18 @@ class LivePreview extends React.Component {
     if (message) {
       const { type, payload } = message;
       if (type === constants.FRAMEWORK_MESSAGE_INIT_DEBUG) {
-        const { actionSequences, targetProperties } = payload;
+        const { actionSequences } = payload;
         this.actionSequences = actionSequences;
-        this.targetProperties = targetProperties;
         this.actionLog = [];
         this.setState({
           initializationDebugMessageCount: this.state.initializationDebugMessageCount + 1
         })
       } else if (type === constants.FRAMEWORK_MESSAGE_DEBUG) {
         this.actionLog.push(payload);
+      } else if (type === constants.FRAMEWORK_MESSAGE_CHANGE_URL) {
+        this.setState({
+          activeUrl: payload,
+        });
       }
     }
   };
