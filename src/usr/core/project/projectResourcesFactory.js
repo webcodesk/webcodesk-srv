@@ -67,6 +67,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         name: functionName,
         displayName: functionName,
         functionName: canonicalFunctionName,
+        parentFunctionsKey: modelKey,
         dispatches: cloneDeep(sortedDispatches),
         parameters: cloneDeep(parameters),
         externalProperties,
@@ -155,6 +156,7 @@ export function createPageModels(modelKey, declarationsInFile) {
             properties: cloneDeep(properties),
             pageName,
             pagePath,
+            isTest,
           }
         };
         pageModel.children.push(componentInstanceModel);
@@ -224,6 +226,7 @@ export function createFlowModels(modelKey, declarationsInFile) {
             props: {
               resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
               name: functionName,
+              isTest,
               displayName: particleDisplayName,
               functionName: functionName,
               inputs: cloneDeep(inputs),
@@ -241,6 +244,7 @@ export function createFlowModels(modelKey, declarationsInFile) {
               displayName: componentInstance,
               componentName: componentName,
               componentInstance: componentInstance,
+              isTest,
               inputs: cloneDeep(inputs),
               outputs: cloneDeep(outputs),
             }
@@ -255,6 +259,7 @@ export function createFlowModels(modelKey, declarationsInFile) {
               displayName: pageName,
               pageName,
               pagePath,
+              isTest,
               inputs: cloneDeep(inputs),
               outputs: cloneDeep(outputs),
             }

@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+import isEmpty from 'lodash/isEmpty';
 import path from 'path-browserify';
 import { getIndexObjectFileText } from './fileTemplates';
 import constants from '../../../../commons/constants';
@@ -27,15 +28,23 @@ function createIndexObject (resourceModel) {
   let resultObject = {};
   let childrenArray = children;
   if (childrenArray && childrenArray.length > 0) {
+    let dirObject;
     childrenArray.forEach(child => {
-      const { type: childType, props: childProps } = child;
+      const { type: childType, props: childProps, children: childChildren } = child;
       if (childType === constants.GRAPH_MODEL_DIR_TYPE) {
-        resultObject[childProps.name] = createIndexObject(child);
+        dirObject = createIndexObject(child);
+        if (!isEmpty(dirObject)) {
+          resultObject[childProps.name] = dirObject;
+        }
       } else if (childType === constants.GRAPH_MODEL_FILE_TYPE) {
         if (childProps.resourceType === constants.RESOURCE_IN_USER_FUNCTIONS_TYPE) {
-          resultObject[childProps.name] = `require('${childProps.importPath}')`;
+          if (childChildren && childChildren.length > 0) {
+            resultObject[childProps.name] = `require('${childProps.importPath}')`;
+          }
         } else if (childProps.resourceType === constants.RESOURCE_IN_COMPONENTS_TYPE) {
-          resultObject[childProps.name] = `require('${childProps.importPath}').default`;
+          if (childChildren && childChildren.length > 0) {
+            resultObject[childProps.name] = `require('${childProps.importPath}').default`;
+          }
         }
       }
     });

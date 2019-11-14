@@ -78,6 +78,9 @@ async function generateSchema () {
 }
 
 export async function generateIndices () {
+  /**
+   * Development
+   */
   // Obtain model trees from the graphs
   const userFunctions = projectResourcesManager.getUserFunctionsTree();
   const userComponents = projectResourcesManager.getUserComponentsTree();
@@ -85,14 +88,33 @@ export async function generateIndices () {
   const resourceTrees = [
     {
       tree: userFunctions,
-      indexDirName: constants.INDEX_USER_FUNCTIONS_ROOT_DIR_NAME,
+      indexDirName: constants.INDEX_USER_FUNCTIONS_ROOT_FILE_NAME,
     },
     {
       tree: userComponents,
-      indexDirName: constants.INDEX_COMPONENTS_ROOT_DIR_NAME,
+      indexDirName: constants.INDEX_COMPONENTS_ROOT_FILE_NAME,
     },
   ];
   await indicesGeneratorManager.generateFiles(resourceTrees, config.appIndicesSourceDir);
+
+  /**
+   * Production
+   */
+  // Obtain model trees from the graphs
+  const userFunctionsProd = projectResourcesManager.getUserFunctionsTreeProd();
+  const userComponentsProd = projectResourcesManager.getUserComponentsTreeProd();
+  // Regenerate index files by the trees
+  const resourceTreesProd = [
+    {
+      tree: userFunctionsProd,
+      indexDirName: constants.INDEX_USER_FUNCTIONS_ROOT_FILE_NAME,
+    },
+    {
+      tree: userComponentsProd,
+      indexDirName: constants.INDEX_COMPONENTS_ROOT_FILE_NAME,
+    },
+  ];
+  await indicesGeneratorManager.generateFiles(resourceTreesProd, config.appIndicesProdSourceDir);
 }
 
 export async function generateFiles () {

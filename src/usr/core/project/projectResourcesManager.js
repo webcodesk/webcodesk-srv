@@ -178,12 +178,94 @@ export function getUserFunctionsTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE, startKey);
 }
 
+const flowUserFunctionsModelsMap = new Map();
+
+function flowUserFunctionResourceVisitor ({ nodeModel, parentModel }) {
+  const result = [];
+  if (nodeModel && nodeModel.props && nodeModel.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE) {
+    if (!nodeModel.props.isTest) {
+      result.push(nodeModel);
+    }
+  }
+  return result;
+}
+
+export function getUserFunctionsTreeProd (startKey = null) {
+  // We have to gather all functions in flow into a single map that let us check if there is such a function
+  flowUserFunctionsModelsMap.clear();
+  if (flowsGraphModel) {
+    const flowFunctionsModels = flowsGraphModel.traverse(flowUserFunctionResourceVisitor);
+    if (flowFunctionsModels && flowFunctionsModels.length > 0) {
+      flowFunctionsModels.forEach(flowFunctionsModel => {
+        if (flowFunctionsModel.props) {
+          const { props: { parentFunctionsKey } } = flowFunctionsModel;
+          flowUserFunctionsModelsMap.set(parentFunctionsKey, true);
+        }
+      });
+    }
+  }
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE, startKey, (model) => {
+    if (model && model.props) {
+      if (model.type === constants.GRAPH_MODEL_FUNCTIONS_TYPE) {
+        const { props: { functionsName } } = model;
+        if (!flowUserFunctionsModelsMap.get(functionsName)) {
+          // this is function in test flow, exclude it
+          return true;
+        }
+      }
+    }
+    // this is an unknown resource model or does not fit
+    return false;
+  });
+}
+
 export function getUserFunctionsCount() {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE);
 }
 
 export function getUserComponentsTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_COMPONENTS_TYPE, startKey);
+}
+
+const componentInstanceModelsMap = new Map();
+
+function componentInstancesResourceVisitor ({ nodeModel, parentModel }) {
+  const result = [];
+  if (nodeModel && nodeModel.props && nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
+    if (!nodeModel.props.isTest) {
+      result.push(nodeModel);
+    }
+  }
+  return result;
+}
+
+export function getUserComponentsTreeProd (startKey = null) {
+  // We have to gather all instances into a single map that let us check if there is such an instance
+  componentInstanceModelsMap.clear();
+  if (pagesGraphModel) {
+    const componentInstanceModels = pagesGraphModel.traverse(componentInstancesResourceVisitor);
+    if (componentInstanceModels && componentInstanceModels.length > 0) {
+      componentInstanceModels.forEach(componentInstanceModel => {
+        if (componentInstanceModel.props) {
+          const { props: { componentName } } = componentInstanceModel;
+          componentInstanceModelsMap.set(componentName, true);
+        }
+      });
+    }
+  }
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_COMPONENTS_TYPE, startKey, (model) => {
+    if (model && model.props) {
+      if (model.type === constants.GRAPH_MODEL_COMPONENT_TYPE) {
+        const { props: { componentName } } = model;
+        if (!componentInstanceModelsMap.get(componentName)) {
+          // this component is in test page, exclude it
+          return true;
+        }
+      }
+    }
+    // this is an unknown resource model or does not fit
+    return false;
+  });
 }
 
 export function getUserComponentsCount() {

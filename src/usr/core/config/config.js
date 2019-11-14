@@ -43,6 +43,7 @@ export let appSchemaPagesFile;
 export let appSchemaFlowsFile;
 export let appSchemaRouterFile;
 
+export let appIndicesProdSourceDir;
 export let appSchemaProdSourceDir;
 export let appSchemaProdPagesFile;
 export let appSchemaProdFlowsFile;
@@ -105,6 +106,7 @@ export const initProjectPaths = async () => {
   appSchemaProdRouterFile = repairPath(path.join(appSchemaProdSourceDir, `${constants.FILE_NAME_ROUTER}.js`));
 
   appIndicesSourceDir = repairPath(path.join(validPaths.testAppSourceDir, constants.DIR_NAME_INDICES));
+  appIndicesProdSourceDir = repairPath(path.join(validPaths.testAppSourceDir, constants.DIR_NAME_INDICES_PROD));
 
   packageDownloadDirPath = repairPath(path.join(projectDirPath, constants.DIR_NAME_DOWNLOAD));
 

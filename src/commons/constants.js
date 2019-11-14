@@ -173,9 +173,9 @@ module.exports = {
 
   CONTEXT_MENU_FOR_RESOURCE_OBJECT: 'CONTEXT_MENU_FOR_RESOURCE_OBJECT',
 
-  // do not change values - they are used in indice generator for directories names
-  INDEX_COMPONENTS_ROOT_DIR_NAME: 'userComponents',
-  INDEX_USER_FUNCTIONS_ROOT_DIR_NAME: 'userFunctions',
+  // do not change values - they are used in indices generator for file names
+  INDEX_COMPONENTS_ROOT_FILE_NAME: 'userComponents',
+  INDEX_USER_FUNCTIONS_ROOT_FILE_NAME: 'userFunctions',
 
   FRAMEWORK_MESSAGE_PAGE_CELL_WAS_SELECTED: 'FRAMEWORK_MESSAGE_PAGE_CELL_WAS_SELECTED',
   FRAMEWORK_MESSAGE_CONTEXT_MENU_CLICKED: 'FRAMEWORK_MESSAGE_CONTEXT_MENU_CLICKED',
