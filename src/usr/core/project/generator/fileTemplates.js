@@ -30,12 +30,12 @@ export function getIndexFileText(templateData) {
 }
 
 const schemaIndexFileTemplate = `
-import <%= flowsDirName %> from './<%= flowsDirName %>';
-import <%= pagesDirName %> from './<%= pagesDirName %>';
+import <%= flowsFileName %> from './<%= flowsFileName %>';
+import <%= pagesFileName %> from './<%= pagesFileName %>';
 import <%= routerFileName %> from './<%= routerFileName %>';
 export default {
-  <%= flowsDirName %>,
-  <%= pagesDirName %>,
+  <%= flowsFileName %>,
+  <%= pagesFileName %>,
   <%= routerFileName %>,
 };
 `;

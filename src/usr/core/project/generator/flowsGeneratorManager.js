@@ -16,9 +16,9 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 import set from 'lodash/set';
-import constants from '../../../commons/constants';
+import constants from '../../../../commons/constants';
 import { getArrayDefaultExportFileText } from './fileTemplates';
-import { writeFileWhenDifferent } from '../utils/fileUtils';
+import { writeFileWhenDifferent } from '../../utils/fileUtils';
 
 function createFlow (model, level = 0) {
   const targetsPerEvents = [];
@@ -151,10 +151,10 @@ export function createIndexObject (resourceModel, resultObject = {}, replaceImpo
   }
 }
 
-export function generateFiles (resourcesTrees, destDirPath, replaceImportDir) {
+export function generateFiles (resourcesTrees, destFilePath, replaceImportDir) {
   const indexObject = {};
   createIndexObject(resourcesTrees, indexObject, `${replaceImportDir}/`);
-  const filePath = `${destDirPath}.js`;
+  const filePath = `${destFilePath}.js`;
   const fileBody = getArrayDefaultExportFileText({fileData: indexObject});
   return writeFileWhenDifferent(filePath, fileBody);
 }

@@ -104,17 +104,19 @@ export async function checkProjectPaths() {
   } catch (e) {
     throw Error(`App source code dir is missing. Please check "src/app" directory exists in ${testProjectDirPath}.`);
   }
-  // check app indices dir path in the project
-  const testAppIndicesSourceDir =
-    repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_APP, constants.DIR_NAME_INDICES));
-  // try {
-  //   await isExisting(testAppIndicesSourceDir);
-  // } catch (e) {
-  //   throw Error(`App indices source code dir is missing. Please check "src/app/indices" directory exists in ${testProjectDirPath}.`);
-  // }
+
+  // check etc dir path in the project
+  const testEtcSourceDir =
+    repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_ETC));
+  try {
+    await isExisting(testEtcSourceDir);
+  } catch (e) {
+    throw Error(`Etc source code dir is missing. Please check "src/etc" directory exists in ${testProjectDirPath}.`);
+  }
+
   // check pages config dir path in the project
   const testEtcPagesSourceDir =
-    repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_ETC, constants.DIR_NAME_PAGES));
+    repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_PAGES));
   // try {
   //   await isExisting(testEtcPagesSourceDir);
   // } catch (e) {
@@ -122,7 +124,7 @@ export async function checkProjectPaths() {
   // }
   // check flows config dir path in the project
   const testEtcFlowsSourceDir =
-    repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_ETC, constants.DIR_NAME_FLOWS));
+    repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_FLOWS));
   // try {
   //   await isExisting(testEtcFlowsSourceDir);
   // } catch (e) {
@@ -130,7 +132,7 @@ export async function checkProjectPaths() {
   // }
   // check templates config dir path in the project
   const testEtcTemplatesSourceDir =
-    repairPath(path.join(testProjectRootSourceDir, constants.DIR_NAME_ETC, constants.DIR_NAME_TEMPLATES));
+    repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_TEMPLATES));
   // try {
   //   await isExisting(testEtcTemplatesSourceDir);
   // } catch (e) {
@@ -171,7 +173,7 @@ export async function checkProjectPaths() {
     testProjectRootSourceDir,
     testUsrSourceDir,
     testAppSourceDir,
-    testAppIndicesSourceDir,
+    testEtcSourceDir,
     testEtcPagesSourceDir,
     testEtcFlowsSourceDir,
     testEtcTemplatesSourceDir,

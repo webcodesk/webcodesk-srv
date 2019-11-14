@@ -16,9 +16,9 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 import set from 'lodash/set';
-import constants from '../../../commons/constants';
+import constants from '../../../../commons/constants';
 import { getArrayDefaultExportFileText } from './fileTemplates';
-import { writeFileWhenDifferent } from '../utils/fileUtils';
+import { writeFileWhenDifferent } from '../../utils/fileUtils';
 
 export function createComponentsTree(model, rootModelProps) {
   if (model && model.props) {
@@ -152,7 +152,8 @@ export function makeRouterItemsData (resourceModel) {
   if (resourceModel) {
     const { type, props, children } = resourceModel;
     if (type === constants.GRAPH_MODEL_PAGE_TYPE) {
-      let path = `${constants.FILE_SEPARATOR}${props.pagePath}/:parameter?`;
+      // let path = `${constants.FILE_SEPARATOR}${props.pagePath}/:parameter?`;
+      let path = `${constants.FILE_SEPARATOR}${props.pagePath}`;
       const pageName =
         `${props.pagePath.replace(constants.FILE_SEPARATOR_REGEXP, constants.MODEL_KEY_SEPARATOR)}`;
       resultItems.push({
@@ -168,10 +169,10 @@ export function makeRouterItemsData (resourceModel) {
   return resultItems;
 }
 
-export function generateFiles (resourcesTrees, destDirPath, replaceImportDir) {
+export function generateFiles (resourcesTrees, destFilePath, replaceImportDir) {
   const indexObject = {};
   createIndexObject(resourcesTrees, indexObject, `${replaceImportDir}/`);
-  const filePath = `${destDirPath}.js`;
+  const filePath = `${destFilePath}.js`;
   const fileBody = getArrayDefaultExportFileText({fileData: indexObject});
   return writeFileWhenDifferent(filePath, fileBody);
 }

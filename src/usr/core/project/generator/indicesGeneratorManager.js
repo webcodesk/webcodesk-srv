@@ -16,11 +16,11 @@
 
 import path from 'path-browserify';
 import { getIndexObjectFileText } from './fileTemplates';
-import constants from '../../../commons/constants';
+import constants from '../../../../commons/constants';
 import {
   repairPath,
   writeFileWhenDifferent
-} from '../utils/fileUtils';
+} from '../../utils/fileUtils';
 
 function createIndexObject (resourceModel) {
   const { children } = resourceModel;

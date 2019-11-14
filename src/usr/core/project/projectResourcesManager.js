@@ -194,6 +194,16 @@ export function getPagesTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_PAGES_TYPE, startKey);
 }
 
+export function getPagesTreeProd (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_PAGES_TYPE, startKey, (model) => {
+    if (model && model.props && model.props.isTest) {
+      // exclude the resource with isTest in the properties
+      return true;
+    }
+    return false;
+  });
+}
+
 export function getPagesCount() {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_PAGES_TYPE);
 }
@@ -208,6 +218,16 @@ export function getTemplatesCount() {
 
 export function getFlowsTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_FLOWS_TYPE, startKey);
+}
+
+export function getFlowsTreeProd (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_FLOWS_TYPE, startKey, (model) => {
+    if (model && model.props && model.props.isTest) {
+      // exclude the resource with isTest in the properties
+      return true;
+    }
+    return false;
+  });
 }
 
 export function getFlowsCount() {

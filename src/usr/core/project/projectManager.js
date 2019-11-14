@@ -14,107 +14,16 @@
  *    limitations under the License.
  */
 
-// import debounce from 'lodash/debounce';
 import * as fileUtils from '../utils/fileUtils';
 import * as parserManager from '../parser/parserManager';
 import * as config from '../config/config';
 import * as projectResourcesManager from './projectResourcesManager';
+import * as projectGenerator from './projectGenerator';
 import { invokeServer, sendAppWidowMessage } from '../utils/serverUtils';
-import * as indicesGeneratorManager from '../generator/indicesGeneratorManager';
-import * as schemaIndexGeneratorManager from '../generator/schemaIndexGeneratorManager';
-import * as pagesGeneratorManager from '../generator/pagesGeneratorManager';
-import * as flowsGeneratorManager from '../generator/flowsGeneratorManager';
+
 import appWindowMessages from '../../../commons/appWindowMessages';
-import constants from '../../../commons/constants';
 import { getConsoleErrors } from '../../core/config/storage';
 import { repairPath } from '../utils/fileUtils';
-
-async function generateSchema () {
-  // generate schema index just for the sake it is missing
-  await schemaIndexGeneratorManager.generateSchemaIndex(config.appSchemaSourceDir);
-
-  // omit root keys
-  const pagesStarterKey =
-    config.etcPagesSourceDir.replace(`${config.projectRootSourceDir}${constants.FILE_SEPARATOR}`, '');
-  const pages = projectResourcesManager.getPagesTree(pagesStarterKey);
-  // if we want to write pages files we have to write them into schema dir
-  // but before we need to get rid of the etc dir in the import paths of the page resources
-  const replacePagesDirName =
-    `${constants.DIR_NAME_ETC}${constants.FILE_SEPARATOR}${constants.DIR_NAME_PAGES}`;
-  // write pages files
-  await pagesGeneratorManager.generateFiles(pages, config.appSchemaPagesSourceDir, replacePagesDirName);
-  // write routes file
-  await pagesGeneratorManager.generateRoutesFile(pages, config.appSchemaRouterFile);
-
-  // omit root keys
-  const flowsStarterKey =
-    config.etcFlowsSourceDir.replace(`${config.projectRootSourceDir}${constants.FILE_SEPARATOR}`, '');
-  const flows = projectResourcesManager.getFlowsTree(flowsStarterKey);
-  // if we want to write flows files we have to write them into schema dir
-  // but before we need to get rid of the etc dir in the import paths of the flow resources
-  const replaceFlowsDirName =
-    `${constants.DIR_NAME_ETC}${constants.FILE_SEPARATOR}${constants.DIR_NAME_FLOWS}`;
-  // write flows files
-  await flowsGeneratorManager.generateFiles(flows, config.appSchemaFlowsSourceDir, replaceFlowsDirName);
-
-}
-
-export async function generateIndices () {
-  // Obtain model trees from the graphs
-  const userFunctions = projectResourcesManager.getUserFunctionsTree();
-  const userComponents = projectResourcesManager.getUserComponentsTree();
-  // Regenerate index files by the trees
-  const resourceTrees = [
-    {
-      tree: userFunctions,
-      indexDirName: constants.INDEX_USER_FUNCTIONS_ROOT_DIR_NAME,
-    },
-    {
-      tree: userComponents,
-      indexDirName: constants.INDEX_COMPONENTS_ROOT_DIR_NAME,
-    },
-  ];
-  await indicesGeneratorManager.generateFiles(resourceTrees, config.appIndicesSourceDir);
-}
-
-// let generatingFilesRunCount = 0;
-
-// const debounceGeneratingFiles = debounce(async () => {
-//   try {
-//     await generateFiles();
-//   } catch (e) {
-//     console.error(e);
-//   }
-// }, 600);
-
-async function generateFiles () {
-  // generatingFilesRunCount += 1;
-  await generateIndices();
-  await generateSchema();
-  // generatingFilesRunCount -= 1;
-}
-
-// const waitForFilesGenerating = timeout => new Promise((r, j)=>{
-//   const check = () => {
-//     if(generatingFilesRunCount <= 0) {
-//       generatingFilesRunCount = 0; // for the sake of negative numbers :-)
-//       r();
-//     } else if((timeout -= 200) < 0) {
-//       j('timed out!');
-//     } else {
-//       setTimeout(check, 200)
-//     }
-//   };
-//   setTimeout(check, 10)
-// });
-
-// async function waitFor (delay = 5000) {
-//   return new Promise(resolve => {
-//     setTimeout(async () => {
-//       resolve();
-//     }, delay);
-//   });
-// }
 
 export async function testProjectConfiguration () {
    return config.checkProjectPaths();
@@ -138,7 +47,6 @@ export function restartProjectServer () {
     .catch(err => {
       console.error(`Error restarting the project server. `, err);
     });
-
 }
 
 export function stopProjectServer() {
@@ -179,19 +87,12 @@ export async function watchUsrSourceDir () {
 export async function readResource (resourcePath) {
   const validResourcePath = repairPath(resourcePath);
   const declarationsInFiles = await parserManager.parseResource(validResourcePath);
-  // const updatedDeclarationsInFiles = projectFilesManager.updateDeclarationsInFiles(declarationsInFiles);
   if (declarationsInFiles && declarationsInFiles.length > 0) {
     // Update resources in the graphs for updated files
     const { updatedResources, deletedResources, doUpdateAll } =
       projectResourcesManager.updateResources(declarationsInFiles);
     // try to generate all needed files
-    // debounceGeneratingFiles();
-    // try {
-    //   await waitForFilesGenerating(6000);
-    // } catch (e) {
-    //   console.error('Timeout occurs in files generating process.');
-    // }
-    await generateFiles();
+    await projectGenerator.generateFiles();
     // tell there are updated resources
     return { updatedResources, deletedResources, doUpdateAll };
   }
@@ -201,27 +102,15 @@ export async function readResource (resourcePath) {
 
 export async function removeResource (resourcePath) {
   const validResourcePath = repairPath(resourcePath);
-  // const declarationsInFilesToRemove = projectFilesManager.getAllDeclarationsInFile(validResourcePath);
   // to remove all resources just create empty declarations and pass them to update the resource trees
   const emptyDeclarationsInFiles = parserManager.createEmptyResource(validResourcePath);
-  // declarationsInFilesToRemove.forEach(declarationsInFile => {
-  //   emptyDeclarationsInFiles.push(declarationsInFile.cloneWithEmptyDeclarations());
-  // });
   // Update resource in the graphs
   const { updatedResources, deletedResources, doUpdateAll } =
     projectResourcesManager.updateResources(emptyDeclarationsInFiles, () => {
       return false;
     });
-  //
-  // projectFilesManager.removeDeclarationsInFile(validResourcePath);
   // try to generate all needed files
-  // debounceGeneratingFiles();
-  // try {
-  //   await waitForFilesGenerating(6000);
-  // } catch (e) {
-  //   console.error('Timeout occurs in files generating process.');
-  // }
-  await generateFiles();
+  await projectGenerator.generateFiles();
   return { updatedResources, deletedResources, doUpdateAll };
 
 }
@@ -230,22 +119,12 @@ export async function updateResource (resourcePath, resourceFileData) {
   // optimistic update of the declarations in files
   const validResourcePath = repairPath(resourcePath);
   const declarationsInFiles = await parserManager.parseResource(validResourcePath, resourceFileData);
-  // provide the declaration update in declaration cache will cause not to update
-  // the resource when its file will be changed
-  // so, the optimistic update will eliminate cycling updates
-  // const updatedDeclarationsInFiles = projectFilesManager.updateDeclarationsInFiles(declarationsInFiles);
   if (declarationsInFiles && declarationsInFiles.length > 0) {
     // Update resource in the graphs
     const { updatedResources, deletedResources, doUpdateAll } =
       projectResourcesManager.updateResources(declarationsInFiles);
     // try to generate all needed files
-    // debounceGeneratingFiles();
-    // try {
-    //   await waitForFilesGenerating(6000);
-    // } catch (e) {
-    //   console.error('Timeout occurs in files generating process.');
-    // }
-    await generateFiles();
+    await projectGenerator.generateFiles();
     return { updatedResources, deletedResources, doUpdateAll };
   }
   return {};

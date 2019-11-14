@@ -184,6 +184,7 @@ class FlowInputTransformManager {
 
   getInputSamplePropTypes () {
     if (this._inputPropertiesModel) {
+      console.info('getInputSamplePropTypes: ', this._inputPropertiesModel);
       return this.createPropTypes(this._inputPropertiesModel);
     }
     return null;
@@ -342,7 +343,7 @@ class FlowInputTransformManager {
     let result = null;
     if (node) {
       const { type, props: { isRequired }, children } = node;
-      if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE || type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
+      if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         let shapeObject = null;
         if (children && children.length > 0) {
           shapeObject = {};
@@ -359,6 +360,12 @@ class FlowInputTransformManager {
           } else {
             result = PropTypes.shape(shapeObject);
           }
+        } else {
+          if (isRequired) {
+            result = PropTypes.object.isRequired;
+          } else {
+            result = PropTypes.object;
+          }
         }
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         let arrayOfObject = null;
@@ -372,6 +379,12 @@ class FlowInputTransformManager {
             result = PropTypes.arrayOf(arrayOfObject).isRequired;
           } else {
             result = PropTypes.arrayOf(arrayOfObject);
+          }
+        } else {
+          if (isRequired) {
+            result = PropTypes.array.isRequired;
+          } else {
+            result = PropTypes.array;
           }
         }
       } else if (type === constants.COMPONENT_PROPERTY_STRING_TYPE
@@ -443,7 +456,9 @@ class FlowInputTransformManager {
         }
 
         const samplePropTypes = this.getInputSamplePropTypes();
-        if (samplePropTypes || transformedDataObject) {
+        console.info('samplePropTypes: ', samplePropTypes);
+        console.info('transformedDataObject: ', transformedDataObject);
+        if (samplePropTypes) {
           const checkingPropTypes = {data: samplePropTypes};
           const checkingPropValue = {data: transformedDataObject};
           let propTypesErrors =

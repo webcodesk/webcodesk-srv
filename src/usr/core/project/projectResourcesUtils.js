@@ -356,12 +356,12 @@ export function findResourcesKeysByText (text) {
   return keys;
 }
 
-export function getResourceTree (resourceType, resourceKey = null) {
+export function getResourceTree (resourceType, resourceKey = null, excludeTestCallback = null) {
   const graphModel = getGraphByResourceType(resourceType);
   if (resourceKey) {
-    return graphModel.extractModel(resourceKey, false, resourceModelComparator);
+    return graphModel.extractModel(resourceKey, false, resourceModelComparator, excludeTestCallback);
   }
-  return graphModel.getModel(false, resourceModelComparator);
+  return graphModel.getModel(false, resourceModelComparator, excludeTestCallback);
 }
 
 export function getResourceTreeItemCount(resourceType) {
