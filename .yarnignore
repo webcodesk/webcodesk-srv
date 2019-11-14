@@ -6,6 +6,5 @@ src
 gulpfile.js
 jsconfig.json
 yarn.lock
-README.md
 *.iml
 *.log
