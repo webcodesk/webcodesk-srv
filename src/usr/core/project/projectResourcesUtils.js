@@ -37,6 +37,8 @@ export const possibleResourceTypes = [
   constants.RESOURCE_IN_MARKDOWN_TYPE,
   constants.RESOURCE_IN_CLIPBOARD_TYPE,
   constants.RESOURCE_IN_TEMPLATES_TYPE,
+  constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
+  constants.RESOURCE_IN_SETTINGS_TYPE,
 ];
 
 export function getGraphByResourceType(resourceType) {
@@ -65,6 +67,12 @@ export function getGraphByResourceType(resourceType) {
       break;
     case constants.RESOURCE_IN_CLIPBOARD_TYPE:
       graphModel = globalStore.get('clipboardGraphModel');
+      break;
+    case constants.RESOURCE_IN_SETTINGS_CONF_TYPE:
+      graphModel = globalStore.get('settingsConfGraphModel');
+      break;
+    case constants.RESOURCE_IN_SETTINGS_TYPE:
+      graphModel = globalStore.get('settingsGraphModel');
       break;
     default:
       throw Error('Cannot find graph model. Wrong resource type.');
@@ -192,6 +200,18 @@ export function updateResourceTree (declarationsInFile) {
               projectResourceFactory.createMarkdownModels(modelKey, declarationsInFile, pathParsed.name)
             );
         }
+        if (declarationsInFile.isInSettingsConf) {
+          resourceFileModel.children =
+            resourceFileModel.children.concat(
+              projectResourceFactory.createSettingsConfigModels(modelKey, declarationsInFile)
+            );
+        }
+        if (declarationsInFile.isInSettings) {
+          resourceFileModel.children =
+            resourceFileModel.children.concat(
+              projectResourceFactory.createSettingsModels(modelKey, declarationsInFile)
+            );
+        }
       }
       // remove all children for the sake of the declaration signature is changed or deleted in the file
       graphModel.deleteChildren(resourceFileModel.key);
@@ -311,6 +331,28 @@ export function getAllPagesList () {
   const graphModel = getGraphByResourceType(constants.RESOURCE_IN_PAGES_TYPE);
   if (graphModel) {
     return graphModel.traverse(visitForPages).sort((a, b) => a.pagePath.localeCompare(b.pagePath));
+  }
+  return [];
+}
+
+function visitForSettings ({nodeModel}) {
+  const result = [];
+  if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_SETTINGS_TYPE) {
+    const {props: {settingsProperties}} = nodeModel;
+    if (settingsProperties) {
+      result.push(settingsProperties);
+    }
+  }
+  return result;
+}
+
+export function getApplicationSettings () {
+  const graphModel = getGraphByResourceType(constants.RESOURCE_IN_SETTINGS_TYPE);
+  if (graphModel) {
+    const settingsItems = graphModel.traverse(visitForSettings);
+    if (settingsItems && settingsItems.length > 0) {
+      return settingsItems[0];
+    }
   }
   return [];
 }

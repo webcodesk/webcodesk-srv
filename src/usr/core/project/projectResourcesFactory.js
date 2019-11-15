@@ -291,6 +291,38 @@ export function createMarkdownModels (modelKey, declarationsInFile, displayName)
   return result;
 }
 
+export function createSettingsConfigModels (modelKey, declarationsInFile) {
+  const result = [];
+  declarationsInFile.declarations.forEach(settingsConfigDeclaration => {
+    const { properties } = settingsConfigDeclaration;
+    result.push({
+      key: modelKey,
+      type: constants.GRAPH_MODEL_SETTINGS_CONF_TYPE,
+      props: {
+        resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
+        settingsConfProperties: cloneDeep(properties),
+      }
+    });
+  });
+  return result;
+}
+
+export function createSettingsModels (modelKey, declarationsInFile) {
+  const result = [];
+  declarationsInFile.declarations.forEach(settingsDeclaration => {
+    const { model } = settingsDeclaration;
+    result.push({
+      key: modelKey,
+      type: constants.GRAPH_MODEL_SETTINGS_TYPE,
+      props: {
+        resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
+        settingsProperties: cloneDeep(model),
+      }
+    });
+  });
+  return result;
+}
+
 export function createClipboardModel(clipboardItemModel) {
   let newClipboardItemModel = clipboardItemModel ? cloneDeep(clipboardItemModel) : {};
   newClipboardItemModel.props = newClipboardItemModel.props || {};

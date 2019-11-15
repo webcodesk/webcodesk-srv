@@ -172,9 +172,8 @@ export function makeRouterItemsData (resourceModel) {
 export function generateFiles (resourcesTrees, destFilePath, replaceImportDir) {
   const indexObject = {};
   createIndexObject(resourcesTrees, indexObject, `${replaceImportDir}/`);
-  const filePath = `${destFilePath}.js`;
   const fileBody = getArrayDefaultExportFileText({fileData: indexObject});
-  return writeFileWhenDifferent(filePath, fileBody);
+  return writeFileWhenDifferent(destFilePath, fileBody);
 }
 
 export function generateRoutesFile (resourcesTrees, destFilePath) {
@@ -205,10 +204,9 @@ export function generateRoutesFile (resourcesTrees, destFilePath) {
       }
     }
   }
-  const filePath = destFilePath;
   const fileBody = getArrayDefaultExportFileText({ fileData: routerItems });
-  return writeFileWhenDifferent(filePath, fileBody)
+  return writeFileWhenDifferent(destFilePath, fileBody)
     .catch(error => {
-      console.error(`Can not create router file: "${filePath}" `, error);
+      console.error(`Can not create router file: "${destFilePath}" `, error);
     });
 }

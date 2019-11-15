@@ -21,6 +21,7 @@ import * as projectResourcesManager from './projectResourcesManager';
 import * as pagesGeneratorManager from './generator/pagesGeneratorManager';
 import * as flowsGeneratorManager from './generator/flowsGeneratorManager';
 import * as indicesGeneratorManager from './generator/indicesGeneratorManager';
+import * as settingsGeneratorManager from './generator/settingsGeneratorManager';
 
 async function generateSchema () {
   // generate schema index just for the sake it is missing
@@ -73,7 +74,16 @@ async function generateSchema () {
    */
   const flowsProd = projectResourcesManager.getFlowsTreeProd(flowsStarterKey);
   // write flows files
-  await flowsGeneratorManager.generateFiles(flowsProd, config.appSchemaProdFlowsFile, replaceFlowsDirName);
+  await flowsGeneratorManager.generateFiles(flowsProd, config.appSettingsFile, replaceFlowsDirName);
+
+  /**
+   * Settings
+   */
+    // omit root keys
+  const settingsStarterKey =
+      config.etcSettingsSourceDir.replace(`${config.projectRootSourceDir}${constants.FILE_SEPARATOR}`, '');
+  const settings = projectResourcesManager.getSettingsTree(settingsStarterKey);
+  await settingsGeneratorManager.generateFiles(settings, config.appSettingsFile);
 
 }
 
@@ -122,4 +132,8 @@ export async function generateFiles () {
   await generateIndices();
   await generateSchema();
   // generatingFilesRunCount -= 1;
+}
+
+export async function generateDefaultFiles () {
+  await settingsGeneratorManager.generateInitialSettingsEtc(config.etcSettingsSourceDir);
 }

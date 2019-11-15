@@ -105,7 +105,7 @@ const styles = theme => ({
   },
 });
 
-const ComponentPropsTreeListItem = withStyles(theme => ({
+const PropsTreeListItem = withStyles(theme => ({
   root: {
     alignItems: 'flex-start',
     position: 'relative',
@@ -124,7 +124,7 @@ const ComponentPropsTreeListItem = withStyles(theme => ({
   }
 }))(ListItem);
 
-const ComponentPropsTreeListItemText = withStyles({
+const PropsTreeListItemText = withStyles({
   root: {
     padding: 0,
     overflow: 'hidden',
@@ -135,7 +135,7 @@ const ComponentPropsTreeListItemText = withStyles({
   }
 })(ListItemText);
 
-export const ComponentPropsTreeItemExtraButton = withStyles({
+export const PropsTreeItemExtraButton = withStyles({
   root: {
     padding: 0,
     fontSize: '12px',
@@ -145,14 +145,14 @@ export const ComponentPropsTreeItemExtraButton = withStyles({
   }
 })(IconButton);
 
-const ComponentPropsTreeListItemIcon = withStyles({
+const PropsTreeListItemIcon = withStyles({
   root: {
     marginRight: 0,
     padding: '2px 3px 2px 0',
   }
 })(ListItemIcon);
 
-export const ComponentPropsTreeItemButton = withStyles(theme => ({
+export const PropsTreeItemButton = withStyles(theme => ({
   sizeSmall: {
     padding: '2px 8px',
     borderRadius: '16px',
@@ -164,7 +164,7 @@ export const ComponentPropsTreeItemButton = withStyles(theme => ({
   }
 }))(Button);
 
-class ComponentPropsTreeItem extends React.Component {
+class PropsTreeItem extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     propertyModel: PropTypes.object,
@@ -280,7 +280,7 @@ class ComponentPropsTreeItem extends React.Component {
     const { type, props } = localPropertyModel;
     if (!props) {
       return (
-        <ComponentPropsTreeListItemText
+        <PropsTreeListItemText
           primary={
             <span className={classes.errorText}>unknown property</span>
           }
@@ -305,14 +305,14 @@ class ComponentPropsTreeItem extends React.Component {
           />
         );
         editorElement = (
-          <ComponentPropsTreeItemButton
+          <PropsTreeItemButton
             color="default"
             size="small"
             disabled={true}
             fullWidth={true}
           >
             Empty element
-          </ComponentPropsTreeItemButton>
+          </PropsTreeItemButton>
         );
         break;
       case constants.PAGE_COMPONENT_TYPE:
@@ -323,7 +323,7 @@ class ComponentPropsTreeItem extends React.Component {
           />
         );
         editorElement = (
-          <ComponentPropsTreeItemButton
+          <PropsTreeItemButton
             color="default"
             size="small"
             fullWidth={true}
@@ -331,7 +331,7 @@ class ComponentPropsTreeItem extends React.Component {
             onClick={() => {}}
           >
             {componentInstance}
-          </ComponentPropsTreeItemButton>
+          </PropsTreeItemButton>
         );
         break;
       case constants.COMPONENT_PROPERTY_OBJECT_TYPE:
@@ -343,7 +343,7 @@ class ComponentPropsTreeItem extends React.Component {
           />
         );
         editorElement = (
-          <ComponentPropsTreeItemButton
+          <PropsTreeItemButton
             color="default"
             size="small"
             title="Click to edit value"
@@ -356,7 +356,7 @@ class ComponentPropsTreeItem extends React.Component {
             {type === constants.COMPONENT_PROPERTY_ARRAY_TYPE && (
               <span>{'[ a,r,r,a,y ]'}</span>
             )}
-          </ComponentPropsTreeItemButton>
+          </PropsTreeItemButton>
         );
         break;
       case constants.COMPONENT_PROPERTY_ONE_OF_TYPE:
@@ -431,20 +431,20 @@ class ComponentPropsTreeItem extends React.Component {
     }
     const isError = errors && !isEmpty(errors);
     return (
-      <ComponentPropsTreeListItem
+      <PropsTreeListItem
         style={{ paddingLeft }}
         button={false}
         onClick={!isEmpty(errors) ? this.handleErrorClick : this.handleClick}
       >
         <div className={classes.listItemPrefixSector}/>
         <div className={classes.listItemContent}>
-          <ComponentPropsTreeListItemIcon>
+          <PropsTreeListItemIcon>
             {editorElementIcon}
-          </ComponentPropsTreeListItemIcon>
+          </PropsTreeListItemIcon>
           <div className={classes.propertyEditorContainer}>
             {name && (
               <div className={classes.titleContainer}>
-                <ComponentPropsTreeListItemText
+                <PropsTreeListItemText
                   disableTypography={true}
                   title={propertyComment}
                   primary={
@@ -477,22 +477,22 @@ class ComponentPropsTreeItem extends React.Component {
                         </div>
                       </Tooltip>
                       {!propertyName && (
-                        <ComponentPropsTreeItemExtraButton
+                        <PropsTreeItemExtraButton
                           title="Remove this item from the array"
                           className={classes.extraButtonDelete}
                           onClick={this.handleDeleteComponentProperty}
                         >
                           <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
-                        </ComponentPropsTreeItemExtraButton>
+                        </PropsTreeItemExtraButton>
                       )}
                       {isError && (
-                        <ComponentPropsTreeItemExtraButton
+                        <PropsTreeItemExtraButton
                           title="Remove the property"
                           className={classes.errorText}
                           onClick={this.handleDeleteComponentProperty}
                         >
                           <Delete className={classes.buttonIcon} color="disabled"/>
-                        </ComponentPropsTreeItemExtraButton>
+                        </PropsTreeItemExtraButton>
                       )}
                     </React.Fragment>
                   }
@@ -502,9 +502,9 @@ class ComponentPropsTreeItem extends React.Component {
             {editorElement}
           </div>
         </div>
-      </ComponentPropsTreeListItem>
+      </PropsTreeListItem>
     );
   }
 }
 
-export default withStyles(styles)(ComponentPropsTreeItem);
+export default withStyles(styles)(PropsTreeItem);

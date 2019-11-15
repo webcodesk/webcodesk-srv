@@ -16,7 +16,6 @@
 
 import uniqueId from 'lodash/uniqueId';
 import pickBy from 'lodash/pickBy';
-import omit from 'lodash/omit';
 import merge from 'lodash/merge';
 import assign from 'lodash/assign';
 import isUndefined from 'lodash/isUndefined';
@@ -123,14 +122,14 @@ class GraphModel {
     if (this.rootNodeKey) {
       return this.extractModel(this.rootNodeKey, noKeys, comparator, excludeTestCallback);
     }
-    throw Error('GraphModel.initModel: can not find root node key');
+    throw Error('GraphModel.getModel: can not find root node key');
   }
 
   getSerializableModel(comparator = null, excludeTestCallback = null) {
     if (this.rootNodeKey) {
       return this.extractModel(this.rootNodeKey, true, comparator, excludeTestCallback);
     }
-    throw Error('GraphModel.initModel: can not find root node key');
+    throw Error('GraphModel.getSerializableModel: can not find root node key');
   }
 
   getRootKey() {

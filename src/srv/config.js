@@ -117,27 +117,14 @@ export async function checkProjectPaths() {
   // check pages config dir path in the project
   const testEtcPagesSourceDir =
     repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_PAGES));
-  // try {
-  //   await isExisting(testEtcPagesSourceDir);
-  // } catch (e) {
-  //   throw Error(`Pages configurations dir is missing. Please check "src/etc/pages" directory exists in ${testProjectDirPath}.`);
-  // }
   // check flows config dir path in the project
   const testEtcFlowsSourceDir =
     repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_FLOWS));
-  // try {
-  //   await isExisting(testEtcFlowsSourceDir);
-  // } catch (e) {
-  //   throw Error(`Data flows configurations dir is missing. Please check "src/etc/flows" directory exists in ${testProjectDirPath}.`);
-  // }
   // check templates config dir path in the project
   const testEtcTemplatesSourceDir =
     repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_TEMPLATES));
-  // try {
-  //   await isExisting(testEtcTemplatesSourceDir);
-  // } catch (e) {
-  //   throw Error(`Templates configurations dir is missing. Please check "src/etc/templates" directory exists in ${testProjectDirPath}.`);
-  // }
+  const testEtcSettingsSourceDir =
+    repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_SETTINGS));
 
   // check yarn lock file existing
   let testProjectYarnLockFile =
@@ -177,6 +164,7 @@ export async function checkProjectPaths() {
     testEtcPagesSourceDir,
     testEtcFlowsSourceDir,
     testEtcTemplatesSourceDir,
+    testEtcSettingsSourceDir,
     testProjectTSConfigFile,
     testProjectYarnLockFile,
     startScriptPath,

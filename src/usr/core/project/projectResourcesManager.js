@@ -33,6 +33,8 @@ let userPropTypesGraphModel = globalStore.get('userPropTypesGraphModel');
 let markdownGraphModel = globalStore.get('markdownGraphModel');
 let clipboardGraphModel = globalStore.get('clipboardGraphModel');
 let templatesGraphModel = globalStore.get('templatesGraphModel');
+let settingsConfGraphModel = globalStore.get('settingsConfGraphModel');
+let settingsGraphModel = globalStore.get('settingsGraphModel');
 
 const CLIPBOARD_ITEM_LIST_SIZE_LIMIT = 5;
 
@@ -116,6 +118,24 @@ export function initNewResourcesTrees () {
       resourceType: constants.RESOURCE_IN_CLIPBOARD_TYPE,
     }
   });
+  settingsConfGraphModel = new GraphModel();
+  settingsConfGraphModel.initModel({
+    key: constants.GRAPH_MODEL_SETTINGS_CONF_ROOT_KEY,
+    type: constants.GRAPH_MODEL_SETTINGS_CONF_ROOT_TYPE,
+    props: {
+      displayName: 'Settings Config',
+      resourceType: constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
+    }
+  });
+  settingsGraphModel = new GraphModel();
+  settingsGraphModel.initModel({
+    key: constants.GRAPH_MODEL_SETTINGS_ROOT_KEY,
+    type: constants.GRAPH_MODEL_SETTINGS_ROOT_TYPE,
+    props: {
+      displayName: 'Settings',
+      resourceType: constants.RESOURCE_IN_SETTINGS_TYPE,
+    }
+  });
   //
   globalStore.set('pagesGraphModel', pagesGraphModel);
   globalStore.set('templatesGraphModel', templatesGraphModel);
@@ -125,6 +145,8 @@ export function initNewResourcesTrees () {
   globalStore.set('userPropTypesGraphModel', userPropTypesGraphModel);
   globalStore.set('markdownGraphModel', markdownGraphModel);
   globalStore.set('clipboardGraphModel', clipboardGraphModel);
+  globalStore.set('settingsConfGraphModel', settingsConfGraphModel);
+  globalStore.set('settingsGraphModel', settingsGraphModel);
   //
 }
 
@@ -320,6 +342,10 @@ export function getPropTypesTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_PROP_TYPES_TYPE, startKey);
 }
 
+export function getSettingsTree (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_SETTINGS_TYPE, startKey);
+}
+
 export function getClipboardTree (startKey = null) {
   return projectResourcesUtils.getResourceTreeOrderedByKey(constants.RESOURCE_IN_CLIPBOARD_TYPE, startKey, 'desc');
 }
@@ -330,6 +356,10 @@ export function getClipboardItemsCount() {
 
 export function getAllPagesList() {
   return projectResourcesUtils.getAllPagesList();
+}
+
+export function getApplicationSettings() {
+  return projectResourcesUtils.getApplicationSettings();
 }
 
 export function findResourcesKeysByText(text) {

@@ -113,7 +113,8 @@ export function createResourceEditorLivePreviewTabObject() {
     key: constants.RESOURCE_LIVE_PREVIEW_KEY,
     type: constants.RESOURCE_EDITOR_TAB_LIVE_PREVIEW_TYPE,
     title: 'Live Preview',
-    pages: projectResourcesManager.getAllPagesList()
+    pages: projectResourcesManager.getAllPagesList(),
+    settings: projectResourcesManager.getApplicationSettings(),
   };
 }
 

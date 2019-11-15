@@ -69,7 +69,7 @@ const styles = theme => ({
   },
 });
 
-const ComponentPropsTreeGroupListItem = withStyles(theme => ({
+const PropsTreeGroupListItem = withStyles(theme => ({
   root: {
     alignItems: 'center',
     position: 'relative',
@@ -88,7 +88,7 @@ const ComponentPropsTreeGroupListItem = withStyles(theme => ({
   }
 }))(ListItem);
 
-const ComponentPropsTreeGroupText = withStyles(theme => ({
+const PropsTreeGroupText = withStyles(theme => ({
   root: {
     padding: 0,
     overflow: 'hidden',
@@ -99,14 +99,14 @@ const ComponentPropsTreeGroupText = withStyles(theme => ({
   }
 }))(ListItemText);
 
-export const ComponentPropsListItemButton = withStyles({
+export const PropsListItemButton = withStyles({
   root: {
     padding: '3px',
     fontSize: '12px',
   }
 })(IconButton);
 
-export const ComponentPropsListItemExtraButton = withStyles({
+export const PropsListItemExtraButton = withStyles({
   root: {
     padding: 0,
     fontSize: '12px',
@@ -116,7 +116,7 @@ export const ComponentPropsListItemExtraButton = withStyles({
   }
 })(IconButton);
 
-class ComponentPropsTreeGroup extends React.Component {
+class PropsTreeGroup extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     propertyModel: PropTypes.object,
@@ -202,7 +202,7 @@ class ComponentPropsTreeGroup extends React.Component {
     const { type, props, children } = propertyModel;
     if (!props) {
       return (
-        <ComponentPropsTreeGroupText
+        <PropsTreeGroupText
           primary={
             <span className={classes.errorText}>unknown property</span>
           }
@@ -223,17 +223,17 @@ class ComponentPropsTreeGroup extends React.Component {
       }
     }
     return (
-      <ComponentPropsTreeGroupListItem
+      <PropsTreeGroupListItem
         style={{ paddingLeft }}
         button={false}
         onClick={isError ? this.handleErrorClick : this.handleToggleExpandItem}
       >
         <div className={classes.listItemPrefixSector}>
-          <ComponentPropsListItemButton onClick={this.handleToggleExpandItem}>
+          <PropsListItemButton onClick={this.handleToggleExpandItem}>
             {expandIcon}
-          </ComponentPropsListItemButton>
+          </PropsListItemButton>
         </div>
-        <ComponentPropsTreeGroupText
+        <PropsTreeGroupText
           title={name}
           disableTypography={true}
           primary={
@@ -265,38 +265,38 @@ class ComponentPropsTreeGroup extends React.Component {
                 </div>
               </Tooltip>
               {type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE && (
-                <ComponentPropsListItemExtraButton
+                <PropsListItemExtraButton
                   title="Add new item to the array"
                   className={classes.extraButtonIncrease}
                   onClick={this.handleIncreaseComponentPropertyArray}
                 >
                   <ExposurePlus1 className={classes.buttonIcon} color="disabled"/>
-                </ComponentPropsListItemExtraButton>
+                </PropsListItemExtraButton>
               )}
               {!propertyName && (
-                <ComponentPropsListItemExtraButton
+                <PropsListItemExtraButton
                   title="Remove this item from the array"
                   className={classes.extraButtonDelete}
                   onClick={this.handleDeleteComponentProperty}
                 >
                   <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
-                </ComponentPropsListItemExtraButton>
+                </PropsListItemExtraButton>
               )}
               {isError && (
-                <ComponentPropsListItemExtraButton
+                <PropsListItemExtraButton
                   title="Remove the property"
                   className={classes.errorText}
                   onClick={this.handleDeleteComponentProperty}
                 >
                   <Delete className={classes.buttonIcon} color="disabled"/>
-                </ComponentPropsListItemExtraButton>
+                </PropsListItemExtraButton>
               )}
             </React.Fragment>
           }
         />
-      </ComponentPropsTreeGroupListItem>
+      </PropsTreeGroupListItem>
     );
   }
 }
 
-export default withStyles(styles)(ComponentPropsTreeGroup);
+export default withStyles(styles)(PropsTreeGroup);

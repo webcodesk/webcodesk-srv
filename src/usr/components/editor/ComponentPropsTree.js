@@ -14,20 +14,17 @@
  *    limitations under the License.
  */
 
-import isNull from 'lodash/isNull';
 import isEqual from 'lodash/isEqual';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import ComponentPropsTreeItem from './ComponentPropsTreeItem';
 import * as constants from '../../../commons/constants';
-import ComponentPropsTreeGroup from './ComponentPropsTreeGroup';
-import ComponentPropsTreeElement from './ComponentPropsTreeElement';
+import PropsTreeElement from './PropsTreeElement';
 import { getComponentName } from '../commons/utils';
-import EditJsonDialog from '../dialogs/EditJsonDialog';
 import PanelWithShortcutsHelp from '../commons/PanelWithShortcutsHelp';
+import PropsTree from './PropsTree';
 
 const styles = theme => ({
   root: {
@@ -86,20 +83,13 @@ class ComponentPropsTree extends React.Component {
 
   constructor (props, context) {
     super(props, context);
-    this.state = {
-      expandedGroupKeys: {},
-      showEditJsonDialog: false,
-      editComponentPropertyModel: null,
-    };
+    this.state = {};
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { componentModel, isSampleComponent } = this.props;
-    const { expandedGroupKeys, showEditJsonDialog } = this.state;
     return (componentModel !== nextProps.componentModel && !isEqual(componentModel, nextProps.componentModel))
-      || isSampleComponent !== nextProps.isSampleComponent
-      || expandedGroupKeys !== nextState.expandedGroupKeys
-      || showEditJsonDialog !== nextState.showEditJsonDialog;
+      || isSampleComponent !== nextProps.isSampleComponent;
   }
 
   handleUpdateComponentPropertyModel = (newComponentPropertyModel) => {
@@ -108,11 +98,6 @@ class ComponentPropsTree extends React.Component {
 
   handleIncreaseComponentPropertyArray = (propertyKey) => {
     this.props.onIncreaseComponentPropertyArray(propertyKey);
-    const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
-    newExpandedGroupKeys[propertyKey] = true;
-    this.setState({
-      expandedGroupKeys: newExpandedGroupKeys,
-    })
   };
 
   handleDeleteComponentProperty = (propertyKey) => {
@@ -131,150 +116,10 @@ class ComponentPropsTree extends React.Component {
     this.props.onOpenComponent();
   };
 
-  handleToggleExpandItem = (groupKey) => {
-    const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
-    newExpandedGroupKeys[groupKey] = !newExpandedGroupKeys[groupKey];
-    this.setState({
-      expandedGroupKeys: newExpandedGroupKeys,
-    })
-  };
-
-  handleOpenEditJsonDialog = (editComponentPropertyModel) => {
-    this.setState({
-      showEditJsonDialog: true,
-      editComponentPropertyModel,
-    });
-  };
-
-  handleCloseEditJsonDialog = () => {
-    this.setState({
-      showEditJsonDialog: false,
-      editComponentPropertyModel: null,
-    });
-  };
-
-  handleSubmitEditJsonDialog = ({script}) => {
-    const { editComponentPropertyModel } = this.state;
-    editComponentPropertyModel.props = editComponentPropertyModel.props || {};
-    try {
-      editComponentPropertyModel.props.propertyValue = JSON.parse(script);
-    } catch(e) {
-      // do nothing
-    }
-    this.props.onUpdateComponentPropertyModel(editComponentPropertyModel);
-    this.handleCloseEditJsonDialog();
-  };
-
-  createList = (node, level = 0, arrayIndex = null) => {
-    let result = [];
-    if (node) {
-      const { key, type, props, children } = node;
-      const paddingLeft = `${(level * 16)}px`;
-      const { propertyName } = props;
-      let listItemLabelName;
-      if (!isNull(arrayIndex) && arrayIndex >= 0) {
-        listItemLabelName = `${arrayIndex} item`;
-      }
-      if (propertyName) {
-        if (listItemLabelName) {
-          // listItemLabelName = `[${arrayIndex}].${propertyName}`;
-          listItemLabelName = propertyName;
-        } else {
-          listItemLabelName = propertyName;
-        }
-      }
-      if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
-        result.push(
-          <ComponentPropsTreeGroup
-            key={key}
-            paddingLeft={paddingLeft}
-            name={listItemLabelName}
-            propertyModel={node}
-            type={type}
-            isExpanded={this.state.expandedGroupKeys[key]}
-            onDeleteComponentProperty={this.handleDeleteComponentProperty}
-            onErrorClick={this.handleErrorClick}
-            onToggleExpandItem={this.handleToggleExpandItem}
-          />
-        );
-        if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
-          result = children.reduce(
-            (acc, child) => acc.concat(this.createList(child, level + 1, arrayIndex)),
-            result
-          );
-        }
-      } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
-        result.push(
-          <ComponentPropsTreeGroup
-            key={key}
-            paddingLeft={paddingLeft}
-            name={listItemLabelName}
-            propertyModel={node}
-            type={type}
-            isExpanded={this.state.expandedGroupKeys[key]}
-            onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-            onDeleteComponentProperty={this.handleDeleteComponentProperty}
-            onErrorClick={this.handleErrorClick}
-            onToggleExpandItem={this.handleToggleExpandItem}
-          />
-        );
-        if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
-          result = children.reduce(
-            (acc, child, childIdx) => acc.concat(this.createList(child, level + 1, childIdx)),
-            result
-          );
-        }
-      } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
-          result.push(
-            <ComponentPropsTreeItem
-              key={key}
-              paddingLeft={paddingLeft}
-              name={listItemLabelName}
-              propertyModel={node}
-              onDeleteComponentProperty={this.handleDeleteComponentProperty}
-              onErrorClick={this.handleErrorClick}
-            />
-          );
-      } else if (type === constants.PAGE_COMPONENT_TYPE) {
-          result.push(
-            <ComponentPropsTreeItem
-              key={key}
-              paddingLeft={paddingLeft}
-              name={listItemLabelName}
-              propertyModel={node}
-              onDeleteComponentProperty={this.handleDeleteComponentProperty}
-              onErrorClick={this.handleErrorClick}
-            />
-          );
-      } else if (type !== constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
-        result.push(
-          <ComponentPropsTreeItem
-            key={key}
-            paddingLeft={paddingLeft}
-            name={listItemLabelName}
-            propertyModel={node}
-            onPropertyUpdate={this.handleUpdateComponentPropertyModel}
-            onDeleteComponentProperty={this.handleDeleteComponentProperty}
-            onErrorClick={this.handleErrorClick}
-            onEditJson={this.handleOpenEditJsonDialog}
-          />
-        );
-      }
-    }
-    return result;
-  };
-
   render () {
     const { classes, componentModel, isSampleComponent } = this.props;
     if (componentModel && componentModel.props) {
       const { type, props: {componentInstance, componentName}, children } = componentModel;
-      const { showEditJsonDialog, editComponentPropertyModel } = this.state;
-      let editJsonScript = '';
-      let editJsonDialogTitle = '';
-      if (editComponentPropertyModel && editComponentPropertyModel.props) {
-        editJsonScript = JSON.stringify(editComponentPropertyModel.props.propertyValue);
-        editJsonDialogTitle = `Edit property: ${editComponentPropertyModel.props.propertyName}`;
-      }
       if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
         return (
           <div className={classes.root}>
@@ -286,7 +131,6 @@ class ComponentPropsTree extends React.Component {
             </Typography>
             <PanelWithShortcutsHelp />
           </div>
-
         );
       }
       return (
@@ -297,7 +141,7 @@ class ComponentPropsTree extends React.Component {
             disablePadding={true}
           >
             {!isSampleComponent && (
-              <ComponentPropsTreeElement
+              <PropsTreeElement
                 name={getComponentName(componentName)}
                 title={`Open the ${componentName} component's view`}
                 type="button"
@@ -305,7 +149,7 @@ class ComponentPropsTree extends React.Component {
               />
             )}
             {!isSampleComponent && (
-              <ComponentPropsTreeElement
+              <PropsTreeElement
                 paddingLeft="0px"
                 name="Instance name"
                 subname={componentName}
@@ -313,18 +157,13 @@ class ComponentPropsTree extends React.Component {
                 onChange={this.handleRenameComponentInstance}
               />
             )}
-            {children && children.reduce(
-              (acc, child) => acc.concat(this.createList(child)),
-              []
-            )}
           </List>
-          <div className={classes.footerArea} />
-          <EditJsonDialog
-            title={editJsonDialogTitle}
-            isOpen={showEditJsonDialog}
-            script={editJsonScript}
-            onClose={this.handleCloseEditJsonDialog}
-            onSubmit={this.handleSubmitEditJsonDialog}
+          <PropsTree
+            onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
+            onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+            onDeleteComponentProperty={this.handleDeleteComponentProperty}
+            onErrorClick={this.handleErrorClick}
+            properties={children}
           />
         </div>
       );

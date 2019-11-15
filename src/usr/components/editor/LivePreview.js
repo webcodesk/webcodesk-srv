@@ -25,6 +25,7 @@ import PagesList from './PagesList';
 import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import ToolbarButton from '../commons/ToolbarButton';
 import ToolbarField from "../commons/ToolbarField";
+import SettingsPropsTree from './SettingsPropsTree';
 
 const styles = theme => ({
   root: {
@@ -63,12 +64,21 @@ const styles = theme => ({
     right: 0,
     minWidth: '800px'
   },
+  editorPane: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    overflow: 'auto',
+  }
 });
 
 class LivePreview extends React.Component {
   static propTypes = {
     isVisible: PropTypes.bool,
     pages: PropTypes.array,
+    settings: PropTypes.array,
     serverPort: PropTypes.number,
     onOpenUrl: PropTypes.func,
     onSearchRequest: PropTypes.func,
@@ -78,6 +88,7 @@ class LivePreview extends React.Component {
   static defaultProps = {
     isVisible: true,
     pages: [],
+    settings: [],
     serverPort: -1,
     onOpenUrl: () => {
       console.info('LivePreview.onOpenUrl is not set');
@@ -115,6 +126,7 @@ class LivePreview extends React.Component {
       selectedDebugTitle: null,
       selectedDebugClass: null,
       initializationDebugMessageCount: 0,
+      showSettingsEditor: false,
     };
   }
 
@@ -131,7 +143,8 @@ class LivePreview extends React.Component {
       frameUrl,
       selectedDebugTitle,
       selectedDebugClass,
-      initializationDebugMessageCount
+      initializationDebugMessageCount,
+      showSettingsEditor,
     } = this.state;
     return iFrameWidthIndex !== nextState.iFrameWidthIndex
       || isRecordingFrameworkMessages !== nextState.isRecordingFrameworkMessages
@@ -144,6 +157,7 @@ class LivePreview extends React.Component {
       || selectedDebugTitle !== nextState.selectedDebugTitle
       || selectedDebugClass !== nextState.selectedDebugClass
       || initializationDebugMessageCount !== nextState.initializationDebugMessageCount
+      || showSettingsEditor !== nextState.showSettingsEditor
       || isVisible !== nextProps.isVisible
       || pages !== nextProps.pages
       || serverPort !== nextProps.serverPort;
@@ -268,10 +282,17 @@ class LivePreview extends React.Component {
     });
   };
 
+  handleToggleSettingsEditor = () => {
+    this.setState({
+      showSettingsEditor: !this.state.showSettingsEditor,
+    });
+  };
+
   render () {
     const {
       classes,
       pages,
+      settings,
       serverPort
     } = this.props;
     const {
@@ -285,7 +306,8 @@ class LivePreview extends React.Component {
       frameUrl,
       selectedDebugTitle,
       selectedDebugClass,
-      isExportStarted
+      isExportStarted,
+      showSettingsEditor
     } = this.state;
     const menuItems = [];
     if (isDebugFlowOpen) {
@@ -302,6 +324,7 @@ class LivePreview extends React.Component {
         });
       }
     }
+    console.info('Settings in LivePreview: ', settings);
     return (
       <div className={classes.root}>
         <div className={classes.topPane}>
@@ -332,6 +355,14 @@ class LivePreview extends React.Component {
                   iconType="Toc"
                   tooltip="Show available pages list"
                 />
+                <ToolbarButton
+                  switchedOn={showSettingsEditor}
+                  onClick={this.handleToggleSettingsEditor}
+                  title="Settings"
+                  iconType="Toc"
+                  tooltip="Show global application settings"
+                />
+                <CommonToolbarDivider />
                 {isRecordingFrameworkMessages
                   ? (
                     <ToolbarButton
@@ -426,6 +457,15 @@ class LivePreview extends React.Component {
                     onChangeSelected={this.handleChangeActivePage}
                   />
                 </div>
+                <SplitPane
+                  split="vertical"
+                  primary="second"
+                  defaultSize={250}
+                  onDragStarted={this.handleSplitterOnDragStarted}
+                  onDragFinished={this.handleSplitterOnDragFinished}
+                  pane2Style={{display: showSettingsEditor ? 'block' : 'none'}}
+                  resizerStyle={{display: showSettingsEditor ? 'block' : 'none'}}
+                >
                 <div className={classes.root}>
                   {showPanelCover && (
                     <div className={classes.root} style={{ zIndex: 10 }}/>
@@ -441,6 +481,15 @@ class LivePreview extends React.Component {
                     />
                   )}
                 </div>
+                <div className={classes.editorPane}>
+                  <SettingsPropsTree settingsProperties={settings} />
+                  {/*<div>*/}
+                  {/*  <pre>*/}
+                  {/*    {JSON.stringify(settings, null, 4)}*/}
+                  {/*  </pre>*/}
+                  {/*</div>*/}
+                </div>
+                </SplitPane>
               </SplitPane>
             </div>
           )

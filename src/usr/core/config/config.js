@@ -37,6 +37,7 @@ export let etcSourceDir;
 export let etcPagesSourceDir;
 export let etcFlowsSourceDir;
 export let etcTemplatesSourceDir;
+export let etcSettingsSourceDir;
 
 export let appSchemaSourceDir;
 export let appSchemaPagesFile;
@@ -48,6 +49,8 @@ export let appSchemaProdSourceDir;
 export let appSchemaProdPagesFile;
 export let appSchemaProdFlowsFile;
 export let appSchemaProdRouterFile;
+
+export let appSettingsFile;
 
 export let reactScriptsStartPath;
 
@@ -91,22 +94,25 @@ export const initProjectPaths = async () => {
   etcPagesSourceDir = validPaths.testEtcPagesSourceDir;
   etcFlowsSourceDir = validPaths.testEtcFlowsSourceDir;
   etcTemplatesSourceDir = validPaths.testEtcTemplatesSourceDir;
+  etcSettingsSourceDir = validPaths.testEtcSettingsSourceDir;
 
   projectTSConfigFile = validPaths.testProjectTSConfigFile;
   projectYarnLockFile = validPaths.testProjectYarnLockFile;
 
   appSchemaSourceDir = repairPath(path.join(validPaths.testAppSourceDir, constants.DIR_NAME_SCHEMA));
-  appSchemaFlowsFile = repairPath(path.join(appSchemaSourceDir, constants.FILE_NAME_FLOWS));
-  appSchemaPagesFile = repairPath(path.join(appSchemaSourceDir, constants.FILE_NAME_PAGES));
+  appSchemaFlowsFile = repairPath(path.join(appSchemaSourceDir, `${constants.FILE_NAME_FLOWS}.js`));
+  appSchemaPagesFile = repairPath(path.join(appSchemaSourceDir, `${constants.FILE_NAME_PAGES}.js`));
   appSchemaRouterFile = repairPath(path.join(appSchemaSourceDir, `${constants.FILE_NAME_ROUTER}.js`));
 
   appSchemaProdSourceDir = repairPath(path.join(validPaths.testAppSourceDir, constants.DIR_NAME_SCHEMA_PROD));
-  appSchemaProdFlowsFile = repairPath(path.join(appSchemaProdSourceDir, constants.FILE_NAME_FLOWS));
-  appSchemaProdPagesFile = repairPath(path.join(appSchemaProdSourceDir, constants.FILE_NAME_PAGES));
+  appSchemaProdFlowsFile = repairPath(path.join(appSchemaProdSourceDir, `${constants.FILE_NAME_FLOWS}.js`));
+  appSchemaProdPagesFile = repairPath(path.join(appSchemaProdSourceDir, `${constants.FILE_NAME_PAGES}.js`));
   appSchemaProdRouterFile = repairPath(path.join(appSchemaProdSourceDir, `${constants.FILE_NAME_ROUTER}.js`));
 
   appIndicesSourceDir = repairPath(path.join(validPaths.testAppSourceDir, constants.DIR_NAME_INDICES));
   appIndicesProdSourceDir = repairPath(path.join(validPaths.testAppSourceDir, constants.DIR_NAME_INDICES_PROD));
+
+  appSettingsFile = repairPath(path.join(appSourceDir, `${constants.FILE_NAME_SETTINGS}.js`));
 
   packageDownloadDirPath = repairPath(path.join(projectDirPath, constants.DIR_NAME_DOWNLOAD));
 

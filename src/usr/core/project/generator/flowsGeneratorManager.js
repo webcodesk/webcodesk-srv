@@ -154,7 +154,6 @@ export function createIndexObject (resourceModel, resultObject = {}, replaceImpo
 export function generateFiles (resourcesTrees, destFilePath, replaceImportDir) {
   const indexObject = {};
   createIndexObject(resourcesTrees, indexObject, `${replaceImportDir}/`);
-  const filePath = `${destFilePath}.js`;
   const fileBody = getArrayDefaultExportFileText({fileData: indexObject});
-  return writeFileWhenDifferent(filePath, fileBody);
+  return writeFileWhenDifferent(destFilePath, fileBody);
 }

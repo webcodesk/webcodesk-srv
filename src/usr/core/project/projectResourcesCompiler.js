@@ -18,6 +18,7 @@ import * as projectResourcesUtils from './projectResourcesUtils';
 import constants from '../../../commons/constants';
 import PageModelCompiler from './compiler/PageModelCompiler';
 import FlowModelCompiler from './compiler/FlowModelCompiler';
+import SettingsModelCompiler from './compiler/SettingsModelCompiler';
 
 const componentInstanceModelsMap = new Map();
 
@@ -114,6 +115,26 @@ const templatesResourceVisitor = ({templateModelCompiler, templatesGraphModel}) 
   return result;
 };
 
+const settingsResourceVisitor = ({settingsModelCompiler}) => ({ nodeModel, parentModel }) => {
+  const result = [];
+  if (
+    nodeModel &&
+    nodeModel.type === constants.GRAPH_MODEL_SETTINGS_TYPE &&
+    nodeModel.props &&
+    nodeModel.props.settingsProperties
+  ) {
+    settingsModelCompiler.resetCounters();
+    settingsModelCompiler.compile(nodeModel);
+    const errorsCount = settingsModelCompiler.getErrorsCount();
+    const changesCount = settingsModelCompiler.getChangesCount();
+    result.push({
+      errorsCount,
+      changesCount,
+    });
+  }
+  return result;
+};
+
 function componentInstancesResourceVisitor ({ nodeModel, parentModel }) {
   const result = [];
   if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
@@ -165,6 +186,13 @@ export function compileResources () {
   const flowsGraphModel =
     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_FLOWS_TYPE);
 
+  const settingsConfGraphModel =
+    projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_SETTINGS_CONF_TYPE);
+  console.info('SettingsConf tree: ', settingsConfGraphModel.getModel());
+  console.info('SettingsConf model: ', settingsConfGraphModel.getNode('usr.settings'));
+  const settingsGraphModel =
+    projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_SETTINGS_TYPE);
+
   // We have to gather all instances into a single map that let us check if there is such an instance
   componentInstanceModelsMap.clear();
   if (pagesGraphModel) {
@@ -180,6 +208,26 @@ export function compileResources () {
   }
 
   let changesCounter = 0;
+
+  /**
+   * Compile settings
+   */
+  const settingsModelCompiler = new SettingsModelCompiler({ settingsConfGraphModel });
+  const settingsCompilationResults =
+    settingsGraphModel.traverse(
+      settingsResourceVisitor({settingsModelCompiler})
+    );
+  if (settingsCompilationResults && settingsCompilationResults.length > 0) {
+    settingsCompilationResults.forEach(settingsCompilationResult => {
+      if (settingsCompilationResult) {
+        if (settingsCompilationResult.changesCount > 0) {
+          changesCounter += settingsCompilationResult.changesCount;
+        }
+      }
+    });
+  }
+
+  console.info('Settings tree: ', settingsGraphModel.getModel());
 
   /**
    * Compile all pages
@@ -207,7 +255,7 @@ export function compileResources () {
   pagesGraphModel.mergeNode(pagesGraphModel.getRootKey(), { props: { hasErrors: pagesErrorsCount > 0 } });
 
   /**
-   * Compile all pages
+   * Compile all templates
    *
    */
   let templatesErrorsCount = 0;

@@ -458,6 +458,7 @@ class ResourceEditor extends React.Component {
                   <LivePreview
                     isVisible={index === activeEditorTabIndex}
                     pages={livePreviewObject.pages}
+                    settings={livePreviewObject.settings}
                     serverPort={projectSettingsObject.port}
                     onOpenUrl={this.handleOpenUrl}
                     onSearchRequest={this.handleSearchRequest}

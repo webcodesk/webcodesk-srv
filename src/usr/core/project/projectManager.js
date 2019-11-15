@@ -76,12 +76,12 @@ export async function watchUsrSourceDir () {
   // Make resources trees by declarations in files
   // Init new resources graphs
   projectResourcesManager.initNewResourcesTrees();
+  // generate all default files if they are missing
+  await projectGenerator.generateDefaultFiles();
   // read the entire usr directory after a while
   await readResource(config.usrSourceDir);
   // read the entire etc directory after a while
-  await readResource(config.etcPagesSourceDir);
-  await readResource(config.etcFlowsSourceDir);
-  await readResource(config.etcTemplatesSourceDir);
+  await readResource(config.etcSourceDir);
 }
 
 export async function readResource (resourcePath) {
@@ -144,7 +144,8 @@ export async function writeEtcFile (filePath, fileData) {
   const validResourcePath = repairPath(filePath);
   if (validResourcePath.indexOf(config.etcPagesSourceDir) === 0
     || validResourcePath.indexOf(config.etcFlowsSourceDir) === 0
-    || validResourcePath.indexOf(config.etcTemplatesSourceDir) === 0) {
+    || validResourcePath.indexOf(config.etcTemplatesSourceDir) === 0
+    || validResourcePath.indexOf(config.etcSettingsSourceDir) === 0) {
     await fileUtils.ensureFilePath(validResourcePath);
     await fileUtils.writeFile(validResourcePath, fileData);
   } else {
@@ -160,6 +161,8 @@ export async function deleteEtcFile (filePath) {
     await fileUtils.removeFileAndEmptyDir(validResourcePath, config.etcFlowsSourceDir);
   } else if (validResourcePath.indexOf(config.etcTemplatesSourceDir) === 0) {
     await fileUtils.removeFileAndEmptyDir(validResourcePath, config.etcTemplatesSourceDir);
+  } else if (validResourcePath.indexOf(config.etcSettingsSourceDir) === 0) {
+    await fileUtils.removeFileAndEmptyDir(validResourcePath, config.etcSettingsSourceDir);
   } else {
     throw Error(`It is not allowed to delete files out of ${config.etcSourceDir} directory.`);
   }

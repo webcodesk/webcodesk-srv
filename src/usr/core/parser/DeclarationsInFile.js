@@ -72,6 +72,16 @@ class DeclarationsInFile {
           return this.resourceType === constants.RESOURCE_IN_TEMPLATES_TYPE;
         }
       },
+      'isInSettingsConf': {
+        get: function() {
+          return this.resourceType === constants.RESOURCE_IN_SETTINGS_CONF_TYPE;
+        }
+      },
+      'isInSettings': {
+        get: function() {
+          return this.resourceType === constants.RESOURCE_IN_SETTINGS_TYPE;
+        }
+      },
     });
   }
 

@@ -56,7 +56,7 @@ const styles = theme => ({
   }
 });
 
-const ComponentPropsTreeListElement = withStyles(theme => ({
+const PropsTreeListElement = withStyles(theme => ({
   root: {
     alignItems: 'flex-start',
     position: 'relative',
@@ -75,7 +75,7 @@ const ComponentPropsTreeListElement = withStyles(theme => ({
   }
 }))(ListItem);
 
-const ComponentPropsTreeListElementText = withStyles({
+const PropsTreeListElementText = withStyles({
   root: {
     padding: 0,
     overflow: 'hidden',
@@ -83,7 +83,7 @@ const ComponentPropsTreeListElementText = withStyles({
   }
 })(ListItemText);
 
-export const ComponentPropsTreeElementButton = withStyles(theme => ({
+export const PropsTreeElementButton = withStyles(theme => ({
   sizeSmall: {
     padding: '2px 8px',
     borderRadius: '16px',
@@ -95,7 +95,7 @@ export const ComponentPropsTreeElementButton = withStyles(theme => ({
   }
 }))(Button);
 
-class ComponentPropsTreeElement extends React.Component {
+class PropsTreeElement extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     subname: PropTypes.string,
@@ -115,10 +115,10 @@ class ComponentPropsTreeElement extends React.Component {
     title: null,
     paddingLeft: '0px',
     onChange: () => {
-      console.info('ComponentPropsTreeElement.onChange is not set');
+      console.info('PropsTreeElement.onChange is not set');
     },
     onClick: () => {
-      console.info('ComponentPropsTreeElement.onClick is not set');
+      console.info('PropsTreeElement.onClick is not set');
     },
   };
 
@@ -169,22 +169,22 @@ class ComponentPropsTreeElement extends React.Component {
     switch (type) {
       case 'button':
         editorElement = (
-          <ComponentPropsTreeListElement
+          <PropsTreeListElement
             style={{ paddingLeft }}
             button={false}
           >
-            <ComponentPropsTreeListElementText
+            <PropsTreeListElementText
               title={name}
               disableTypography={true}
               primary={
-                <ComponentPropsTreeElementButton
+                <PropsTreeElementButton
                   color="default"
                   size="small"
                   fullWidth={true}
                   onClick={this.handleClick}
                 >
                   {name}
-                </ComponentPropsTreeElementButton>
+                </PropsTreeElementButton>
               }
               secondary={subname && (
                 <div className={classes.subtitleText}>
@@ -192,20 +192,20 @@ class ComponentPropsTreeElement extends React.Component {
                 </div>
               )}
             />
-          </ComponentPropsTreeListElement>
+          </PropsTreeListElement>
         );
         break;
       case 'input':
       default:
         editorElement = (
-          <ComponentPropsTreeListElement
+          <PropsTreeListElement
             style={{ paddingLeft }}
             button={false}
           >
             <div className={classes.propertyEditorContainer}>
               {name && (
                 <div>
-                  <ComponentPropsTreeListElementText
+                  <PropsTreeListElementText
                     title={name}
                     primary={
                       <span style={{ whiteSpace: 'nowrap' }}>
@@ -234,7 +234,7 @@ class ComponentPropsTreeElement extends React.Component {
                 </Typography>
               )}
             </div>
-          </ComponentPropsTreeListElement>
+          </PropsTreeListElement>
         );
         break;
     }
@@ -242,4 +242,4 @@ class ComponentPropsTreeElement extends React.Component {
   }
 }
 
-export default withStyles(styles)(ComponentPropsTreeElement);
+export default withStyles(styles)(PropsTreeElement);

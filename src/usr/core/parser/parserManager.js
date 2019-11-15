@@ -24,6 +24,8 @@ import { findPageDeclarations } from './pagesParser';
 import { findFlowDeclarations } from './flowsParser';
 import { findTemplateDeclarations } from './templatesParser';
 import { findMarkdownDeclarations } from './markdownParser';
+import { findSettingsDeclarations } from './settingsParser';
+import { findSettingsConfigDeclarations } from './settingsConfigParser';
 import * as config from '../config/config';
 import constants  from '../../../commons/constants';
 import { isFile } from '../utils/fileUtils';
@@ -36,6 +38,7 @@ const validFileExtensions = {
 const componentFileSuffix = '.comp';
 const userFunctionsFileSuffix = '.funcs';
 const propTypesFileSuffix = '.props';
+const settingsConfFileSuffix = '.conf';
 const markdownFileExtension = '.md';
 
 export const createEmptyResource = (filePath) => {
@@ -74,7 +77,17 @@ export const createEmptyResource = (filePath) => {
       constants.RESOURCE_IN_TEMPLATES_TYPE,
       [],
       filePath
-    )
+    ),
+    new DeclarationsInFile(
+      constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
+      [],
+      filePath
+    ),
+    new DeclarationsInFile(
+      constants.RESOURCE_IN_SETTINGS_TYPE,
+      [],
+      filePath
+    ),
   ];
 };
 
@@ -114,6 +127,12 @@ const parseFileData = (filePath, fileData) => {
           findFunctionDeclarations(fileData, config.projectRootSourceDir, filePath),
           filePath
         ));
+      } else if (baseName.endsWith(settingsConfFileSuffix)){
+        result.push(new DeclarationsInFile(
+          constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
+          findSettingsConfigDeclarations(fileData),
+          filePath
+        ));
       } else if (extName === markdownFileExtension){
         result.push(new DeclarationsInFile(
           constants.RESOURCE_IN_MARKDOWN_TYPE,
@@ -137,6 +156,12 @@ const parseFileData = (filePath, fileData) => {
       result.push(new DeclarationsInFile(
         constants.RESOURCE_IN_TEMPLATES_TYPE,
         findTemplateDeclarations(fileData),
+        filePath
+      ));
+    } else if (filePath.indexOf(config.etcSettingsSourceDir) === 0) {
+      result.push(new DeclarationsInFile(
+        constants.RESOURCE_IN_SETTINGS_TYPE,
+        findSettingsDeclarations(fileData),
         filePath
       ));
     }
