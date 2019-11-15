@@ -192,8 +192,8 @@ export function updateResources (declarationsInFiles) {
   return { updatedResources, deletedResources, doUpdateAll };
 }
 
-export function getResourceByKey(resourceKey) {
-  return projectResourcesUtils.getResource(resourceKey);
+export function getResourceByKey(resourceKey, specificResourceType = null) {
+  return projectResourcesUtils.getResource(resourceKey, specificResourceType);
 }
 
 export function getUserFunctionsTree (startKey = null) {

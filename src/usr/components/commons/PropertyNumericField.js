@@ -110,10 +110,12 @@ class PropertyTextField extends React.Component {
   }, 500);
 
   handleOnChange = () => {
+    let inputValue = this.input.value;
+    inputValue = inputValue && inputValue.length > 0 ? Number(inputValue) : null;
     this.setState({
-      inputValue: this.input.value,
+      inputValue,
     });
-    this.debounceOnChange(this.input.value);
+    this.debounceOnChange(inputValue);
   };
 
   handleOnCancel = () => {

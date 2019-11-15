@@ -103,6 +103,8 @@ class PropsTreeElement extends React.Component {
     value: PropTypes.string,
     title: PropTypes.string,
     paddingLeft: PropTypes.string,
+    disabled: PropTypes.bool,
+    color: PropTypes.oneOf(['default', 'primary', 'secondary']),
     onChange: PropTypes.func,
     onClick: PropTypes.func,
   };
@@ -114,6 +116,8 @@ class PropsTreeElement extends React.Component {
     value: null,
     title: null,
     paddingLeft: '0px',
+    disabled: false,
+    color: 'default',
     onChange: () => {
       console.info('PropsTreeElement.onChange is not set');
     },
@@ -163,6 +167,8 @@ class PropsTreeElement extends React.Component {
       subname,
       type,
       value,
+      disabled,
+      color
     } = this.props;
     const { error } = this.state;
     let editorElement;
@@ -178,9 +184,10 @@ class PropsTreeElement extends React.Component {
               disableTypography={true}
               primary={
                 <PropsTreeElementButton
-                  color="default"
+                  color={color}
                   size="small"
                   fullWidth={true}
+                  disabled={disabled}
                   onClick={this.handleClick}
                 >
                   {name}

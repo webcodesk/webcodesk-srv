@@ -15,7 +15,7 @@
  */
 
 import path from 'path-browserify';
-import { repairPath } from '../utils/fileUtils';
+import { default as fileUtils, repairPath } from '../utils/fileUtils';
 import constants from '../../../commons/constants';
 import { invokeServer } from '../utils/serverUtils';
 
@@ -38,6 +38,7 @@ export let etcPagesSourceDir;
 export let etcFlowsSourceDir;
 export let etcTemplatesSourceDir;
 export let etcSettingsSourceDir;
+export let etcSettingsFile;
 
 export let appSchemaSourceDir;
 export let appSchemaPagesFile;
@@ -95,6 +96,8 @@ export const initProjectPaths = async () => {
   etcFlowsSourceDir = validPaths.testEtcFlowsSourceDir;
   etcTemplatesSourceDir = validPaths.testEtcTemplatesSourceDir;
   etcSettingsSourceDir = validPaths.testEtcSettingsSourceDir;
+
+  etcSettingsFile = repairPath(path.join(etcSettingsSourceDir, `${constants.FILE_NAME_SETTINGS_ETC}.json`));
 
   projectTSConfigFile = validPaths.testProjectTSConfigFile;
   projectYarnLockFile = validPaths.testProjectYarnLockFile;

@@ -28,7 +28,8 @@ import {
   openUrlInExternalBrowser,
   pushItemToClipboard,
   clearClipboard,
-  writeResourceSourceCode
+  writeResourceSourceCode,
+  updateSettings
 } from "usr/api/resourceEditorMethods";
 
 export default {
@@ -45,5 +46,6 @@ export default {
   openUrlInExternalBrowser,
   pushItemToClipboard,
   clearClipboard,
-  writeResourceSourceCode
+  writeResourceSourceCode,
+  updateSettings
 };

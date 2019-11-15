@@ -75,6 +75,8 @@ import ChromeReaderMode from '@material-ui/icons/ChromeReaderMode';
 import Receipt from '@material-ui/icons/Receipt';
 import StayCurrentPortrait from '@material-ui/icons/StayCurrentPortrait';
 import StayCurrentLandscape from '@material-ui/icons/StayCurrentLandscape';
+import CollectionsBookmark from '@material-ui/icons/CollectionsBookmark';
+import SettingsApplications from '@material-ui/icons/SettingsApplications';
 
 import { CommonToolbarButton, CommonToolbarIconButton, CommonErrorBadge } from './Commons.parts';
 
@@ -218,6 +220,8 @@ const icons = {
   Receipt,
   StayCurrentPortrait,
   StayCurrentLandscape,
+  CollectionsBookmark,
+  SettingsApplications,
 
   // fa icons
   CopyToClipboard,

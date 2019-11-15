@@ -56,6 +56,7 @@ module.exports = {
   FILE_NAME_FLOWS: 'flows',
   FILE_NAME_ROUTER: 'routes',
   FILE_NAME_SETTINGS: 'settings',
+  FILE_NAME_SETTINGS_ETC: 'conf',
   NODE_MODULES_DIR_NAME: 'node_modules',
   REACT_SCRIPTS_NAME: 'react-scripts',
   REACT_APP_FRAMEWORK: '@webcodesk/react-app-framework',
@@ -106,9 +107,6 @@ module.exports = {
   GRAPH_MODEL_DIR_ETC_TEMPLATES_KEY: 'etc/templates',
   GRAPH_MODEL_DIR_ETC_FLOWS_KEY: 'etc/flows',
   GRAPH_MODEL_DIR_USR_KEY: 'usr',
-
-  GRAPH_MODEL_DIR_ETC_SETTINGS: 'etc/settings',
-  GRAPH_MODEL_FILE_ETC_SETTINGS: 'etc/settings/config.json',
 
   GRAPH_MODEL_SETTINGS_CONF_KEY: 'usr.settings',
 

@@ -14,11 +14,12 @@
  *    limitations under the License.
  */
 
-import * as config from '../config/config';
 import path from 'path-browserify';
 import * as pageComposerFactory from '../pageComposer/pageComposerFactory';
 import * as flowComposerFactory from '../flowComposer/flowComposerFactory';
 import * as projectResourcesManager from './projectResourcesManager';
+import * as config from '../config/config';
+import constants from '../../../commons/constants';
 import { repairPath } from '../utils/fileUtils';
 
 export function createNewPageFileObject (name, directoryName) {
@@ -164,4 +165,11 @@ export function createFileObject (resource, fileDataOptions = {}) {
     });
   }
   return fileObject;
+}
+
+export function createSettingsFileObject (settings) {
+  return {
+    filePath: config.etcSettingsFile,
+    fileData: JSON.stringify({model: settings}),
+  };
 }

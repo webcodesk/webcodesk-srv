@@ -31,6 +31,8 @@ const possibleResourceTypes = [
   constants.RESOURCE_IN_MARKDOWN_TYPE,
   constants.RESOURCE_IN_CLIPBOARD_TYPE,
   constants.RESOURCE_IN_TEMPLATES_TYPE,
+  constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
+  constants.RESOURCE_IN_SETTINGS_TYPE,
 ];
 
 class ResourceAdapter {
@@ -99,6 +101,16 @@ class ResourceAdapter {
         'inClipboard': {
           get: function () {
             return this.resource && this.resource.resourceType === constants.RESOURCE_IN_CLIPBOARD_TYPE;
+          }
+        },
+        'inSettingsConf': {
+          get: function () {
+            return this.resource && this.resource.resourceType === constants.RESOURCE_IN_SETTINGS_CONF_TYPE;
+          }
+        },
+        'inSettings': {
+          get: function () {
+            return this.resource && this.resource.resourceType === constants.RESOURCE_IN_SETTINGS_TYPE;
           }
         },
         'resource': {
@@ -593,6 +605,11 @@ class ResourceAdapter {
         'isFlowPage': {
           get: function () {
             return this.resource && this.type === constants.GRAPH_MODEL_FLOW_PAGE_TYPE;
+          }
+        },
+        'isSettings': {
+          get: function () {
+            return this.resource && this.type === constants.GRAPH_MODEL_SETTINGS_TYPE;
           }
         }
       });

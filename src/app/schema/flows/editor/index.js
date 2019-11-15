@@ -25,6 +25,7 @@ import Push_To_Clipboard from './Push_To_Clipboard';
 import Save_As_New_Template from './Save_As_New_Template';
 import Undo_Update_Resource_Tab from './Undo_Update_Resource_Tab';
 import Update_Resource_Tab from './Update_Resource_Tab';
+import Update_Settings from './Update_Settings';
 import Write_Resource_Source_Code from './Write_Resource_Source_Code';
 
 export default {
@@ -39,5 +40,6 @@ export default {
   Save_As_New_Template,
   Undo_Update_Resource_Tab,
   Update_Resource_Tab,
+  Update_Settings,
   Write_Resource_Source_Code,
 };

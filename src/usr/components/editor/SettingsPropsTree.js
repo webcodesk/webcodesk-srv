@@ -28,19 +28,9 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
     padding: '10px'
   },
-  contentPane: {
-    position: 'absolute',
-    top: '32px',
-    bottom: 0,
-    right: 0,
-    left: 0,
-  },
   mainDivider: {
-    margin: '8px 0',
+    height: '5px'
   },
-  footerArea: {
-    height: '7em',
-  }
 });
 
 class SettingsPropsTree extends React.Component {
@@ -117,7 +107,6 @@ class SettingsPropsTree extends React.Component {
   render () {
     const { classes } = this.props;
     const { localSettingsModel, sendUpdateCounter } = this.state;
-    console.info('SettingsPropsTree localSettings: ', localSettingsModel);
     if (localSettingsModel && localSettingsModel.children) {
       return (
         <div className={classes.root}>
@@ -127,12 +116,15 @@ class SettingsPropsTree extends React.Component {
             disablePadding={true}
           >
               <PropsTreeElement
-                name="Save"
+                name="Save Changes"
                 title="Save recent changes in application settings"
                 type="button"
+                disabled={sendUpdateCounter === 0}
+                color={sendUpdateCounter === 0 ? 'default' : 'primary'}
                 onClick={this.handleSaveSettingsProperties}
               />
           </List>
+          <div className={classes.mainDivider} />
           <PropsTree
             onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
             onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
@@ -145,7 +137,7 @@ class SettingsPropsTree extends React.Component {
     return (
       <div className={classes.root}>
         <Typography variant="subtitle2" gutterBottom={true}>
-          Application Settings was not found
+          Application settings was not found
         </Typography>
       </div>
     );

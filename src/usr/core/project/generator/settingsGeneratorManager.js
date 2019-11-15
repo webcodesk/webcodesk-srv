@@ -117,19 +117,18 @@ export async function generateFiles(resourcesTrees, destFilePath) {
   return writeFileWhenDifferent(destFilePath, fileBody);
 }
 
-export async function generateInitialSettingsEtc(destDir) {
-  const indexFilePath = fileUtils.repairPath(path.join(destDir, 'conf.json'));
+export async function generateInitialSettingsEtc(destFilePath) {
   try {
-    await fileUtils.isExisting(indexFilePath);
+    await fileUtils.isExisting(destFilePath);
     // cool, we don't have to do anything
   } catch (e) {
     // need to create the file in the ect dir
-    return fileUtils.ensureFilePath(indexFilePath)
+    return fileUtils.ensureFilePath(destFilePath)
       .then(() => {
-        return fileUtils.writeFile(indexFilePath, JSON.stringify({model: []}));
+        return fileUtils.writeFile(destFilePath, JSON.stringify({model: []}));
       })
       .catch(error => {
-        console.error(`Error writing ${indexFilePath} file. `, error);
+        console.error(`Error writing ${destFilePath} file. `, error);
       });
   }
 }

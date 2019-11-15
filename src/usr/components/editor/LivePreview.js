@@ -83,6 +83,7 @@ class LivePreview extends React.Component {
     onOpenUrl: PropTypes.func,
     onSearchRequest: PropTypes.func,
     onError: PropTypes.func,
+    onUpdateSettings: PropTypes.func,
   };
 
   static defaultProps = {
@@ -98,6 +99,9 @@ class LivePreview extends React.Component {
     },
     onError: () => {
       console.info('LivePreview.onError is not set');
+    },
+    onUpdateSettings: () => {
+      console.info('LivePreview.onUpdateSettings is not set');
     },
   };
 
@@ -288,6 +292,10 @@ class LivePreview extends React.Component {
     });
   };
 
+  handleUpdateSettings = (settings) => {
+    this.props.onUpdateSettings(settings);
+  };
+
   render () {
     const {
       classes,
@@ -352,14 +360,14 @@ class LivePreview extends React.Component {
                   switchedOn={showPagesList}
                   onClick={this.handleTogglePagesList}
                   title="Pages"
-                  iconType="Toc"
+                  iconType="CollectionsBookmark"
                   tooltip="Show available pages list"
                 />
                 <ToolbarButton
                   switchedOn={showSettingsEditor}
                   onClick={this.handleToggleSettingsEditor}
                   title="Settings"
-                  iconType="Toc"
+                  iconType="SettingsApplications"
                   tooltip="Show global application settings"
                 />
                 <CommonToolbarDivider />
@@ -370,8 +378,8 @@ class LivePreview extends React.Component {
                       iconColor="#E53935"
                       switchedOn={true}
                       onClick={this.handleToggleRecording}
-                      title="Stop"
-                      tooltip="Stop recording flow"
+                      title="Stop Recording"
+                      tooltip="Stop recording actions for debug"
                     />
                   )
                   : (
@@ -380,8 +388,8 @@ class LivePreview extends React.Component {
                       iconColor="#E53935"
                       switchedOn={false}
                       onClick={this.handleToggleRecording}
-                      title="Record"
-                      tooltip="Start recording flow"
+                      title="Record Actions"
+                      tooltip="Start recording actions for debug"
                       disabled={isExportStarted}
                     />
                   )
@@ -482,7 +490,10 @@ class LivePreview extends React.Component {
                   )}
                 </div>
                 <div className={classes.editorPane}>
-                  <SettingsPropsTree settingsProperties={settings} />
+                  <SettingsPropsTree
+                    settingsProperties={settings}
+                    onUpdateSettingsProperties={this.handleUpdateSettings}
+                  />
                   {/*<div>*/}
                   {/*  <pre>*/}
                   {/*    {JSON.stringify(settings, null, 4)}*/}

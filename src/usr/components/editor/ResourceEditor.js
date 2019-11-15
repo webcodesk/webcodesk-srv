@@ -89,11 +89,11 @@ class ResourceEditor extends React.Component {
     onSearchRequest: PropTypes.func,
     onUndoUpdateEditorTab: PropTypes.func,
     onOpenUrl: PropTypes.func,
-    onExportApp: PropTypes.func,
     onSaveSourceCode: PropTypes.func,
     onOpenResource: PropTypes.func,
     onPushToClipboard: PropTypes.func,
     onSaveAsTemplate: PropTypes.func,
+    onUpdateSettings: PropTypes.func,
   };
 
   static defaultProps = {
@@ -123,9 +123,6 @@ class ResourceEditor extends React.Component {
     onOpenUrl: () => {
       console.info('ResourceEditor.onOpenUrl is not set');
     },
-    onExportApp: () => {
-      console.info('ResourceEditor.onExportApp is not set');
-    },
     onSaveSourceCode: () => {
       console.info('ResourceEditor.onSaveSourceCode is not set');
     },
@@ -137,6 +134,9 @@ class ResourceEditor extends React.Component {
     },
     onSaveAsTemplate: () => {
       console.info('ResourceEditor.onSaveAsTemplate is not set');
+    },
+    onUpdateSettings: () => {
+      console.info('ResourceEditor.onUpdateSettings is not set');
     },
   };
 
@@ -191,10 +191,6 @@ class ResourceEditor extends React.Component {
     this.props.onOpenUrl(url);
   };
 
-  handleExportApp = (helpers) => {
-    this.props.onExportApp(helpers);
-  };
-
   handleSaveSourceCode = (tabIndex) => (newScript) => {
     const { resourceEditorTabs } = this.props;
     const resourceTab = resourceEditorTabs[tabIndex];
@@ -212,6 +208,10 @@ class ResourceEditor extends React.Component {
 
   handleSaveAsTemplate = (item) => {
     this.props.onSaveAsTemplate({templateModel: item});
+  };
+
+  handleUpdateSettings = (settings) => {
+    this.props.onUpdateSettings(settings);
   };
 
   render () {
@@ -462,7 +462,7 @@ class ResourceEditor extends React.Component {
                     serverPort={projectSettingsObject.port}
                     onOpenUrl={this.handleOpenUrl}
                     onSearchRequest={this.handleSearchRequest}
-                    onExportApp={this.handleExportApp}
+                    onUpdateSettings={this.handleUpdateSettings}
                   />
                 </div>
               );
