@@ -184,7 +184,6 @@ class FlowInputTransformManager {
 
   getInputSamplePropTypes () {
     if (this._inputPropertiesModel) {
-      console.info('getInputSamplePropTypes: ', this._inputPropertiesModel);
       return this.createPropTypes(this._inputPropertiesModel);
     }
     return null;
@@ -456,8 +455,6 @@ class FlowInputTransformManager {
         }
 
         const samplePropTypes = this.getInputSamplePropTypes();
-        console.info('samplePropTypes: ', samplePropTypes);
-        console.info('transformedDataObject: ', transformedDataObject);
         if (samplePropTypes) {
           const checkingPropTypes = {data: samplePropTypes};
           const checkingPropValue = {data: transformedDataObject};

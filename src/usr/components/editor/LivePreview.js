@@ -332,7 +332,6 @@ class LivePreview extends React.Component {
         });
       }
     }
-    console.info('Settings in LivePreview: ', settings);
     return (
       <div className={classes.root}>
         <div className={classes.topPane}>

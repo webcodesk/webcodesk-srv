@@ -188,8 +188,6 @@ export function compileResources () {
 
   const settingsConfGraphModel =
     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_SETTINGS_CONF_TYPE);
-  console.info('SettingsConf tree: ', settingsConfGraphModel.getModel());
-  console.info('SettingsConf model: ', settingsConfGraphModel.getNode('usr.settings'));
   const settingsGraphModel =
     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_SETTINGS_TYPE);
 
@@ -226,8 +224,6 @@ export function compileResources () {
       }
     });
   }
-
-  console.info('Settings tree: ', settingsGraphModel.getModel());
 
   /**
    * Compile all pages

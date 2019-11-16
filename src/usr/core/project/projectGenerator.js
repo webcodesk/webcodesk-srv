@@ -22,7 +22,6 @@ import * as pagesGeneratorManager from './generator/pagesGeneratorManager';
 import * as flowsGeneratorManager from './generator/flowsGeneratorManager';
 import * as indicesGeneratorManager from './generator/indicesGeneratorManager';
 import * as settingsGeneratorManager from './generator/settingsGeneratorManager';
-import { etcSettingsFile } from '../config/config';
 
 async function generateSchema () {
   // generate schema index just for the sake it is missing
@@ -75,7 +74,7 @@ async function generateSchema () {
    */
   const flowsProd = projectResourcesManager.getFlowsTreeProd(flowsStarterKey);
   // write flows files
-  await flowsGeneratorManager.generateFiles(flowsProd, config.appSettingsFile, replaceFlowsDirName);
+  await flowsGeneratorManager.generateFiles(flowsProd, config.appSchemaProdFlowsFile, replaceFlowsDirName);
 
   /**
    * Settings

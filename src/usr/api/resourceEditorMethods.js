@@ -253,8 +253,6 @@ export const writeResourceSourceCode = ({resource, script}) => async (dispatch) 
 
 export const updateSettings = (settings) => async (dispatch) => {
   const fileObject = projectFileFactory.createSettingsFileObject(settings);
-  console.info('Update settings: ', settings);
-  console.info('Update settings: ', fileObject);
   if (fileObject && fileObject.filePath && fileObject.fileData) {
     dispatch('fileObject', fileObject);
   }

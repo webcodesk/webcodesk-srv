@@ -37,8 +37,6 @@ class SettingsModelCompiler {
     if (foundSettingsConfModel) {
       const { props: {settingsConfProperties} } = foundSettingsConfModel;
       if (settingsProperties && settingsProperties.length > 0) {
-        console.info('SettingsModelCompiler (settingsConfProperties): ', settingsConfProperties);
-        console.info('SettingsModelCompiler (settingsProperties): ', settingsProperties);
         instanceModel.props.settingsProperties = this.testProperties(settingsConfProperties, settingsProperties);
       } else {
         instanceModel.props.settingsProperties = cloneDeep(settingsConfProperties);
