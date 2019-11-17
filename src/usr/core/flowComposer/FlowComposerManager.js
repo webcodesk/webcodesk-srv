@@ -324,19 +324,25 @@ class FlowComposerManager {
       if (nodeModel) {
         const keyToDelete = nodeModel.key;
         const parentKey = this.graphModel.getParentKey(keyToDelete);
+        const childrenKeys = this.graphModel.getChildrenKeys(keyToDelete);
         if (parentKey) {
-          const childrenKeys = this.graphModel.getChildrenKeys(keyToDelete);
+          // set new parent to each child node
           if (childrenKeys && childrenKeys.length > 0) {
-            let childModel;
             childrenKeys.forEach(childKey => {
-              childModel = this.graphModel.getNode(childKey);
-              this.clearInputs(childKey, childModel);
               this.graphModel.setParentKey(childKey, parentKey);
             });
           }
         }
         this.graphModel.deleteChildren(keyToDelete);
         this.graphModel.deleteNode(keyToDelete);
+        // reconnect each new child to new parent
+        if (childrenKeys && childrenKeys.length > 0) {
+          let childModel;
+          childrenKeys.forEach(childKey => {
+            childModel = this.graphModel.getNode(childKey);
+            this.clearInputs(childKey, childModel);
+          });
+        }
         if (!parentKey) {
           this.graphModel.initModel(composerFactory.createDefaultModel());
         }

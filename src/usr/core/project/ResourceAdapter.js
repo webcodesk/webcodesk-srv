@@ -380,9 +380,23 @@ class ResourceAdapter {
             return undefined;
           }
         },
-        'properties': {
+        'componentsTreeChunk': {
           get: function () {
             if (this.props) {
+              return this.props.componentsTreeChunk;
+            }
+            return undefined;
+          }
+        },
+        'properties': {
+          get: function () {
+            if (this.isComponentInstance) {
+              // in case of component instance we have only components tree chunk
+              // then properties are children of this chunk
+              if (this.componentsTreeChunk) {
+                return this.componentsTreeChunk.children;
+              }
+            } else if (this.props) {
               return this.props.properties || [];
             }
             return [];
@@ -401,6 +415,13 @@ class ResourceAdapter {
                   .build();
               }
               return this.componentResourceObject.propertiesRef;
+            } else if (this.isFlowUserFunction) {
+              if (!this.userFunctionResourceObject) {
+                this.userFunctionResourceObject = new ResourceAdapter.Builder()
+                  .byKeyInGraphs(this.functionName, this.getGraphByType)
+                  .build();
+              }
+              return this.userFunctionResourceObject.propertiesRef;
             }
             return [];
           }

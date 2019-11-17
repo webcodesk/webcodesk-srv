@@ -42,8 +42,12 @@ class FlowModelCompiler {
 
   compile(nodeModel, parentModel = null) {
     if (nodeModel) {
-      if (nodeModel.type === constants.FLOW_COMPONENT_INSTANCE_TYPE) {
-        const { props: { componentName, title, componentInstance } } = nodeModel;
+      if (
+        nodeModel.type === constants.FLOW_COMPONENT_INSTANCE_TYPE
+        || nodeModel.type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+        || nodeModel.type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE
+      ) {
+        const { props: { componentName, componentInstance } } = nodeModel;
         const componentModel = this.componentsGraphModel.getNode(componentName);
         if (componentModel) {
           const { props: { inputs, outputs } } = nodeModel;
@@ -75,6 +79,8 @@ class FlowModelCompiler {
                 foundItemInput = flowItemInputs[propertyName];
                 if (!foundItemInput) {
                   // input is missing
+                  if (nodeModel.type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE) {
+                  }
                   nodeModel.props.inputs.push({
                     name: propertyName,
                     properties: propertyRef ? cloneDeep(propertyRef) : {},
@@ -197,7 +203,7 @@ class FlowModelCompiler {
             ) {
               nodeModel.props.errors = nodeModel.props.errors || {};
               nodeModel.props.errors[constants.COMPILER_ERROR_FLOW_ELEMENT_EMPTY_PROPERTIES] =
-                `The "${title}" instance does not have properties.`;
+                `The "${componentName}" instance does not have properties.`;
               this.changesCount++;
             }
             this.errorsCount++;
@@ -222,7 +228,11 @@ class FlowModelCompiler {
               });
             }
           }
-          if (parentModel) {
+          if (
+            parentModel
+            && nodeModel.type !== constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+            && nodeModel.type !== constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE
+          ) {
             // check if there is a parent, if so, then there should be inputs connected to the parent
             const findConnectedInputs = inputs && inputs.length > 0 ? inputs.find(i => !!i.connectedTo) : null;
             if (!findConnectedInputs) {
@@ -287,8 +297,12 @@ class FlowModelCompiler {
         //   }
         // }
 
-      } else if (nodeModel.type === constants.FLOW_USER_FUNCTION_TYPE) {
-        const { props: { functionName, title } } = nodeModel;
+      } else if (
+        nodeModel.type === constants.FLOW_USER_FUNCTION_TYPE
+        || nodeModel.type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
+        || nodeModel.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE
+      ) {
+        const { props: { functionName } } = nodeModel;
         const functionModel = this.userFunctionsGraphModel.getNode(functionName);
         if (functionModel) {
           const { props: { inputs, outputs } } = nodeModel;
@@ -371,25 +385,30 @@ class FlowModelCompiler {
           // remove all that was specified as to remove
           remove(nodeModel.props.outputs, i => !!i.toRemove);
 
-          const findConnectedInputs = inputs && inputs.length > 0 ? inputs.find(i => !!i.connectedTo) : null;
-          if (!findConnectedInputs) {
-            if (
-              !nodeModel.props.errors ||
-              !nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS]
-            ) {
-              nodeModel.props.errors = nodeModel.props.errors || {};
-              nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS] =
-                `The "${title}" function is not connected`;
-              this.changesCount++;
-            }
-            this.errorsCount++;
-          } else {
-            if (
-              nodeModel.props.errors &&
-              nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS]
-            ) {
-              delete nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS];
-              this.changesCount++;
+          if (
+            nodeModel.type !== constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
+            && nodeModel.type !== constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE
+          ) {
+            const findConnectedInputs = inputs && inputs.length > 0 ? inputs.find(i => !!i.connectedTo) : null;
+            if (!findConnectedInputs) {
+              if (
+                !nodeModel.props.errors ||
+                !nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS]
+              ) {
+                nodeModel.props.errors = nodeModel.props.errors || {};
+                nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS] =
+                  `The "${functionName}" function is not connected`;
+                this.changesCount++;
+              }
+              this.errorsCount++;
+            } else {
+              if (
+                nodeModel.props.errors &&
+                nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS]
+              ) {
+                delete nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS];
+                this.changesCount++;
+              }
             }
           }
 
@@ -408,7 +427,7 @@ class FlowModelCompiler {
           ) {
             nodeModel.props.errors = nodeModel.props.errors || {};
             nodeModel.props.errors[constants.COMPILER_ERROR_USER_FUNCTION_NOT_FOUND] =
-              `The "${title}" function is not found by path "${functionName}"`;
+              `The function is not found by path "${functionName}"`;
             this.changesCount++;
           }
           this.errorsCount++;

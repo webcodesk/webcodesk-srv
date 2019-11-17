@@ -303,6 +303,13 @@ class DiagramDecorator {
           return 20;
         }
         return 0;
+      })
+      .each(function () {
+        d3.select(this)
+          .on('click', function (item) {
+            d3.event.preventDefault();
+            self.diagramContext.getHandleErrorClick()(item.data.props.errors);
+          });
       });
 
     // update error circle icon
@@ -331,6 +338,13 @@ class DiagramDecorator {
           return 40;
         }
         return 0;
+      })
+      .each(function () {
+        d3.select(this)
+          .on('click', function (item) {
+            d3.event.preventDefault();
+            self.diagramContext.getHandleErrorClick()(item.data.props.errors);
+          });
       });
 
     decoratedNode

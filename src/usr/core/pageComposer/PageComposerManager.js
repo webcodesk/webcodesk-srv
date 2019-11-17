@@ -49,9 +49,9 @@ class PageComposerManager {
       result.push({
         componentName: props.componentName,
         componentInstance: props.componentInstance,
-        // no need to clone children,
-        // this is the responsibility of the executor of the method
-        properties: extractedModel.children,
+        // no need to clone all model as components tree chunk,
+        // it is used for pasting into flows and pages
+        componentsTree: extractedModel,
       });
     }
     return result;
@@ -81,7 +81,8 @@ class PageComposerManager {
   };
 
   getInstancesListUniq = () => {
-     return this.graphModel.traverse(this.instanceVisitor);
+    // get all instance references with the component tree chunks that belong to each instance
+    return this.graphModel.traverse(this.instanceVisitor);
   };
 
   getModel = () => {

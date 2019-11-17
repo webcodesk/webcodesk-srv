@@ -43,7 +43,7 @@ path.link {
 
 path.link.transforming {
   fill: none;
-  stroke: #03a9f4;
+  stroke: #5C6BC0;
   stroke-width: 5px;
 }
 
@@ -102,7 +102,7 @@ path.header.page {
 
 path.header.selected {
   /*fill: #fa8927;*/
-  stroke: #fa8927;
+  stroke: #263238;
   stroke-width: 4px;
 }
 
@@ -129,7 +129,7 @@ rect.dropzone-node.acceptable {
 }
 
 rect.node.selected {
-  stroke: #fa8927;
+  stroke: #263238;
   stroke-width: 4px;
 }
 

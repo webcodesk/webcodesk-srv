@@ -24,62 +24,84 @@ const componentInstanceModelsMap = new Map();
 
 const flowsResourceVisitor = ({flowModelCompiler, flowsGraphModel}) => ({ nodeModel, parentModel }) => {
   const result = [];
-  if (
-    nodeModel &&
-    nodeModel.type === constants.GRAPH_MODEL_FLOW_TYPE &&
-    nodeModel.props &&
-    nodeModel.props.flowTree
-  ) {
-    flowModelCompiler.resetCounters();
-    flowModelCompiler.compile(nodeModel.props.flowTree);
-    const errorsCount = flowModelCompiler.getErrorsCount();
-    const changesCount = flowModelCompiler.getChangesCount();
-    if (errorsCount > 0 || changesCount > 0) {
-      // set error flag on each item in the hierarchy: root -> dir -> flow
-      // this is done to indicate the error on the UI resource tree
-      flowsGraphModel.mergeNode(nodeModel.key, { props: { hasErrors: errorsCount > 0 } });
-      const parentKeys = flowsGraphModel.getAllParentKeys(nodeModel.key);
-      if (parentKeys && parentKeys.length > 0) {
-        parentKeys.forEach(parentKey => {
-          flowsGraphModel.mergeNode(parentKey, { props: { hasErrors: errorsCount > 0 } });
-        });
+  if (nodeModel && nodeModel.props) {
+    if (
+      nodeModel.type === constants.GRAPH_MODEL_FLOW_TYPE &&
+      nodeModel.props.flowTree
+    ) {
+      flowModelCompiler.resetCounters();
+      flowModelCompiler.compile(nodeModel.props.flowTree);
+      const errorsCount = flowModelCompiler.getErrorsCount();
+      const changesCount = flowModelCompiler.getChangesCount();
+      if (errorsCount > 0 || changesCount > 0) {
+        // set error flag on each item in the hierarchy: root -> dir -> flow
+        // this is done to indicate the error on the UI resource tree
+        flowsGraphModel.mergeNode(nodeModel.key, { props: { hasErrors: errorsCount > 0 } });
+        const parentKeys = flowsGraphModel.getAllParentKeys(nodeModel.key);
+        if (parentKeys && parentKeys.length > 0) {
+          parentKeys.forEach(parentKey => {
+            flowsGraphModel.mergeNode(parentKey, { props: { hasErrors: errorsCount > 0 } });
+          });
+        }
       }
+      result.push({
+        errorsCount,
+        changesCount,
+      });
+    } else if (
+      nodeModel.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE
+    ) {
+      // we have to compile flow user function reference
+      // because it is used for dropping into flow as the copy
+      flowModelCompiler.resetCounters();
+      flowModelCompiler.compile(nodeModel);
+    } else if (
+      nodeModel.type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE
+    ) {
+      // we have to compile flow component instance reference
+      // because it is used for dropping into flow as the copy
+      flowModelCompiler.resetCounters();
+      flowModelCompiler.compile(nodeModel);
     }
-    result.push({
-      errorsCount,
-      changesCount,
-    });
   }
   return result;
 };
 
 const pagesResourceVisitor = ({pageModelCompiler, pagesGraphModel}) => ({ nodeModel, parentModel }) => {
   const result = [];
-  if (
-    nodeModel &&
-    nodeModel.type === constants.GRAPH_MODEL_PAGE_TYPE &&
-    nodeModel.props &&
-    nodeModel.props.componentsTree
-  ) {
-    pageModelCompiler.resetCounters();
-    nodeModel.props.componentsTree = pageModelCompiler.compile(nodeModel.props.componentsTree);
-    const errorsCount = pageModelCompiler.getErrorsCount();
-    const changesCount = pageModelCompiler.getChangesCount();
-    if (errorsCount > 0 || changesCount > 0) {
-      // set error flag on each item in the hierarchy: root -> dir -> page
-      // this is done to indicate the error on the UI resource tree
-      pagesGraphModel.mergeNode(nodeModel.key, { props: { hasErrors: errorsCount > 0 } });
-      const parentKeys = pagesGraphModel.getAllParentKeys(nodeModel.key);
-      if (parentKeys && parentKeys.length > 0) {
-        parentKeys.forEach(parentKey => {
-          pagesGraphModel.mergeNode(parentKey, { props: { hasErrors: errorsCount > 0 } });
-        });
+  if (nodeModel && nodeModel.props) {
+    if (
+      nodeModel.type === constants.GRAPH_MODEL_PAGE_TYPE
+      && nodeModel.props.componentsTree
+    ) {
+      pageModelCompiler.resetCounters();
+      nodeModel.props.componentsTree = pageModelCompiler.compile(nodeModel.props.componentsTree);
+      const errorsCount = pageModelCompiler.getErrorsCount();
+      const changesCount = pageModelCompiler.getChangesCount();
+      if (errorsCount > 0 || changesCount > 0) {
+        // set error flag on each item in the hierarchy: root -> dir -> page
+        // this is done to indicate the error on the UI resource tree
+        pagesGraphModel.mergeNode(nodeModel.key, { props: { hasErrors: errorsCount > 0 } });
+        const parentKeys = pagesGraphModel.getAllParentKeys(nodeModel.key);
+        if (parentKeys && parentKeys.length > 0) {
+          parentKeys.forEach(parentKey => {
+            pagesGraphModel.mergeNode(parentKey, { props: { hasErrors: errorsCount > 0 } });
+          });
+        }
       }
+      result.push({
+        errorsCount,
+        changesCount,
+      });
+    } else if (
+      nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE
+      && nodeModel.props.componentsTreeChunk
+    ) {
+      // we have to compile all referenced component instance in the graph,
+      // because they are used for dropping into flows
+      pageModelCompiler.resetCounters();
+      nodeModel.props.componentsTreeChunk = pageModelCompiler.compile(nodeModel.props.componentsTreeChunk);
     }
-    result.push({
-      errorsCount,
-      changesCount,
-    });
   }
   return result;
 };
@@ -143,35 +165,35 @@ function componentInstancesResourceVisitor ({ nodeModel, parentModel }) {
   return result;
 }
 
-export function checkResources(declarationsInFiles) {
-  let newFlowsCount = 0;
-  let newPagesCount = 0;
-  if (declarationsInFiles && declarationsInFiles.length > 0) {
-    declarationsInFiles.forEach(declarationsInFile => {
-      if (declarationsInFile.isInFlows){
-        newFlowsCount++;
-      }
-      if (declarationsInFile.isInPages) {
-        newPagesCount++;
-      }
-    });
-  }
-  let flowModels = [];
-  const flowsGraphModel =
-    projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_FLOWS_TYPE);
-  if (flowsGraphModel) {
-    flowModels = flowsGraphModel.traverse(flowsResourceVisitor);
-  }
-  let pageModels = [];
-  const pagesGraphModel = projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_PAGES_TYPE);
-  if (pagesGraphModel) {
-    pageModels = pagesGraphModel.traverse(pagesResourceVisitor);
-  }
-  if ((flowModels.length + newFlowsCount) > 10 ||
-    (pageModels.length + newPagesCount) > 5) {
-    throw Error('Wrong resources');
-  }
-}
+// export function checkResources(declarationsInFiles) {
+//   let newFlowsCount = 0;
+//   let newPagesCount = 0;
+//   if (declarationsInFiles && declarationsInFiles.length > 0) {
+//     declarationsInFiles.forEach(declarationsInFile => {
+//       if (declarationsInFile.isInFlows){
+//         newFlowsCount++;
+//       }
+//       if (declarationsInFile.isInPages) {
+//         newPagesCount++;
+//       }
+//     });
+//   }
+//   let flowModels = [];
+//   const flowsGraphModel =
+//     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_FLOWS_TYPE);
+//   if (flowsGraphModel) {
+//     flowModels = flowsGraphModel.traverse(flowsResourceVisitor);
+//   }
+//   let pageModels = [];
+//   const pagesGraphModel = projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_PAGES_TYPE);
+//   if (pagesGraphModel) {
+//     pageModels = pagesGraphModel.traverse(pagesResourceVisitor);
+//   }
+//   if ((flowModels.length + newFlowsCount) > 10 ||
+//     (pageModels.length + newPagesCount) > 5) {
+//     throw Error('Wrong resources');
+//   }
+// }
 
 export function compileResources () {
 
