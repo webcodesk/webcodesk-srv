@@ -246,11 +246,22 @@ class GraphModel {
     this.graphInstance.setParent(newNodeKey, nodeKey);
   }
 
-  updateChildrenOrder(nodeKey, model) {
-    const parentNodeKey = this.graphInstance.parent(nodeKey);
-    const newNodeKey = this.mapModel(model);
-    if (parentNodeKey) {
-      this.graphInstance.setParent(newNodeKey, parentNodeKey);
+  updateChildrenOrder(model) {
+    if (model && model.children) {
+      const {children} = model;
+      let foundChildModel;
+      if (children && children.length > 0) {
+        children.forEach((child, idx) => {
+          const { key } = child;
+          if (key) {
+            foundChildModel = this.graphInstance.node(key);
+            if (foundChildModel) {
+              foundChildModel.index = idx;
+              this.graphInstance.setNode(key, foundChildModel);
+            }
+          }
+        });
+      }
     }
   }
 
@@ -352,6 +363,10 @@ class GraphModel {
 
   getPostorderKeys() {
     return graphlib.alg.postorder(this.graphInstance, this.rootNodeKey);
+  }
+
+  getIndexComparator() {
+    return indexComparator;
   }
 
 }

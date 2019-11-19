@@ -352,6 +352,17 @@ class ComponentView extends React.Component {
     this.updateLocalState();
   };
 
+  handleUpdateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
+    if (newComponentPropertyModel) {
+      this.pageComposerManager.updateComponentPropertyArrayOrder(newComponentPropertyModel);
+      const { selectedComponentModel } = this.state;
+      if (selectedComponentModel) {
+        this.pageComposerManager.selectCell(selectedComponentModel.key);
+      }
+      this.updateLocalState(true);
+    }
+  };
+
   handleSaveAsTemplate = () => {
     this.props.onSaveAsTemplate(this.state.localComponentsTree);
   };
@@ -534,6 +545,7 @@ class ComponentView extends React.Component {
                     onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
                     onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
                     onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
                   />
                 </div>
               </SplitPane>

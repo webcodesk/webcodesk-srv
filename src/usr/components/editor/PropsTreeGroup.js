@@ -30,9 +30,7 @@ import Typography from '@material-ui/core/Typography';
 import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
 import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
 import Delete from '@material-ui/icons/Delete';
-
 import * as constants from '../../../commons/constants';
-import { ResourceListItem } from '../panels/ResourcesTreeView.parts';
 
 const styles = theme => ({
   listItemPrefixSector: {
@@ -104,6 +102,7 @@ export const PropsListItemButton = withStyles({
   root: {
     padding: '3px',
     fontSize: '12px',
+    color: '#aaaaaa',
   }
 })(IconButton);
 
@@ -260,9 +259,9 @@ class PropsTreeGroup extends React.Component {
                   }
               >
                 <div className={classes.title}>
-                <span className={isError ? classes.errorText : classes.titleText}>
-                  {name}
-                </span>
+                  <span className={isError ? classes.errorText : classes.titleText}>
+                    {name}
+                  </span>
                 </div>
               </Tooltip>
               {type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE && (

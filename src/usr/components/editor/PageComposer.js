@@ -798,6 +798,7 @@ class PageComposer extends React.Component {
                     onRenameComponentInstance={this.handleRenameComponentInstance}
                     onErrorClick={this.handleErrorClick}
                     onOpenComponent={this.handleOpenComponent}
+                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
                   />
                 </div>
               </SplitPane>

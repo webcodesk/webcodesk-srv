@@ -56,6 +56,7 @@ class ComponentPropsTree extends React.Component {
     onRenameComponentInstance: PropTypes.func,
     onErrorClick: PropTypes.func,
     onOpenComponent: PropTypes.func,
+    onUpdateComponentPropertyArrayOrder: PropTypes.func,
   };
 
   static defaultProps = {
@@ -79,6 +80,9 @@ class ComponentPropsTree extends React.Component {
     onOpenComponent: () => {
       console.info('ComponentPropsTree.onOpenComponent is not set');
     },
+    onUpdateComponentPropertyArrayOrder: () => {
+      console.info('ComponentPropsTree.onUpdateComponentPropertyArrayOrder is not set');
+    },
   };
 
   constructor (props, context) {
@@ -94,6 +98,10 @@ class ComponentPropsTree extends React.Component {
 
   handleUpdateComponentPropertyModel = (newComponentPropertyModel) => {
     this.props.onUpdateComponentPropertyModel(newComponentPropertyModel);
+  };
+
+  handleUpdateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
+    this.props.onUpdateComponentPropertyArrayOrder(newComponentPropertyModel);
   };
 
   handleIncreaseComponentPropertyArray = (propertyKey) => {
@@ -163,6 +171,7 @@ class ComponentPropsTree extends React.Component {
             onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
+            onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
             properties={children}
           />
         </div>

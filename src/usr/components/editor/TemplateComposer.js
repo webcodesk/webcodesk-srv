@@ -395,6 +395,17 @@ class TemplateComposer extends React.Component {
     this.updateLocalState(true);
   };
 
+  handleUpdateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
+    if (newComponentPropertyModel) {
+      this.pageComposerManager.updateComponentPropertyArrayOrder(newComponentPropertyModel);
+      const { selectedComponentModel } = this.state;
+      if (selectedComponentModel) {
+        this.pageComposerManager.selectCell(selectedComponentModel.key);
+      }
+      this.updateLocalState(true);
+    }
+  };
+
   handleDeleteComponentInstance = () => {
     const { selectedComponentModel } = this.state;
     if (selectedComponentModel) {
@@ -755,6 +766,7 @@ class TemplateComposer extends React.Component {
                     onRenameComponentInstance={this.handleRenameComponentInstance}
                     onErrorClick={this.handleErrorClick}
                     onOpenComponent={this.handleOpenComponent}
+                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
                   />
                 </div>
               </SplitPane>

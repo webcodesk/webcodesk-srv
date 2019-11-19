@@ -137,8 +137,7 @@ class PageComposerManager {
 
   updateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
     if (newComponentPropertyModel) {
-      const { key } = newComponentPropertyModel;
-      return this.graphModel.updateChildrenOrder(key, newComponentPropertyModel);
+      this.graphModel.updateChildrenOrder(newComponentPropertyModel);
     }
   };
 

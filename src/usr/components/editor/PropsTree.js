@@ -21,10 +21,28 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PropsTreeItem from './PropsTreeItem';
 import * as constants from '../../../commons/constants';
 import PropsTreeGroup from './PropsTreeGroup';
 import EditJsonDialog from '../dialogs/EditJsonDialog';
+import { arrayMove } from '../../core/utils/arrayUtils';
+
+const DragHandler = SortableHandle(({element}) => element);
+
+const SortableTreeItem = SortableElement(({element}) => element);
+
+const SortableTreeList = SortableContainer(({items, classes}) => {
+  return (
+    <div className={classes.listContainer}>
+      {items.map((element, index) => {
+        return (
+          <SortableTreeItem key={`item-${index}`} index={index} element={element} />
+        );
+      })}
+    </div>
+  )
+});
 
 const TREE_VIEW_INDENT = '21px';
 const FIRST_LIST_INDENT = '0px';
@@ -65,6 +83,18 @@ const styles = theme => ({
     alignItems: 'center',
     flexDirection: 'column',
   },
+  dragHandlerContainer: {
+    position: 'relative',
+  },
+  dragHandler: {
+    position: 'absolute',
+    top: '9px',
+    left: '-16px',
+    color: '#aaaaaa',
+    cursor: 'move',
+    fontSize: '10px',
+    zIndex: 10
+  }
 });
 
 class PropsTree extends React.Component {
@@ -74,6 +104,7 @@ class PropsTree extends React.Component {
     onIncreaseComponentPropertyArray: PropTypes.func,
     onDeleteComponentProperty: PropTypes.func,
     onErrorClick: PropTypes.func,
+    onUpdateComponentPropertyArrayOrder: PropTypes.func,
   };
 
   static defaultProps = {
@@ -89,6 +120,9 @@ class PropsTree extends React.Component {
     },
     onErrorClick: () => {
       console.info('PropsTree.onErrorClick is not set');
+    },
+    onUpdateComponentPropertyArrayOrder: () => {
+      console.info('PropsTree.onUpdateComponentPropertyArrayOrder is not set');
     },
   };
 
@@ -126,8 +160,11 @@ class PropsTree extends React.Component {
     this.props.onDeleteComponentProperty(propertyKey);
   };
 
-  handleUpdateComponentPropertyArrayOrder = () => {
-
+  handleUpdateComponentPropertyArrayOrder = (model) => ({oldIndex, newIndex}) => {
+    if (model && model.children) {
+      model.children = arrayMove(model.children, oldIndex, newIndex);
+    }
+    this.props.onUpdateComponentPropertyArrayOrder(model);
   };
 
   handleErrorClick = (messages) => {
@@ -171,17 +208,19 @@ class PropsTree extends React.Component {
   createList = (node, level = 0, arrayIndex = null) => {
     const { classes } = this.props;
     let result = [];
+    let isArrayItem = false;
     if (node) {
       const { key, type, props, children } = node;
-      // const paddingLeft = `${(level * 16)}px`;
       const { propertyName } = props;
       let listItemLabelName;
       if (!isNull(arrayIndex) && arrayIndex >= 0) {
         listItemLabelName = `${arrayIndex} item`;
+        isArrayItem = true;
+      } else {
+        isArrayItem = false;
       }
       if (propertyName) {
         if (listItemLabelName) {
-          // listItemLabelName = `[${arrayIndex}].${propertyName}`;
           listItemLabelName = propertyName;
         } else {
           listItemLabelName = propertyName;
@@ -205,7 +244,7 @@ class PropsTree extends React.Component {
             <div key={`${key}_container`} className={classes.listItemContainer}>
               <div className={classes.listContainer}>
                 {children.reduce(
-                  (acc, child) => acc.concat(this.createList(child, level + 1, arrayIndex)),
+                  (acc, child) => acc.concat(this.createList(child, level + 1, null)),
                   []
                 )}
               </div>
@@ -229,12 +268,15 @@ class PropsTree extends React.Component {
         if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
           result.push(
             <div key={`${key}_container`} className={classes.listItemContainer}>
-              <div className={classes.listContainer}>
-                {children.reduce(
+              <SortableTreeList
+                classes={classes}
+                useDragHandle={true}
+                items={children.reduce(
                   (acc, child, childIdx) => acc.concat(this.createList(child, level + 1, childIdx)),
                   []
                 )}
-              </div>
+                onSortEnd={this.handleUpdateComponentPropertyArrayOrder(node)}
+              />
             </div>
           );
         }
@@ -271,6 +313,18 @@ class PropsTree extends React.Component {
           />
         );
       }
+    }
+    if (isArrayItem) {
+      return [
+        <div className={classes.dragHandlerContainer}>
+          <DragHandler
+            element={
+              <div className={`${classes.dragHandler} fas fa-grip-horizontal`} />
+            }
+          />
+          {result}
+        </div>
+      ];
     }
     return result;
   };
