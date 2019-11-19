@@ -32,6 +32,7 @@ import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
 import Delete from '@material-ui/icons/Delete';
 
 import * as constants from '../../../commons/constants';
+import { ResourceListItem } from '../panels/ResourcesTreeView.parts';
 
 const styles = theme => ({
   listItemPrefixSector: {
@@ -224,6 +225,8 @@ class PropsTreeGroup extends React.Component {
     }
     return (
       <PropsTreeGroupListItem
+        component="div"
+        disableGutters={true}
         style={{ paddingLeft }}
         button={false}
         onClick={isError ? this.handleErrorClick : this.handleToggleExpandItem}
@@ -251,9 +254,7 @@ class PropsTreeGroup extends React.Component {
                     )
                     : (
                       <React.Fragment>
-                        <Typography variant="caption">There is no comment for this property. Please add a line before
-                          the property name:</Typography>
-                        <Typography>{'// Comment text explaining what is this'}</Typography>
+                        <Typography variant="caption">There is no comment for this property.</Typography>
                       </React.Fragment>
                     )
                   }

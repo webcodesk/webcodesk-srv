@@ -408,6 +408,17 @@ class PageComposer extends React.Component {
     this.updateLocalState(true);
   };
 
+  handleUpdateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
+    if (newComponentPropertyModel) {
+      this.pageComposerManager.updateComponentPropertyArrayOrder(newComponentPropertyModel);
+      const { selectedComponentModel } = this.state;
+      if (selectedComponentModel) {
+        this.pageComposerManager.selectCell(selectedComponentModel.key);
+      }
+      this.updateLocalState(true);
+    }
+  };
+
   handleDeleteComponentInstance = () => {
     const { selectedComponentModel } = this.state;
     if (selectedComponentModel) {

@@ -62,6 +62,7 @@ const styles = theme => ({
     boxSizing: 'border-box',
     overflow: 'hidden',
     paddingLeft: FIRST_LIST_INDENT,
+    paddingBottom: '5px'
   },
   listContainer: {
     width: '100%',
@@ -75,10 +76,10 @@ const styles = theme => ({
       content: `''`,
       position: 'absolute',
       top: 0,
-      left: TREE_VIEW_INDENT,
+      left: '9px',
       bottom: 0,
       width: 0,
-      borderLeft: '1px solid #f5f5f5',
+      borderLeft: '1px solid #e2e2e2',
     }
   },
   listItemContainer: {

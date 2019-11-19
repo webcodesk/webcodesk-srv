@@ -135,6 +135,13 @@ class PageComposerManager {
     this.graphModel.deleteNode(targetKey);
   };
 
+  updateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
+    if (newComponentPropertyModel) {
+      const { key } = newComponentPropertyModel;
+      return this.graphModel.updateChildrenOrder(key, newComponentPropertyModel);
+    }
+  };
+
   increaseComponentPropertyArray = (targetKey) => {
     const nodeModel = this.graphModel.getNode(targetKey);
     if (nodeModel) {

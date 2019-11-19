@@ -50,7 +50,8 @@ const styles = theme => ({
   listItemContent: {
     display: 'flex',
     alignItems: 'flex-start',
-    width: '100%'
+    width: '100%',
+    paddingRight: '2px'
   },
   buttonIcon: {
     fontSize: '12px'
@@ -432,6 +433,8 @@ class PropsTreeItem extends React.Component {
     const isError = errors && !isEmpty(errors);
     return (
       <PropsTreeListItem
+        component="div"
+        disableGutters={true}
         style={{ paddingLeft }}
         button={false}
         onClick={!isEmpty(errors) ? this.handleErrorClick : this.handleClick}
@@ -462,8 +465,7 @@ class PropsTreeItem extends React.Component {
                             )
                             : (
                               <React.Fragment>
-                                <Typography variant="caption">There is no comment for this property. Please add a line before the property name:</Typography>
-                                <Typography>{'// Comment text explaining what this is'}</Typography>
+                                <Typography variant="caption">There is no comment for this property.</Typography>
                               </React.Fragment>
                             )
                           }

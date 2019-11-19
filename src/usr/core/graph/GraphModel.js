@@ -246,6 +246,14 @@ class GraphModel {
     this.graphInstance.setParent(newNodeKey, nodeKey);
   }
 
+  updateChildrenOrder(nodeKey, model) {
+    const parentNodeKey = this.graphInstance.parent(nodeKey);
+    const newNodeKey = this.mapModel(model);
+    if (parentNodeKey) {
+      this.graphInstance.setParent(newNodeKey, parentNodeKey);
+    }
+  }
+
   deleteChildren(nodeKey) {
     const childrenKeys = this.graphInstance.children(nodeKey);
     if (childrenKeys && childrenKeys.length > 0) {

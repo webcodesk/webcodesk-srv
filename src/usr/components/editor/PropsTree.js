@@ -26,10 +26,45 @@ import * as constants from '../../../commons/constants';
 import PropsTreeGroup from './PropsTreeGroup';
 import EditJsonDialog from '../dialogs/EditJsonDialog';
 
+const TREE_VIEW_INDENT = '21px';
+const FIRST_LIST_INDENT = '0px';
+
 const styles = theme => ({
   footerArea: {
     height: '7em',
-  }
+  },
+  firstListContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    paddingLeft: FIRST_LIST_INDENT,
+  },
+  listContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    paddingLeft: TREE_VIEW_INDENT,
+    position: 'relative',
+    '&::after': {
+      content: `''`,
+      position: 'absolute',
+      top: 0,
+      left: '9px',
+      bottom: 0,
+      width: 0,
+      borderLeft: '1px solid #e2e2e2',
+    }
+  },
+  listItemContainer: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
 });
 
 class PropsTree extends React.Component {
@@ -91,6 +126,10 @@ class PropsTree extends React.Component {
     this.props.onDeleteComponentProperty(propertyKey);
   };
 
+  handleUpdateComponentPropertyArrayOrder = () => {
+
+  };
+
   handleErrorClick = (messages) => {
     this.props.onErrorClick(messages);
   };
@@ -130,10 +169,11 @@ class PropsTree extends React.Component {
   };
 
   createList = (node, level = 0, arrayIndex = null) => {
+    const { classes } = this.props;
     let result = [];
     if (node) {
       const { key, type, props, children } = node;
-      const paddingLeft = `${(level * 16)}px`;
+      // const paddingLeft = `${(level * 16)}px`;
       const { propertyName } = props;
       let listItemLabelName;
       if (!isNull(arrayIndex) && arrayIndex >= 0) {
@@ -151,7 +191,6 @@ class PropsTree extends React.Component {
         result.push(
           <PropsTreeGroup
             key={key}
-            paddingLeft={paddingLeft}
             name={listItemLabelName}
             propertyModel={node}
             type={type}
@@ -162,16 +201,21 @@ class PropsTree extends React.Component {
           />
         );
         if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
-          result = children.reduce(
-            (acc, child) => acc.concat(this.createList(child, level + 1, arrayIndex)),
-            result
+          result.push(
+            <div key={`${key}_container`} className={classes.listItemContainer}>
+              <div className={classes.listContainer}>
+                {children.reduce(
+                  (acc, child) => acc.concat(this.createList(child, level + 1, arrayIndex)),
+                  []
+                )}
+              </div>
+            </div>
           );
         }
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         result.push(
           <PropsTreeGroup
             key={key}
-            paddingLeft={paddingLeft}
             name={listItemLabelName}
             propertyModel={node}
             type={type}
@@ -183,16 +227,21 @@ class PropsTree extends React.Component {
           />
         );
         if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
-          result = children.reduce(
-            (acc, child, childIdx) => acc.concat(this.createList(child, level + 1, childIdx)),
-            result
+          result.push(
+            <div key={`${key}_container`} className={classes.listItemContainer}>
+              <div className={classes.listContainer}>
+                {children.reduce(
+                  (acc, child, childIdx) => acc.concat(this.createList(child, level + 1, childIdx)),
+                  []
+                )}
+              </div>
+            </div>
           );
         }
       } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
           result.push(
             <PropsTreeItem
               key={key}
-              paddingLeft={paddingLeft}
               name={listItemLabelName}
               propertyModel={node}
               onDeleteComponentProperty={this.handleDeleteComponentProperty}
@@ -203,7 +252,6 @@ class PropsTree extends React.Component {
           result.push(
             <PropsTreeItem
               key={key}
-              paddingLeft={paddingLeft}
               name={listItemLabelName}
               propertyModel={node}
               onDeleteComponentProperty={this.handleDeleteComponentProperty}
@@ -214,7 +262,6 @@ class PropsTree extends React.Component {
         result.push(
           <PropsTreeItem
             key={key}
-            paddingLeft={paddingLeft}
             name={listItemLabelName}
             propertyModel={node}
             onPropertyUpdate={this.handleUpdateComponentPropertyModel}
@@ -245,10 +292,14 @@ class PropsTree extends React.Component {
             dense={true}
             disablePadding={true}
           >
-            {properties.reduce(
-              (acc, child) => acc.concat(this.createList(child)),
-              []
-            )}
+            <div className={classes.listItemContainer}>
+              <div className={classes.firstListContainer}>
+                {properties.reduce(
+                  (acc, child) => acc.concat(this.createList(child)),
+                  []
+                )}
+              </div>
+            </div>
           </List>
           <div className={classes.footerArea} />
           <EditJsonDialog
