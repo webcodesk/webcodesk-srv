@@ -48,7 +48,8 @@ const styles = theme => ({
     flexGrow: 2,
   },
   titleText: {
-    fontWeight: 700,
+    fontWeight: 400,
+    fontSize: '14px'
   },
   errorText: {
     color: '#D50000',
@@ -214,12 +215,12 @@ class PropsTreeGroup extends React.Component {
     const hasChildren = children && children.length > 0;
     let expandIcon;
     if (!hasChildren) {
-      expandIcon = (<PanoramaFishEye className={classes.buttonIcon} color="disabled"/>);
+      expandIcon = (<PanoramaFishEye className={classes.buttonIcon} color="primary"/>);
     } else {
       if (isExpanded) {
-        expandIcon = (<RemoveCircleOutline className={classes.buttonIcon} color="disabled"/>);
+        expandIcon = (<RemoveCircleOutline className={classes.buttonIcon} color="primary"/>);
       } else {
-        expandIcon = (<AddCircleOutline className={classes.buttonIcon} color="disabled"/>);
+        expandIcon = (<AddCircleOutline className={classes.buttonIcon} color="primary"/>);
       }
     }
     return (

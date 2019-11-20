@@ -58,9 +58,8 @@ export function createComponentsTree(model, rootModelProps) {
             rootModelProps[propertyName] = null;
           }
         } else {
-          // rootModelProps = rootModelProps || [];
           if (propertyValue) {
-            rootModelProps = cloneDeep(propertyValue);
+            rootModelProps.push(cloneDeep(propertyValue));
           }
         }
       }
