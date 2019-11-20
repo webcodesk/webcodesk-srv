@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+import orderBy from 'lodash/orderBy';
 import cloneDeep from 'lodash/cloneDeep';
 import isUndefined from 'lodash/isUndefined';
 import constants from '../../../commons/constants';
@@ -150,6 +151,14 @@ export function traverseProperties(properties, defaults) {
         }
         result.push(newChildItem);
       }
+    });
+  }
+  if (result.length > 0) {
+    result = orderBy(result, propItem => {
+      if (propItem && propItem.props) {
+        return propItem.props.propertyName;
+      }
+      return undefined;
     });
   }
   return result;

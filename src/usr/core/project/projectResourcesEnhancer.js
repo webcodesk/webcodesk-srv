@@ -216,6 +216,12 @@ function componentEnrichVisitor ({ nodeModel, parentModel }) {
         // now when all properties are fulfilled but still are without default values
         // we have to save them for the referencing
         props.propertiesRef = getPropertiesRef(props.properties);
+        props.propertiesRef = orderBy(props.propertiesRef, propItem => {
+          if (propItem && propItem.props) {
+            return propItem.props.propertyName;
+          }
+          return undefined;
+        });
         // and here we set the default values to the properties
         if (props.defaultProps) {
           traversePropertiesWithDefaultValues(props.properties, props.defaultProps);
