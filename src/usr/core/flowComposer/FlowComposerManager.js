@@ -231,14 +231,16 @@ class FlowComposerManager {
     if (parentModel && parentModel.props && parentModel.props.outputs) {
       parentOutputs = parentModel.props.outputs;
     }
-    const { props: { inputs } } = model;
-    if (inputs && inputs.length > 0) {
-      let foundParentOutput;
-      for(let i = 0; i < inputs.length; i++) {
-        if (!!inputs[i].connectedTo) {
-          foundParentOutput = parentOutputs.find(parentOutput => parentOutput.name === inputs[i].connectedTo);
-          if (!foundParentOutput) {
-            delete inputs[i].connectedTo;
+    if (model && model.props) {
+      const { props: { inputs } } = model;
+      if (inputs && inputs.length > 0) {
+        let foundParentOutput;
+        for (let i = 0; i < inputs.length; i++) {
+          if (!!inputs[i].connectedTo) {
+            foundParentOutput = parentOutputs.find(parentOutput => parentOutput.name === inputs[i].connectedTo);
+            if (!foundParentOutput) {
+              delete inputs[i].connectedTo;
+            }
           }
         }
       }

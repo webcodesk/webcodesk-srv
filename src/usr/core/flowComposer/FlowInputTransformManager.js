@@ -119,9 +119,6 @@ class FlowInputTransformManager {
   _testDataScript;
   _transformScript;
 
-  constructor () {
-  }
-
   getOutputPropertiesModel () {
     return this._outputPropertiesModel;
   }
@@ -143,7 +140,8 @@ class FlowInputTransformManager {
   }
 
   getDefaultTestDataScript() {
-    return this._testDataScript || format(`return function () { ${this.getOutputSampleObjectText()} return data; }`);
+    return this._testDataScript ||
+      format(`return function () { ${this.getOutputSampleObjectText()} return outputObject; }`);
   }
 
   setTestDataScript (value) {
@@ -155,7 +153,7 @@ class FlowInputTransformManager {
   }
 
   getDefaultTransformScript () {
-    return this._transformScript || 'return function (data) { return data; }';
+    return this._transformScript || 'return function (inputObject) { return outputObject; }';
   }
 
   setTransformScript (value) {
@@ -164,20 +162,20 @@ class FlowInputTransformManager {
 
   getInputSampleObjectText () {
     if (this._inputPropertiesModel) {
-      const dataObjectCode = this.createNextLine(this._inputPropertiesModel).join('\n');
+      const dataObjectCode = this.createNextLine(this._inputPropertiesModel, 'inputObject').join('\n');
       return dataObjectCode && dataObjectCode.length > 0
         ? format(dataObjectCode)
-        : 'const data = null;';
+        : 'const inputObject = null;';
     }
     return '';
   }
 
   getOutputSampleObjectText () {
     if (this._outputPropertiesModel) {
-      const dataObjectCode = this.createNextLine(this._outputPropertiesModel).join('\n');
+      const dataObjectCode = this.createNextLine(this._outputPropertiesModel, 'outputObject').join('\n');
       return dataObjectCode && dataObjectCode.length > 0
         ? format(dataObjectCode)
-        : 'const data = null;';
+        : 'const outputObject = null;';
     }
     return '';
   }
@@ -189,21 +187,21 @@ class FlowInputTransformManager {
     return null;
   }
 
-  createNextLine = (node, level = 0) => {
+  createNextLine = (node, variableName, level = 0) => {
     let result = [];
     if (node) {
       const { type, props, children } = node;
       let propertyName;
-      let propertyComment;
-      let isRequired;
+      // let propertyComment;
+      // let isRequired;
       if (props) {
         propertyName = props.propertyName;
-        propertyComment = props.propertyComment;
-        isRequired = props.isRequired;
+        // propertyComment = props.propertyComment;
+        // isRequired = props.isRequired;
       }
-      if (propertyComment) {
-        result.push(`/* ${propertyComment} */`);
-      }
+      // if (propertyComment) {
+      //   result.push(`/* ${propertyComment} */`);
+      // }
       if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         if (propertyName) {
           if (level > 0) {
@@ -211,12 +209,12 @@ class FlowInputTransformManager {
               `${propertyName}: {`
             );
           } else {
-            result.push(`// type: object, required: ${!!isRequired}`);
-            result.push('const data = {');
+            // result.push(`// type: object, required: ${!!isRequired}`);
+            result.push(`const ${variableName} = {`);
           }
           if (children && children.length > 0) {
             result = children.reduce(
-              (acc, child) => acc.concat(this.createNextLine(child, level + 1)),
+              (acc, child) => acc.concat(this.createNextLine(child, variableName, level + 1)),
               result
             );
           }
@@ -229,12 +227,12 @@ class FlowInputTransformManager {
               '{'
             );
           } else {
-            result.push(`// type: object, required: ${!!isRequired}`);
-            result.push('const data = {');
+            // result.push(`// type: object, required: ${!!isRequired}`);
+            result.push(`const ${variableName} = {`);
           }
           if (children && children.length > 0) {
             result = children.reduce(
-              (acc, child) => acc.concat(this.createNextLine(child, level + 1)),
+              (acc, child) => acc.concat(this.createNextLine(child, variableName, level + 1)),
               result
             );
           }
@@ -249,12 +247,12 @@ class FlowInputTransformManager {
               `${propertyName}: [`
             );
           } else {
-            result.push(`// type: array, required: ${!isRequired}`);
-            result.push('const data = [');
+            // result.push(`// type: array, required: ${!isRequired}`);
+            result.push(`const ${variableName} = [`);
           }
           if (children && children.length > 0) {
             result = children.reduce(
-              (acc, child) => acc.concat(this.createNextLine(child, level + 1)),
+              (acc, child) => acc.concat(this.createNextLine(child, variableName, level + 1)),
               result
             );
           }
@@ -267,12 +265,12 @@ class FlowInputTransformManager {
               '['
             );
           } else {
-            result.push(`// type: array, required: ${!!isRequired}`);
-            result.push('const data = [');
+            // result.push(`// type: array, required: ${!!isRequired}`);
+            result.push(`const ${variableName} = [`);
           }
           if (children && children.length > 0) {
             result = children.reduce(
-              (acc, child) => acc.concat(this.createNextLine(child, level + 1)),
+              (acc, child) => acc.concat(this.createNextLine(child, variableName, level + 1)),
               result
             );
           }
@@ -287,7 +285,7 @@ class FlowInputTransformManager {
               '{'
             );
             result = children.reduce(
-              (acc, child) => acc.concat(this.createNextLine(child, level + 1)),
+              (acc, child) => acc.concat(this.createNextLine(child, variableName, level + 1)),
               result
             );
             result.push(
@@ -300,18 +298,18 @@ class FlowInputTransformManager {
           }
         } else {
           if (children && children.length > 0) {
-            result.push(`// type: object, required: ${!!isRequired}`);
-            result.push('const data = {');
+            // result.push(`// type: object, required: ${!!isRequired}`);
+            result.push(`const ${variableName} = {`);
             result = children.reduce(
-              (acc, child) => acc.concat(this.createNextLine(child, level + 1)),
+              (acc, child) => acc.concat(this.createNextLine(child, variableName, level + 1)),
               result
             );
             result.push(
               `}${level > 0 ? ',' : ';'}`
             );
           } else {
-            result.push('// type: any');
-            result.push('const data = null;');
+            // result.push('// type: any');
+            result.push(`const ${variableName} = null;`);
           }
         }
       } else if (type === constants.COMPONENT_PROPERTY_STRING_TYPE
@@ -323,14 +321,14 @@ class FlowInputTransformManager {
         || type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
         || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
         const commentValues = propertyTypeMap[type](node);
-        result.push(`${commentValues.typeInComment}`);
+        // result.push(`${commentValues.typeInComment}`);
         if (propertyName) {
           if (level > 0) {
             result.push(
               `${commentValues.sampleCode},`
             );
           } else {
-            result.push(`const data = ${commentValues.singleSampleCode};`);
+            result.push(`const ${variableName} = ${commentValues.singleSampleCode};`);
           }
         }
       }
@@ -474,12 +472,13 @@ class FlowInputTransformManager {
     }
 
     if (errors.length > 0) {
-      errors.push('Usage: ');
-      errors.push('1. The test script should return function: return function () { ... }');
-      errors.push('2. The function in test script should return a data that ' +
+      output.push('');
+      output.push('Usage: ');
+      output.push('1. The test script should return function: return function () { ... }');
+      output.push('2. The function in test script should return a data that ' +
         'matches the structure and data type of the output endpoint or null.');
-      errors.push('3. The transformation script should return function: return function (data) { ... }');
-      errors.push('4. The function in transformation script should return data that ' +
+      output.push('3. The transformation script should return function: return function (data) { ... }');
+      output.push('4. The function in transformation script should return data that ' +
         'matches the structure and data type of the input endpoint');
     }
 
