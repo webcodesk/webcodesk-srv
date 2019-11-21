@@ -15,7 +15,7 @@
  */
 
 import isNull from 'lodash/isNull';
-import isEqual from 'lodash/isEqual';
+import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -97,6 +97,26 @@ const styles = theme => ({
   }
 });
 
+const propertyComparator = (aModel, bModel) => {
+  const { props: { propertyName: aPropertyName } } = aModel;
+  const { props: { propertyName: bPropertyName } } = bModel;
+  if (!aPropertyName && bPropertyName) {
+    return 1;
+  } else if (aPropertyName && !bPropertyName) {
+    return -1;
+  } else if (!aPropertyName && !bPropertyName) {
+    return 0;
+  } else {
+    if (aPropertyName === constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
+      return -1;
+    }
+    if (bPropertyName === constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
+      return 1;
+    }
+    return aPropertyName.localeCompare(bPropertyName);
+  }
+};
+
 class PropsTree extends React.Component {
   static propTypes = {
     properties: PropTypes.array,
@@ -128,19 +148,31 @@ class PropsTree extends React.Component {
 
   constructor (props, context) {
     super(props, context);
+    const { properties } = this.props;
     this.state = {
       expandedGroupKeys: {},
       showEditJsonDialog: false,
       editComponentPropertyModel: null,
+      propertiesLocal: properties ? this.sortProperties(cloneDeep(properties)) : [],
     };
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { properties } = this.props;
-    const { expandedGroupKeys, showEditJsonDialog } = this.state;
-    return (properties !== nextProps.properties && !isEqual(properties, nextProps.properties))
+    const { expandedGroupKeys, showEditJsonDialog, propertiesLocal } = this.state;
+    return properties !== nextProps.properties
       || expandedGroupKeys !== nextState.expandedGroupKeys
-      || showEditJsonDialog !== nextState.showEditJsonDialog;
+      || showEditJsonDialog !== nextState.showEditJsonDialog
+      || propertiesLocal !== nextState.propertiesLocal;
+  }
+
+  componentDidUpdate (prevProps, prevState, snapshot) {
+    const { properties } = this.props;
+    if (properties && properties !== prevProps.properties) {
+      this.setState({
+        propertiesLocal: this.sortProperties(cloneDeep(properties)),
+      });
+    }
   }
 
   handleUpdateComponentPropertyModel = (newComponentPropertyModel) => {
@@ -203,6 +235,18 @@ class PropsTree extends React.Component {
     }
     this.props.onUpdateComponentPropertyModel(editComponentPropertyModel);
     this.handleCloseEditJsonDialog();
+  };
+
+  sortProperties = (properties) => {
+    if (properties && properties.length > 0) {
+      properties.forEach(propertyItem => {
+        if (propertyItem && propertyItem.children && propertyItem.children.length > 0) {
+          propertyItem.children = this.sortProperties(propertyItem.children);
+        }
+      });
+      return properties.sort(propertyComparator);
+    }
+    return properties;
   };
 
   createList = (node, level = 0, arrayIndex = null) => {
@@ -331,7 +375,8 @@ class PropsTree extends React.Component {
 
   render () {
     const { classes, properties } = this.props;
-    if (properties && properties.length > 0) {
+    const { propertiesLocal } = this.state;
+    if (propertiesLocal && propertiesLocal.length > 0) {
       const { showEditJsonDialog, editComponentPropertyModel } = this.state;
       let editJsonScript = '';
       let editJsonDialogTitle = '';
@@ -348,7 +393,7 @@ class PropsTree extends React.Component {
           >
             <div className={classes.listItemContainer}>
               <div className={classes.firstListContainer}>
-                {properties.reduce(
+                {propertiesLocal.reduce(
                   (acc, child) => acc.concat(this.createList(child)),
                   []
                 )}

@@ -41,18 +41,33 @@ class PageComposerManager {
     this.metaData = metaData;
   }
 
-  instanceVisitor = ({nodeModel, parentModel}) => {
+  instanceVisitor = ({nodeModel}) => {
     const result = [];
     if (nodeModel && nodeModel.props && nodeModel.type === constants.PAGE_COMPONENT_TYPE) {
       const { key, props } = nodeModel;
-      const extractedModel = this.graphModel.extractModel(key, true);
-      result.push({
-        componentName: props.componentName,
-        componentInstance: props.componentInstance,
-        // no need to clone all model as components tree chunk,
-        // it is used for pasting into flows and pages
-        componentsTree: extractedModel,
-      });
+      if (props) {
+        const extractedModel = this.graphModel.extractModel(key, true);
+        const { children } = extractedModel;
+        // we have to omit component models with property COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME
+        let foundDoNotUseInFlows = null;
+        if (children && children.length > 0) {
+          foundDoNotUseInFlows = children.find(property => {
+            return property
+              && property.props
+              && property.props.propertyName === constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME
+              && !!property.props.propertyValue;
+          });
+        }
+        if (!foundDoNotUseInFlows) {
+          result.push({
+            componentName: props.componentName,
+            componentInstance: props.componentInstance,
+            // no need to clone all model as components tree chunk,
+            // it is used for pasting into flows and pages
+            componentsTree: extractedModel,
+          });
+        }
+      }
     }
     return result;
   };

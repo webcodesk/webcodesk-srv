@@ -82,7 +82,7 @@ class PropertyCheckbox extends React.Component {
         className={classes.root}
         checkedIcon={<CheckBox className={classes.icon} />}
         icon={<CheckBoxOutlineBlank className={classes.icon} />}
-        checked={inputValue}
+        checked={!!inputValue}
         color="default"
         onChange={this.handleOnChange}
       />
