@@ -59,12 +59,12 @@ const styles = theme => ({
   },
   titleSpacerLine: {
     height: 0,
-    borderTop: '1px dotted #cdcdcd',
+    borderTop: '1px dotted #e3f2fd',
     width: '100%'
   },
   titleText: {
     fontWeight: 400,
-    fontSize: '14px',
+    // fontSize: '14px',
     whiteSpace: 'nowrap'
   },
   errorText: {
@@ -89,9 +89,11 @@ const PropsTreeGroupListItem = withStyles(theme => ({
   root: {
     alignItems: 'center',
     position: 'relative',
-    cursor: 'default',
+    cursor: 'pointer',
+    borderRadius: '4px',
+    backgroundColor: '#eceff1',
     '&:hover': {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: '#cfd8dc',
     },
     userSelect: 'none',
   },
@@ -127,7 +129,7 @@ export const PropsListItemExtraButton = withStyles({
   root: {
     padding: 0,
     fontSize: '12px',
-    border: '1px solid #dddddd',
+    border: '1px solid #b0bec5',
     backgroundColor: '#f5f5f5',
     marginLeft: '5px'
   }

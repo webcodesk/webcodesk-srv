@@ -69,6 +69,20 @@ export const ResourceListItemText = withStyles({
   }
 })(ListItemText);
 
+export const ResourceListItemDimmedText = withStyles({
+  root: {
+    padding: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: 'flex',
+    alignItems: 'center',
+    color: '#90a4ae',
+  },
+  primary: {
+    color: '#90a4ae',
+  }
+})(ListItemText);
+
 export const ResourceListItemErrorText = withStyles({
   root: {
     padding: 0,
@@ -117,11 +131,10 @@ export const ResourceListSubheader = withStyles(theme => ({
     lineHeight: 'normal',
     paddingTop: '3px',
     paddingBottom: '3px',
-    backgroundColor: '#f5f5f5',
-    '&:hover': {
-      backgroundColor: '#dddddd',
-      color: '#1e1e1e'
-    },
+    // backgroundColor: '#f5f5f5',
+    // '&:hover': {
+    //   backgroundColor: '#cfd8dc',
+    // },
   }
 }))(ListSubheader);
 

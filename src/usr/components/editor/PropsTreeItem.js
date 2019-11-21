@@ -67,6 +67,7 @@ const styles = theme => ({
   },
   titleText: {
     fontWeight: 400,
+    color: '#90a4ae',
     '&:hover': {
       color: theme.palette.primary.main,
     }

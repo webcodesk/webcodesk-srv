@@ -132,6 +132,7 @@ export function traverseProperties(properties, defaults) {
         }
         if (childProperties && childProperties.length > 0) {
           // we have to keep children properties as a sample for the new array item
+          newChildItem.props.defaultChildren = [];
           newChildItem.props.defaultChildren = traverseProperties(childProperties, null);
           newChildItem.children = [];
           let defaultValue;

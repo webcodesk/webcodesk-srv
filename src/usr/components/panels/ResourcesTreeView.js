@@ -36,6 +36,7 @@ import {
   ResourceListItemIcon,
   ResourceListItemExpandedIcon,
   ResourceListSubheader,
+  ResourceListItemDimmedText,
 } from './ResourcesTreeView.parts';
 import ToolbarButton from '../commons/ToolbarButton';
 
@@ -186,44 +187,63 @@ const styles = theme => ({
     margin: '5px 0',
   },
   subheader1: {
-    borderTop: '1px solid #ffcc80',
-    backgroundColor: '#fff3e0',
-    // '&:hover': {
-    //   backgroundColor: '#ffcc80',
-    // },
-    // subheaderStyle.color = '#FF9800';
+    borderTop: '2px solid #ff9800',
+    backgroundColor: '#eceff1',
+    fontWeight: 400,
+    color: '#455a64',
+    '&:hover': {
+      backgroundColor: '#cfd8dc',
+      color: '#263238',
+    },
   },
   subheader2: {
-    borderTop: '1px solid #c5cae9',
-    backgroundColor: '#e8eaf6',
-    // '&:hover': {
-    //   backgroundColor: '#9fa8da',
-    // },
-    // subheaderStyle.color = '#3F51B5';
+    borderTop: '2px solid #3f51b5',
+    backgroundColor: '#eceff1',
+    fontWeight: 400,
+    color: '#455a64',
+    '&:hover': {
+      backgroundColor: '#cfd8dc',
+      color: '#263238',
+    },
   },
   subheader3: {
-    borderTop: '1px solid #d7ccc8',
-    backgroundColor: '#efebe9',
-    // '&:hover': {
-    //   backgroundColor: '#bcaaa4',
-    // },
-    // subheaderStyle.color = '#795548';
+    borderTop: '2px solid #795548',
+    backgroundColor: '#eceff1',
+    fontWeight: 400,
+    color: '#455a64',
+    '&:hover': {
+      backgroundColor: '#cfd8dc',
+      color: '#263238',
+    },
   },
   subheader4: {
-    borderTop: '1px solid #b2dfdb',
-    backgroundColor: '#e0f2f1',
-    // '&:hover': {
-    //   backgroundColor: '#80cbc4',
-    // },
-    // subheaderStyle.color = '#009688';
+    borderTop: '2px solid #009688',
+    backgroundColor: '#eceff1',
+    fontWeight: 400,
+    color: '#455a64',
+    '&:hover': {
+      backgroundColor: '#cfd8dc',
+      color: '#263238',
+    },
   },
   subheader5: {
-    borderTop: '1px solid #d1c4e9',
+    borderTop: '2px solid #673ab7',
     backgroundColor: '#eceff1',
-    // '&:hover': {
-    //   backgroundColor: '#80cbc4',
-    // },
-    // subheaderStyle.color = '#009688';
+    fontWeight: 400,
+    color: '#455a64',
+    '&:hover': {
+      backgroundColor: '#cfd8dc',
+      color: '#263238',
+    },
+  },
+  subheader6: {
+    backgroundColor: '#eceff1',
+    fontWeight: 400,
+    color: '#455a64',
+    '&:hover': {
+      backgroundColor: '#cfd8dc',
+      color: '#263238',
+    },
   }
 });
 
@@ -532,7 +552,7 @@ class ResourcesTreeView extends React.Component {
                       />
                     )
                     : (
-                      <ResourceListItemText
+                      <ResourceListItemDimmedText
                         primary={props.displayName}
                       />
                     )
@@ -1451,20 +1471,21 @@ class ResourcesTreeView extends React.Component {
           ];
           subheaderClass = classes.subheader4;
         } else if (type === constants.GRAPH_MODEL_CLIPBOARD_ROOT_TYPE) {
-          subheaderButtons = [
-            // (<div key={`clipboardMoreActions_${key}`} className={classes.subheaderButton}>
-            //   <ToolbarButton
-            //     iconType="MoreVert"
-            //     primary={true}
-            //     tooltip="More actions"
-            //     menuItems={[{
-            //       label: 'Clear clipboard',
-            //       onClick: this.handleClearClipboard,
-            //     }]}
-            //   />
-            // </div>),
-          ];
+          // subheaderButtons = [
+          //   // (<div key={`clipboardMoreActions_${key}`} className={classes.subheaderButton}>
+          //   //   <ToolbarButton
+          //   //     iconType="MoreVert"
+          //   //     primary={true}
+          //   //     tooltip="More actions"
+          //   //     menuItems={[{
+          //   //       label: 'Clear clipboard',
+          //   //       onClick: this.handleClearClipboard,
+          //   //     }]}
+          //   //   />
+          //   // </div>),
+          // ];
           // subheaderStyle.borderTop = '2px solid transparent';
+          subheaderClass = classes.subheader6;
         }
         lists.push(
           <ResourceList

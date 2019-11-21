@@ -135,21 +135,24 @@ function traversePropertiesWithDefaultValues(properties, defaults) {
           traversePropertiesWithDefaultValues(children, defaults || {});
         }
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
-          let defaultValue;
-          if (propertyName) {
-            defaultValue = defaults ? defaults[propertyName] : null;
-          } else {
-            defaultValue = defaults;
-          }
-          // named array field in the defaults
-          if (defaultValue && defaultValue.length > 0 && props.defaultChildren && props.defaultChildren[0]) {
-            property.children = property.children || [];
-            defaultValue.forEach(defaultValueArrayItem => {
-              const newChild = cloneDeep(props.defaultChildren[0]);
-              traversePropertiesWithDefaultValues([newChild], defaultValueArrayItem || {});
-              property.children.push(newChild);
-            });
-          }
+        let defaultValue;
+        if (propertyName) {
+          defaultValue = defaults ? defaults[propertyName] : null;
+        } else {
+          defaultValue = defaults;
+        }
+        // named array field in the defaults
+        if (defaultValue && defaultValue.length > 0 && props.defaultChildren && props.defaultChildren[0]) {
+          property.children = property.children || [];
+          defaultValue.forEach(defaultValueArrayItem => {
+            // set up the default values into the default children reference
+            traversePropertiesWithDefaultValues(props.defaultChildren, defaultValueArrayItem || {});
+            // add new child property with the default value
+            const newChild = cloneDeep(props.defaultChildren[0]);
+            traversePropertiesWithDefaultValues([newChild], defaultValueArrayItem || {});
+            property.children.push(newChild);
+          });
+        }
       }
     });
   }

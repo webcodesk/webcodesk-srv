@@ -74,7 +74,7 @@ const styles = theme => ({
       left: '9px',
       bottom: 0,
       width: 0,
-      borderLeft: '1px solid #e2e2e2',
+      borderLeft: '1px dotted #cdcdcd',
     }
   },
   listItemContainer: {
