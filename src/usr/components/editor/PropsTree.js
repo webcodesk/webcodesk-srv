@@ -98,8 +98,8 @@ const styles = theme => ({
 });
 
 const propertyComparator = (aModel, bModel) => {
-  const { props: { propertyName: aPropertyName } } = aModel;
-  const { props: { propertyName: bPropertyName } } = bModel;
+  const { type: aType, props: { propertyName: aPropertyName } } = aModel;
+  const { type: bType, props: { propertyName: bPropertyName } } = bModel;
   if (!aPropertyName && bPropertyName) {
     return 1;
   } else if (aPropertyName && !bPropertyName) {
@@ -112,6 +112,12 @@ const propertyComparator = (aModel, bModel) => {
     }
     if (bPropertyName === constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
       return 1;
+    }
+    if (aType === constants.COMPONENT_PROPERTY_SHAPE_TYPE || aType === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
+      return 1;
+    }
+    if (bType === constants.COMPONENT_PROPERTY_SHAPE_TYPE || bType === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
+      return -1;
     }
     return aPropertyName.localeCompare(bPropertyName);
   }
@@ -150,7 +156,7 @@ class PropsTree extends React.Component {
     super(props, context);
     const { properties } = this.props;
     this.state = {
-      expandedGroupKeys: {},
+      expandedGroupKeys: properties ? this.expandAllGroupsProperties(properties) : {},
       showEditJsonDialog: false,
       editComponentPropertyModel: null,
       propertiesLocal: properties ? this.sortProperties(cloneDeep(properties)) : [],
@@ -247,6 +253,24 @@ class PropsTree extends React.Component {
       return properties.sort(propertyComparator);
     }
     return properties;
+  };
+
+  expandAllGroupsProperties = (properties) => {
+    let result = {};
+    if (properties && properties.length > 0) {
+      properties.forEach(propertyItem => {
+        if (propertyItem) {
+          const { type, key, children } = propertyItem;
+          if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE || type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
+            result[key] = true;
+            if (children && children.length > 0) {
+              result = {...result, ...this.expandAllGroupsProperties(children)};
+            }
+          }
+        }
+      });
+    }
+    return result;
   };
 
   createList = (node, level = 0, arrayIndex = null) => {
