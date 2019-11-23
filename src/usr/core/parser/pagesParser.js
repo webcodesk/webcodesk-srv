@@ -41,13 +41,12 @@ export function findPageDeclarations(sourceCode) {
   const declarations = [];
   try {
     const pageJSON = isString(sourceCode) ? JSON.parse(sourceCode) : sourceCode;
-    const { pageName, pagePath, componentsTree, metaData, isTest } = pageJSON;
+    const { pageName, pagePath, componentsTree, isTest } = pageJSON;
     const pageComposerManager = new PageComposerManager(componentsTree);
     const pageDeclaration = {
       pageName,
       pagePath,
       componentsTree,
-      metaData,
       isTest,
       componentInstances:  pageComposerManager.getInstancesListUniq(),
     };

@@ -29,7 +29,6 @@ import { CommonToolbar, CommonToolbarDivider, CommonTab, CommonTabs } from '../c
 import IFrame from './IFrame';
 import PageTree from './PageTree';
 import ToolbarButton from '../commons/ToolbarButton';
-import PageMetaData from './PageMetaData';
 import ComponentPropsTree from './ComponentPropsTree';
 
 const styles = theme => ({
@@ -131,8 +130,7 @@ class PageComposer extends React.Component {
     this.iframeId = uniqueId('iframe');
     const { data } = this.props;
     const componentsTree = data ? data.componentsTree : {};
-    const metaData = data ? data.metaData : {};
-    this.pageComposerManager = new PageComposerManager(componentsTree, metaData);
+    this.pageComposerManager = new PageComposerManager(componentsTree);
     this.state = {
       iFrameReadyCounter: 0,
       sendMessageCounter: 0,
@@ -140,7 +138,6 @@ class PageComposer extends React.Component {
       recentUpdateHistory: [],
       selectedComponentModel: null,
       localComponentsTree: null,
-      localMetaData: null,
       showTreeView: this.getViewFlag('showTreeView', false),
       showPropertyEditor: this.getViewFlag('showPropertyEditor', true),
       showPanelCover: false,
@@ -156,7 +153,6 @@ class PageComposer extends React.Component {
     const {
       iFrameReadyCounter,
       localComponentsTree,
-      localMetaData,
       sendMessageCounter,
       sendUpdateCounter,
       selectedComponentModel,
@@ -170,13 +166,12 @@ class PageComposer extends React.Component {
       }
     } else if (data !== prevProps.data && sendUpdateCounter === 0) {
       const componentsTree = data ? data.componentsTree : {};
-      const metaData = data ? data.metaData : {};
       if (
         componentsTree
-        && (!isEqual(localComponentsTree, componentsTree) || !isEqual(localMetaData, metaData))
+        && !isEqual(localComponentsTree, componentsTree)
       ) {
         delete this.pageComposerManager;
-        this.pageComposerManager = new PageComposerManager(componentsTree, metaData);
+        this.pageComposerManager = new PageComposerManager(componentsTree);
         if (selectedComponentModel) {
           this.pageComposerManager.selectCell(selectedComponentModel.key);
         }
@@ -231,11 +226,9 @@ class PageComposer extends React.Component {
         sendUpdateCounter,
         recentUpdateHistory,
         localComponentsTree,
-        localMetaData,
       } = state;
       const newState = {
         localComponentsTree: this.pageComposerManager.getModel(),
-        localMetaData: this.pageComposerManager.getMetaData(),
         sendMessageCounter: sendMessageCounter + 1,
         selectedComponentModel: this.pageComposerManager.getSelectedNode(),
       };
@@ -246,7 +239,6 @@ class PageComposer extends React.Component {
               ...recentUpdateHistory,
               {
                 componentsTree: localComponentsTree,
-                metaData: localMetaData,
               }
             ];
         }
@@ -269,12 +261,10 @@ class PageComposer extends React.Component {
         delete this.pageComposerManager;
         this.pageComposerManager =
           new PageComposerManager(
-            lastRecentChanges.componentsTree,
-            lastRecentChanges.metaData,
+            lastRecentChanges.componentsTree
           );
         return {
           localComponentsTree: this.pageComposerManager.getModel(),
-          localMetaData: this.pageComposerManager.getMetaData(),
           selectedComponentModel: this.pageComposerManager.getSelectedNode(),
           sendMessageCounter: sendMessageCounter + 1,
           sendUpdateCounter: sendUpdateCounter - 1,
@@ -295,8 +285,7 @@ class PageComposer extends React.Component {
     });
     const { onUpdate } = this.props;
     onUpdate({
-      componentsTree: this.pageComposerManager.getSerializableModel(),
-      metaData: this.pageComposerManager.getMetaData(),
+      componentsTree: this.pageComposerManager.getSerializableModel()
     });
     // if (this.iFrameRef.current) {
     //   this.iFrameRef.current.setFocus();
@@ -511,11 +500,6 @@ class PageComposer extends React.Component {
     }
   };
 
-  handleChangeMetaData = (metaData) => {
-    this.pageComposerManager.setMetaData(metaData);
-    this.updateLocalState(true);
-  };
-
   handleToggleTreeView = () => {
     this.storeViewFlag('showTreeView', !this.state.showTreeView);
     this.setState({
@@ -560,12 +544,6 @@ class PageComposer extends React.Component {
 
   handleUndo = () => {
     this.props.onUndo();
-  };
-
-  handleChangeStructureTab = (event, value) => {
-    this.setState({
-      structureTabActiveIndex: value,
-    });
   };
 
   handleOpenComponent = () => {
@@ -621,10 +599,8 @@ class PageComposer extends React.Component {
       showPanelCover,
       showIframeDropPanelCover,
       localComponentsTree,
-      localMetaData,
       recentUpdateHistory,
       iFrameWidthIndex,
-      structureTabActiveIndex,
       treeViewSplitterSize,
       propertyEditorSplitterSize
     } = this.state;
@@ -760,41 +736,23 @@ class PageComposer extends React.Component {
               resizerStyle={{display: showTreeView ? 'block' : 'none'}}
             >
               <div className={classes.leftPane}>
-                <CommonTabs
-                  value={structureTabActiveIndex}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  fullWidth={true}
-                  onChange={this.handleChangeStructureTab}
-                >
-                  <CommonTab label="Structure"/>
-                  <CommonTab label="Meta" disabled={true} />
-                </CommonTabs>
-                {structureTabActiveIndex === 0 && (
-                  <PageTree
-                    componentsTree={localComponentsTree}
-                    onItemClick={this.handleSelectComponent}
-                    onItemDrop={this.handlePageTreeItemDrop}
-                    onItemErrorClick={this.handleErrorClick}
-                    draggedItem={
-                      draggedItem && (
-                        draggedItem.isComponent ||
-                        draggedItem.isComponentInstance ||
-                        draggedItem.isClipboardItem ||
-                        draggedItem.isTemplate
-                      )
-                        ? draggedItem
-                        : null
-                    }
-                    isDraggingItem={isDraggingItem}
-                  />
-                )}
-                {structureTabActiveIndex === 1 && (
-                  <PageMetaData
-                    metaData={localMetaData}
-                    onChangeMetaData={this.handleChangeMetaData}
-                  />
-                )}
+                <PageTree
+                  componentsTree={localComponentsTree}
+                  onItemClick={this.handleSelectComponent}
+                  onItemDrop={this.handlePageTreeItemDrop}
+                  onItemErrorClick={this.handleErrorClick}
+                  draggedItem={
+                    draggedItem && (
+                      draggedItem.isComponent ||
+                      draggedItem.isComponentInstance ||
+                      draggedItem.isClipboardItem ||
+                      draggedItem.isTemplate
+                    )
+                      ? draggedItem
+                      : null
+                  }
+                  isDraggingItem={isDraggingItem}
+                />
               </div>
               <SplitPane
                 split="vertical"

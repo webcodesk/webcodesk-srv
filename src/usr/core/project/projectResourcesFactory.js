@@ -125,7 +125,7 @@ export function createPropTypesModels (modelKey, declarationsInFile) {
 export function createPageModels(modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(pageDeclaration => {
-    const { pageName, pagePath, componentsTree, metaData, isTest, componentInstances } = pageDeclaration;
+    const { pageName, pagePath, componentsTree, isTest, componentInstances } = pageDeclaration;
     const pageModel = {
       key: pagePath, // set page path as a key in order to find the resource from any place
       type: constants.GRAPH_MODEL_PAGE_TYPE,
@@ -136,7 +136,6 @@ export function createPageModels(modelKey, declarationsInFile) {
         isTest,
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
         componentsTree: cloneDeep(componentsTree),
-        metaData: cloneDeep(metaData),
       },
       children: [],
     };

@@ -35,10 +35,9 @@ import * as pageComposerFactory from './pageComposerFactory';
 
 class PageComposerManager {
 
-  constructor (model, metaData) {
+  constructor (model) {
     this.graphModel = new GraphModel({globallyUniqueKeys: false});
     this.graphModel.initModel(cloneDeep(model));
-    this.metaData = metaData;
   }
 
   instanceVisitor = ({nodeModel}) => {
@@ -109,14 +108,6 @@ class PageComposerManager {
       return this.graphModel.extractModel(nodeKey, true);
     }
     return this.graphModel.getModel();
-  };
-
-  getMetaData = () => {
-    return this.metaData;
-  };
-
-  setMetaData = (newMetaData) => {
-    this.metaData = newMetaData;
   };
 
   getParentKey = (nodeKey) => {

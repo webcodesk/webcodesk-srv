@@ -299,14 +299,6 @@ class ResourceAdapter {
             return undefined;
           }
         },
-        'metaData': {
-          get: function () {
-            if (this.props) {
-              return this.props.metaData;
-            }
-            return undefined;
-          }
-        },
         'isDisabled': {
           get: function () {
             if (this.props) {

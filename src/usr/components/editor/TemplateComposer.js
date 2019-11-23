@@ -126,7 +126,7 @@ class TemplateComposer extends React.Component {
     this.iframeId = uniqueId('iframe');
     const { data } = this.props;
     const componentsTree = data ? data.componentsTree : {};
-    this.pageComposerManager = new PageComposerManager(componentsTree, {});
+    this.pageComposerManager = new PageComposerManager(componentsTree);
     this.state = {
       iFrameReadyCounter: 0,
       sendMessageCounter: 0,
@@ -139,7 +139,6 @@ class TemplateComposer extends React.Component {
       showPanelCover: false,
       showIframeDropPanelCover: false,
       iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
-      structureTabActiveIndex: 0,
       isPreviewMode: false,
       treeViewSplitterSize: this.getViewFlag('treeViewSplitterSize', 350),
       propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
@@ -535,12 +534,6 @@ class TemplateComposer extends React.Component {
     this.props.onUndo();
   };
 
-  handleChangeStructureTab = (event, value) => {
-    this.setState({
-      structureTabActiveIndex: value,
-    });
-  };
-
   handleOpenComponent = () => {
     const { selectedComponentModel } = this.state;
     if (selectedComponentModel) {
@@ -593,7 +586,6 @@ class TemplateComposer extends React.Component {
       localComponentsTree,
       recentUpdateHistory,
       iFrameWidthIndex,
-      structureTabActiveIndex,
       isPreviewMode,
       treeViewSplitterSize,
       propertyEditorSplitterSize,
@@ -733,34 +725,23 @@ class TemplateComposer extends React.Component {
               resizerStyle={{display: showTreeView ? 'block' : 'none'}}
             >
               <div className={classes.leftPane}>
-                <CommonTabs
-                  value={structureTabActiveIndex}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  fullWidth={true}
-                  onChange={this.handleChangeStructureTab}
-                >
-                  <CommonTab label="Structure"/>
-                </CommonTabs>
-                {structureTabActiveIndex === 0 && (
-                  <PageTree
-                    componentsTree={localComponentsTree}
-                    onItemClick={this.handleSelectComponent}
-                    onItemDrop={this.handlePageTreeItemDrop}
-                    onItemErrorClick={this.handleErrorClick}
-                    draggedItem={
-                      draggedItem && (
-                        draggedItem.isComponent
-                        || draggedItem.isComponentInstance
-                        || draggedItem.isClipboardItem
-                        || draggedItem.isTemplate
-                      )
-                        ? draggedItem
-                        : null
-                    }
-                    isDraggingItem={isDraggingItem}
-                  />
-                )}
+                <PageTree
+                  componentsTree={localComponentsTree}
+                  onItemClick={this.handleSelectComponent}
+                  onItemDrop={this.handlePageTreeItemDrop}
+                  onItemErrorClick={this.handleErrorClick}
+                  draggedItem={
+                    draggedItem && (
+                      draggedItem.isComponent
+                      || draggedItem.isComponentInstance
+                      || draggedItem.isClipboardItem
+                      || draggedItem.isTemplate
+                    )
+                      ? draggedItem
+                      : null
+                  }
+                  isDraggingItem={isDraggingItem}
+                />
               </div>
               <SplitPane
                 split="vertical"

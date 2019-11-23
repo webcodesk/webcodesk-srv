@@ -93,7 +93,7 @@ export function createCopyFlowFileObject (source, name, directoryName) {
 export function createFileObjectWithNewData (resource, data) {
   let fileObject = {};
   if (resource.isPage) {
-    const { componentsTree: dataComponentsTree, metaData } = data;
+    const { componentsTree: dataComponentsTree } = data;
     const parentKeys = resource.allParentKeys;
     if (parentKeys && parentKeys.length > 1) {
       const pageFileResource = projectResourcesManager.getResourceByKey(parentKeys[0]);
@@ -101,7 +101,6 @@ export function createFileObjectWithNewData (resource, data) {
       fileObject.fileData = JSON.stringify({
         pageName: resource.pageName,
         pagePath: resource.pagePath,
-        metaData,
         isTest: resource.isTest,
         componentsTree: dataComponentsTree
       });
