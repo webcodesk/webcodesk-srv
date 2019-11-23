@@ -15,6 +15,7 @@
  */
 
 import isEmpty from 'lodash/isEmpty';
+import isNull from 'lodash/isNull';
 import values from 'lodash/values';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -29,6 +30,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
 import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
+import FileCopy from '@material-ui/icons/FileCopy';
 import Delete from '@material-ui/icons/Delete';
 import * as constants from '../../../commons/constants';
 
@@ -108,7 +110,7 @@ const PropsTreeGroupListItem = withStyles(theme => ({
 
 const PropsTreeGroupText = withStyles(theme => ({
   root: {
-    padding: 0,
+    padding: '0 2px 0 0',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     display: 'flex',
@@ -138,17 +140,22 @@ export const PropsListItemExtraButton = withStyles({
 class PropsTreeGroup extends React.Component {
   static propTypes = {
     name: PropTypes.string,
+    parentKey: PropTypes.string,
+    arrayIndex: PropTypes.number,
     propertyModel: PropTypes.object,
     paddingLeft: PropTypes.string,
     isExpanded: PropTypes.bool,
     onIncreaseComponentPropertyArray: PropTypes.func,
     onDeleteComponentProperty: PropTypes.func,
+    onDuplicateComponentProperty: PropTypes.func,
     onToggleExpandItem: PropTypes.func,
     onErrorClick: PropTypes.func,
   };
 
   static defaultProps = {
     name: null,
+    parentKey: null,
+    arrayIndex: null,
     propertyModel: {},
     paddingLeft: '0px',
     isExpanded: false,
@@ -157,6 +164,9 @@ class PropsTreeGroup extends React.Component {
     },
     onDeleteComponentProperty: () => {
       console.info('ComponentPropsTreeGroup.onDeleteComponentProperty is not set');
+    },
+    onDuplicateComponentProperty: () => {
+      console.info('ComponentPropsTreeGroup.onDuplicateComponentProperty is not set');
     },
     onToggleExpandItem: () => {
       console.info('ComponentPropsTreeGroup.onToggleExpandItem is not set');
@@ -196,6 +206,17 @@ class PropsTreeGroup extends React.Component {
     const { onDeleteComponentProperty, propertyModel } = this.props;
     if (propertyModel) {
       onDeleteComponentProperty(propertyModel.key);
+    }
+  };
+
+  handleDuplicateComponentProperty = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { parentKey, arrayIndex, propertyModel, onDuplicateComponentProperty } = this.props;
+    if (!isNull(arrayIndex) && arrayIndex >= 0 && parentKey && propertyModel) {
+      onDuplicateComponentProperty(propertyModel.key, parentKey, arrayIndex);
     }
   };
 
@@ -288,6 +309,14 @@ class PropsTreeGroup extends React.Component {
                   </div>
                 </div>
               </Tooltip>
+              {!propertyName && (
+                <PropsListItemExtraButton
+                  title="Duplicate this item in the array"
+                  onClick={this.handleDuplicateComponentProperty}
+                >
+                  <FileCopy className={classes.buttonIcon} />
+                </PropsListItemExtraButton>
+              )}
               {type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE && (
                 <PropsListItemExtraButton
                   title="Add new item to the array"

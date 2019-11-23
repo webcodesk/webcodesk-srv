@@ -395,6 +395,11 @@ class ComponentView extends React.Component {
     }
   };
 
+  handleDuplicateComponentPropertyArrayItem = (propertyKey, groupPropertyKey, itemIndex) => {
+    this.pageComposerManager.duplicateComponentPropertyArrayItem(propertyKey, groupPropertyKey, itemIndex);
+    this.updateLocalState(true);
+  };
+
   handleSaveAsTemplate = () => {
     this.props.onSaveAsTemplate(this.state.localComponentsTree);
   };
@@ -580,6 +585,7 @@ class ComponentView extends React.Component {
                     onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
                     onDeleteComponentProperty={this.handleDeleteComponentProperty}
                     onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
                   />
                 </div>
               </SplitPane>

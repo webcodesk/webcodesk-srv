@@ -18,7 +18,6 @@ import uniqueId from 'lodash/uniqueId';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
 import assign from 'lodash/assign';
-import isUndefined from 'lodash/isUndefined';
 import isMatch from 'lodash/isMatch';
 import isArray from 'lodash/isArray';
 import cloneDeep from 'lodash/cloneDeep';
@@ -40,7 +39,7 @@ class GraphModel {
   }
 
   mapModel(root, index = 0, refreshKey = false) {
-    const { key, type, props, text, children } = root;
+    const { key, type, props, children } = root;
     let nodeKey;
     if (refreshKey) {
       nodeKey = this.globallyUniqueKeys ? uniqueId('node') : `node${++this.idCounter}`;
@@ -67,7 +66,7 @@ class GraphModel {
     }
     this.graphInstance.setNode(
       nodeKey,
-      pickBy({ key: nodeKey, type, props, text, index }, i => !isUndefined(i))
+      { key: nodeKey, type, props, index }
     );
     if (children && children.length > 0) {
       children.forEach((child, idx) => {
@@ -77,6 +76,22 @@ class GraphModel {
       });
     }
     return nodeKey;
+  }
+
+  updateModel(root, index = 0) {
+    const { key, type, props, children } = root;
+    this.graphInstance.setNode(
+      key,
+      { key, type, props, index }
+    );
+    if (children && children.length > 0) {
+      children.forEach((child, idx) => {
+        const childKey = this.updateModel(child, idx);
+        this.graphInstance.setParent(childKey, key);
+        this.graphInstance.setEdge(key, childKey, `${key}${childKey}`);
+      });
+    }
+    return key;
   }
 
   mapNewModel(root, index = 0) {
@@ -89,7 +104,7 @@ class GraphModel {
 
   extractModel(rootNodeKey, noKeys = false, comparator = null, excludeTestCallback = null) {
     const nodeObject = this.graphInstance.node(rootNodeKey);
-    const model = nodeObject ? cloneDeep(pickBy(nodeObject, i => !isUndefined(i))) : {};
+    const model = nodeObject ? cloneDeep(pickBy(nodeObject, i => typeof i !== 'undefined')) : {};
     if (excludeTestCallback && excludeTestCallback(model)) {
       return null;
     }
@@ -186,15 +201,31 @@ class GraphModel {
     }
   }
 
-  addChildNode(parentNodeKey, model) {
-    const childrenKeys = this.graphInstance.children(parentNodeKey);
+  addChildNode(parentNodeKey, model, insertIndex = -1) {
+    let newNodeKey;
+    let childrenKeys = this.graphInstance.children(parentNodeKey);
     if (childrenKeys && childrenKeys.length > 0) {
-      childrenKeys.forEach((childKey, idx) => {
-        this.graphInstance.setNode(childKey, {...this.getNode(childKey), index: idx});
-      });
+      if (insertIndex >= 0 && insertIndex <= childrenKeys.length) {
+        // check children again
+        childrenKeys = this.graphInstance.children(parentNodeKey);
+        let childNode;
+        childrenKeys.forEach((childKey, idx) => {
+          childNode = this.graphInstance.node(childKey);
+          if (childNode.index >= insertIndex) {
+            this.graphInstance.setNode(childKey, { ...childNode, index: childNode.index + 1 });
+          }
+        });
+        const newNodeKey = this.mapNewModel(model, insertIndex);
+        this.graphInstance.setParent(newNodeKey, parentNodeKey);
+      } else {
+        // just push the new child in the end
+        const newNodeKey = this.mapNewModel(model, childrenKeys.length);
+        this.graphInstance.setParent(newNodeKey, parentNodeKey);
+      }
+    } else {
+      newNodeKey = this.mapNewModel(model);
+      this.graphInstance.setParent(newNodeKey, parentNodeKey);
     }
-    const newNodeKey = this.mapNewModel(model, childrenKeys.length);
-    this.graphInstance.setParent(newNodeKey, parentNodeKey);
     return newNodeKey;
   }
 
@@ -211,18 +242,22 @@ class GraphModel {
   mergeNode(nodeKey, model) {
     const nodeModel = this.graphInstance.node(nodeKey);
     const newModel = merge({}, nodeModel, model);
-    this.graphInstance.setNode(nodeKey, newModel);
-    return newModel;
+    const newNodeKey = this.updateModel(newModel, newModel.index);
+    return this.graphInstance.node(newNodeKey);
   }
 
   assignNode(nodeKey, model) {
     const nodeModel = this.graphInstance.node(nodeKey);
     const newModel = assign({}, nodeModel, model);
-    this.graphInstance.setNode(nodeKey, newModel);
+    return this.updateModel(newModel, newModel.index);
+    // this.graphInstance.setNode(newNodeKey, newModel);
   }
 
   updateNode(nodeKey, model) {
-    this.graphInstance.setNode(nodeKey, model);
+    console.info('updateNode: ', model);
+    const newKey = this.updateModel(model, model.index);
+    console.info('newKey: ', newKey);
+    // this.graphInstance.setNode(newNodeKey, model);
   }
 
   getChildrenCount(nodeKey) {
@@ -248,20 +283,7 @@ class GraphModel {
 
   updateChildrenOrder(model) {
     if (model && model.children) {
-      const {children} = model;
-      let foundChildModel;
-      if (children && children.length > 0) {
-        children.forEach((child, idx) => {
-          const { key } = child;
-          if (key) {
-            foundChildModel = this.graphInstance.node(key);
-            if (foundChildModel) {
-              foundChildModel.index = idx;
-              this.graphInstance.setNode(key, foundChildModel);
-            }
-          }
-        });
-      }
+      return this.updateModel(model, model.index);
     }
   }
 

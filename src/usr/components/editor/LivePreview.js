@@ -530,11 +530,6 @@ class LivePreview extends React.Component {
                     settingsProperties={settings}
                     onUpdateSettingsProperties={this.handleUpdateSettings}
                   />
-                  {/*<div>*/}
-                  {/*  <pre>*/}
-                  {/*    {JSON.stringify(settings, null, 4)}*/}
-                  {/*  </pre>*/}
-                  {/*</div>*/}
                 </div>
                 </SplitPane>
               </SplitPane>

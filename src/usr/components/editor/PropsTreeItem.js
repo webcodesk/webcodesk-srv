@@ -16,6 +16,7 @@
 
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
+import isNull from 'lodash/isNull';
 import values from 'lodash/values';
 import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
@@ -33,6 +34,7 @@ import Wallpaper from '@material-ui/icons/Wallpaper';
 import Delete from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
 import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
+import FileCopy from '@material-ui/icons/FileCopy';
 
 import * as constants from '../../../commons/constants';
 
@@ -169,16 +171,22 @@ export const PropsTreeItemButton = withStyles(theme => ({
 class PropsTreeItem extends React.Component {
   static propTypes = {
     name: PropTypes.string,
+    parentKey: PropTypes.string,
+    arrayIndex: PropTypes.number,
     propertyModel: PropTypes.object,
     paddingLeft: PropTypes.string,
     onPropertyUpdate: PropTypes.func,
     onDeleteComponentProperty: PropTypes.func,
+    onDuplicateComponentProperty: PropTypes.func,
     onErrorClick: PropTypes.func,
     onEditJson: PropTypes.func,
+    onSelectComponent: PropTypes.func,
   };
 
   static defaultProps = {
     name: null,
+    parentKey: null,
+    arrayIndex: null,
     propertyModel: {},
     paddingLeft: '0px',
     onPropertyUpdate: () => {
@@ -187,11 +195,17 @@ class PropsTreeItem extends React.Component {
     onDeleteComponentProperty: () => {
       console.info('ComponentPropsTreeItem.onDeleteComponentProperty is not set');
     },
+    onDuplicateComponentProperty: () => {
+      console.info('ComponentPropsTreeItem.onDuplicateComponentProperty is not set');
+    },
     onErrorClick: () => {
       console.info('ComponentPropsTreeItem.onErrorClick is not set');
     },
     onEditJson: () => {
       console.info('ComponentPropsTreeItem.onEditJson is not set');
+    },
+    onSelectComponent: () => {
+      console.info('ComponentPropsTreeItem.onSelectComponent is not set');
     },
   };
 
@@ -204,7 +218,7 @@ class PropsTreeItem extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState) {
-    const { name, propertyModel, paddingLeft } = this.props;
+    const { name, propertyModel, paddingLeft, parentKey, arrayIndex } = this.props;
     const { localPropertyModel } = this.state;
     return name !== nextProps.name
       || (
@@ -213,6 +227,8 @@ class PropsTreeItem extends React.Component {
         && !isEqual(nextProps.propertyModel, localPropertyModel)
       )
       || paddingLeft !== nextProps.paddingLeft
+      || parentKey !== nextProps.parentKey
+      || arrayIndex !== nextProps.arrayIndex
       || localPropertyModel !== nextState.localPropertyModel;
   }
 
@@ -223,7 +239,6 @@ class PropsTreeItem extends React.Component {
       this.setState({
         localPropertyModel: cloneDeep(propertyModel),
       });
-
     }
   }
 
@@ -244,6 +259,17 @@ class PropsTreeItem extends React.Component {
     const { onDeleteComponentProperty, propertyModel } = this.props;
     if (propertyModel) {
       onDeleteComponentProperty(propertyModel.key);
+    }
+  };
+
+  handleDuplicateComponentProperty = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { parentKey, arrayIndex, propertyModel, onDuplicateComponentProperty } = this.props;
+    if (!isNull(arrayIndex) && arrayIndex >= 0 && parentKey && propertyModel) {
+      onDuplicateComponentProperty(propertyModel.key, parentKey, arrayIndex);
     }
   };
 
@@ -268,6 +294,17 @@ class PropsTreeItem extends React.Component {
 
   handleClick = () => {
 
+  };
+
+  handleSelectComponent = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { localPropertyModel } = this.state;
+    if (localPropertyModel) {
+      this.props.onSelectComponent(localPropertyModel.key);
+    }
   };
 
   render () {
@@ -296,7 +333,7 @@ class PropsTreeItem extends React.Component {
       componentName,
       componentInstance,
       errors,
-      propertyValueVariants
+      propertyValueVariants,
     } = props;
     switch (type) {
       case constants.COMPONENT_PROPERTY_ELEMENT_TYPE:
@@ -330,7 +367,7 @@ class PropsTreeItem extends React.Component {
             size="small"
             fullWidth={true}
             title={`Select the ${componentName} component's instance on the page`}
-            onClick={() => {}}
+            onClick={this.handleSelectComponent}
           >
             {componentInstance}
           </PropsTreeItemButton>
@@ -479,6 +516,14 @@ class PropsTreeItem extends React.Component {
                           </span>
                         </div>
                       </Tooltip>
+                      {!propertyName && (
+                        <PropsTreeItemExtraButton
+                          title="Duplicate this item in the array"
+                          onClick={this.handleDuplicateComponentProperty}
+                        >
+                          <FileCopy className={classes.buttonIcon} />
+                        </PropsTreeItemExtraButton>
+                      )}
                       {!propertyName && (
                         <PropsTreeItemExtraButton
                           title="Remove this item from the array"

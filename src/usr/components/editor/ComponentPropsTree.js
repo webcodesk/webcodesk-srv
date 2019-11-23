@@ -52,11 +52,13 @@ class ComponentPropsTree extends React.Component {
     isSampleComponent: PropTypes.bool,
     onUpdateComponentPropertyModel: PropTypes.func,
     onIncreaseComponentPropertyArray: PropTypes.func,
+    onDuplicateComponentPropertyArrayItem: PropTypes.func,
     onDeleteComponentProperty: PropTypes.func,
     onRenameComponentInstance: PropTypes.func,
     onErrorClick: PropTypes.func,
     onOpenComponent: PropTypes.func,
     onUpdateComponentPropertyArrayOrder: PropTypes.func,
+    onSelectComponent: PropTypes.func,
   };
 
   static defaultProps = {
@@ -67,6 +69,9 @@ class ComponentPropsTree extends React.Component {
     },
     onIncreaseComponentPropertyArray: () => {
       console.info('ComponentPropsTree.onIncreaseComponentPropertyArray is not set');
+    },
+    onDuplicateComponentPropertyArrayItem: () => {
+      console.info('ComponentPropsTree.onDuplicateComponentPropertyArrayItem is not set');
     },
     onDeleteComponentProperty: () => {
       console.info('ComponentPropsTree.onDeleteComponentProperty is not set');
@@ -82,6 +87,9 @@ class ComponentPropsTree extends React.Component {
     },
     onUpdateComponentPropertyArrayOrder: () => {
       console.info('ComponentPropsTree.onUpdateComponentPropertyArrayOrder is not set');
+    },
+    onSelectComponent: () => {
+      console.info('ComponentPropsTree.onSelectComponent is not set');
     },
   };
 
@@ -108,6 +116,10 @@ class ComponentPropsTree extends React.Component {
     this.props.onIncreaseComponentPropertyArray(propertyKey);
   };
 
+  handleDuplicateComponentPropertyArrayItem = (propertyKey, groupPropertyKey, itemIndex) => {
+    this.props.onDuplicateComponentPropertyArrayItem(propertyKey, groupPropertyKey, itemIndex);
+  };
+
   handleDeleteComponentProperty = (propertyKey) => {
     this.props.onDeleteComponentProperty(propertyKey);
   };
@@ -122,6 +134,10 @@ class ComponentPropsTree extends React.Component {
 
   handleOpenComponent = () => {
     this.props.onOpenComponent();
+  };
+
+  handleSelectComponent = (componentKey) => {
+    this.props.onSelectComponent(componentKey);
   };
 
   render () {
@@ -174,6 +190,8 @@ class ComponentPropsTree extends React.Component {
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
             onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+            onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+            onSelectComponent={this.handleSelectComponent}
           />
         </div>
       );

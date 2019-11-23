@@ -130,9 +130,11 @@ class PropsTree extends React.Component {
     properties: PropTypes.array,
     onUpdateComponentPropertyModel: PropTypes.func,
     onIncreaseComponentPropertyArray: PropTypes.func,
+    onDuplicateComponentPropertyArrayItem: PropTypes.func,
     onDeleteComponentProperty: PropTypes.func,
     onErrorClick: PropTypes.func,
     onUpdateComponentPropertyArrayOrder: PropTypes.func,
+    onSelectComponent: PropTypes.func,
   };
 
   static defaultProps = {
@@ -144,6 +146,9 @@ class PropsTree extends React.Component {
     onIncreaseComponentPropertyArray: () => {
       console.info('PropsTree.onIncreaseComponentPropertyArray is not set');
     },
+    onDuplicateComponentPropertyArrayItem: () => {
+      console.info('PropsTree.onDuplicateComponentPropertyArrayItem is not set');
+    },
     onDeleteComponentProperty: () => {
       console.info('PropsTree.onDeleteComponentProperty is not set');
     },
@@ -152,6 +157,9 @@ class PropsTree extends React.Component {
     },
     onUpdateComponentPropertyArrayOrder: () => {
       console.info('PropsTree.onUpdateComponentPropertyArrayOrder is not set');
+    },
+    onSelectComponent: () => {
+      console.info('PropsTree.onSelectComponent is not set');
     },
   };
 
@@ -191,12 +199,6 @@ class PropsTree extends React.Component {
 
   handleIncreaseComponentPropertyArray = (propertyKey) => {
     this.props.onIncreaseComponentPropertyArray(propertyKey);
-    const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
-    newExpandedGroupKeys[propertyKey] = true;
-    this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
-    this.setState({
-      expandedGroupKeys: newExpandedGroupKeys,
-    });
   };
 
   handleDeleteComponentProperty = (propertyKey) => {
@@ -210,8 +212,16 @@ class PropsTree extends React.Component {
     this.props.onUpdateComponentPropertyArrayOrder(model);
   };
 
+  handleDuplicateComponentPropertyArrayItem = (propertyKey, groupPropertyKey, itemIndex) => {
+    this.props.onDuplicateComponentPropertyArrayItem(propertyKey, groupPropertyKey, itemIndex);
+  };
+
   handleErrorClick = (messages) => {
     this.props.onErrorClick(messages);
+  };
+
+  handleSelectComponent = (componentKey) => {
+    this.props.onSelectComponent(componentKey);
   };
 
   handleToggleExpandItem = (groupKey) => {
@@ -295,10 +305,14 @@ class PropsTree extends React.Component {
     }
   };
 
-  createList = (node, level = 0, arrayIndex = null) => {
+  createList = (node, parentNode = null, level = 0, arrayIndex = null) => {
     const { classes } = this.props;
     let result = [];
     let isArrayItem = false;
+    let parentKey;
+    if (parentNode) {
+      parentKey = parentNode.key;
+    }
     if (node) {
       const { key, type, props, children } = node;
       const { propertyName } = props;
@@ -321,12 +335,15 @@ class PropsTree extends React.Component {
           <PropsTreeGroup
             key={key}
             name={listItemLabelName}
+            parentKey={parentKey}
+            arrayIndex={arrayIndex}
             propertyModel={node}
             type={type}
             isExpanded={this.state.expandedGroupKeys[key]}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
             onToggleExpandItem={this.handleToggleExpandItem}
+            onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
         if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
@@ -334,7 +351,7 @@ class PropsTree extends React.Component {
             <div key={`${key}_container`} className={classes.listItemContainer}>
               <div className={classes.listContainer}>
                 {children.reduce(
-                  (acc, child) => acc.concat(this.createList(child, level + 1, null)),
+                  (acc, child) => acc.concat(this.createList(child, node, level + 1, null)),
                   []
                 )}
               </div>
@@ -346,6 +363,8 @@ class PropsTree extends React.Component {
           <PropsTreeGroup
             key={key}
             name={listItemLabelName}
+            parentKey={parentKey}
+            arrayIndex={arrayIndex}
             propertyModel={node}
             type={type}
             isExpanded={this.state.expandedGroupKeys[key]}
@@ -353,6 +372,7 @@ class PropsTree extends React.Component {
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
             onToggleExpandItem={this.handleToggleExpandItem}
+            onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
         if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
@@ -362,7 +382,7 @@ class PropsTree extends React.Component {
                 classes={classes}
                 useDragHandle={true}
                 items={children.reduce(
-                  (acc, child, childIdx) => acc.concat(this.createList(child, level + 1, childIdx)),
+                  (acc, child, childIdx) => acc.concat(this.createList(child, node, level + 1, childIdx)),
                   []
                 )}
                 onSortEnd={this.handleUpdateComponentPropertyArrayOrder(node)}
@@ -375,8 +395,11 @@ class PropsTree extends React.Component {
             <PropsTreeItem
               key={key}
               name={listItemLabelName}
+              parentKey={parentKey}
+              arrayIndex={arrayIndex}
               propertyModel={node}
               onDeleteComponentProperty={this.handleDeleteComponentProperty}
+              onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
               onErrorClick={this.handleErrorClick}
             />
           );
@@ -385,9 +408,13 @@ class PropsTree extends React.Component {
             <PropsTreeItem
               key={key}
               name={listItemLabelName}
+              parentKey={parentKey}
+              arrayIndex={arrayIndex}
               propertyModel={node}
               onDeleteComponentProperty={this.handleDeleteComponentProperty}
+              onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
               onErrorClick={this.handleErrorClick}
+              onSelectComponent={this.handleSelectComponent}
             />
           );
       } else if (type !== constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
@@ -395,11 +422,14 @@ class PropsTree extends React.Component {
           <PropsTreeItem
             key={key}
             name={listItemLabelName}
+            parentKey={parentKey}
+            arrayIndex={arrayIndex}
             propertyModel={node}
             onPropertyUpdate={this.handleUpdateComponentPropertyModel}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
             onEditJson={this.handleOpenEditJsonDialog}
+            onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
       }

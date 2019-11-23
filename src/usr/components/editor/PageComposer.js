@@ -387,7 +387,7 @@ class PageComposer extends React.Component {
     }
   };
 
-  handlePageTreeItemClick = (key) => {
+  handleSelectComponent = (key) => {
     this.pageComposerManager.selectCell(key);
     this.updateLocalState();
   };
@@ -427,6 +427,11 @@ class PageComposer extends React.Component {
 
   handleIncreaseComponentPropertyArray = (propertyKey) => {
     this.pageComposerManager.increaseComponentPropertyArray(propertyKey);
+    this.updateLocalState(true);
+  };
+
+  handleDuplicateComponentPropertyArrayItem = (propertyKey, groupPropertyKey, itemIndex) => {
+    this.pageComposerManager.duplicateComponentPropertyArrayItem(propertyKey, groupPropertyKey, itemIndex);
     this.updateLocalState(true);
   };
 
@@ -768,7 +773,7 @@ class PageComposer extends React.Component {
                 {structureTabActiveIndex === 0 && (
                   <PageTree
                     componentsTree={localComponentsTree}
-                    onItemClick={this.handlePageTreeItemClick}
+                    onItemClick={this.handleSelectComponent}
                     onItemDrop={this.handlePageTreeItemDrop}
                     onItemErrorClick={this.handleErrorClick}
                     draggedItem={
@@ -832,6 +837,8 @@ class PageComposer extends React.Component {
                     onErrorClick={this.handleErrorClick}
                     onOpenComponent={this.handleOpenComponent}
                     onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                    onSelectComponent={this.handleSelectComponent}
                   />
                 </div>
               </SplitPane>

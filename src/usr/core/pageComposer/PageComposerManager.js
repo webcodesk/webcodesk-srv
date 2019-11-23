@@ -171,6 +171,12 @@ class PageComposerManager {
     }
   };
 
+  duplicateComponentPropertyArrayItem = (targetKey, parentKey, itemIndex) => {
+    const extractedNodeModel = this.graphModel.extractModel(targetKey, true);
+    // append child after the original item
+    this.graphModel.addChildNode(parentKey, extractedNodeModel, itemIndex + 1);
+  };
+
   renameComponentInstance = (targetKey, componentInstance) => {
     const componentModel = this.graphModel.getNode(targetKey);
     if (componentModel && componentModel.type === constants.PAGE_COMPONENT_TYPE) {
