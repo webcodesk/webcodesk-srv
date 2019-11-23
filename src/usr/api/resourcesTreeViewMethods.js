@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+import constants from '../../commons/constants';
 import globalStore from '../core/config/globalStore';
 import * as projectObjectFactory from '../core/project/projectObjectFactory';
 import * as projectFileFactory from '../core/project/projectFileFactory';
@@ -22,9 +23,22 @@ import * as projectResourcesManager from '../core/project/projectResourcesManage
 import { testReservedName } from '../core/utils/textUtils';
 import * as scaffoldManager from '../core/scaffold/scaffoldManager';
 
+export const restoreStorageRecords = () => async (dispatch) => {
+  try {
+    await globalStore.restore(constants.STORAGE_RECORD_EXPANDED_COMPONENT_PROPS_KEYS);
+    await globalStore.restore(constants.STORAGE_RECORD_COMPONENT_VIEW_FLAGS);
+    await globalStore.restore(constants.STORAGE_RECORD_PAGE_COMPOSER_FLAGS);
+    await globalStore.restore(constants.STORAGE_RECORD_TEMPLATE_COMPOSER_FLAGS);
+    await globalStore.restore(constants.STORAGE_RECORD_FLOW_COMPOSER_FLAGS);
+    await globalStore.restore(constants.STORAGE_RECORD_LIVE_PREVIEW_FLAGS);
+  } catch (e) {
+    console.error('Cannot restore storage records');
+  }
+};
+
 export const restoreExpandedResourceKeys = () => async (dispatch) => {
   try {
-    const expandedResourceKeys = await globalStore.restore('expandedResourceKeys');
+    const expandedResourceKeys = await globalStore.restore(constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS);
     if (expandedResourceKeys) {
       dispatch('expandedResourceKeys', expandedResourceKeys);
     }
@@ -70,9 +84,12 @@ export const findResourcesByText = (text) => (dispatch) => {
       keysToExpand[parentKey] = true;
     });
   });
-  let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-  expandedResourceKeys = { ...expandedResourceKeys, ...keysToExpand };
-  globalStore.set('expandedResourceKeys', expandedResourceKeys);
+  const expandedResourceKeys =
+    globalStore.merge(
+      constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+      keysToExpand,
+      true
+    );
   dispatch('expandedResourceKeys', expandedResourceKeys);
 };
 
@@ -122,9 +139,12 @@ export const createNewPageSubmit = (options) => async (dispatch) => {
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
       });
-      let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-      expandedResourceKeys = { ...expandedResourceKeys, ...keysToExpand };
-      globalStore.set('expandedResourceKeys', expandedResourceKeys);
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
       dispatch('expandedResourceKeys', expandedResourceKeys);
     }
   }
@@ -162,9 +182,12 @@ export const createNewTemplateSubmit = (options) => async (dispatch) => {
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
       });
-      let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-      expandedResourceKeys = { ...expandedResourceKeys, ...keysToExpand };
-      globalStore.set('expandedResourceKeys', expandedResourceKeys);
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
       dispatch('expandedResourceKeys', expandedResourceKeys);
     }
   }
@@ -202,9 +225,12 @@ export const copyPageSubmit = ({ resource, name, directoryName }) => async (disp
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
       });
-      let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-      expandedResourceKeys = { ...expandedResourceKeys, ...keysToExpand };
-      globalStore.set('expandedResourceKeys', expandedResourceKeys);
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
       dispatch('expandedResourceKeys', expandedResourceKeys);
     }
   }
@@ -242,9 +268,12 @@ export const copyTemplateSubmit = ({ resource, name, directoryName }) => async (
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
       });
-      let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-      expandedResourceKeys = { ...expandedResourceKeys, ...keysToExpand };
-      globalStore.set('expandedResourceKeys', expandedResourceKeys);
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
       dispatch('expandedResourceKeys', expandedResourceKeys);
     }
   }
@@ -316,9 +345,12 @@ export const createNewFlowSubmit = ({ name, directoryName }) => async (dispatch)
       flowResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
       });
-      let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-      expandedResourceKeys = { ...expandedResourceKeys, ...keysToExpand };
-      globalStore.set('expandedResourceKeys', expandedResourceKeys);
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
       dispatch('expandedResourceKeys', expandedResourceKeys);
     }
   }
@@ -355,9 +387,12 @@ export const copyFlowSubmit = ({ resource, name, directoryName }) => async (disp
       flowResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
       });
-      let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-      expandedResourceKeys = { ...expandedResourceKeys, ...keysToExpand };
-      globalStore.set('expandedResourceKeys', expandedResourceKeys);
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
       dispatch('expandedResourceKeys', expandedResourceKeys);
     }
   }
@@ -436,9 +471,14 @@ export const toggleIsTest = ({ resourceKey, isTest }) => async (dispatch) => {
 };
 
 export const toggleExpandedResourceKey = (key) => (dispatch) => {
-  let expandedResourceKeys = globalStore.get('expandedResourceKeys') || {};
-  expandedResourceKeys = { ...expandedResourceKeys, ...{ [key]: !expandedResourceKeys[key] } };
-  globalStore.set('expandedResourceKeys', expandedResourceKeys);
+  let expandedResourceKeys =
+    globalStore.get(constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS) || {};
+  expandedResourceKeys =
+    globalStore.merge(
+      constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+      { [key]: !expandedResourceKeys[key] },
+      true
+    );
   dispatch('expandedResourceKeys', expandedResourceKeys);
 };
 

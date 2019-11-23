@@ -109,7 +109,13 @@ export default [
                         ]
                       },
                     ]
-                  }
+                  },
+                  {
+                    type: 'userFunction',
+                    props: {
+                      functionName: 'usr.api.resourcesTreeViewMethods.restoreStorageRecords'
+                    },
+                  },
                 ]
               },
               {

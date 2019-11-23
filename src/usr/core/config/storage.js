@@ -15,7 +15,6 @@
  */
 
 import isUndefined from 'lodash/isUndefined';
-import take from 'lodash/take';
 import localforage from 'localforage';
 import { SequentialTaskQueue } from 'sequential-task-queue';
 import { repairPath } from "../utils/fileUtils";
@@ -24,9 +23,6 @@ import { repairPath } from "../utils/fileUtils";
 const taskQueue = new SequentialTaskQueue();
 
 let storageInstance;
-
-const STORAGE_RECORD_RECENT_PROJECTS = 'recentProjects';
-const STORAGE_RECORD_EXPANDED_RESOURCE_KEYS = 'expandedResourceKeys';
 
 function getCurrentTimeString() {
   const time = new Date();
@@ -56,40 +52,6 @@ export function getStorageInstance() {
   return storageInstance;
 }
 
-export async function addProjectToRecentProjects(dirPath) {
-  return getStorageInstance().getItem(STORAGE_RECORD_RECENT_PROJECTS)
-      .then(recentProjectPaths => {
-        recentProjectPaths = recentProjectPaths || [];
-        const validDirPath = repairPath(dirPath);
-        const foundIndex = recentProjectPaths.findIndex(i => i === validDirPath);
-        if (foundIndex >= 0) {
-          recentProjectPaths.splice(foundIndex, 1);
-        }
-        recentProjectPaths.unshift(validDirPath);
-        if (recentProjectPaths.length > 5) {
-          recentProjectPaths = take(recentProjectPaths, 5);
-        }
-        return getStorageInstance().setItem(STORAGE_RECORD_RECENT_PROJECTS, recentProjectPaths);
-      });
-}
-
-export async function getRecentProjects() {
-  return getStorageInstance().getItem(STORAGE_RECORD_RECENT_PROJECTS);
-}
-
-export async function removeRecentProject(dirPath) {
-  return getStorageInstance().getItem(STORAGE_RECORD_RECENT_PROJECTS)
-    .then(recentProjectPaths => {
-      recentProjectPaths = recentProjectPaths || [];
-      const validDirPath = repairPath(dirPath);
-      const foundIndex = recentProjectPaths.findIndex(i => i === validDirPath);
-      if (foundIndex >= 0) {
-        recentProjectPaths.splice(foundIndex, 1);
-      }
-      return getStorageInstance().setItem(STORAGE_RECORD_RECENT_PROJECTS, recentProjectPaths);
-    });
-}
-
 export async function getProjectSettings(dirPath) {
   const validDirPath = repairPath(dirPath);
   return getStorageInstance().getItem(validDirPath);
@@ -98,20 +60,6 @@ export async function getProjectSettings(dirPath) {
 export async function saveProjectSettings(dirPath, projectSettingsObj) {
   const validDirPath = repairPath(dirPath);
   return getStorageInstance().setItem(validDirPath, projectSettingsObj);
-}
-
-export async function getWelcomeInfo() {
-  return getStorageInstance().getItem('welcome');
-}
-
-export async function saveWelcomeInfo(info) {
-  return getStorageInstance().getItem('welcome')
-    .then(prevInfo => {
-      return getStorageInstance().setItem('welcome', {...prevInfo, ...info});
-    })
-    .catch(error => {
-      console.error('Can not read/write welcome info');
-    });
 }
 
 export async function clearConsoleErrors() {
@@ -142,20 +90,37 @@ export async function getConsoleErrors() {
   return getStorageInstance().getItem('SYSLOG');
 }
 
-export async function setRecordOfExpandedKeys(dirPath, expandedResourcesKeys) {
-  return getStorageInstance().getItem(STORAGE_RECORD_EXPANDED_RESOURCE_KEYS)
-    .then(recordOfExpandedKeys => {
-      recordOfExpandedKeys = recordOfExpandedKeys || {};
-      recordOfExpandedKeys[dirPath] = expandedResourcesKeys;
-      return getStorageInstance().setItem(STORAGE_RECORD_EXPANDED_RESOURCE_KEYS, recordOfExpandedKeys);
+export async function setRecord(recordObjectKey, recordObject, storageKey) {
+  return getStorageInstance().getItem(storageKey)
+    .then(record => {
+      record = record || {};
+      record[recordObjectKey] = recordObject;
+      return getStorageInstance().setItem(storageKey, record);
     });
 }
 
-export async function getRecordOfExpandedKeys(dirPath) {
-  return getStorageInstance().getItem(STORAGE_RECORD_EXPANDED_RESOURCE_KEYS)
-    .then(recordOfExpandedKeys => {
-      recordOfExpandedKeys = recordOfExpandedKeys || {};
-      return recordOfExpandedKeys[dirPath]
+export async function getRecord(recordObjectKey, storageKey) {
+  return getStorageInstance().getItem(storageKey)
+    .then(record => {
+      record = record || {};
+      return record[recordObjectKey]
     });
 }
+
+// export async function setRecordOfComponentPropsKeys(projectKey, expandedResourcesKeys) {
+//   return getStorageInstance().getItem(STORAGE_RECORD_EXPANDED_COMPONENT_PROPS_KEYS)
+//     .then(recordOfExpandedKeys => {
+//       recordOfExpandedKeys = recordOfExpandedKeys || {};
+//       recordOfExpandedKeys[projectKey] = expandedResourcesKeys;
+//       return getStorageInstance().setItem(STORAGE_RECORD_EXPANDED_COMPONENT_PROPS_KEYS, recordOfExpandedKeys);
+//     });
+// }
+//
+// export async function getRecordOfComponentPropsKeys(projectKey) {
+//   return getStorageInstance().getItem(STORAGE_RECORD_EXPANDED_COMPONENT_PROPS_KEYS)
+//     .then(recordOfExpandedKeys => {
+//       recordOfExpandedKeys = recordOfExpandedKeys || {};
+//       return recordOfExpandedKeys[projectKey]
+//     });
+// }
 

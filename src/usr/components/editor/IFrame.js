@@ -25,7 +25,7 @@ const containerStyle = {
   bottom: 0,
   right: 0,
   overflowX: 'auto',
-  backgroundColor: '#f5f5f5',
+  backgroundColor: '#eceff1',
 };
 
 const defaultInnerContainerStyle = {

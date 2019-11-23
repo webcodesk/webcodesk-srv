@@ -84,7 +84,7 @@ class Diagram extends Component {
     this.state = {
       isDropItemAcceptable: false,
       localTransform: null,
-      localZoomK: 0.6,
+      localZoomK: this.props.zoomK,
     };
   }
 
@@ -260,7 +260,7 @@ class Diagram extends Component {
       // let scaleK = k * scaleKoef <= 2 ? scaleKoef : 1;
       let scaleK = k;
       // let newK = k * scaleK;
-      let newK = 0.6;
+      let newK = this.state.localZoomK;
       const {data, x: itemX, y: itemY} = node;
       const selectorNode = this.container.select(`#${data.key}`).node();
       if (selectorNode) {

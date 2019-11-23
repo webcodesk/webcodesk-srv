@@ -32,6 +32,11 @@ const styles = theme => ({
   },
   errorText: {
     color: '#D50000',
+  },
+  selectedItem: {
+    backgroundColor: '#eceff1',
+    border: '1px solid #2979FF',
+    borderRadius: '4px'
   }
 });
 
@@ -41,7 +46,7 @@ const PageTreeListItem = withStyles(theme => ({
     position: 'relative',
     cursor: 'default',
     '&:hover': {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: '#eceff1',
     },
     userSelect: 'none',
   },
@@ -50,7 +55,7 @@ const PageTreeListItem = withStyles(theme => ({
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: 0,
-  }
+  },
 }))(ListItem);
 
 const PageTreeListItemText = withStyles({
@@ -156,7 +161,7 @@ class PageTreeItem extends React.Component {
           style={{paddingLeft}}
           button={false}
           onClick={!isEmpty(errors) ? this.handleErrorClick : this.handleClick}
-          selected={isSelected}
+          className={isSelected ? classes.selectedItem : ''}
         >
           <PageTreeListItemIcon>
             <ResourceIcon resourceType={constants.PAGE_COMPONENT_TYPE} />
@@ -186,8 +191,8 @@ class PageTreeItem extends React.Component {
       <PageTreeListItem
         key={itemKey}
         style={{paddingLeft}}
-        selected={isSelected}
         onClick={this.handleClick}
+        className={isSelected ? classes.selectedItem : ''}
       >
         <PageTreeListItemIcon>
           <ResourceIcon resourceType={constants.COMPONENT_PROPERTY_ELEMENT_TYPE} />

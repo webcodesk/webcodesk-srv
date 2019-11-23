@@ -29,6 +29,7 @@ import IFrame from './IFrame';
 import PageTree from './PageTree';
 import ToolbarButton from '../commons/ToolbarButton';
 import ComponentPropsTree from './ComponentPropsTree';
+import globalStore from '../../core/config/globalStore';
 
 const styles = theme => ({
   root: {
@@ -74,6 +75,7 @@ const styles = theme => ({
 
 class TemplateComposer extends React.Component {
   static propTypes = {
+    dataId: PropTypes.string,
     isVisible: PropTypes.bool,
     data: PropTypes.object,
     isDraggingItem: PropTypes.bool,
@@ -90,6 +92,7 @@ class TemplateComposer extends React.Component {
   };
 
   static defaultProps = {
+    dataId: '',
     isVisible: true,
     data: null,
     isDraggingItem: false,
@@ -131,13 +134,15 @@ class TemplateComposer extends React.Component {
       recentUpdateHistory: [],
       selectedComponentModel: null,
       localComponentsTree: null,
-      showTreeView: false,
-      showPropertyEditor: true,
+      showTreeView: this.getViewFlag('showTreeView', false),
+      showPropertyEditor: this.getViewFlag('showPropertyEditor', true),
       showPanelCover: false,
       showIframeDropPanelCover: false,
-      iFrameWidthIndex: 0,
+      iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
       structureTabActiveIndex: 0,
       isPreviewMode: false,
+      treeViewSplitterSize: this.getViewFlag('treeViewSplitterSize', 350),
+      propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
     };
   }
 
@@ -283,6 +288,28 @@ class TemplateComposer extends React.Component {
     // if (this.iFrameRef.current) {
     //   this.iFrameRef.current.setFocus();
     // }
+  };
+
+  storeViewFlag = (flagName, flagValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_TEMPLATE_COMPOSER_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      viewFlags[flagName] = flagValue;
+      recordViewFlags[dataId] = viewFlags;
+      globalStore.set(constants.STORAGE_RECORD_TEMPLATE_COMPOSER_FLAGS, recordViewFlags, true);
+    }
+  };
+
+  getViewFlag = (flagName, flagDefaultValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_TEMPLATE_COMPOSER_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      const viewFlag = viewFlags[flagName];
+      return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
+    }
+    return flagDefaultValue;
   };
 
   handleIFrameReady = () => {
@@ -458,12 +485,14 @@ class TemplateComposer extends React.Component {
   };
 
   handleToggleTreeView = () => {
+    this.storeViewFlag('showTreeView', !this.state.showTreeView);
     this.setState({
       showTreeView: !this.state.showTreeView,
     });
   };
 
   handleTogglePropertyEditor = () => {
+    this.storeViewFlag('showPropertyEditor', !this.state.showPropertyEditor);
     this.setState({
       showPropertyEditor: !this.state.showPropertyEditor,
     });
@@ -475,13 +504,15 @@ class TemplateComposer extends React.Component {
     });
   };
 
-  handleSplitterOnDragFinished = () => {
+  handleSplitterOnDragFinished = (splitterName) => (newSplitterSize) => {
+    this.storeViewFlag(splitterName, newSplitterSize);
     this.setState({
       showPanelCover: false,
     });
   };
 
   handleToggleWidth = (widthIndex) => () => {
+    this.storeViewFlag('iFrameWidthIndex', widthIndex);
     this.setState({
       iFrameWidthIndex: widthIndex,
     });
@@ -558,7 +589,9 @@ class TemplateComposer extends React.Component {
       recentUpdateHistory,
       iFrameWidthIndex,
       structureTabActiveIndex,
-      isPreviewMode
+      isPreviewMode,
+      treeViewSplitterSize,
+      propertyEditorSplitterSize,
     } = this.state;
     const {
       classes,
@@ -688,9 +721,9 @@ class TemplateComposer extends React.Component {
           <div className={classes.centralPane}>
             <SplitPane
               split="vertical"
-              defaultSize={250}
+              defaultSize={treeViewSplitterSize}
               onDragStarted={this.handleSplitterOnDragStarted}
-              onDragFinished={this.handleSplitterOnDragFinished}
+              onDragFinished={this.handleSplitterOnDragFinished('treeViewSplitterSize')}
               pane1Style={{display: showTreeView ? 'block' : 'none'}}
               resizerStyle={{display: showTreeView ? 'block' : 'none'}}
             >
@@ -727,9 +760,9 @@ class TemplateComposer extends React.Component {
               <SplitPane
                 split="vertical"
                 primary="second"
-                defaultSize={250}
+                defaultSize={propertyEditorSplitterSize}
                 onDragStarted={this.handleSplitterOnDragStarted}
-                onDragFinished={this.handleSplitterOnDragFinished}
+                onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
                 pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
                 resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
               >

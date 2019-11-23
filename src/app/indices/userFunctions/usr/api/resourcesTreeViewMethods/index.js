@@ -53,7 +53,8 @@ import {
   createNewComponentSubmit,
   createNewFunctionsStart,
   createNewFunctionsSubmit,
-  restoreExpandedResourceKeys
+  restoreExpandedResourceKeys,
+  restoreStorageRecords
 } from "usr/api/resourcesTreeViewMethods";
 
 export default {
@@ -95,5 +96,6 @@ export default {
   createNewComponentSubmit,
   createNewFunctionsStart,
   createNewFunctionsSubmit,
-  restoreExpandedResourceKeys
+  restoreExpandedResourceKeys,
+  restoreStorageRecords
 };

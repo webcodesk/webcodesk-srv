@@ -345,8 +345,9 @@ class ResourceEditor extends React.Component {
                     style={{ display: index === activeEditorTabIndex ? 'block' : 'none' }}
                   >
                     <ComponentView
-                      isVisible={index === activeEditorTabIndex}
+                      dataId={resourceObject.key}
                       data={resourceObject}
+                      isVisible={index === activeEditorTabIndex}
                       serverPort={projectSettingsObject.port}
                       onSaveChanges={this.handleSaveSourceCode(index)}
                       onSaveAsTemplate={this.handleSaveAsTemplate}
@@ -361,6 +362,7 @@ class ResourceEditor extends React.Component {
                     style={{ display: index === activeEditorTabIndex ? 'block' : 'none' }}
                   >
                     <PageComposer
+                      dataId={resourceObject.key}
                       isVisible={index === activeEditorTabIndex}
                       isDraggingItem={isDraggingItem}
                       draggedItem={draggedItem}
@@ -386,6 +388,7 @@ class ResourceEditor extends React.Component {
                     style={{ display: index === activeEditorTabIndex ? 'block' : 'none' }}
                   >
                     <TemplateComposer
+                      dataId={resourceObject.key}
                       isVisible={index === activeEditorTabIndex}
                       isDraggingItem={isDraggingItem}
                       draggedItem={draggedItem}
@@ -410,6 +413,7 @@ class ResourceEditor extends React.Component {
                     style={{ display: index === activeEditorTabIndex ? 'block' : 'none' }}
                   >
                     <FlowComposer
+                      dataId={resourceObject.key}
                       draggedItem={draggedItem}
                       isDraggingItem={isDraggingItem}
                       updateHistory={updateResourceHistory[resourceObject.key]}
@@ -456,6 +460,7 @@ class ResourceEditor extends React.Component {
                   style={{ display: index === activeEditorTabIndex ? 'block' : 'none' }}
                 >
                   <LivePreview
+                    dataId={livePreviewObject.key}
                     isVisible={index === activeEditorTabIndex}
                     pages={livePreviewObject.pages}
                     settings={livePreviewObject.settings}

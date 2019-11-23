@@ -16,8 +16,6 @@
 
 import globalStore from '../core/config/globalStore';
 import * as projectManager from '../core/project/projectManager';
-import * as storage from '../core/config/storage';
-import * as constants from '../../commons/constants';
 
 export const testProjectConfiguration = () => async (dispatch) => {
   try {
@@ -67,24 +65,4 @@ export const closeExistingProject = () => dispatch => {
   dispatch('selectedResource', null);
   dispatch('selectedVirtualPath', '');
   dispatch('success');
-};
-
-export const getInfo = () => async dispatch => {
-  // const welcomeInfo = await storage.getWelcomeInfo();
-  // dispatch('showWelcomeDialog', welcomeInfo ? welcomeInfo.showWelcomeDialog : true);
-};
-
-export const showTutorial = (doNotShowAgain) => async (dispatch) => {
-  projectManager.openUrlInExternalBrowser(constants.URL_WEBCODESK_TUTORIAL);
-  if (doNotShowAgain) {
-    await storage.saveWelcomeInfo({showWelcomeDialog: !doNotShowAgain});
-  }
-  dispatch('showWelcomeDialog', false);
-};
-
-export const closeWelcome = (doNotShowAgain) => async (dispatch) => {
-  if (doNotShowAgain) {
-    await storage.saveWelcomeInfo({showWelcomeDialog: !doNotShowAgain});
-  }
-  dispatch('showWelcomeDialog', false);
 };

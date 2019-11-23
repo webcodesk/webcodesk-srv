@@ -23,6 +23,7 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PropsTreeItem from './PropsTreeItem';
+import globalStore from '../../core/config/globalStore';
 import * as constants from '../../../commons/constants';
 import PropsTreeGroup from './PropsTreeGroup';
 import EditJsonDialog from '../dialogs/EditJsonDialog';
@@ -125,6 +126,7 @@ const propertyComparator = (aModel, bModel) => {
 
 class PropsTree extends React.Component {
   static propTypes = {
+    dataId: PropTypes.string,
     properties: PropTypes.array,
     onUpdateComponentPropertyModel: PropTypes.func,
     onIncreaseComponentPropertyArray: PropTypes.func,
@@ -134,6 +136,7 @@ class PropsTree extends React.Component {
   };
 
   static defaultProps = {
+    dataId: '',
     properties: [],
     onUpdateComponentPropertyModel: () => {
       console.info('PropsTree.onUpdateComponentPropertyModel is not set');
@@ -154,9 +157,9 @@ class PropsTree extends React.Component {
 
   constructor (props, context) {
     super(props, context);
-    const { properties } = this.props;
+    const { properties, dataId } = this.props;
     this.state = {
-      expandedGroupKeys: properties ? this.expandAllGroupsProperties(properties) : {},
+      expandedGroupKeys: this.getStoredExpandedKeys(dataId),
       showEditJsonDialog: false,
       editComponentPropertyModel: null,
       propertiesLocal: properties ? this.sortProperties(cloneDeep(properties)) : [],
@@ -173,9 +176,10 @@ class PropsTree extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
-    const { properties } = this.props;
+    const { properties, dataId } = this.props;
     if (properties && properties !== prevProps.properties) {
       this.setState({
+        expandedGroupKeys: this.getStoredExpandedKeys(dataId),
         propertiesLocal: this.sortProperties(cloneDeep(properties)),
       });
     }
@@ -189,9 +193,10 @@ class PropsTree extends React.Component {
     this.props.onIncreaseComponentPropertyArray(propertyKey);
     const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
     newExpandedGroupKeys[propertyKey] = true;
+    this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
     this.setState({
       expandedGroupKeys: newExpandedGroupKeys,
-    })
+    });
   };
 
   handleDeleteComponentProperty = (propertyKey) => {
@@ -212,6 +217,7 @@ class PropsTree extends React.Component {
   handleToggleExpandItem = (groupKey) => {
     const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
     newExpandedGroupKeys[groupKey] = !newExpandedGroupKeys[groupKey];
+    this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
     this.setState({
       expandedGroupKeys: newExpandedGroupKeys,
     })
@@ -255,22 +261,38 @@ class PropsTree extends React.Component {
     return properties;
   };
 
-  expandAllGroupsProperties = (properties) => {
-    let result = {};
-    if (properties && properties.length > 0) {
-      properties.forEach(propertyItem => {
-        if (propertyItem) {
-          const { type, key, children } = propertyItem;
-          if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE || type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
-            result[key] = true;
-            if (children && children.length > 0) {
-              result = {...result, ...this.expandAllGroupsProperties(children)};
-            }
-          }
-        }
-      });
+  // expandAllGroupsProperties = (properties) => {
+  //   let result = {};
+  //   if (properties && properties.length > 0) {
+  //     properties.forEach(propertyItem => {
+  //       if (propertyItem) {
+  //         const { type, key, children } = propertyItem;
+  //         if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE || type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
+  //           result[key] = true;
+  //           if (children && children.length > 0) {
+  //             result = {...result, ...this.expandAllGroupsProperties(children)};
+  //           }
+  //         }
+  //       }
+  //     });
+  //   }
+  //   return result;
+  // };
+
+  getStoredExpandedKeys = (dataId) => {
+    if (dataId) {
+      const recordOfExpandedKeys = globalStore.get(constants.STORAGE_RECORD_EXPANDED_COMPONENT_PROPS_KEYS) || {};
+      return recordOfExpandedKeys[dataId] || {};
     }
-    return result;
+    return {};
+  };
+
+  storeExpandedKeys = (dataId, expandedKeys) => {
+    if (dataId) {
+      const recordOfExpandedKeys = globalStore.get(constants.STORAGE_RECORD_EXPANDED_COMPONENT_PROPS_KEYS) || {};
+      recordOfExpandedKeys[dataId] = expandedKeys;
+      globalStore.set(constants.STORAGE_RECORD_EXPANDED_COMPONENT_PROPS_KEYS, recordOfExpandedKeys, true);
+    }
   };
 
   createList = (node, level = 0, arrayIndex = null) => {
@@ -398,7 +420,7 @@ class PropsTree extends React.Component {
   };
 
   render () {
-    const { classes, properties } = this.props;
+    const { classes } = this.props;
     const { propertiesLocal } = this.state;
     if (propertiesLocal && propertiesLocal.length > 0) {
       const { showEditJsonDialog, editComponentPropertyModel } = this.state;

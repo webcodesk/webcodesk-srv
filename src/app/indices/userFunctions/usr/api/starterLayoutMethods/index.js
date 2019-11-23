@@ -19,9 +19,6 @@ import {
   testProjectConfiguration,
   closeExistingProject,
   testError,
-  getInfo,
-  showTutorial,
-  closeWelcome,
 } from "usr/api/starterLayoutMethods";
 
 export default {
@@ -29,7 +26,4 @@ export default {
   testProjectConfiguration,
   closeExistingProject,
   testError,
-  getInfo,
-  showTutorial,
-  closeWelcome,
 };

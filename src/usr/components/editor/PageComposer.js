@@ -22,6 +22,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import SplitPane from '../splitPane';
+import globalStore from '../../core/config/globalStore';
 import constants from '../../../commons/constants';
 import PageComposerManager from '../../core/pageComposer/PageComposerManager';
 import { CommonToolbar, CommonToolbarDivider, CommonTab, CommonTabs } from '../commons/Commons.parts';
@@ -75,6 +76,7 @@ const styles = theme => ({
 
 class PageComposer extends React.Component {
   static propTypes = {
+    dataId: PropTypes.string,
     isVisible: PropTypes.bool,
     data: PropTypes.object,
     isDraggingItem: PropTypes.bool,
@@ -92,6 +94,7 @@ class PageComposer extends React.Component {
   };
 
   static defaultProps = {
+    dataId: '',
     isVisible: true,
     data: null,
     isDraggingItem: false,
@@ -138,12 +141,14 @@ class PageComposer extends React.Component {
       selectedComponentModel: null,
       localComponentsTree: null,
       localMetaData: null,
-      showTreeView: false,
-      showPropertyEditor: true,
+      showTreeView: this.getViewFlag('showTreeView', false),
+      showPropertyEditor: this.getViewFlag('showPropertyEditor', true),
       showPanelCover: false,
       showIframeDropPanelCover: false,
-      iFrameWidthIndex: 0,
+      iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
       structureTabActiveIndex: 0,
+      treeViewSplitterSize: this.getViewFlag('treeViewSplitterSize', 350),
+      propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
     };
   }
 
@@ -296,6 +301,28 @@ class PageComposer extends React.Component {
     // if (this.iFrameRef.current) {
     //   this.iFrameRef.current.setFocus();
     // }
+  };
+
+  storeViewFlag = (flagName, flagValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_PAGE_COMPOSER_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      viewFlags[flagName] = flagValue;
+      recordViewFlags[dataId] = viewFlags;
+      globalStore.set(constants.STORAGE_RECORD_PAGE_COMPOSER_FLAGS, recordViewFlags, true);
+    }
+  };
+
+  getViewFlag = (flagName, flagDefaultValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_PAGE_COMPOSER_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      const viewFlag = viewFlags[flagName];
+      return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
+    }
+    return flagDefaultValue;
   };
 
   handleIFrameReady = () => {
@@ -485,12 +512,14 @@ class PageComposer extends React.Component {
   };
 
   handleToggleTreeView = () => {
+    this.storeViewFlag('showTreeView', !this.state.showTreeView);
     this.setState({
       showTreeView: !this.state.showTreeView,
     });
   };
 
   handleTogglePropertyEditor = () => {
+    this.storeViewFlag('showPropertyEditor', !this.state.showPropertyEditor);
     this.setState({
       showPropertyEditor: !this.state.showPropertyEditor,
     });
@@ -502,13 +531,15 @@ class PageComposer extends React.Component {
     });
   };
 
-  handleSplitterOnDragFinished = () => {
+  handleSplitterOnDragFinished = (splitterName) => (newSplitterSize) => {
+    this.storeViewFlag(splitterName, newSplitterSize);
     this.setState({
       showPanelCover: false,
     });
   };
 
   handleToggleWidth = (widthIndex) => () => {
+    this.storeViewFlag('iFrameWidthIndex', widthIndex);
     this.setState({
       iFrameWidthIndex: widthIndex,
     });
@@ -589,6 +620,8 @@ class PageComposer extends React.Component {
       recentUpdateHistory,
       iFrameWidthIndex,
       structureTabActiveIndex,
+      treeViewSplitterSize,
+      propertyEditorSplitterSize
     } = this.state;
     const {
       classes,
@@ -715,9 +748,9 @@ class PageComposer extends React.Component {
           <div className={classes.centralPane}>
             <SplitPane
               split="vertical"
-              defaultSize={250}
+              defaultSize={treeViewSplitterSize}
               onDragStarted={this.handleSplitterOnDragStarted}
-              onDragFinished={this.handleSplitterOnDragFinished}
+              onDragFinished={this.handleSplitterOnDragFinished('treeViewSplitterSize')}
               pane1Style={{display: showTreeView ? 'block' : 'none'}}
               resizerStyle={{display: showTreeView ? 'block' : 'none'}}
             >
@@ -761,9 +794,9 @@ class PageComposer extends React.Component {
               <SplitPane
                 split="vertical"
                 primary="second"
-                defaultSize={250}
+                defaultSize={propertyEditorSplitterSize}
                 onDragStarted={this.handleSplitterOnDragStarted}
-                onDragFinished={this.handleSplitterOnDragFinished}
+                onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
                 pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
                 resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
               >

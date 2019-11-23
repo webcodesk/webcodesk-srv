@@ -167,12 +167,13 @@ class ComponentPropsTree extends React.Component {
             )}
           </List>
           <PropsTree
+            dataId={isSampleComponent ? componentName : `${componentName}_${componentInstance}`}
+            properties={children}
             onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
             onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
             onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-            properties={children}
           />
         </div>
       );

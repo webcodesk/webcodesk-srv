@@ -20,6 +20,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import SplitPane from '../splitPane';
 import constants from '../../../commons/constants';
+import globalStore from '../../core/config/globalStore';
 import { CommonToolbar, CommonToolbarDivider, CommonTab, CommonTabs } from '../commons/Commons.parts';
 import IFrame from './IFrame';
 import ToolbarButton from '../commons/ToolbarButton';
@@ -79,6 +80,7 @@ const styles = theme => ({
 
 class ComponentView extends React.Component {
   static propTypes = {
+    dataId: PropTypes.string,
     data: PropTypes.object,
     serverPort: PropTypes.number,
     isVisible: PropTypes.bool,
@@ -87,6 +89,7 @@ class ComponentView extends React.Component {
   };
 
   static defaultProps = {
+    dataId: '',
     data: {},
     serverPort: -1,
     // sourceCode: '',
@@ -110,10 +113,10 @@ class ComponentView extends React.Component {
       iFrameReadyCounter: 0,
       sendMessageCounter: 0,
       showPanelCover: false,
-      showPropertyEditor: true,
-      showInfoView: true,
-      infoTabActiveIndex: 0,
-      iFrameWidthIndex: 0,
+      showPropertyEditor: this.getViewFlag('showPropertyEditor', true),
+      showInfoView: this.getViewFlag('showInfoView', true),
+      infoTabActiveIndex: this.getViewFlag('infoTabActiveIndex', 0),
+      iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
       lastDebugMsg: null,
       isSourceCodeOpen: false,
       localComponentViewModel: null,
@@ -122,6 +125,8 @@ class ComponentView extends React.Component {
       markdownContent: data ? data.readmeText : '',
       sourceCodeUpdateCounter: 0,
       recentUpdateHistory: [],
+      actionsLogViewSplitterSize: this.getViewFlag('actionsLogViewSplitter', 350),
+      storiesViewSplitterSize: this.getViewFlag('storiesViewSplitterSize', 250)
     };
   }
 
@@ -252,6 +257,28 @@ class ComponentView extends React.Component {
     }
   };
 
+  storeViewFlag = (flagName, flagValue) => {
+    const { dataId } = this.props;
+     if (dataId) {
+       const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_COMPONENT_VIEW_FLAGS) || {};
+       const viewFlags = recordViewFlags[dataId] || {};
+       viewFlags[flagName] = flagValue;
+       recordViewFlags[dataId] = viewFlags;
+       globalStore.set(constants.STORAGE_RECORD_COMPONENT_VIEW_FLAGS, recordViewFlags, true);
+    }
+  };
+
+  getViewFlag = (flagName, flagDefaultValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_COMPONENT_VIEW_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      const viewFlag = viewFlags[flagName];
+      return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
+    }
+    return flagDefaultValue;
+  };
+
   handleIFrameReady = () => {
     this.setState({
       iFrameReadyCounter: this.state.iFrameReadyCounter + 1,
@@ -280,12 +307,14 @@ class ComponentView extends React.Component {
   };
 
   handleTogglePropsPanel = () => {
+    this.storeViewFlag('showPropertyEditor', !this.state.showPropertyEditor);
     this.setState({
       showPropertyEditor: !this.state.showPropertyEditor,
     });
   };
 
   handleToggleInfoView = () => {
+    this.storeViewFlag('showInfoView', !this.state.showInfoView);
     this.setState({
       showInfoView: !this.state.showInfoView,
     });
@@ -297,19 +326,22 @@ class ComponentView extends React.Component {
     });
   };
 
-  handleSplitterOnDragFinished = () => {
+  handleSplitterOnDragFinished = (splitterName) =>  (newSplitterSize) => {
+    this.storeViewFlag(splitterName, newSplitterSize);
     this.setState({
       showPanelCover: false,
     });
   };
 
   handleChangeInfoTab = (event, value) => {
+    this.storeViewFlag('infoTabActiveIndex', value);
     this.setState({
       infoTabActiveIndex: value,
     });
   };
 
   handleToggleWidth = (widthIndex) => () => {
+    this.storeViewFlag('iFrameWidthIndex', widthIndex);
     this.setState({
       iFrameWidthIndex: widthIndex,
     });
@@ -380,7 +412,9 @@ class ComponentView extends React.Component {
       markdownContent,
       sourceCodeUpdateCounter,
       localComponentsTree,
-      recentUpdateHistory
+      recentUpdateHistory,
+      actionsLogViewSplitterSize,
+      storiesViewSplitterSize
     } = this.state;
     const { iFrameWidthIndex } = this.state;
     return (
@@ -483,9 +517,9 @@ class ComponentView extends React.Component {
                 key="storiesViewSplitter"
                 split="vertical"
                 primary="second"
-                defaultSize={250}
+                defaultSize={storiesViewSplitterSize}
                 onDragStarted={this.handleSplitterOnDragStarted}
-                onDragFinished={this.handleSplitterOnDragFinished}
+                onDragFinished={this.handleSplitterOnDragFinished('storiesViewSplitterSize')}
                 pane2Style={{ display: showPropertyEditor ? 'block' : 'none' }}
                 resizerStyle={{ display: showPropertyEditor ? 'block' : 'none' }}
               >
@@ -493,10 +527,10 @@ class ComponentView extends React.Component {
                   <SplitPane
                     key="actionsLogViewSplitter"
                     split="horizontal"
-                    defaultSize={350}
+                    defaultSize={actionsLogViewSplitterSize}
                     primary="second"
                     onDragStarted={this.handleSplitterOnDragStarted}
-                    onDragFinished={this.handleSplitterOnDragFinished}
+                    onDragFinished={this.handleSplitterOnDragFinished('actionsLogViewSplitterSize')}
                     pane2Style={{ display: showInfoView ? 'block' : 'none' }}
                     resizerStyle={{ display: showInfoView ? 'block' : 'none' }}
                   >

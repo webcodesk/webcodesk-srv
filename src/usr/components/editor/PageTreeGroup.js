@@ -21,16 +21,12 @@ import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import * as constants from '../../../commons/constants';
-import ResourceIcon from '../commons/ResourceIcon';
+import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 
 const styles = theme => ({
-  mutedText: {
-    color: theme.palette.text.disabled,
+  buttonIcon: {
+    fontSize: '12px'
   },
-  errorText: {
-    color: '#D50000',
-  }
 });
 
 const PageTreeListGroup = withStyles(theme => ({
@@ -38,17 +34,16 @@ const PageTreeListGroup = withStyles(theme => ({
     alignItems: 'flex-start',
     position: 'relative',
     cursor: 'default',
-    '&:hover': {
-      backgroundColor: theme.palette.action.hover,
-    },
     userSelect: 'none',
   },
   dense: {
+    display: 'flex',
+    alignItems: 'center',
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: 0,
-  }
+  },
 }))(ListItem);
 
 const PageTreeListGroupText = withStyles({
@@ -103,13 +98,13 @@ class PageTreeGroup extends React.Component {
     if (!this.props.name) {
       return null;
     }
-    const { name, paddingLeft } = this.props;
+    const { name, paddingLeft, classes } = this.props;
     return (
       <PageTreeListGroup
         style={{paddingLeft}}
       >
         <PageTreeListGroupIcon>
-          <ResourceIcon resourceType={constants.GRAPH_MODEL_DIR_TYPE} />
+          <RemoveCircleOutline className={classes.buttonIcon} color="primary"/>
         </PageTreeListGroupIcon>
         <PageTreeListGroupText
           title={name}

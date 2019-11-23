@@ -46,13 +46,15 @@ const styles = theme => ({
     border: '1px solid #dcdcdc',
     borderRadius: '4px',
     marginTop: '5px',
-    marginBottom: '5px'
+    marginBottom: '5px',
   },
   propertyEditorContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    width: '100%'
+    width: '100%',
+    overflow: 'hidden',
+    paddingRight: '2px'
   }
 });
 

@@ -43,6 +43,7 @@ import ToolbarButton from '../commons/ToolbarButton';
 import constants from '../../../commons/constants';
 import DraggableWrapper from './DraggableWrapper';
 import ScriptView from '../commons/ScriptView';
+import superPropBase from '@babel/runtime/helpers/esm/superPropBase';
 
 const TREE_VIEW_INDENT = '21px';
 const FIRST_LIST_INDENT = '17px';
@@ -508,7 +509,8 @@ class ResourcesTreeView extends React.Component {
             ? `${virtualPath}${constants.FILE_SEPARATOR}${props.displayName}`
             : props.displayName;
         }
-        if (children && children.length > 0 && expandedResourceKeys[key]) {
+        let hasChildren = children && children.length > 0;
+        if (hasChildren && expandedResourceKeys[key]) {
           const { list: childList, totalLevels: childTotalLevels } =
             this.createLists(children, parentVirtualPath, level + 1);
           listItems = listItems.concat(childList);
@@ -529,12 +531,18 @@ class ResourcesTreeView extends React.Component {
                   title="Click to expand the group"
                 >
                   <ResourceListItemExpandedIcon>
-                    {expandedResourceKeys[key]
+                    {hasChildren
                       ? (
-                        <ExpandMore fontSize="small" color="disabled"/>
+                        expandedResourceKeys[key]
+                          ? (
+                            <ExpandMore fontSize="small" color="disabled"/>
+                          )
+                          : (
+                            <ChevronRight fontSize="small" color="disabled"/>
+                          )
                       )
                       : (
-                        <ChevronRight fontSize="small" color="disabled"/>
+                        <span>&nbsp;</span>
                       )
                     }
                   </ResourceListItemExpandedIcon>
@@ -609,12 +617,18 @@ class ResourcesTreeView extends React.Component {
                     title="Click to expand the group"
                   >
                     <ResourceListItemExpandedIcon>
-                      {expandedResourceKeys[key]
+                      {hasChildren
                         ? (
-                          <ExpandMore fontSize="small" color="disabled"/>
+                          expandedResourceKeys[key]
+                            ? (
+                              <ExpandMore fontSize="small" color="disabled"/>
+                            )
+                            : (
+                              <ChevronRight fontSize="small" color="disabled"/>
+                            )
                         )
                         : (
-                          <ChevronRight fontSize="small" color="disabled"/>
+                          <span>&nbsp;</span>
                         )
                       }
                     </ResourceListItemExpandedIcon>
@@ -656,12 +670,18 @@ class ResourcesTreeView extends React.Component {
                   title="Click to expand the group"
                 >
                   <ResourceListItemExpandedIcon>
-                    {expandedResourceKeys[key]
+                    {hasChildren
                       ? (
-                        <ExpandMore fontSize="small" color="disabled"/>
+                        expandedResourceKeys[key]
+                          ? (
+                            <ExpandMore fontSize="small" color="disabled"/>
+                          )
+                          : (
+                            <ChevronRight fontSize="small" color="disabled"/>
+                          )
                       )
                       : (
-                        <ChevronRight fontSize="small" color="disabled"/>
+                        <span>&nbsp;</span>
                       )
                     }
                   </ResourceListItemExpandedIcon>
@@ -710,9 +730,7 @@ class ResourcesTreeView extends React.Component {
                     <span>&nbsp;</span>
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
-                    <ResourceIcon
-                      resourceType={type}
-                    />
+                    <ResourceIcon resourceType={type} />
                   </ResourceListItemIcon>
                 </div>
                 <div className={classes.listItemTextContainerDraggable}>
@@ -799,12 +817,18 @@ class ResourcesTreeView extends React.Component {
                   title="Click to expand the group"
                 >
                   <ResourceListItemExpandedIcon>
-                    {expandedResourceKeys[key]
+                    {hasChildren
                       ? (
-                        <ExpandMore fontSize="small" color="disabled"/>
+                        expandedResourceKeys[key]
+                          ? (
+                            <ExpandMore fontSize="small" color="disabled"/>
+                          )
+                          : (
+                            <ChevronRight fontSize="small" color="disabled"/>
+                          )
                       )
                       : (
-                        <ChevronRight fontSize="small" color="disabled"/>
+                        <span>&nbsp;</span>
                       )
                     }
                   </ResourceListItemExpandedIcon>
@@ -1014,12 +1038,18 @@ class ResourcesTreeView extends React.Component {
                   title="Click to expand the group"
                 >
                   <ResourceListItemExpandedIcon>
-                    {expandedResourceKeys[key]
+                    {hasChildren
                       ? (
-                        <ExpandMore fontSize="small" color="disabled"/>
+                        expandedResourceKeys[key]
+                          ? (
+                            <ExpandMore fontSize="small" color="disabled"/>
+                          )
+                          : (
+                            <ChevronRight fontSize="small" color="disabled"/>
+                          )
                       )
                       : (
-                        <ChevronRight fontSize="small" color="disabled"/>
+                        <span>&nbsp;</span>
                       )
                     }
                   </ResourceListItemExpandedIcon>
@@ -1248,9 +1278,7 @@ class ResourcesTreeView extends React.Component {
                     <span>&nbsp;</span>
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
-                    <ResourceIcon
-                      resourceType={type}
-                    />
+                    <ResourceIcon resourceType={type} />
                   </ResourceListItemIcon>
                 </div>
                 <div className={classes.listItemTextContainerDraggable}>
@@ -1309,9 +1337,7 @@ class ResourcesTreeView extends React.Component {
                       <span>&nbsp;</span>
                     </ResourceListItemExpandedIcon>
                     <ResourceListItemIcon>
-                      <ResourceIcon
-                        resourceType={itemModel.type}
-                      />
+                      <ResourceIcon resourceType={itemModel.type} />
                     </ResourceListItemIcon>
                   </div>
                   <div className={classes.listItemTextContainerDraggable}>

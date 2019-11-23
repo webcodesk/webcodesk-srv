@@ -27,6 +27,8 @@ import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import Diagram from '../diagram/Diagram';
 import ToolbarButton from '../commons/ToolbarButton';
 import FlowInputTransformEditor from './FlowInputTransformEditor';
+import globalStore from '../../core/config/globalStore';
+import constants from '../../../commons/constants';
 
 const styles = theme => ({
   root: {
@@ -77,6 +79,7 @@ const styles = theme => ({
 
 class FlowComposer extends React.Component {
   static propTypes = {
+    dataId: PropTypes.string,
     isVisible: PropTypes.bool,
     data: PropTypes.object,
     draggedItem: PropTypes.object,
@@ -90,6 +93,7 @@ class FlowComposer extends React.Component {
   };
 
   static defaultProps = {
+    dataId: '',
     isVisible: true,
     data: null,
     draggedItem: null,
@@ -119,8 +123,9 @@ class FlowComposer extends React.Component {
       selectedModels: null,
       updateCounter: 0,
       showPanelCover: false,
-      showPropertyEditor: true,
-      zoomK: 0.6,
+      showPropertyEditor: this.getViewFlag('showPropertyEditor', true),
+      zoomK: this.getViewFlag('zoomK', 0.6),
+      propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
     };
     const { data } = this.props;
     if (data) {
@@ -132,7 +137,15 @@ class FlowComposer extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { data, isVisible, isDraggingItem, updateHistory } = this.props;
-    const { localFlowTree, selectedModels, updateCounter, showPanelCover, showPropertyEditor, zoomK } = this.state;
+    const {
+      localFlowTree,
+      selectedModels,
+      updateCounter,
+      showPanelCover,
+      showPropertyEditor,
+      zoomK,
+      propertyEditorSplitterSize
+    } = this.state;
     let dataIsChanged = nextProps.data && data !== nextProps.data;
     if (dataIsChanged) {
       // it seems new data is arrived
@@ -155,7 +168,8 @@ class FlowComposer extends React.Component {
       || updateCounter !== nextState.updateCounter
       || showPanelCover !== nextState.showPanelCover
       || showPropertyEditor !== nextState.showPropertyEditor
-      || zoomK !== nextState.zoomK;
+      || zoomK !== nextState.zoomK
+      || propertyEditorSplitterSize !== nextState.propertyEditorSplitterSize;
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
@@ -186,19 +200,43 @@ class FlowComposer extends React.Component {
     this.props.onUpdate({ flowTree: this.flowComposerManager.getSerializableFlowModel() });
   };
 
+  storeViewFlag = (flagName, flagValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_FLOW_COMPOSER_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      viewFlags[flagName] = flagValue;
+      recordViewFlags[dataId] = viewFlags;
+      globalStore.set(constants.STORAGE_RECORD_FLOW_COMPOSER_FLAGS, recordViewFlags, true);
+    }
+  };
+
+  getViewFlag = (flagName, flagDefaultValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_FLOW_COMPOSER_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      const viewFlag = viewFlags[flagName];
+      return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
+    }
+    return flagDefaultValue;
+  };
+
   handleSplitterOnDragStarted = () => {
     this.setState({
       showPanelCover: true,
     });
   };
 
-  handleSplitterOnDragFinished = () => {
+  handleSplitterOnDragFinished = (splitterName) => (newSplitterSize) => {
+    this.storeViewFlag(splitterName, newSplitterSize);
     this.setState({
       showPanelCover: false,
     });
   };
 
   handleTogglePropertyEditor = () => {
+    this.storeViewFlag('showPropertyEditor', !this.state.showPropertyEditor);
     this.setState({
       showPropertyEditor: !this.state.showPropertyEditor,
     });
@@ -318,6 +356,7 @@ class FlowComposer extends React.Component {
   handleIncreaseZoom = () => {
     const {zoomK} = this.state;
     const newZoomK = zoomK < 1 ? zoomK + 0.2 : zoomK;
+    this.storeViewFlag('zoomK', Number(newZoomK));
     this.setState({
       zoomK: Number(newZoomK)
     })
@@ -326,25 +365,35 @@ class FlowComposer extends React.Component {
   handleDecreaseZoom = () => {
     const {zoomK} = this.state;
     const newZoomK = zoomK > 0.3 ? zoomK - 0.2 : zoomK;
+    this.storeViewFlag('zoomK', Number(newZoomK));
     this.setState({
       zoomK: Number(newZoomK)
     })
   };
 
   handleInitialZoom = () => {
+    this.storeViewFlag('zoomK', 0.6);
     this.setState({
       zoomK: 0.6
     })
   };
 
   handleZoomed = (zoomedK) => {
+    this.storeViewFlag('zoomK', Number(zoomedK));
     this.setState({
       zoomK: Number(zoomedK),
     });
   };
 
   render () {
-    const { localFlowTree, selectedModels, showPanelCover, showPropertyEditor, zoomK } = this.state;
+    const {
+      localFlowTree,
+      selectedModels,
+      showPanelCover,
+      showPropertyEditor,
+      zoomK,
+      propertyEditorSplitterSize
+    } = this.state;
     if (!localFlowTree) {
       return <h1>Flow tree is not specified</h1>
     }
@@ -457,9 +506,9 @@ class FlowComposer extends React.Component {
           <SplitPane
             split="horizontal"
             primary="second"
-            defaultSize={250}
+            defaultSize={propertyEditorSplitterSize}
             onDragStarted={this.handleSplitterOnDragStarted}
-            onDragFinished={this.handleSplitterOnDragFinished}
+            onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
             pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
             resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
           >

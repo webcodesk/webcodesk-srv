@@ -26,6 +26,7 @@ import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import ToolbarButton from '../commons/ToolbarButton';
 import ToolbarField from "../commons/ToolbarField";
 import SettingsPropsTree from './SettingsPropsTree';
+import globalStore from '../../core/config/globalStore';
 
 const styles = theme => ({
   root: {
@@ -76,6 +77,7 @@ const styles = theme => ({
 
 class LivePreview extends React.Component {
   static propTypes = {
+    dataId: PropTypes.string,
     isVisible: PropTypes.bool,
     pages: PropTypes.array,
     settings: PropTypes.array,
@@ -87,6 +89,7 @@ class LivePreview extends React.Component {
   };
 
   static defaultProps = {
+    dataId: '',
     isVisible: true,
     pages: [],
     settings: [],
@@ -119,18 +122,20 @@ class LivePreview extends React.Component {
       }
     }
     this.state = {
-      iFrameWidthIndex: 0,
+      iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
       isRecordingFrameworkMessages: false,
       isDebugFlowOpen: false,
       activePage: indexPage,
       activeUrl: indexPage ? `/${indexPage.pagePath}`: '/',
-      showPagesList: false,
+      showPagesList: this.getViewFlag('showPagesList', false),
       showPanelCover: false,
       frameUrl: null,
       selectedDebugTitle: null,
       selectedDebugClass: null,
       initializationDebugMessageCount: 0,
-      showSettingsEditor: false,
+      showSettingsEditor: this.getViewFlag('showSettingsEditor', false),
+      pagesListSplitterSize: this.getViewFlag('pagesListSplitterSize', 300),
+      settingsEditorSplitterSize: this.getViewFlag('settingsEditorSplitterSize', 250),
     };
   }
 
@@ -149,6 +154,8 @@ class LivePreview extends React.Component {
       selectedDebugClass,
       initializationDebugMessageCount,
       showSettingsEditor,
+      pagesListSplitterSize,
+      settingsEditorSplitterSize
     } = this.state;
     return iFrameWidthIndex !== nextState.iFrameWidthIndex
       || isRecordingFrameworkMessages !== nextState.isRecordingFrameworkMessages
@@ -162,10 +169,34 @@ class LivePreview extends React.Component {
       || selectedDebugClass !== nextState.selectedDebugClass
       || initializationDebugMessageCount !== nextState.initializationDebugMessageCount
       || showSettingsEditor !== nextState.showSettingsEditor
+      || pagesListSplitterSize !== nextState.pagesListSplitterSize
+      || settingsEditorSplitterSize !== nextState.settingsEditorSplitterSize
       || isVisible !== nextProps.isVisible
       || pages !== nextProps.pages
       || serverPort !== nextProps.serverPort;
   }
+
+  storeViewFlag = (flagName, flagValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_LIVE_PREVIEW_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      viewFlags[flagName] = flagValue;
+      recordViewFlags[dataId] = viewFlags;
+      globalStore.set(constants.STORAGE_RECORD_LIVE_PREVIEW_FLAGS, recordViewFlags, true);
+    }
+  };
+
+  getViewFlag = (flagName, flagDefaultValue) => {
+    const { dataId } = this.props;
+    if (dataId) {
+      const recordViewFlags = globalStore.get(constants.STORAGE_RECORD_LIVE_PREVIEW_FLAGS) || {};
+      const viewFlags = recordViewFlags[dataId] || {};
+      const viewFlag = viewFlags[flagName];
+      return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
+    }
+    return flagDefaultValue;
+  };
 
   handleReload = () => {
     if (this.iFrameRef.current) {
@@ -174,6 +205,7 @@ class LivePreview extends React.Component {
   };
 
   handleToggleWidth = (widthIndex) => () => {
+    this.storeViewFlag('iFrameWidthIndex', widthIndex);
     this.setState({
       iFrameWidthIndex: widthIndex,
     });
@@ -233,6 +265,7 @@ class LivePreview extends React.Component {
   };
 
   handleTogglePagesList = () => {
+    this.storeViewFlag('showPagesList', !this.state.showPagesList);
     this.setState({
       showPagesList: !this.state.showPagesList,
     });
@@ -244,7 +277,8 @@ class LivePreview extends React.Component {
     });
   };
 
-  handleSplitterOnDragFinished = () => {
+  handleSplitterOnDragFinished = (splitterName) => (newSplitterSize) => {
+    this.storeViewFlag(splitterName, newSplitterSize);
     this.setState({
       showPanelCover: false,
     });
@@ -287,6 +321,7 @@ class LivePreview extends React.Component {
   };
 
   handleToggleSettingsEditor = () => {
+    this.storeViewFlag('showSettingsEditor', !this.state.showSettingsEditor);
     this.setState({
       showSettingsEditor: !this.state.showSettingsEditor,
     });
@@ -315,7 +350,9 @@ class LivePreview extends React.Component {
       selectedDebugTitle,
       selectedDebugClass,
       isExportStarted,
-      showSettingsEditor
+      showSettingsEditor,
+      pagesListSplitterSize,
+      settingsEditorSplitterSize
     } = this.state;
     const menuItems = [];
     if (isDebugFlowOpen) {
@@ -451,9 +488,9 @@ class LivePreview extends React.Component {
             <div className={classes.webviewCentralPane}>
               <SplitPane
                 split="vertical"
-                defaultSize={250}
+                defaultSize={pagesListSplitterSize}
                 onDragStarted={this.handleSplitterOnDragStarted}
-                onDragFinished={this.handleSplitterOnDragFinished}
+                onDragFinished={this.handleSplitterOnDragFinished('pagesListSplitterSize')}
                 pane1Style={{ display: showPagesList ? 'block' : 'none' }}
                 resizerStyle={{ display: showPagesList ? 'block' : 'none' }}
               >
@@ -467,9 +504,9 @@ class LivePreview extends React.Component {
                 <SplitPane
                   split="vertical"
                   primary="second"
-                  defaultSize={250}
+                  defaultSize={settingsEditorSplitterSize}
                   onDragStarted={this.handleSplitterOnDragStarted}
-                  onDragFinished={this.handleSplitterOnDragFinished}
+                  onDragFinished={this.handleSplitterOnDragFinished('settingsEditorSplitterSize')}
                   pane2Style={{display: showSettingsEditor ? 'block' : 'none'}}
                   resizerStyle={{display: showSettingsEditor ? 'block' : 'none'}}
                 >

@@ -126,10 +126,11 @@ class SettingsPropsTree extends React.Component {
           </List>
           <div className={classes.mainDivider} />
           <PropsTree
+            dataId="applicationSettings"
+            properties={localSettingsModel.children}
             onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
             onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
-            properties={localSettingsModel.children}
           />
         </div>
       );
