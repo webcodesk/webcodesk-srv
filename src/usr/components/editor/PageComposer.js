@@ -146,6 +146,7 @@ class PageComposer extends React.Component {
       structureTabActiveIndex: 0,
       treeViewSplitterSize: this.getViewFlag('treeViewSplitterSize', 350),
       propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
+      isPreviewMode: false,
     };
   }
 
@@ -597,6 +598,16 @@ class PageComposer extends React.Component {
     }
   };
 
+  handleTogglePreviewMode = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    this.setState({
+      isPreviewMode: !this.state.isPreviewMode
+    });
+  };
+
   debouncedSendMessage = debounce(newMousePos => {
     if (newMousePos) {
       const iframePos = this.iFrameRef.current.getOffset();
@@ -643,7 +654,8 @@ class PageComposer extends React.Component {
       recentUpdateHistory,
       iFrameWidthIndex,
       treeViewSplitterSize,
-      propertyEditorSplitterSize
+      propertyEditorSplitterSize,
+      isPreviewMode
     } = this.state;
     const {
       classes,
@@ -744,6 +756,17 @@ class PageComposer extends React.Component {
               />
               <CommonToolbarDivider />
               <ToolbarButton
+                iconType="SlowMotionVideo"
+                title="Preview"
+                switchedOn={isPreviewMode}
+                onClick={this.handleTogglePreviewMode}
+                tooltip={isPreviewMode
+                  ? "Switch to edit mode"
+                  : "Switch to live preview mode"
+                }
+              />
+              <CommonToolbarDivider />
+              <ToolbarButton
                 iconType="Widgets"
                 title="Save Template"
                 disabled={!selectedComponentModel}
@@ -820,7 +843,10 @@ class PageComposer extends React.Component {
                     <IFrame
                       ref={this.iFrameRef}
                       width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
-                      url={`http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`}
+                      url={isPreviewMode
+                        ? `http://localhost:${serverPort}/webcodesk__component_view`
+                        : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
+                      }
                       onIFrameReady={this.handleIFrameReady}
                       onIFrameMessage={this.handleIFrameMessage}
                     />
