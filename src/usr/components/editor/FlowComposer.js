@@ -135,6 +135,14 @@ class FlowComposer extends React.Component {
     }
   }
 
+  componentDidMount () {
+    window.document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount () {
+    window.document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { data, isVisible, isDraggingItem, updateHistory } = this.props;
     const {
@@ -220,6 +228,29 @@ class FlowComposer extends React.Component {
       return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
     }
     return flagDefaultValue;
+  };
+
+  handleKeyDown = (e) => {
+    if (
+      this.props.isVisible
+      && e
+      && e.target
+      && e.target.tagName !== 'INPUT'
+      && e.target.tagName !== 'TEXTAREA'
+    ) {
+      const {keyCode, metaKey, ctrlKey} = e;
+      if (metaKey || ctrlKey) {
+        if (keyCode === 90) { // Undo
+          this.handleUndo();
+        }
+      } else {
+        if (keyCode === 8 || keyCode === 46) { // Delete
+          this.handleDeleteItem();
+        }
+      }
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   handleSplitterOnDragStarted = () => {
@@ -474,14 +505,14 @@ class FlowComposer extends React.Component {
               disabled={!title}
               onClick={this.handleDeleteItem}
               title="Delete"
-              tooltip="Remove the selected particle from the flow"
+              tooltip="Remove the selected particle from the flow (Delete | Back Space)"
             />
             <ToolbarButton
               iconType="Undo"
               disabled={(!updateHistory || updateHistory.length === 0)}
               onClick={this.handleUndo}
               title="Undo"
-              tooltip="Undo current changes to the last saving"
+              tooltip="Undo current changes to the last saving (⌘+z | ctrl+z)"
             />
             <CommonToolbarDivider />
             <ToolbarButton

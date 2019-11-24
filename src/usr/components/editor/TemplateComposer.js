@@ -145,6 +145,14 @@ class TemplateComposer extends React.Component {
     };
   }
 
+  componentDidMount () {
+    window.document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount () {
+    window.document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   componentDidUpdate (prevProps, prevState, snapshot) {
     const {
       iFrameReadyCounter,
@@ -309,6 +317,39 @@ class TemplateComposer extends React.Component {
       return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
     }
     return flagDefaultValue;
+  };
+
+  handleKeyDown = (e) => {
+    if (
+      this.props.isVisible
+      && e
+      && e.target
+      && e.target.tagName !== 'INPUT'
+      && e.target.tagName !== 'TEXTAREA'
+    ) {
+      const {keyCode, metaKey, ctrlKey} = e;
+      if (metaKey || ctrlKey) {
+        if (keyCode === 90) { // Undo
+          this.undoUpdateLocalState();
+        } else if (keyCode === 67) { // Copy
+          this.handleCopyComponentInstance();
+        } else if (keyCode === 86) { // Paste
+          this.handlePasteComponentInstance();
+        } else if (keyCode === 88) { // Cut
+          this.handleCutComponentInstance();
+        } else if (keyCode === 83) { // Save
+          this.sendUpdate();
+        } else if (keyCode === 82) { // Reload
+          this.handleReload();
+        }
+      } else {
+        if (keyCode === 8 || keyCode === 46) { // Delete
+          this.handleDeleteComponentInstance();
+        }
+      }
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   handleIFrameReady = () => {
@@ -637,32 +678,32 @@ class TemplateComposer extends React.Component {
                 iconType="CopyToClipboard"
                 disabled={!selectedComponentModel}
                 onClick={this.handleCopyComponentInstance}
-                tooltip="Copy the selected element into the clipboard"
+                tooltip="Copy selected element into the clipboard (⌘+c | ctrl+c)"
               />
               <ToolbarButton
                 iconType="CutToClipboard"
                 disabled={!selectedComponentModel}
                 onClick={this.handleCutComponentInstance}
-                tooltip="Cut the selected element into the clipboard"
+                tooltip="Cut selected element into the clipboard (⌘+x | ctrl+x)"
               />
               <ToolbarButton
                 iconType="PasteFromClipboard"
                 disabled={!selectedComponentModel || !clipboardItems || clipboardItems.length === 0}
                 onClick={this.handlePasteComponentInstance}
-                tooltip="Replace the selected element with the last clipboard item"
+                tooltip="Replace selected element with the last clipboard item (⌘+v | ctrl+v)"
               />
               <ToolbarButton
                 iconType="Undo"
                 disabled={recentUpdateHistory.length === 0}
                 onClick={this.undoUpdateLocalState}
-                tooltip="Undo the last recent change on the page"
+                tooltip="Undo the last recent change on the page (⌘+z | ctrl+z)"
               />
               <ToolbarButton
                 iconType="Delete"
                 iconColor="#E53935"
                 disabled={!selectedComponentModel}
                 onClick={this.handleDeleteComponentInstance}
-                tooltip="Remove the selected component instance from the page"
+                tooltip="Remove selected component instance from the page (Delete | Back Space)"
               />
               <CommonToolbarDivider />
               <ToolbarButton
@@ -679,13 +720,13 @@ class TemplateComposer extends React.Component {
                 title="Save"
                 switchedOn={recentUpdateHistory.length > 0}
                 disabled={recentUpdateHistory.length === 0}
-                tooltip="Save all recent changes"
+                tooltip="Save all recent changes (⌘+s | ctrl+s)"
               />
               <ToolbarButton
                 iconType="Refresh"
                 title="Reload"
                 onClick={this.handleReload}
-                tooltip="Reload the entire page"
+                tooltip="Reload the entire page (⌘+r | ctrl+r)"
               />
               <CommonToolbarDivider />
               <ToolbarButton

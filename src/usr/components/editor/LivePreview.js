@@ -139,6 +139,14 @@ class LivePreview extends React.Component {
     };
   }
 
+  componentDidMount () {
+    window.document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount () {
+    window.document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { isVisible, pages, serverPort } = this.props;
     const {
@@ -196,6 +204,25 @@ class LivePreview extends React.Component {
       return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
     }
     return flagDefaultValue;
+  };
+
+  handleKeyDown = (e) => {
+    if (
+      this.props.isVisible
+      && e
+      && e.target
+      && e.target.tagName !== 'INPUT'
+      && e.target.tagName !== 'TEXTAREA'
+    ) {
+      const {keyCode, metaKey, ctrlKey} = e;
+      if (metaKey || ctrlKey) {
+        if (keyCode === 82) { // Reload
+          this.handleReload();
+        }
+      }
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   handleReload = () => {
@@ -436,7 +463,7 @@ class LivePreview extends React.Component {
                   title="Reload"
                   onClick={this.handleReload}
                   disabled={isRecordingFrameworkMessages}
-                  tooltip="Reload the entire page"
+                  tooltip="Reload the entire page (⌘+r | ctrl+r)"
                 />
                 <ToolbarButton
                   iconType="OpenInBrowser"

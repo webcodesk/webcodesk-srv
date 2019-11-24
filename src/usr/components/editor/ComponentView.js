@@ -130,6 +130,14 @@ class ComponentView extends React.Component {
     };
   }
 
+  componentDidMount () {
+    window.document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount () {
+    window.document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   componentDidUpdate (prevProps, prevState, snapshot) {
     const { data, isVisible } = this.props;
     const {
@@ -277,6 +285,29 @@ class ComponentView extends React.Component {
       return typeof viewFlag === 'undefined' ? flagDefaultValue : viewFlag;
     }
     return flagDefaultValue;
+  };
+
+  handleKeyDown = (e) => {
+    if (
+      this.props.isVisible
+      && e
+      && e.target
+      && e.target.tagName !== 'INPUT'
+      && e.target.tagName !== 'TEXTAREA'
+    ) {
+      const {keyCode, metaKey, ctrlKey} = e;
+      if (metaKey || ctrlKey) {
+        if (keyCode === 90) { // Undo
+          this.undoUpdateLocalState();
+        } else if (keyCode === 83) { // Save
+          this.handleSaveAsTemplate();
+        } else if (keyCode === 82) { // Reload
+          this.handleReload();
+        }
+      }
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   handleIFrameReady = () => {
@@ -454,7 +485,7 @@ class ComponentView extends React.Component {
                   title="Undo"
                   disabled={recentUpdateHistory.length === 0}
                   onClick={this.undoUpdateLocalState}
-                  tooltip="Undo the last change of the property"
+                  tooltip="Undo the last change of the property (⌘+z | ctrl+z)"
                 />
                 <CommonToolbarDivider/>
                 <ToolbarButton
@@ -467,14 +498,14 @@ class ComponentView extends React.Component {
                   iconType="Refresh"
                   title="Reload"
                   onClick={this.handleReload}
-                  tooltip="Reload the entire page"
+                  tooltip="Reload the entire page (⌘+r | ctrl+r)"
                 />
                 <CommonToolbarDivider/>
                 <ToolbarButton
                   iconType="Widgets"
                   title="Save Template"
                   onClick={this.handleSaveAsTemplate}
-                  tooltip="Save the component with current settings as a template"
+                  tooltip="Save the component with current settings as a template (⌘+s | ctrl+s)"
                 />
                 <CommonToolbarDivider/>
                 <ToolbarButton
