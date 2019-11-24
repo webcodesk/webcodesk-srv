@@ -199,6 +199,12 @@ class PropsTree extends React.Component {
 
   handleIncreaseComponentPropertyArray = (propertyKey) => {
     this.props.onIncreaseComponentPropertyArray(propertyKey);
+    const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
+    newExpandedGroupKeys[propertyKey] = true;
+    this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
+    this.setState({
+      expandedGroupKeys: newExpandedGroupKeys,
+    });
   };
 
   handleDeleteComponentProperty = (propertyKey) => {
