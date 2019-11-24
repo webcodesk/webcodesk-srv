@@ -143,6 +143,7 @@ class PageComposer extends React.Component {
       showPanelCover: false,
       showIframeDropPanelCover: false,
       iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
+      iFrameScaleIndex: this.getViewFlag('iFrameScaleIndex', 0),
       structureTabActiveIndex: 0,
       treeViewSplitterSize: this.getViewFlag('treeViewSplitterSize', 350),
       propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
@@ -576,6 +577,13 @@ class PageComposer extends React.Component {
     });
   };
 
+  handleToggleScale = (scaleIndex) => () => {
+    this.storeViewFlag('iFrameScaleIndex', scaleIndex);
+    this.setState({
+      iFrameScaleIndex: scaleIndex,
+    });
+  };
+
   handleSearchRequest = (text) => () => {
     this.props.onSearchRequest(text);
   };
@@ -653,6 +661,7 @@ class PageComposer extends React.Component {
       localComponentsTree,
       recentUpdateHistory,
       iFrameWidthIndex,
+      iFrameScaleIndex,
       treeViewSplitterSize,
       propertyEditorSplitterSize,
       isPreviewMode
@@ -788,6 +797,18 @@ class PageComposer extends React.Component {
                   }
                 })}
               />
+              <CommonToolbarDivider />
+              <ToolbarButton
+                iconType={iFrameScaleIndex > 0 ? 'ZoomIn' : 'ZoomOut'}
+                title={constants.MEDIA_SCALE[iFrameScaleIndex].label}
+                titleLengthLimit={200}
+                menuItems={constants.MEDIA_SCALE.map((mediaScaleItem, itemIndex) => {
+                  return {
+                    label: mediaScaleItem.label,
+                    onClick: this.handleToggleScale(itemIndex),
+                  }
+                })}
+              />
             </CommonToolbar>
           </div>
           <div className={classes.centralPane}>
@@ -843,6 +864,7 @@ class PageComposer extends React.Component {
                     <IFrame
                       ref={this.iFrameRef}
                       width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
+                      scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
                       url={isPreviewMode
                         ? `http://localhost:${serverPort}/webcodesk__component_view`
                         : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`

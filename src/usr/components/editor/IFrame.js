@@ -49,14 +49,13 @@ class IFrame extends React.Component {
     url: PropTypes.string.isRequired,
     onIFrameMessage: PropTypes.func,
     width: PropTypes.string,
-    top: PropTypes.string,
-    left: PropTypes.string,
-    padding: PropTypes.string,
+    scale: PropTypes.number,
     onIFrameReady: PropTypes.func,
   };
 
   static defaultProps = {
     width: '100%',
+    scale: 1,
     onIFrameMessage: (message) => {
       console.info('IFrame received the message: ', message);
     },
@@ -86,9 +85,9 @@ class IFrame extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContent) {
-    const { url, width } = this.props;
-    const { url: nextUrl, width: nextWidth } = nextProps;
-    return url !== nextUrl || width !== nextWidth;
+    const { url, width, scale } = this.props;
+    const { url: nextUrl, width: nextWidth, scale: nextScale } = nextProps;
+    return url !== nextUrl || width !== nextWidth || scale !== nextScale;
   }
 
   handleDidFinishLoad = () => {
@@ -143,7 +142,7 @@ class IFrame extends React.Component {
   };
 
   render () {
-    const { url, width } = this.props;
+    const { url, width, scale } = this.props;
     let innerContainerStyle;
     if (width === "100%") {
       innerContainerStyle = defaultInnerContainerStyle;
@@ -158,12 +157,21 @@ class IFrame extends React.Component {
         backgroundColor: containerStyle.backgroundColor,
       };
     }
+    let iFrameStyle = webViewStyle;
+    if (scale < 1) {
+      iFrameStyle = {
+        ...iFrameStyle,
+        height: `calc(100% + ${(100 * (1 - scale))}%)`,
+        transform: `scale(${scale})`,
+        transformOrigin: '0 0'
+      };
+    }
     return (
       <div style={containerStyle}>
         <div style={innerContainerStyle}>
           <iframe
             ref={this.frameWindow}
-            style={webViewStyle}
+            style={iFrameStyle}
             src={url}
           >
           </iframe>

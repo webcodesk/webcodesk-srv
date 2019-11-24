@@ -301,7 +301,38 @@ module.exports = {
     {
       label: 'Desktop, 1920+ (12 columns)',
       iconType: 'DesktopMac', // Desktop
-      width: '1200px',
+      width: '2000px',
+    },
+  ],
+
+  MEDIA_SCALE: [
+    {
+      label: '100%',
+      value: 1,
+    },
+    {
+      label: '90%',
+      value: 0.9,
+    },
+    {
+      label: '80%',
+      value: 0.8,
+    },
+    {
+      label: '70%',
+      value: 0.7,
+    },
+    {
+      label: '60%',
+      value: 0.6,
+    },
+    {
+      label: '50%',
+      value: 0.5,
+    },
+    {
+      label: '40%',
+      value: 0.4,
     },
   ],
 

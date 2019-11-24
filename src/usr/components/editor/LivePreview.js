@@ -123,6 +123,7 @@ class LivePreview extends React.Component {
     }
     this.state = {
       iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
+      iFrameScaleIndex: this.getViewFlag('iFrameScaleIndex', 0),
       isRecordingFrameworkMessages: false,
       isDebugFlowOpen: false,
       activePage: indexPage,
@@ -151,6 +152,7 @@ class LivePreview extends React.Component {
     const { isVisible, pages, serverPort } = this.props;
     const {
       iFrameWidthIndex,
+      iFrameScaleIndex,
       isRecordingFrameworkMessages,
       isDebugFlowOpen,
       activePage,
@@ -166,6 +168,7 @@ class LivePreview extends React.Component {
       settingsEditorSplitterSize
     } = this.state;
     return iFrameWidthIndex !== nextState.iFrameWidthIndex
+      || iFrameScaleIndex !== nextState.iFrameScaleIndex
       || isRecordingFrameworkMessages !== nextState.isRecordingFrameworkMessages
       || activePage !== nextState.activePage
       || activeUrl !== nextState.activeUrl
@@ -235,6 +238,13 @@ class LivePreview extends React.Component {
     this.storeViewFlag('iFrameWidthIndex', widthIndex);
     this.setState({
       iFrameWidthIndex: widthIndex,
+    });
+  };
+
+  handleToggleScale = (scaleIndex) => () => {
+    this.storeViewFlag('iFrameScaleIndex', scaleIndex);
+    this.setState({
+      iFrameScaleIndex: scaleIndex,
     });
   };
 
@@ -367,6 +377,7 @@ class LivePreview extends React.Component {
     } = this.props;
     const {
       iFrameWidthIndex,
+      iFrameScaleIndex,
       isRecordingFrameworkMessages,
       isDebugFlowOpen,
       activePage,
@@ -488,6 +499,18 @@ class LivePreview extends React.Component {
                   })}
                 />
                 <CommonToolbarDivider />
+                <ToolbarButton
+                  iconType={iFrameScaleIndex > 0 ? 'ZoomIn' : 'ZoomOut'}
+                  title={constants.MEDIA_SCALE[iFrameScaleIndex].label}
+                  titleLengthLimit={200}
+                  menuItems={constants.MEDIA_SCALE.map((mediaScaleItem, itemIndex) => {
+                    return {
+                      label: mediaScaleItem.label,
+                      onClick: this.handleToggleScale(itemIndex),
+                    }
+                  })}
+                />
+                <CommonToolbarDivider />
                 <ToolbarField
                   iconType="OpenInBrowser"
                   disabled={!frameUrl}
@@ -546,6 +569,7 @@ class LivePreview extends React.Component {
                       key={`livePreview${serverPort}`}
                       ref={this.iFrameRef}
                       width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
+                      scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
                       url={`http://localhost:${serverPort}${activeUrl}`}
                       onIFrameMessage={this.handleFrameworkMessage}
                       onIFrameReady={this.handleFrameReady}
