@@ -34,7 +34,10 @@ const styles = theme => ({
     bottom: 0,
     right: 0,
     left: 0,
-  }
+  },
+  footerArea: {
+    height: '7em',
+  },
 });
 
 class PageTree extends React.Component {
@@ -218,6 +221,7 @@ class PageTree extends React.Component {
         >
           {this.createList(componentsTree, draggedItem, isDraggingItem)}
         </List>
+        <div className={classes.footerArea} />
       </div>
     );
   }
