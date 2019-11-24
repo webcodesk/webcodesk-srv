@@ -254,10 +254,7 @@ class GraphModel {
   }
 
   updateNode(nodeKey, model) {
-    console.info('updateNode: ', model);
-    const newKey = this.updateModel(model, model.index);
-    console.info('newKey: ', newKey);
-    // this.graphInstance.setNode(newNodeKey, model);
+    this.updateModel(model, model.index);
   }
 
   getChildrenCount(nodeKey) {
