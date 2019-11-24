@@ -32,6 +32,7 @@ import TemplateComposer from './TemplateComposer';
 import FlowComposer from './FlowComposer';
 import FunctionsFileView from './FunctionsFileView';
 import ReadmePreview from './ReadmePreview';
+import { cutText } from '../../core/utils/textUtils';
 
 const styles = theme => ({
   root: {
@@ -66,6 +67,11 @@ const styles = theme => ({
   },
   resourceTabLabel: { display: 'flex', alignItems: 'center' },
   resourceTabCloseBtn: { marginLeft: '7px' },
+  resourceTabText: {
+    maxWidth: '300px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+  },
   resourceTabTextError: { color: '#D50000' },
   resourceTabTextStrike: {
     textDecoration: 'line-through'
@@ -255,9 +261,9 @@ class ResourceEditor extends React.Component {
               let type = resourceObject.type;
               let title = resourceObject.title;
               let key = resourceObject.key;
-              let textClassName = '';
+              let textClassName = classes.resourceTabText;
               if (resourceObject.hasErrors) {
-                textClassName = classes.resourceTabTextError;
+                textClassName = ' ' + classes.resourceTabTextError;
               }
               if (resourceObject.isDisabled) {
                 textClassName = ' ' + classes.resourceTabTextStrike;
@@ -269,9 +275,10 @@ class ResourceEditor extends React.Component {
                   component="div"
                   key={key}
                   icon={<ResourceIcon resourceType={type} isMuted={true}/>}
+                  title={title}
                   label={
                     <div className={classes.resourceTabLabel}>
-                      <div className={textClassName}>{title}</div>
+                      <div className={textClassName}>{cutText(title, 30)}</div>
                       <div className={classes.resourceTabCloseBtn}>
                         <ResourceTabCloseButton onClick={this.handleCloseTab(index)}>
                           <Close color="disabled" fontSize="inherit"/>
