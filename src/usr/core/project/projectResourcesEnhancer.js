@@ -106,7 +106,7 @@ function traversePropertiesWithDefaultValues(properties, defaults) {
         || type === constants.COMPONENT_PROPERTY_ANY_TYPE
         || type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
         || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
-        let defaultValue = null;
+        let defaultValue = undefined;
         if (!isUndefined(defaults)) {
           if (propertyName) {
             defaultValue = defaults[propertyName];
@@ -122,6 +122,8 @@ function traversePropertiesWithDefaultValues(properties, defaults) {
           } else {
             property.props.propertyValue = defaultValue;
           }
+        } else {
+          property.props.propertyValue = defaultValue;
         }
       } else if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         if (propertyName) {
@@ -146,10 +148,10 @@ function traversePropertiesWithDefaultValues(properties, defaults) {
           property.children = property.children || [];
           defaultValue.forEach(defaultValueArrayItem => {
             // set up the default values into the default children reference
-            traversePropertiesWithDefaultValues(props.defaultChildren, defaultValueArrayItem || {});
+            traversePropertiesWithDefaultValues(props.defaultChildren, defaultValueArrayItem);
             // add new child property with the default value
             const newChild = cloneDeep(props.defaultChildren[0]);
-            traversePropertiesWithDefaultValues([newChild], defaultValueArrayItem || {});
+            traversePropertiesWithDefaultValues([newChild], defaultValueArrayItem);
             property.children.push(newChild);
           });
         }
@@ -167,7 +169,6 @@ function traversePropTypesProps(property) {
         const externalPropTypesResource = projectResourcesManager.getResourceByKey(props.externalProperties);
         if (externalPropTypesResource) {
           property.children = cloneDeep(externalPropTypesResource.properties);
-          // delete property.externalProperties;
         }
       }
       if (props.defaultChildren && props.defaultChildren.length > 0) {
@@ -188,7 +189,6 @@ function propTypesEnrichVisitor ({ nodeModel, parentModel }) {
         const externalPropTypesResource = projectResourcesManager.getResourceByKey(props.externalProperties);
         if (externalPropTypesResource) {
           props.properties = cloneDeep(externalPropTypesResource.properties);
-          // delete props.externalProperties;
         }
       }
       if (props.properties && props.properties.length > 0) {

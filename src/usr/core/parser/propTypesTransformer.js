@@ -39,6 +39,14 @@ export function traverseProperties(properties, defaults) {
           isRequired,
         },
       };
+      if (wcdAnnotations) {
+        if (wcdAnnotations[constants.ANNOTATION_COMMENT]) {
+          newChildItem.props.propertyComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
+        }
+        if (wcdAnnotations[constants.ANNOTATION_LABEL]) {
+          newChildItem.props.propertyLabel = wcdAnnotations[constants.ANNOTATION_LABEL];
+        }
+      }
       if (externalProperties) {
         newChildItem.props.externalProperties = externalProperties;
         result.push(newChildItem);
@@ -70,46 +78,14 @@ export function traverseProperties(properties, defaults) {
         if (variants && variants.length > 0) {
           newChildItem.props.propertyValueVariants = cloneDeep(variants);
         }
-        if (wcdAnnotations) {
-          if (wcdAnnotations[constants.ANNOTATION_COMMENT]) {
-            newChildItem.props.propertyComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
-          }
-          if (wcdAnnotations[constants.ANNOTATION_LABEL]) {
-            newChildItem.props.propertyLabel = wcdAnnotations[constants.ANNOTATION_LABEL];
-          }
-        }
         result.push(newChildItem);
       } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
         // todo: it seems we don't need to specify the special component name for the placeholder on the page composer
         newChildItem.props.componentName = '__PlaceHolder';
-        if (wcdAnnotations) {
-          if (wcdAnnotations[constants.ANNOTATION_COMMENT]) {
-            newChildItem.props.propertyComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
-          }
-          if (wcdAnnotations[constants.ANNOTATION_LABEL]) {
-            newChildItem.props.propertyLabel = wcdAnnotations[constants.ANNOTATION_LABEL];
-          }
-        }
         result.push(newChildItem);
       } else if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
-        if (wcdAnnotations) {
-          if (wcdAnnotations[constants.ANNOTATION_COMMENT]) {
-            newChildItem.props.propertyComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
-          }
-          if (wcdAnnotations[constants.ANNOTATION_LABEL]) {
-            newChildItem.props.propertyLabel = wcdAnnotations[constants.ANNOTATION_LABEL];
-          }
-        }
         result.push(newChildItem);
       } else if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
-        if (wcdAnnotations) {
-          if (wcdAnnotations[constants.ANNOTATION_COMMENT]) {
-            newChildItem.props.propertyComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
-          }
-          if (wcdAnnotations[constants.ANNOTATION_LABEL]) {
-            newChildItem.props.propertyLabel = wcdAnnotations[constants.ANNOTATION_LABEL];
-          }
-        }
         if (name) {
           // we have the named object property
           const defaultValue = defaults ? defaults[name] : {};
@@ -122,14 +98,6 @@ export function traverseProperties(properties, defaults) {
         }
         result.push(newChildItem);
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
-        if (wcdAnnotations) {
-          if (wcdAnnotations[constants.ANNOTATION_COMMENT]) {
-            newChildItem.props.propertyComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
-          }
-          if (wcdAnnotations[constants.ANNOTATION_LABEL]) {
-            newChildItem.props.propertyLabel = wcdAnnotations[constants.ANNOTATION_LABEL];
-          }
-        }
         if (childProperties && childProperties.length > 0) {
           // we have to keep children properties as a sample for the new array item
           newChildItem.props.defaultChildren = [];
