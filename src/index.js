@@ -24,7 +24,6 @@ import { SnackbarProvider } from 'notistack';
 import App, { initApp } from './app';
 import { consoleError, clearConsoleErrors } from './usr/core/config/storage';
 import './index.css';
-import './usr/css/fa/css/all.min.css';
 import './usr/css/github-markdown.css';
 
 if (process.env.NODE_ENV === 'production') {
