@@ -797,18 +797,18 @@ class PageComposer extends React.Component {
                   }
                 })}
               />
-              <CommonToolbarDivider />
-              <ToolbarButton
-                iconType={iFrameScaleIndex > 0 ? 'ZoomIn' : 'ZoomOut'}
-                title={constants.MEDIA_SCALE[iFrameScaleIndex].label}
-                titleLengthLimit={200}
-                menuItems={constants.MEDIA_SCALE.map((mediaScaleItem, itemIndex) => {
-                  return {
-                    label: mediaScaleItem.label,
-                    onClick: this.handleToggleScale(itemIndex),
-                  }
-                })}
-              />
+              {/*<CommonToolbarDivider />*/}
+              {/*<ToolbarButton*/}
+              {/*  iconType={iFrameScaleIndex > 0 ? 'ZoomIn' : 'ZoomOut'}*/}
+              {/*  title={constants.MEDIA_SCALE[iFrameScaleIndex].label}*/}
+              {/*  titleLengthLimit={200}*/}
+              {/*  menuItems={constants.MEDIA_SCALE.map((mediaScaleItem, itemIndex) => {*/}
+              {/*    return {*/}
+              {/*      label: mediaScaleItem.label,*/}
+              {/*      onClick: this.handleToggleScale(itemIndex),*/}
+              {/*    }*/}
+              {/*  })}*/}
+              {/*/>*/}
             </CommonToolbar>
           </div>
           <div className={classes.centralPane}>
