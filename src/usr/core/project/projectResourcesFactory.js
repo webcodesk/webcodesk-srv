@@ -293,13 +293,14 @@ export function createMarkdownModels (modelKey, declarationsInFile, displayName)
 export function createSettingsConfigModels (modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(settingsConfigDeclaration => {
-    const { properties } = settingsConfigDeclaration;
+    const { properties, defaultProps } = settingsConfigDeclaration;
     result.push({
       key: modelKey,
       type: constants.GRAPH_MODEL_SETTINGS_CONF_TYPE,
       props: {
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
         settingsConfProperties: cloneDeep(properties),
+        defaultProps: cloneDeep(defaultProps),
       }
     });
   });

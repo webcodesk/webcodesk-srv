@@ -427,6 +427,10 @@ export function getClipboardGraphModel () {
   return clipboardGraphModel;
 }
 
+export function getSettingsConfGraphModel () {
+  return settingsConfGraphModel;
+}
+
 export function getClipboardItemList () {
   const resultList = [];
   const rootKey = clipboardGraphModel.getRootKey();

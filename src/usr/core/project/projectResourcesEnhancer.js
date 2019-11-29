@@ -292,6 +292,42 @@ function functionEnrichVisitor ({ nodeModel, parentModel }) {
   }
 }
 
+function settingsConfEnrichVisitor ({ nodeModel, parentModel }) {
+  if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_SETTINGS_CONF_TYPE) {
+    const { props } = nodeModel;
+    if (props) {
+      if (props.externalProperties) {
+        const externalPropTypesResource = projectResourcesManager.getResourceByKey(props.externalProperties);
+        if (externalPropTypesResource) {
+          props.settingsConfProperties = cloneDeep(externalPropTypesResource.properties);
+        }
+      }
+      if (props.settingsConfProperties && props.settingsConfProperties.length > 0) {
+        props.settingsConfProperties.forEach(traversePropTypesProps);
+        // now when all properties are fulfilled but still are without default values
+        // we have to save them for the referencing
+        // props.propertiesRef = getPropertiesRef(props.properties);
+        // props.propertiesRef = orderBy(props.propertiesRef, propItem => {
+        //   if (propItem && propItem.props) {
+        //     return propItem.props.propertyName;
+        //   }
+        //   return undefined;
+        // });
+        // and here we set the default values to the properties
+        if (props.defaultProps) {
+          traversePropertiesWithDefaultValues(props.settingsConfProperties, props.defaultProps);
+        }
+      }
+      props.settingsConfProperties = orderBy(props.settingsConfProperties, propItem => {
+        if (propItem && propItem.props) {
+          return propItem.props.propertyName;
+        }
+        return undefined;
+      });
+    }
+  }
+}
+
 export function enrichResources () {
 
   // first we have to enhance our models with the resources from different graph models.
@@ -313,6 +349,12 @@ export function enrichResources () {
   const functionsGraphModel = projectResourcesManager.getFunctionsGraphModel();
   if (functionsGraphModel) {
     functionsGraphModel.traverse(functionEnrichVisitor);
+  }
+
+  // enhance Settings: replace external prop types with their real props
+  const settingsConfGraphModel = projectResourcesManager.getSettingsConfGraphModel();
+  if (settingsConfGraphModel) {
+    settingsConfGraphModel.traverse(settingsConfEnrichVisitor);
   }
 
 }

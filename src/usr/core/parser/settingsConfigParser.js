@@ -16,13 +16,12 @@
 
 import { getSourceAst } from '../utils/babelParser';
 import { getDefaultPropsObject } from './defaultPropsParserUtils';
-import { getPropTypesObject } from './propTypesParserUtils';
+import { getImportSpecifiers, getPropTypesObject } from './propTypesParserUtils';
 import { traverseProperties } from './propTypesTransformer';
 
-function getPropTypes(ast) {
+function getPropTypes(ast, importSpecifiers) {
   const result = [];
   let propTypesDeclaration = {};
-  let defaultProps = {};
   if (ast && ast.body && ast.body.length > 0) {
     ast.body.forEach(node => {
       const {type, declaration, declarations} = node;
@@ -32,7 +31,7 @@ function getPropTypes(ast) {
         if (declarators && declarators.length > 0) {
           const {type: declaratorType, id: declaratorId, init: declaratorInit} = declarators[0];
           if (declaratorType === 'VariableDeclarator' && declaratorInit && declaratorId && declaratorId.name === 'defaultSettings') {
-            defaultProps = getDefaultPropsObject(declaratorInit);
+            propTypesDeclaration.defaultProps = getDefaultPropsObject(declaratorInit);
           }
         }
       } else if (type === 'VariableDeclaration' && declarations && declarations.length > 0) {
@@ -42,20 +41,22 @@ function getPropTypes(ast) {
           propTypesDeclaration = {
             name: declaratorId.name,
           };
-          propTypesDeclaration = getPropTypesObject(declaratorInit, {}, propTypesDeclaration);
+          propTypesDeclaration = getPropTypesObject(declaratorInit, importSpecifiers, propTypesDeclaration);
         }
       }
     });
   }
   if (propTypesDeclaration.properties && propTypesDeclaration.properties.length > 0) {
-    propTypesDeclaration.properties = traverseProperties(propTypesDeclaration.properties, defaultProps);
+    propTypesDeclaration.properties =
+      traverseProperties(propTypesDeclaration.properties, propTypesDeclaration.defaultProps);
   }
   result.push(propTypesDeclaration);
   return result;
 }
 
-export const findSettingsConfigDeclarations = (sourceCode) => {
+export const findSettingsConfigDeclarations = (sourceCode, rootDirPath, filePath) => {
   // console.info('AST: ', JSON.stringify(getSourceAst(sourceCode), null, 4));
   const ast = getSourceAst(sourceCode);
-  return getPropTypes(ast);
+  let importSpecifiers = getImportSpecifiers(ast, rootDirPath, filePath);
+  return getPropTypes(ast, importSpecifiers);
 };

@@ -130,7 +130,7 @@ const parseFileData = (filePath, fileData) => {
       } else if (baseName.endsWith(settingsConfFileSuffix)){
         result.push(new DeclarationsInFile(
           constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
-          findSettingsConfigDeclarations(fileData),
+          findSettingsConfigDeclarations(fileData, config.projectRootSourceDir, filePath),
           filePath
         ));
       } else if (extName === markdownFileExtension){

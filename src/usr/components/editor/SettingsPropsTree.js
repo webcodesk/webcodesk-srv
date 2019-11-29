@@ -25,11 +25,31 @@ import SettingsManager from '../../core/settings/SettingsManager';
 
 const styles = theme => ({
   root: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
     backgroundColor: theme.palette.background.paper,
-    padding: '10px'
+    overflow: 'hidden',
   },
-  mainDivider: {
-    height: '5px'
+  fixedArea: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '50px',
+    right: 0,
+    padding: '10px',
+    overflow: 'hidden',
+  },
+  scrollArea: {
+    position: 'absolute',
+    top: '50px',
+    left: 0,
+    bottom: 0,
+    right: 0,
+    padding: '10px',
+    overflow: 'auto'
   },
 });
 
@@ -110,11 +130,12 @@ class SettingsPropsTree extends React.Component {
     if (localSettingsModel && localSettingsModel.children) {
       return (
         <div className={classes.root}>
-          <List
-            key="componentPropsTree"
-            dense={true}
-            disablePadding={true}
-          >
+          <div className={classes.fixedArea}>
+            <List
+              key="componentPropsTree"
+              dense={true}
+              disablePadding={true}
+            >
               <PropsTreeElement
                 name="Save Changes"
                 title="Save recent changes in application settings"
@@ -123,15 +144,18 @@ class SettingsPropsTree extends React.Component {
                 color={sendUpdateCounter === 0 ? 'default' : 'primary'}
                 onClick={this.handleSaveSettingsProperties}
               />
-          </List>
-          <div className={classes.mainDivider} />
-          <PropsTree
-            dataId="applicationSettings"
-            properties={localSettingsModel.children}
-            onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
-            onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-            onDeleteComponentProperty={this.handleDeleteComponentProperty}
-          />
+            </List>
+          </div>
+          <div className={classes.scrollArea}>
+            {/*<div className={classes.mainDivider} />*/}
+            <PropsTree
+              dataId="applicationSettings"
+              properties={localSettingsModel.children}
+              onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
+              onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+              onDeleteComponentProperty={this.handleDeleteComponentProperty}
+            />
+          </div>
         </div>
       );
     }

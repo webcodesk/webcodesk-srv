@@ -116,7 +116,7 @@ class SettingsModelCompiler {
 
         if (instancePropertyType === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
           instanceProperty.children =
-            this.testProperties(modelPropsChildren, instanceProperty.children);
+            this.testProperties(modelPropsChildren, instanceProperty.children || []);
         } else if (instancePropertyType === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
           // array should have default children to test the items
           // clone them into the instance property
@@ -145,7 +145,6 @@ class SettingsModelCompiler {
         }
       });
     }
-
     const instancePropertiesMap = {};
     if (instanceProperties && instanceProperties.length > 0) {
       const newInstanceProperties = [];

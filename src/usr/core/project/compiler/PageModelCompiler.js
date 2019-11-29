@@ -153,7 +153,7 @@ class PageModelCompiler {
           instanceProperty = this.testComponentModel(instanceProperty);
         } else if (instancePropertyType === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
           instanceProperty.children =
-            this.testProperties(modelPropsChildren, instanceProperty.children);
+            this.testProperties(modelPropsChildren, instanceProperty.children || []);
         } else if (instancePropertyType === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
           // array should have default children to test the items
           // clone them into the instance property
