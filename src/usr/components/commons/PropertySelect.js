@@ -98,6 +98,16 @@ class PropertySelect extends React.Component {
   render () {
     const {classes, values} = this.props;
     const {inputValue} = this.state;
+    const optionsList = [];
+    if (values && values.length > 0) {
+      values.forEach((valueItem, valueIdx) => {
+        if (valueItem && valueItem.length > 0) {
+          optionsList.push(
+            <option key={'' + valueIdx} value={valueItem}>{valueItem}</option>
+          );
+        }
+      });
+    }
     return (
       <FormControl className={classes.root}>
         <PropertySelectElement
@@ -109,11 +119,7 @@ class PropertySelect extends React.Component {
           <option className={classes.optionsHeader} disabled={true}>
             &#9472;&#9472;&#9472;
           </option>
-          {values && values.map((valueItem, valueIdx) => {
-            return (
-              <option key={'' + valueIdx} value={valueItem}>{valueItem}</option>
-            );
-          })}
+          {optionsList}
         </PropertySelectElement>
       </FormControl>
     );

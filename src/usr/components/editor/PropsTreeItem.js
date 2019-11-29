@@ -234,7 +234,6 @@ class PropsTreeItem extends React.Component {
 
   componentDidUpdate (prevProps, prevState, snapshot) {
     const { propertyModel } = this.props;
-    const { localPropertyModel } = this.state;
     if (propertyModel && propertyModel !== prevProps.propertyModel) {
       this.setState({
         localPropertyModel: cloneDeep(propertyModel),

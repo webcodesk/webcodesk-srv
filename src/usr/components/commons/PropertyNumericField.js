@@ -16,6 +16,7 @@
 
 import debounce from 'lodash/debounce';
 import isNull from 'lodash/isNull';
+import isNumber from 'lodash/isNumber';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -111,7 +112,9 @@ class PropertyTextField extends React.Component {
 
   handleOnChange = () => {
     let inputValue = this.input.value;
-    inputValue = inputValue && inputValue.length > 0 ? Number(inputValue) : null;
+    inputValue = isNumber(inputValue)
+      ? inputValue
+      : inputValue && inputValue.length > 0 ? Number(inputValue) : null;
     this.setState({
       inputValue,
     });
