@@ -22,23 +22,11 @@ import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
+import PanoramaFishEye from '@material-ui/icons/PanoramaFishEye';
 import * as constants from '../../../commons/constants';
 import ResourceIcon from '../commons/ResourceIcon';
 import PlaceholderSpan from '../commons/PlaceholderSpan';
-
-const styles = theme => ({
-  mutedText: {
-    color: theme.palette.text.disabled,
-  },
-  errorText: {
-    color: '#D50000',
-  },
-  selectedItem: {
-    backgroundColor: '#eceff1',
-    border: '1px solid #2979FF',
-    borderRadius: '4px'
-  }
-});
 
 const PageTreeListItem = withStyles(theme => ({
   root: {
@@ -63,6 +51,9 @@ const PageTreeListItemText = withStyles({
     padding: 0,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+  },
+  primary: {
+    width: '100%'
   }
 })(ListItemText);
 
@@ -70,8 +61,43 @@ const PageTreeListItemIcon = withStyles({
   root: {
     marginRight: 0,
     padding: '3px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   }
 })(ListItemIcon);
+
+const styles = theme => ({
+  mutedText: {
+    color: theme.palette.text.disabled,
+  },
+  errorText: {
+    color: '#D50000',
+  },
+  selectedItem: {
+    backgroundColor: '#eceff1',
+    border: '1px solid #2979FF',
+    borderRadius: '4px'
+  },
+  itemContentWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width: '100%'
+  },
+  itemContent: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%'
+  },
+  itemName: {
+    whiteSpace: 'nowrap',
+  },
+  buttonIcon: {
+    fontSize: '12px'
+  },
+});
 
 class PageTreeItem extends React.Component {
   static propTypes = {
@@ -81,8 +107,8 @@ class PageTreeItem extends React.Component {
     componentName: PropTypes.string,
     componentInstance: PropTypes.string,
     name: PropTypes.string,
+    hasChildren: PropTypes.bool,
     errors: PropTypes.object,
-    paddingLeft: PropTypes.string,
     draggedItem: PropTypes.object,
     isDraggingItem: PropTypes.bool,
     onClick: PropTypes.func,
@@ -98,7 +124,7 @@ class PageTreeItem extends React.Component {
     componentInstance: null,
     name: null,
     errors: null,
-    paddingLeft: '0px',
+    hasChildren: false,
     draggedItem: null,
     isDraggingItem: false,
     onClick: () => {
@@ -148,80 +174,100 @@ class PageTreeItem extends React.Component {
       componentName,
       componentInstance,
       name,
+      hasChildren,
       isPlaceholder,
       itemKey,
       errors,
       isSelected,
-      paddingLeft
     } = this.props;
     if (!isPlaceholder) {
       return (
         <PageTreeListItem
           key={itemKey}
-          style={{paddingLeft}}
           button={false}
           onClick={!isEmpty(errors) ? this.handleErrorClick : this.handleClick}
           className={isSelected ? classes.selectedItem : ''}
         >
-          <PageTreeListItemIcon>
-            <ResourceIcon resourceType={constants.PAGE_COMPONENT_TYPE} />
-          </PageTreeListItemIcon>
-          <PageTreeListItemText
-            title={componentName}
-            primary={
-              !errors || isEmpty(errors)
-                ? (
-                  <span style={{whiteSpace: 'nowrap'}}>
-                    <span className={classes.mutedText}>{name || 'root'}:&nbsp;</span>
-                    <span>{componentInstance}</span>
-                  </span>
-                )
+          <div className={classes.itemContentWrapper}>
+            <div className={classes.itemContent}>
+              <PageTreeListItemIcon>
+                {hasChildren
+                  ? (
+                    <RemoveCircleOutline className={classes.buttonIcon} color="primary" />
+                  )
                   : (
-                  <span className={classes.errorText} style={{whiteSpace: 'nowrap'}}>
-                    <span>{name || 'root'}:&nbsp;</span>
-                    <span>{componentInstance}</span>
-                  </span>
-                )
-            }
-          />
+                    <PanoramaFishEye className={classes.buttonIcon} color="primary" />
+                  )
+                }
+
+              </PageTreeListItemIcon>
+              <PageTreeListItemText
+                title={componentName}
+                primary={
+                  <div
+                    className={ !errors || isEmpty(errors) ? classes.mutedText : classes.errorText}
+                  >
+                    {name || 'root'}
+                  </div>
+                }
+              />
+            </div>
+            <div className={classes.itemContent}>
+              <PageTreeListItemIcon>
+                <div className={classes.buttonIcon}>
+                  <ResourceIcon resourceType={constants.PAGE_COMPONENT_TYPE} />
+                </div>
+              </PageTreeListItemIcon>
+              <PageTreeListItemText
+                primary={<span>{componentInstance}</span>}
+              />
+            </div>
+          </div>
         </PageTreeListItem>
       );
     }
     return (
       <PageTreeListItem
         key={itemKey}
-        style={{paddingLeft}}
         onClick={this.handleClick}
         className={isSelected ? classes.selectedItem : ''}
       >
-        <PageTreeListItemIcon>
-          <ResourceIcon resourceType={constants.COMPONENT_PROPERTY_ELEMENT_TYPE} />
-        </PageTreeListItemIcon>
-        <PageTreeListItemText
-          title={componentName}
-          primary={
-            componentInstance
-              ? (
-                <span style={{ whiteSpace: 'nowrap' }}>
-                  <span className={classes.mutedText}>{name || 'root'}:&nbsp;</span>
-                  <span>{componentInstance}</span>
-                </span>
-              )
-              : (
-                <span style={{ display: 'flex', whiteSpace: 'nowrap' }}>
-                  <span className={classes.mutedText}>{name || 'root'}:&nbsp;</span>
-                  <PlaceholderSpan
-                    isDraggingItem={isDraggingItem}
-                    draggedItem={draggedItem}
-                    onDrop={this.handleItemDrop}
-                  >
-                    &nbsp;
-                  </PlaceholderSpan>
-                </span>
-              )
-
-          }
-        />
+        <div className={classes.itemContentWrapper}>
+          <div className={classes.itemContent}>
+            <PageTreeListItemIcon>
+              <PanoramaFishEye className={classes.buttonIcon} color="primary" />
+            </PageTreeListItemIcon>
+            <PageTreeListItemText
+              title={componentName}
+              primary={<span className={classes.mutedText}>{name || 'root'}</span>}
+            />
+          </div>
+          <div className={classes.itemContent}>
+            <PageTreeListItemIcon>
+              <div className={classes.buttonIcon}>
+                <ResourceIcon resourceType={constants.COMPONENT_PROPERTY_ELEMENT_TYPE} />
+              </div>
+            </PageTreeListItemIcon>
+            <PageTreeListItemText
+              title={componentName}
+              primary={
+                componentInstance
+                  ? (
+                    <span>{componentInstance}</span>
+                  )
+                  : (
+                    <PlaceholderSpan
+                      isDraggingItem={isDraggingItem}
+                      draggedItem={draggedItem}
+                      onDrop={this.handleItemDrop}
+                    >
+                      &nbsp;
+                    </PlaceholderSpan>
+                  )
+              }
+            />
+          </div>
+        </div>
       </PageTreeListItem>
     );
   }

@@ -46,7 +46,8 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '1em'
+    padding: '1em',
+    backgroundColor: '#eceff1',
   },
   outputSamplePane: {
     position: 'absolute',
@@ -113,6 +114,7 @@ class FlowInputTransformEditor extends React.Component {
       isEditInputTransformDialogOpen: false,
       editInputTransformDialogErrors: [],
       editInputTransformDialogOutput: [],
+      editInputTransformDialogUsage: [],
       editInputTransformDialogTestDataScript: '',
       editInputTransformDialogTransformationScript: '',
       outputSampleObjectText: '',
@@ -174,6 +176,7 @@ class FlowInputTransformEditor extends React.Component {
       isEditInputTransformDialogOpen: false,
       editInputTransformDialogErrors: [],
       editInputTransformDialogOutput: [],
+      editInputTransformDialogUsage: []
     });
   };
 
@@ -183,11 +186,12 @@ class FlowInputTransformEditor extends React.Component {
       transformScript,
     } = options;
 
-    const {errors, output} = this.flowInputTransformManager.testTransformScript(testDataScript, transformScript);
+    const {errors, output, usage} = this.flowInputTransformManager.testTransformScript(testDataScript, transformScript);
 
     this.setState({
       editInputTransformDialogErrors: errors,
       editInputTransformDialogOutput: output,
+      editInputTransformDialogUsage: usage,
     });
 
   };
@@ -205,6 +209,7 @@ class FlowInputTransformEditor extends React.Component {
         isEditInputTransformDialogOpen: false,
         editInputTransformDialogErrors: [],
         editInputTransformDialogOutput: [],
+        editInputTransformDialogUsage: [],
       });
       const { onUpdateTransformScript, selectedNodeModel, selectedInputModel } = this.props;
       onUpdateTransformScript(selectedNodeModel.key, selectedInputModel.name, transformScript, testDataScript);
@@ -240,6 +245,7 @@ class FlowInputTransformEditor extends React.Component {
       inputSampleObjectText,
       editInputTransformDialogErrors,
       editInputTransformDialogOutput,
+      editInputTransformDialogUsage,
       editInputTransformDialogTestDataScript,
       editInputTransformDialogTransformationScript,
       transformationScript
@@ -339,6 +345,7 @@ class FlowInputTransformEditor extends React.Component {
             }
             errors={editInputTransformDialogErrors}
             output={editInputTransformDialogOutput}
+            usage={editInputTransformDialogUsage}
             testDataScript={editInputTransformDialogTestDataScript}
             transformScript={editInputTransformDialogTransformationScript}
             outputSampleScript={outputSampleObjectText}
@@ -354,7 +361,7 @@ class FlowInputTransformEditor extends React.Component {
     return (
       <div className={classes.rootEmpty}>
         <Typography variant="body2" align="center">
-          Connect any output endpoint of the exiting elements in the flow to the input endpoint of the selected element
+          Connect output endpoint of the element on the flow to the input endpoint of another element
         </Typography>
       </div>
     );

@@ -76,7 +76,11 @@ class ScriptView extends React.Component {
       );
     }
     return (
-      <p>Empty</p>
+      <pre className={classes.formatted}>
+        <code>
+          undefined
+        </code>
+      </pre>
     );
   }
 }

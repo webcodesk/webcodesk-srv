@@ -792,6 +792,7 @@ class TemplateComposer extends React.Component {
                   onItemClick={this.handleSelectComponent}
                   onItemDrop={this.handlePageTreeItemDrop}
                   onItemErrorClick={this.handleErrorClick}
+                  onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
                   draggedItem={
                     draggedItem && (
                       draggedItem.isComponent

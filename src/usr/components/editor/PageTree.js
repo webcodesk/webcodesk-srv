@@ -19,9 +19,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PageTreeGroup from './PageTreeGroup';
 import PageTreeItem from './PageTreeItem';
 import * as constants from '../../../commons/constants';
+import { arrayMove } from '../../core/utils/arrayUtils';
+import DragIndicator from '@material-ui/icons/DragIndicator';
+
+const DragHandler = SortableHandle(({element}) => element);
+
+const SortableTreeItem = SortableElement(({element}) => element);
+
+const SortableTreeList = SortableContainer(({items, classes}) => {
+  return (
+    <div className={classes.listContainer}>
+      {items.map((element, index) => {
+        return (
+          <SortableTreeItem key={`item-${index}`} index={index} element={element} />
+        );
+      })}
+    </div>
+  )
+});
+
+const TREE_VIEW_INDENT = '16px';
+const FIRST_LIST_INDENT = '0px';
 
 const styles = theme => ({
   root: {
@@ -38,6 +60,76 @@ const styles = theme => ({
   footerArea: {
     height: '7em',
   },
+  firstListContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    paddingLeft: FIRST_LIST_INDENT,
+  },
+  listContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    paddingLeft: TREE_VIEW_INDENT,
+    position: 'relative',
+    '&::after': {
+      content: `''`,
+      position: 'absolute',
+      top: 0,
+      left: '9px',
+      bottom: 0,
+      width: 0,
+      borderLeft: '1px dotted #cdcdcd',
+    }
+  },
+  componentListContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    paddingLeft: TREE_VIEW_INDENT,
+    position: 'relative',
+    '&::after': {
+      content: `''`,
+      position: 'absolute',
+      top: '-16px',
+      left: '9px',
+      bottom: 0,
+      width: 0,
+      borderLeft: '1px dotted #cdcdcd',
+    }
+  },
+  arrayListContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  listItemContainer: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  dragHandlerContainer: {
+    position: 'relative',
+  },
+  dragHandler: {
+    position: 'absolute',
+    top: '5px',
+    left: '-13px',
+    color: '#aaaaaa',
+    cursor: 'move',
+    fontSize: '13px',
+    zIndex: 10
+  }
 });
 
 class PageTree extends React.Component {
@@ -48,6 +140,7 @@ class PageTree extends React.Component {
     onItemClick: PropTypes.func,
     onItemErrorClick: PropTypes.func,
     onItemDrop: PropTypes.func,
+    onUpdateComponentPropertyArrayOrder: PropTypes.func,
   };
 
   static defaultProps = {
@@ -62,6 +155,9 @@ class PageTree extends React.Component {
     },
     onItemDrop: () => {
       console.info('PageTree.onItemDrop is not set');
+    },
+    onUpdateComponentPropertyArrayOrder: () => {
+      console.info('PageTree.onUpdateComponentPropertyArrayOrder is not set');
     },
   };
 
@@ -84,15 +180,24 @@ class PageTree extends React.Component {
     this.props.onItemDrop(data);
   };
 
+  handleUpdateComponentPropertyArrayOrder = (model) => ({oldIndex, newIndex}) => {
+    if (model && model.children) {
+      model.children = arrayMove(model.children, oldIndex, newIndex);
+    }
+    this.props.onUpdateComponentPropertyArrayOrder(model);
+  };
+
   createList = (node, draggedItem, isDraggingItem, level = 0, arrayIndex = null) => {
+    const { classes } = this.props;
     let result = [];
     if (node) {
+      let isArrayItem = false;
       const { key, type, props, children } = node;
-      const paddingLeft = `${(level * 16)}px`;
       const { propertyName } = props;
       let listItemLabelName;
       if (!isNull(arrayIndex) && arrayIndex >= 0) {
         listItemLabelName = `[${arrayIndex}]`;
+        isArrayItem = true;
       }
       if (propertyName) {
         if (listItemLabelName) {
@@ -121,12 +226,26 @@ class PageTree extends React.Component {
             result.push(
               <PageTreeGroup
                 key={key}
-                paddingLeft={paddingLeft}
                 name={listItemLabelName}
               />
             );
+            result.push(
+              <div key={`${key}_container`} className={classes.listItemContainer}>
+                <div className={classes.listContainer}>
+                  {childListItems}
+                </div>
+              </div>
+            );
+          } else {
+            result.push(
+              <div key={`${key}_container`} className={classes.listItemContainer}>
+                <div className={classes.arrayListContainer}>
+                  {childListItems}
+                </div>
+              </div>
+            );
           }
-          result = result.concat(childListItems);
+          // result = result.concat(childListItems);
         }
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         let childLevel = level;
@@ -148,13 +267,21 @@ class PageTree extends React.Component {
             result.push(
               <PageTreeGroup
                 key={key}
-                paddingLeft={paddingLeft}
                 name={listItemLabelName}
                 isArray={true}
               />
             );
           }
-          result = result.concat(childListItems);
+          result.push(
+            <div key={`${key}_container`} className={classes.listItemContainer}>
+              <SortableTreeList
+                classes={classes}
+                useDragHandle={true}
+                items={childListItems}
+                onSortEnd={this.handleUpdateComponentPropertyArrayOrder(node)}
+              />
+            </div>
+          );
         }
       } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
         const { isSelected } = props;
@@ -165,7 +292,6 @@ class PageTree extends React.Component {
             isPlaceholder={true}
             name={listItemLabelName}
             isSelected={isSelected}
-            paddingLeft={paddingLeft}
             onClick={this.handleItemClick}
             onErrorClick={this.handleItemErrorClick}
             onDrop={this.handleItemDrop}
@@ -175,6 +301,15 @@ class PageTree extends React.Component {
         );
       } else if (type === constants.PAGE_COMPONENT_TYPE) {
         const { errors, componentName, componentInstance, isSelected } = props;
+        let childListItems = [];
+        if (children && children.length > 0) {
+          childListItems = children.reduce(
+            (acc, child) => acc.concat(
+              this.createList(child, draggedItem, isDraggingItem, level + 1)
+            ),
+            childListItems
+          );
+        }
         result.push(
           <PageTreeItem
             key={key}
@@ -185,7 +320,7 @@ class PageTree extends React.Component {
             componentName={componentName}
             componentInstance={componentInstance}
             isSelected={isSelected}
-            paddingLeft={paddingLeft}
+            hasChildren={childListItems.length > 0}
             onClick={this.handleItemClick}
             onErrorClick={this.handleItemErrorClick}
             onDrop={this.handleItemDrop}
@@ -193,18 +328,27 @@ class PageTree extends React.Component {
             isDraggingItem={isDraggingItem}
           />
         );
-        let childListItems = [];
-        if (children && children.length > 0) {
-          childListItems = children.reduce(
-            (acc, child) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, level + 1)
-            ),
-            childListItems
+        if (childListItems.length > 0) {
+          result.push(
+            <div key={`${key}_container`} className={classes.listItemContainer}>
+              <div className={classes.componentListContainer}>
+                {childListItems}
+              </div>
+            </div>
           );
         }
-        if (childListItems.length > 0) {
-          result = result.concat(childListItems);
-        }
+      }
+      if (isArrayItem && result.length > 0) {
+        result = [
+          <div key="dragHandler" className={classes.dragHandlerContainer}>
+            <DragHandler
+              element={
+                <DragIndicator className={classes.dragHandler} />
+              }
+            />
+            {result}
+          </div>
+        ];
       }
     }
     return result;
@@ -219,7 +363,11 @@ class PageTree extends React.Component {
           dense={true}
           disablePadding={true}
         >
-          {this.createList(componentsTree, draggedItem, isDraggingItem)}
+          <div className={classes.listItemContainer}>
+            <div className={classes.firstListContainer}>
+              {this.createList(componentsTree, draggedItem, isDraggingItem)}
+            </div>
+          </div>
         </List>
         <div className={classes.footerArea} />
       </div>

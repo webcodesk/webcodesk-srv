@@ -236,7 +236,7 @@ class ResourceEditor extends React.Component {
           <div className={classes.emptyPane}>
             <div className={classes.welcomeTextBox}>
               <h3 className={classes.welcomeText}>
-                Double click on item in the left panel to open
+                Click on item in the left panel
               </h3>
             </div>
           </div>

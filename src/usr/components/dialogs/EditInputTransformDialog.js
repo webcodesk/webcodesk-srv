@@ -17,16 +17,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import Slide from '@material-ui/core/Slide';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
 import ScriptView from '../commons/ScriptView';
 import SplitPane from '../splitPane';
 import SourceCodeEditor from '../commons/SourceCodeEditor';
 import PanelWithTitle from '../commons/PanelWithTitle';
+import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
+import ToolbarButton from '../commons/ToolbarButton';
+
+function Transition (props) {
+  return <Slide direction="up" {...props} />;
+}
 
 const styles = theme => ({
   dialogContent: {
@@ -49,6 +53,9 @@ const styles = theme => ({
     right: 0,
     bottom: 0,
   },
+  dialogTitle: {
+    marginTop: '8px',
+  },
   errorText: {
     color: '#D50000',
   },
@@ -63,6 +70,7 @@ class EditInputTransformDialog extends React.Component {
     transformScript: PropTypes.string,
     errors: PropTypes.array,
     output: PropTypes.array,
+    usage: PropTypes.array,
     isOpen: PropTypes.bool,
     onClose: PropTypes.func,
     onSubmit: PropTypes.func,
@@ -77,6 +85,7 @@ class EditInputTransformDialog extends React.Component {
     transformScript: '',
     errors: [],
     output: [],
+    usage: [],
     isOpen: false,
     onClose: () => {
       console.info('EditInputTransformDialog.onClose is not set');
@@ -163,7 +172,7 @@ class EditInputTransformDialog extends React.Component {
   };
 
   render () {
-    const { isOpen, classes, title, inputSampleScript, outputSampleScript, errors, output } = this.props;
+    const { isOpen, classes, title, inputSampleScript, outputSampleScript, errors, output, usage } = this.props;
     if (!isOpen) {
       return null;
     }
@@ -177,130 +186,146 @@ class EditInputTransformDialog extends React.Component {
         aria-labelledby="EditInputTransformDialog-dialog-title"
         onClose={this.handleClose}
         open={isOpen}
-        maxWidth="md"
-        fullWidth={true}
-        scroll="body"
+        fullScreen={true}
+        // maxWidth="md"
+        // fullWidth={true}
+        scroll="paper"
+        TransitionComponent={Transition}
       >
-        <form onSubmit={this.handleSubmit}>
-          <DialogTitle id="EditInputTransformDialog-dialog-title" disableTypography={true}>
-            {title
-              ? title
-              : 'Edit Input Transformation Script'
-            }
-          </DialogTitle>
-          <DialogContent>
-            <div className={classes.dialogContent}>
-              <SplitPane
-                split="horizontal"
-                defaultSize={500}
-                primary="first"
-              >
-                <div>
-                  <SplitPane
-                    split="vertical"
-                    defaultSize={300}
-                    primary="first"
-                  >
-                    <div>
-                      <SplitPane
-                        split="horizontal"
-                        defaultSize={250}
-                        primary="first"
-                      >
-                        <div className={classes.sampleWrapper}>
-                          <PanelWithTitle title="Output endpoint sample object">
-                            <ScriptView
-                              propsSampleObjectText={outputSampleScript}
-                            />
-                          </PanelWithTitle>
-                        </div>
-                        <div className={classes.sampleWrapper}>
-                          <PanelWithTitle title="Input endpoint sample object">
-                            <ScriptView
-                              propsSampleObjectText={inputSampleScript}
-                            />
-                          </PanelWithTitle>
-                        </div>
-                      </SplitPane>
-                    </div>
-                    <div>
-                      <SplitPane
-                        split="horizontal"
-                        defaultSize={250}
-                        primary="first"
-                      >
-                        <div className={classes.editorWrapper}>
-                          <PanelWithTitle title="Output endpoint test script">
-                            <SourceCodeEditor
-                              data={testEditorDataObject}
-                              isVisible={activeTabIndex === 0}
-                              onChange={this.handleChangeTestScript}
-                            />
-                          </PanelWithTitle>
-                        </div>
-                        <div className={classes.editorWrapper}>
-                          <PanelWithTitle title="Transformation script">
-                            <SourceCodeEditor
-                              data={transformEditorDataObject}
-                              isVisible={activeTabIndex === 1}
-                              onChange={this.handleChangeTransformScript}
-                            />
-                          </PanelWithTitle>
-                        </div>
-                      </SplitPane>
-                    </div>
-                  </SplitPane>
-                </div>
-                <div>
-                  <PanelWithTitle title="Execution result">
-                    {errors && errors.length > 0 && (
-                      <Typography variant="overline" component="h4">Errors:</Typography>
-                    )}
-                    {errors && errors.length > 0 && (
-                      errors.map((error, idx) => {
-                        return (
-                          <Typography
-                            key={`error_${idx}`}
-                            component="h4"
-                            variant="body2"
-                            gutterBottom={idx < errors.length - 1}
-                            className={classes.errorText}
-                          >
-                            {error}
-                          </Typography>
-                        );
-                      })
-                    )}
-                    {output && output.length > 0 && (
-                      <Typography variant="overline" component="h4">Data on input endpoint:</Typography>
-                    )}
-                    {output && output.length > 0 && (
-                      output.map((outputItem, idx) => {
-                        return (
+        <CommonToolbar disableGutters={true} dense="true">
+          <ToolbarButton
+            iconType="Close"
+            onClick={this.handleClose}
+            title="Close"
+            tooltip="Close server log"
+          />
+          <CommonToolbarDivider/>
+          <ToolbarButton
+            iconType="PlayArrow"
+            onClick={this.handleTest}
+            title="Test"
+            tooltip="Close server log"
+          />
+          <ToolbarButton
+            iconType="PlayCircleOutline"
+            onClick={this.handleSubmit}
+            title="Test & Close"
+            tooltip="Close server log"
+          />
+        </CommonToolbar>
+        <DialogContent>
+          <pre className={classes.dialogTitle}>{title}</pre>
+          <div className={classes.dialogContent}>
+            <SplitPane
+              split="horizontal"
+              defaultSize={500}
+              primary="first"
+            >
+              <div>
+                <SplitPane
+                  split="vertical"
+                  defaultSize={300}
+                  primary="first"
+                >
+                  <div>
+                    <SplitPane
+                      split="horizontal"
+                      defaultSize={250}
+                      primary="first"
+                    >
+                      <div className={classes.sampleWrapper}>
+                        <PanelWithTitle title="Output endpoint sample object">
                           <ScriptView
-                            key={`executionResult_${idx}`}
-                            propsSampleObjectText={outputItem}
+                            propsSampleObjectText={outputSampleScript}
                           />
-                        );
-                      })
-                    )}
-                  </PanelWithTitle>
-                </div>
-              </SplitPane>
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="secondary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleTest} color="primary">
-              Test
-            </Button>
-            <Button type="submit" onClick={this.handleSubmit} color="primary">
-              Test & Close
-            </Button>
-          </DialogActions>
-        </form>
+                        </PanelWithTitle>
+                      </div>
+                      <div className={classes.sampleWrapper}>
+                        <PanelWithTitle title="Input endpoint sample object">
+                          <ScriptView
+                            propsSampleObjectText={inputSampleScript}
+                          />
+                        </PanelWithTitle>
+                      </div>
+                    </SplitPane>
+                  </div>
+                  <div>
+                    <SplitPane
+                      split="horizontal"
+                      defaultSize={250}
+                      primary="first"
+                    >
+                      <div className={classes.editorWrapper}>
+                        <PanelWithTitle title="Output endpoint test script">
+                          <SourceCodeEditor
+                            data={testEditorDataObject}
+                            isVisible={activeTabIndex === 0}
+                            onChange={this.handleChangeTestScript}
+                          />
+                        </PanelWithTitle>
+                      </div>
+                      <div className={classes.editorWrapper}>
+                        <PanelWithTitle title="Transformation script">
+                          <SourceCodeEditor
+                            data={transformEditorDataObject}
+                            isVisible={activeTabIndex === 1}
+                            onChange={this.handleChangeTransformScript}
+                          />
+                        </PanelWithTitle>
+                      </div>
+                    </SplitPane>
+                  </div>
+                </SplitPane>
+              </div>
+              <div>
+                <PanelWithTitle title="Execution result">
+                  {/*{errors && errors.length > 0 && (*/}
+                  {/*  <Typography variant="overline" component="h4">Errors:</Typography>*/}
+                  {/*)}*/}
+                  {errors && errors.length > 0 && (
+                    errors.map((error, idx) => {
+                      return (
+                        <Typography
+                          key={`error_${idx}`}
+                          component="h4"
+                          variant="body2"
+                          gutterBottom={idx < errors.length - 1}
+                          className={classes.errorText}
+                        >
+                          {error}
+                        </Typography>
+                      );
+                    })
+                  )}
+                  {output && output.length > 0 && (
+                    <Typography variant="overline" component="h4">Data on input endpoint:</Typography>
+                  )}
+                  {output && output.length > 0 && (
+                    output.map((outputItem, idx) => {
+                      return (
+                        <ScriptView
+                          key={`executionResult_${idx}`}
+                          propsSampleObjectText={outputItem}
+                        />
+                      );
+                    })
+                  )}
+                  {usage && usage.length > 0 && (
+                    usage.map((usageItem, idx) => {
+                      return (
+                        <Typography
+                          variant="caption"
+                          component="h4">
+                          {usageItem}
+                        </Typography>
+                      );
+                    })
+                  )}
+                </PanelWithTitle>
+              </div>
+            </SplitPane>
+          </div>
+        </DialogContent>
       </Dialog>
     );
   }

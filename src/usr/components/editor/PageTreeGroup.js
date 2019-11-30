@@ -51,6 +51,9 @@ const PageTreeListGroupText = withStyles({
     padding: 0,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+  },
+  primary: {
+    color: '#90a4ae',
   }
 })(ListItemText);
 
@@ -104,7 +107,7 @@ class PageTreeGroup extends React.Component {
         style={{paddingLeft}}
       >
         <PageTreeListGroupIcon>
-          <RemoveCircleOutline className={classes.buttonIcon} color="primary"/>
+          <RemoveCircleOutline className={classes.buttonIcon} color="primary" />
         </PageTreeListGroupIcon>
         <PageTreeListGroupText
           title={name}

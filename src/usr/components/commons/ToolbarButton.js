@@ -78,6 +78,8 @@ import StayCurrentPortrait from '@material-ui/icons/StayCurrentPortrait';
 import StayCurrentLandscape from '@material-ui/icons/StayCurrentLandscape';
 import CollectionsBookmark from '@material-ui/icons/CollectionsBookmark';
 import SettingsApplications from '@material-ui/icons/SettingsApplications';
+import PlayArrow from '@material-ui/icons/PlayArrow';
+import PlayCircleOutline from '@material-ui/icons/PlayCircleOutline';
 
 import { CommonToolbarButton, CommonToolbarIconButton, CommonErrorBadge } from './Commons.parts';
 
@@ -199,6 +201,8 @@ const icons = {
   StayCurrentLandscape,
   CollectionsBookmark,
   SettingsApplications,
+  PlayArrow,
+  PlayCircleOutline,
 
   // extra icons
   CopyToClipboard,

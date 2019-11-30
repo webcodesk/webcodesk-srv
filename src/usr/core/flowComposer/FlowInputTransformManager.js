@@ -153,7 +153,7 @@ class FlowInputTransformManager {
   }
 
   getDefaultTransformScript () {
-    return this._transformScript || 'return function (inputObject) { return outputObject; }';
+    return this._transformScript || 'return function (outputObject) { return inputObject; }';
   }
 
   setTransformScript (value) {
@@ -408,6 +408,7 @@ class FlowInputTransformManager {
   testTransformScript (testDataScript, transformScript) {
     let errors = [];
     let output = [];
+    let usage = [];
     let testFunc;
     let transformFunc;
     try {
@@ -472,17 +473,17 @@ class FlowInputTransformManager {
     }
 
     if (errors.length > 0) {
-      output.push('');
-      output.push('Usage: ');
-      output.push('1. The test script should return function: return function () { ... }');
-      output.push('2. The function in test script should return a data that ' +
+      usage.push('');
+      usage.push('Usage: ');
+      usage.push('1. The test script should return function: return function () { ... }');
+      usage.push('2. The function in test script should return a data that ' +
         'matches the structure and data type of the output endpoint or null.');
-      output.push('3. The transformation script should return function: return function (data) { ... }');
-      output.push('4. The function in transformation script should return data that ' +
+      usage.push('3. The transformation script should return function: return function (data) { ... }');
+      usage.push('4. The function in transformation script should return data that ' +
         'matches the structure and data type of the input endpoint');
     }
 
-    return {errors, output};
+    return {errors, output, usage};
 
   }
 
