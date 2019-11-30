@@ -15,6 +15,7 @@
  */
 
 import cloneDeep from 'lodash/cloneDeep';
+import isNil from 'lodash/isNil';
 import set from 'lodash/set';
 import constants from '../../../../commons/constants';
 import { getArrayDefaultExportFileText } from './fileTemplates';
@@ -54,8 +55,6 @@ export function createComponentsTree(model, rootModelProps) {
         if (propertyName) {
           if (propertyValue) {
             rootModelProps[propertyName] = cloneDeep(propertyValue);
-          } else {
-            rootModelProps[propertyName] = null;
           }
         } else {
           if (propertyValue) {
@@ -107,9 +106,11 @@ export function createComponentsTree(model, rootModelProps) {
       || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
       if (rootModelProps) {
         if (propertyName) {
-          rootModelProps[propertyName] = propertyValue || null;
+          if (!isNil(propertyValue)) {
+            rootModelProps[propertyName] = propertyValue;
+          }
         } else {
-          if (propertyValue) {
+          if (!isNil(propertyValue)) {
             rootModelProps.push(propertyValue);
           }
         }
