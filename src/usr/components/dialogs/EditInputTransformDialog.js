@@ -19,7 +19,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
 import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
 import ScriptView from '../commons/ScriptView';
 import SplitPane from '../splitPane';
@@ -33,11 +32,27 @@ function Transition (props) {
 }
 
 const styles = theme => ({
-  dialogContent: {
-    position: 'relative',
-    width: '100%',
-    height: '800px',
-    border: '1px solid #dddddd',
+  root: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  topPane: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '39px',
+    right: 0
+  },
+  contentPane: {
+    position: 'absolute',
+    top: '39px',
+    left: 0,
+    bottom: 0,
+    right: 0,
+    overflow: 'auto',
   },
   editorWrapper: {
     position: 'absolute',
@@ -54,7 +69,7 @@ const styles = theme => ({
     bottom: 0,
   },
   dialogTitle: {
-    marginTop: '8px',
+    marginLeft: '16px',
   },
   errorText: {
     color: '#D50000',
@@ -187,35 +202,36 @@ class EditInputTransformDialog extends React.Component {
         onClose={this.handleClose}
         open={isOpen}
         fullScreen={true}
-        // maxWidth="md"
-        // fullWidth={true}
         scroll="paper"
         TransitionComponent={Transition}
       >
-        <CommonToolbar disableGutters={true} dense="true">
-          <ToolbarButton
-            iconType="Close"
-            onClick={this.handleClose}
-            title="Close"
-            tooltip="Close server log"
-          />
-          <CommonToolbarDivider/>
-          <ToolbarButton
-            iconType="PlayArrow"
-            onClick={this.handleTest}
-            title="Test"
-            tooltip="Close server log"
-          />
-          <ToolbarButton
-            iconType="PlayCircleOutline"
-            onClick={this.handleSubmit}
-            title="Test & Close"
-            tooltip="Close server log"
-          />
-        </CommonToolbar>
-        <DialogContent>
-          <pre className={classes.dialogTitle}>{title}</pre>
-          <div className={classes.dialogContent}>
+        <div className={classes.root}>
+          <div className={classes.topPane}>
+            <CommonToolbar disableGutters={true} dense="true">
+              <ToolbarButton
+                iconType="Close"
+                onClick={this.handleClose}
+                title="Close"
+                tooltip="Close server log"
+              />
+              <CommonToolbarDivider/>
+              <ToolbarButton
+                iconType="PlayArrow"
+                onClick={this.handleTest}
+                title="Test"
+                tooltip="Close server log"
+              />
+              <ToolbarButton
+                iconType="PlayCircleOutline"
+                onClick={this.handleSubmit}
+                title="Test & Close"
+                tooltip="Close server log"
+              />
+              <CommonToolbarDivider/>
+              <Typography className={classes.dialogTitle} variant="caption">{title}</Typography>
+            </CommonToolbar>
+          </div>
+          <div className={classes.contentPane}>
             <SplitPane
               split="horizontal"
               defaultSize={500}
@@ -325,7 +341,7 @@ class EditInputTransformDialog extends React.Component {
               </div>
             </SplitPane>
           </div>
-        </DialogContent>
+        </div>
       </Dialog>
     );
   }
