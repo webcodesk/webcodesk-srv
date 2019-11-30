@@ -829,7 +829,7 @@ class TemplateComposer extends React.Component {
                     <IFrame
                       ref={this.iFrameRef}
                       width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
-                      scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
+                      // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
                       url={isPreviewMode
                         ? `http://localhost:${serverPort}/webcodesk__component_view`
                         : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`

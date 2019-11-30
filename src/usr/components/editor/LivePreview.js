@@ -569,7 +569,7 @@ class LivePreview extends React.Component {
                       key={`livePreview${serverPort}`}
                       ref={this.iFrameRef}
                       width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
-                      scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
+                      // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
                       url={`http://localhost:${serverPort}${activeUrl}`}
                       onIFrameMessage={this.handleFrameworkMessage}
                       onIFrameReady={this.handleFrameReady}

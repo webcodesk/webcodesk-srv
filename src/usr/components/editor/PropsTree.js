@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
+import DragIndicator from '@material-ui/icons/DragIndicator';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PropsTreeItem from './PropsTreeItem';
 import globalStore from '../../core/config/globalStore';
@@ -89,11 +90,11 @@ const styles = theme => ({
   },
   dragHandler: {
     position: 'absolute',
-    top: '9px',
-    left: '-16px',
+    top: '8px',
+    left: '-18px',
     color: '#aaaaaa',
     cursor: 'move',
-    fontSize: '10px',
+    fontSize: '13px',
     zIndex: 10
   }
 });
@@ -445,7 +446,7 @@ class PropsTree extends React.Component {
         <div className={classes.dragHandlerContainer}>
           <DragHandler
             element={
-              <div className={`${classes.dragHandler} fas fa-grip-horizontal`} />
+              <DragIndicator className={classes.dragHandler} />
             }
           />
           {result}

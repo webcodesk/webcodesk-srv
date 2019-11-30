@@ -151,7 +151,7 @@ class PropertyTextField extends React.Component {
         inputRef={this.input}
         type="text"
         value={inputText}
-        placeholder="Enter string"
+        placeholder="String"
         onChange={this.handleOnChange}
         onKeyDown={this.handleOnKeyDown}
         endAdornment={inputText && inputText.length > 0 && (

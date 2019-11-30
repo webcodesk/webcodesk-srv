@@ -152,7 +152,7 @@ class PropertyTextField extends React.Component {
         inputRef={me => this.input = me}
         type="number"
         value={isNull(inputValue) ? '' : inputValue}
-        placeholder="Enter number"
+        placeholder="Number"
         onChange={this.handleOnChange}
         onKeyDown={this.handleOnKeyDown}
         endAdornment={
