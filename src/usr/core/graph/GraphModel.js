@@ -215,11 +215,11 @@ class GraphModel {
             this.graphInstance.setNode(childKey, { ...childNode, index: childNode.index + 1 });
           }
         });
-        const newNodeKey = this.mapNewModel(model, insertIndex);
+        newNodeKey = this.mapNewModel(model, insertIndex);
         this.graphInstance.setParent(newNodeKey, parentNodeKey);
       } else {
         // just push the new child in the end
-        const newNodeKey = this.mapNewModel(model, childrenKeys.length);
+        newNodeKey = this.mapNewModel(model, childrenKeys.length);
         this.graphInstance.setParent(newNodeKey, parentNodeKey);
       }
     } else {
