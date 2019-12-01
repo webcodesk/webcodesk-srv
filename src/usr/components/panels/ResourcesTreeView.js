@@ -171,6 +171,7 @@ const styles = theme => ({
     opacity: 1,
   },
   htmlTooltip: {
+    minWidth: '450px',
     backgroundColor: '#fff9c4',
     border: '1px solid #dddddd',
   },
