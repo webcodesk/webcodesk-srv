@@ -29,6 +29,10 @@ import SourceCodeEditor from '../commons/SourceCodeEditor';
 import MarkdownView from '../commons/MarkdownView';
 import PageComposerManager from '../../core/pageComposer/PageComposerManager';
 import ComponentPropsTree from './ComponentPropsTree';
+import {
+  generatePropertiesMarkDown,
+  generateSampleObjectScript
+} from '../../core/project/generator/propTypesGenerator';
 
 const styles = theme => ({
   root: {
@@ -436,7 +440,7 @@ class ComponentView extends React.Component {
   };
 
   render () {
-    const { classes, serverPort } = this.props;
+    const { classes, serverPort, data } = this.props;
     const {
       showPropertyEditor,
       showInfoView,
@@ -450,9 +454,13 @@ class ComponentView extends React.Component {
       localComponentsTree,
       recentUpdateHistory,
       actionsLogViewSplitterSize,
-      storiesViewSplitterSize
+      storiesViewSplitterSize,
+      iFrameWidthIndex
     } = this.state;
-    const { iFrameWidthIndex } = this.state;
+    // const propertiesDescription = generatePropertiesMarkDown(data.propertiesRef);
+    // console.info(propertiesDescription);
+    //
+    // const readmeWithProperties = `${markdownContent}\n\n${propertiesDescription} `;
     return (
       <div className={classes.root}>
         <div className={classes.topPane}>

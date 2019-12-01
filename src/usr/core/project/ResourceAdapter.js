@@ -21,6 +21,10 @@ import cloneDeep from 'lodash/cloneDeep';
 import constants from '../../../commons/constants';
 import { readFile } from '../utils/fileUtils';
 import { makeResourceModelCanonicalKey } from '../utils/resourceUtils';
+import {
+  generateComponentMarkDownSpecification,
+  generateFunctionsMarkDownSpecification
+} from './generator/propTypesGenerator';
 
 const possibleResourceTypes = [
   constants.RESOURCE_IN_COMPONENTS_TYPE,
@@ -342,16 +346,23 @@ class ResourceAdapter {
                 }
               }
             }
-            if (this.markdownResourceObject.isEmpty) {
+            if (this.markdownResourceObject.isEmpty && !this.markdownSpecification) {
               if (this.isComponent) {
                 return 'There is no documentation for the component. ' +
-                  `Create a \`${this.displayName}.md\` file in the component's directory.`;
+                  `Create a \`${this.displayName}.md\` file in the component's directory or add comments to the source code.`;
               } else if (this.isFunctions) {
                 return 'There is no documentation for the functions. ' +
-                  `Create a \`${this.displayName}.md\` file in the functions' directory.`;
+                  `Create a \`${this.displayName}.md\` file in the functions' directory or add comments to the source code.`;
               }
             }
-            return this.markdownResourceObject.markdownContent;
+            let resultMarkdownText = '';
+            if (this.markdownResourceObject.markdownContent) {
+              resultMarkdownText = `${this.markdownResourceObject.markdownContent}\n\n`;
+            }
+            if (this.markdownSpecification) {
+              resultMarkdownText += this.markdownSpecification;
+            }
+            return resultMarkdownText;
           }
         },
         'markdownContent': {
@@ -364,10 +375,42 @@ class ResourceAdapter {
             return undefined;
           }
         },
+        'markdownSpecification': {
+          get: function() {
+            if (!this.markdownSpecificationText) {
+              if (this.isComponent) {
+                this.markdownSpecificationText =
+                  generateComponentMarkDownSpecification(this.propertiesRef, this.componentComment);
+              } else if (this.isFunctions) {
+                const keys = this.childrenKeys;
+                let functionResourceObject;
+                const functionsModels = [];
+                if (keys && keys.length > 0) {
+                  keys.forEach(key => {
+                    functionResourceObject = new ResourceAdapter.Builder()
+                      .byKeyInGraphs(key, this.getGraphByType)
+                      .build();
+                    functionsModels.push(functionResourceObject.model);
+                  });
+                }
+                this.markdownSpecificationText = generateFunctionsMarkDownSpecification(functionsModels);
+              }
+            }
+            return this.markdownSpecificationText;
+          }
+        },
         'displayName': {
           get: function () {
             if (this.props) {
               return this.props.displayName;
+            }
+            return undefined;
+          }
+        },
+        'componentComment': {
+          get: function () {
+            if (this.props) {
+              return this.props.componentComment;
             }
             return undefined;
           }

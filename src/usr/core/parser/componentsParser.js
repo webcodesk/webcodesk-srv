@@ -19,6 +19,7 @@ import { traverse } from '../utils/astUtils';
 import { getImportSpecifiers, getPropTypesObject } from './propTypesParserUtils';
 import { getDefaultPropsObject } from './defaultPropsParserUtils';
 import { traverseProperties } from './propTypesTransformer';
+import { getWcdAnnotations } from '../utils/commentsUtils';
 
 const getPropTypesOutOfBody = (ast, classDeclarationName, importSpecifiers, classDeclaration = {}) => {
   if (!ast) {
@@ -119,10 +120,16 @@ const getClassDeclaration = (ast, componentName, importSpecifiers) => {
             componentName: classDeclarationId.name,
           };
           classDeclaration = getPropTypesInBody(classDeclarationBody, importSpecifiers, classDeclaration);
+          let wcdAnnotations = {};
           // get comments
           if (classDeclarationComments && classDeclarationComments.length > 0) {
-            classDeclaration.comments = classDeclarationComments.map(comment => comment.value);
+            classDeclarationComments.forEach(leadingComment => {
+              if (leadingComment && leadingComment.value) {
+                wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
+              }
+            });
           }
+          classDeclaration.wcdAnnotations = wcdAnnotations;
           // set found class declaration
           classDeclarations[classDeclaration.componentName] = classDeclaration;
         }
@@ -162,9 +169,16 @@ const findConstFunctionDeclaration = (ast, componentName) => {
               componentName: declaratorId.name,
             };
             // get comments
+            let wcdAnnotations = {};
+            // get comments
             if (leadingComments && leadingComments.length > 0) {
-              functionsDeclarations[declaratorId.name].comments = leadingComments.map(comment => comment.value);
+              leadingComments.forEach(leadingComment => {
+                if (leadingComment && leadingComment.value) {
+                  wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
+                }
+              });
             }
+            functionsDeclarations[declaratorId.name].wcdAnnotations = wcdAnnotations;
           }
         }
       } else if (type === 'ExportDefaultDeclaration') {

@@ -212,20 +212,20 @@ class EditInputTransformDialog extends React.Component {
                 iconType="Close"
                 onClick={this.handleClose}
                 title="Close"
-                tooltip="Close server log"
+                tooltip="Close transformation script editor"
               />
               <CommonToolbarDivider/>
               <ToolbarButton
                 iconType="PlayArrow"
                 onClick={this.handleTest}
                 title="Test"
-                tooltip="Close server log"
+                tooltip="Test transformation script"
               />
               <ToolbarButton
                 iconType="PlayCircleOutline"
                 onClick={this.handleSubmit}
-                title="Test & Close"
-                tooltip="Close server log"
+                title="Submit"
+                tooltip="Test and save transformation script"
               />
               <CommonToolbarDivider/>
               <Typography className={classes.dialogTitle} variant="caption">{title}</Typography>

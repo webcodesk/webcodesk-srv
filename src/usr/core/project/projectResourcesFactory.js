@@ -15,7 +15,6 @@
  */
 
 import cloneDeep from 'lodash/cloneDeep';
-import sortBy from 'lodash/sortBy';
 import uniqueId from 'lodash/uniqueId';
 import constants from '../../../commons/constants';
 import { getParticleName } from '../utils/textUtils';
@@ -31,7 +30,6 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
       resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
       displayName,
       functionsName: modelKey,
-      functionsDescriptions: [],
     },
     children: [],
   };
@@ -51,14 +49,6 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         'when the function does not catch error thrown during the function execution.'
       }
     });
-    let declarationComments = [];
-    if (wcdAnnotations && wcdAnnotations[constants.ANNOTATION_COMMENT]) {
-      declarationComments.push(wcdAnnotations[constants.ANNOTATION_COMMENT]);
-    }
-    functionsModel.props.functionsDescriptions.push({
-      displayName: functionName,
-      comments: declarationComments,
-    });
     functionsModel.children.push({
       key: canonicalFunctionName,
       type: constants.GRAPH_MODEL_USER_FUNCTION_TYPE,
@@ -67,6 +57,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         name: functionName,
         displayName: functionName,
         functionName: canonicalFunctionName,
+        functionComment: wcdAnnotations[constants.ANNOTATION_COMMENT],
         parentFunctionsKey: modelKey,
         dispatches: cloneDeep(sortedDispatches),
         parameters: cloneDeep(parameters),
@@ -74,8 +65,6 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
       }
     });
   });
-  functionsModel.props.functionsDescriptions =
-    sortBy(functionsModel.props.functionsDescriptions, ['displayName']);
   result.push(functionsModel);
   return result;
 }
@@ -83,7 +72,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
 export function createComponentsModels (modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(componentDeclaration => {
-    const { componentName, properties, defaultProps, comments, externalProperties } = componentDeclaration;
+    const { componentName, properties, defaultProps, wcdAnnotations, externalProperties } = componentDeclaration;
     const canonicalComponentName = modelKey;
     result.push({
       key: canonicalComponentName,
@@ -96,7 +85,7 @@ export function createComponentsModels (modelKey, declarationsInFile) {
         properties: cloneDeep(properties),
         defaultProps: cloneDeep(defaultProps),
         externalProperties: externalProperties,
-        comments: cloneDeep(comments),
+        componentComment: wcdAnnotations[constants.ANNOTATION_COMMENT],
       }
     });
   });
