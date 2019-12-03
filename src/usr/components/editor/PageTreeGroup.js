@@ -21,11 +21,16 @@ import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import IconButton from '@material-ui/core/IconButton';
 import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
+import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
 
 const styles = theme => ({
   buttonIcon: {
     fontSize: '12px'
+  },
+  extraButtonIncrease: {
+    borderColor: '#81c784',
   },
 });
 
@@ -43,6 +48,10 @@ const PageTreeListGroup = withStyles(theme => ({
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: 0,
+    borderRadius: '4px',
+    '&:hover': {
+      backgroundColor: '#eceff1',
+    },
   },
 }))(ListItem);
 
@@ -64,23 +73,38 @@ const PageTreeListGroupIcon = withStyles({
   }
 })(ListItemIcon);
 
+export const PageTreeListGroupExtraButton = withStyles({
+  root: {
+    padding: 0,
+    fontSize: '12px',
+    border: '1px solid #b0bec5',
+    backgroundColor: '#f5f5f5',
+    marginRight: '5px'
+  }
+})(IconButton);
+
 class PageTreeGroup extends React.Component {
   static propTypes = {
     name: PropTypes.string,
-    paddingLeft: PropTypes.string,
+    node: PropTypes.object,
+    isArray: PropTypes.bool,
     onClick: PropTypes.func,
     onErrorClick: PropTypes.func,
+    onIncreaseComponentPropertyArray: PropTypes.func,
   };
 
   static defaultProps = {
     name: "",
-    paddingLeft: '0px',
-    draggedItem: null,
+    node: null,
+    isArray: false,
     onClick: () => {
       console.info('PageTreeGroup.onClick is not set');
     },
     onErrorClick: () => {
       console.info('PageTreeGroup.onErrorClick is not set');
+    },
+    onIncreaseComponentPropertyArray: () => {
+      console.info('PageTreeGroup.onIncreaseComponentPropertyArray is not set');
     },
   };
 
@@ -97,15 +121,24 @@ class PageTreeGroup extends React.Component {
     onClick(key);
   };
 
+  handleIncreaseComponentPropertyArray = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { onIncreaseComponentPropertyArray, node } = this.props;
+    if (node) {
+      onIncreaseComponentPropertyArray(node.key);
+    }
+  };
+
   render () {
-    if (!this.props.name) {
+    if (!this.props.name || !this.props.node) {
       return null;
     }
-    const { name, paddingLeft, classes } = this.props;
+    const { name, classes, isArray } = this.props;
     return (
-      <PageTreeListGroup
-        style={{paddingLeft}}
-      >
+      <PageTreeListGroup>
         <PageTreeListGroupIcon>
           <RemoveCircleOutline className={classes.buttonIcon} color="primary" />
         </PageTreeListGroupIcon>
@@ -117,6 +150,15 @@ class PageTreeGroup extends React.Component {
             </span>
           }
         />
+        {isArray && (
+          <PageTreeListGroupExtraButton
+            title="Add new item to the array"
+            className={classes.extraButtonIncrease}
+            onClick={this.handleIncreaseComponentPropertyArray}
+          >
+            <ExposurePlus1 className={classes.buttonIcon} color="disabled"/>
+          </PageTreeListGroupExtraButton>
+        )}
       </PageTreeListGroup>
     );
   }

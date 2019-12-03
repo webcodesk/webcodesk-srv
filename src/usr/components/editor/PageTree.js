@@ -140,6 +140,9 @@ class PageTree extends React.Component {
     onItemClick: PropTypes.func,
     onItemErrorClick: PropTypes.func,
     onItemDrop: PropTypes.func,
+    onDeleteComponentProperty: PropTypes.func,
+    onIncreaseComponentPropertyArray: PropTypes.func,
+    onDuplicateComponentPropertyArrayItem: PropTypes.func,
     onUpdateComponentPropertyArrayOrder: PropTypes.func,
   };
 
@@ -155,6 +158,15 @@ class PageTree extends React.Component {
     },
     onItemDrop: () => {
       console.info('PageTree.onItemDrop is not set');
+    },
+    onDeleteComponentProperty: () => {
+      console.info('PageTree.onDeleteComponentProperty is not set');
+    },
+    onIncreaseComponentPropertyArray: () => {
+      console.info('PageTree.onIncreaseComponentPropertyArray is not set');
+    },
+    onDuplicateComponentPropertyArrayItem: () => {
+      console.info('PageTree.onDuplicateComponentPropertyArrayItem is not set');
     },
     onUpdateComponentPropertyArrayOrder: () => {
       console.info('PageTree.onUpdateComponentPropertyArrayOrder is not set');
@@ -180,6 +192,18 @@ class PageTree extends React.Component {
     this.props.onItemDrop(data);
   };
 
+  handleDeleteComponentProperty = (propertyKey) => {
+    this.props.onDeleteComponentProperty(propertyKey);
+  };
+
+  handleIncreaseComponentPropertyArray = (propertyKey) => {
+    this.props.onIncreaseComponentPropertyArray(propertyKey);
+  };
+
+  handleDuplicateComponentPropertyArrayItem = (propertyKey, groupPropertyKey, itemIndex) => {
+    this.props.onDuplicateComponentPropertyArrayItem(propertyKey, groupPropertyKey, itemIndex);
+  };
+
   handleUpdateComponentPropertyArrayOrder = (model) => ({oldIndex, newIndex}) => {
     if (model && model.children) {
       model.children = arrayMove(model.children, oldIndex, newIndex);
@@ -187,7 +211,7 @@ class PageTree extends React.Component {
     this.props.onUpdateComponentPropertyArrayOrder(model);
   };
 
-  createList = (node, draggedItem, isDraggingItem, level = 0, arrayIndex = null) => {
+  createList = (node, draggedItem, isDraggingItem, parent = null, level = 0, arrayIndex = null) => {
     const { classes } = this.props;
     let result = [];
     if (node) {
@@ -216,7 +240,7 @@ class PageTree extends React.Component {
         if (children && children.length > 0) {
           childListItems = children.reduce(
             (acc, child) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, childLevel, arrayIndex)
+              this.createList(child, draggedItem, isDraggingItem, node, childLevel)
             ),
             childListItems
           );
@@ -227,6 +251,7 @@ class PageTree extends React.Component {
               <PageTreeGroup
                 key={key}
                 name={listItemLabelName}
+                node={node}
               />
             );
             result.push(
@@ -257,7 +282,7 @@ class PageTree extends React.Component {
         if (children && children.length > 0) {
           childListItems = children.reduce(
             (acc, child, idx) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, childLevel, idx)
+              this.createList(child, draggedItem, isDraggingItem, node, childLevel, idx)
             ),
             childListItems
           );
@@ -268,7 +293,9 @@ class PageTree extends React.Component {
               <PageTreeGroup
                 key={key}
                 name={listItemLabelName}
+                node={node}
                 isArray={true}
+                onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
               />
             );
           }
@@ -289,14 +316,19 @@ class PageTree extends React.Component {
           <PageTreeItem
             key={key}
             itemKey={key}
+            parentKey={parent ? parent.key : null}
             isPlaceholder={true}
             name={listItemLabelName}
+            node={node}
+            arrayIndex={arrayIndex}
             isSelected={isSelected}
+            draggedItem={draggedItem}
+            isDraggingItem={isDraggingItem}
             onClick={this.handleItemClick}
             onErrorClick={this.handleItemErrorClick}
             onDrop={this.handleItemDrop}
-            draggedItem={draggedItem}
-            isDraggingItem={isDraggingItem}
+            onDeleteComponentProperty={this.handleDeleteComponentProperty}
+            onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
       } else if (type === constants.PAGE_COMPONENT_TYPE) {
@@ -305,7 +337,7 @@ class PageTree extends React.Component {
         if (children && children.length > 0) {
           childListItems = children.reduce(
             (acc, child) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, level + 1)
+              this.createList(child, draggedItem, isDraggingItem, node, level + 1)
             ),
             childListItems
           );
@@ -314,18 +346,23 @@ class PageTree extends React.Component {
           <PageTreeItem
             key={key}
             itemKey={key}
+            parentKey={parent ? parent.key : null}
             isPlaceholder={false}
             name={listItemLabelName}
+            node={node}
+            arrayIndex={arrayIndex}
             errors={errors}
             componentName={componentName}
             componentInstance={componentInstance}
             isSelected={isSelected}
             hasChildren={childListItems.length > 0}
+            draggedItem={draggedItem}
+            isDraggingItem={isDraggingItem}
             onClick={this.handleItemClick}
             onErrorClick={this.handleItemErrorClick}
             onDrop={this.handleItemDrop}
-            draggedItem={draggedItem}
-            isDraggingItem={isDraggingItem}
+            onDeleteComponentProperty={this.handleDeleteComponentProperty}
+            onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
         if (childListItems.length > 0) {
