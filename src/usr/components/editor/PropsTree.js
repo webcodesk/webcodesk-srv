@@ -233,7 +233,11 @@ class PropsTree extends React.Component {
 
   handleToggleExpandItem = (groupKey) => {
     const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
-    newExpandedGroupKeys[groupKey] = !newExpandedGroupKeys[groupKey];
+    if (newExpandedGroupKeys[groupKey]) {
+      delete newExpandedGroupKeys[groupKey];
+    } else {
+      newExpandedGroupKeys[groupKey] = true;
+    }
     this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
     this.setState({
       expandedGroupKeys: newExpandedGroupKeys,
