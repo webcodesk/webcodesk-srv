@@ -468,7 +468,7 @@ class PropsTree extends React.Component {
       let editJsonScript = '';
       let editJsonDialogTitle = '';
       if (editComponentPropertyModel && editComponentPropertyModel.props) {
-        editJsonScript = JSON.stringify(editComponentPropertyModel.props.propertyValue, null, 4);
+        editJsonScript = JSON.stringify(editComponentPropertyModel.props.propertyValue, null, 2);
         editJsonDialogTitle = `Edit property: ${editComponentPropertyModel.props.propertyName}`;
       }
       return (
