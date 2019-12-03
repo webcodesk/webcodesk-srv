@@ -105,6 +105,15 @@ const propertyTypeMap = {
       propTypesObject: PropTypes.number,
     };
   },
+  [constants.COMPONENT_PROPERTY_ELEMENT_TYPE]: (propertyNode) => {
+    const { props: {propertyName, isRequired} } = propertyNode;
+    return {
+      typeInComment: `\`{Component, required: ${!!isRequired}}\``,
+      sampleCode: `${propertyName}: <Component />`,
+      singleSampleCode: '<Component />',
+      propTypesObject: PropTypes.element,
+    };
+  },
 };
 
 export function generatePropTypesObject(node) {
@@ -388,7 +397,8 @@ function createInputDescriptionNextLine (node, level = 0) {
       || type === constants.COMPONENT_PROPERTY_BOOL_TYPE
       || type === constants.COMPONENT_PROPERTY_ANY_TYPE
       || type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
-      || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
+      || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE
+      || type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
       const typeDescriptionObject = propertyTypeMap[type](node);
       let typeString;
       if (typeDescriptionObject) {
@@ -444,7 +454,7 @@ export function generateComponentMarkDownSpecification(properties, componentComm
     });
   }
   let resultMarkdownText = '## Specification\n\n';
-  resultMarkdownText += `${componentComment}\n\n`;
+  resultMarkdownText += componentComment ? `${componentComment}\n\n` : '';
   if (inputs.length > 0) {
     let inputText = inputs.join('\n');
     resultMarkdownText += `*Inputs*\n\n${inputText}\n\n`;
@@ -463,8 +473,7 @@ export function generateFunctionsMarkDownSpecification(functions) {
       const { props: { functionComment, displayName, propertiesRef, dispatches } } = functionModel;
       resultMarkdownText += `### Function \`${displayName}\`\n`;
       if (functionComment) {
-        let validFunctionComment = functionComment ? functionComment.trim().replace('\n', '') : '';
-        resultMarkdownText += `${validFunctionComment}\n\n`;
+        resultMarkdownText += `${functionComment}\n\n`;
       }
       let inputs = [];
       inputs.push(`   * __argument__ - \`{Object}\` The first function argument`);
