@@ -426,11 +426,15 @@ function createOutputDescriptionNextLine (node) {
     }
     if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
       result.push(`   * __${propertyName}__ - \`{Function}\` ${propertyComment}`);
-      result.push(`      * output object properties:`);
-      result = children.reduce(
-        (acc, child) => acc.concat(createInputDescriptionNextLine(child, 3)),
-        result
-      );
+      if (children && children.length > 0) {
+        result.push(`      * output object properties:`);
+        result = children.reduce(
+          (acc, child) => acc.concat(createInputDescriptionNextLine(child, 3)),
+          result
+        );
+      } else {
+        result.push(`      * output object has a structure of any type or is undefined`);
+      }
     }
   }
   return result;
@@ -504,7 +508,7 @@ export function generateFunctionsMarkDownSpecification(functions) {
               outputs = outputs.concat(createInputDescriptionNextLine(property, 3));
             });
           } else {
-            outputs.push(`      * output object has a structure of any type`);
+            outputs.push(`      * output object has a structure of any type or is undefined`);
           }
         });
       }
