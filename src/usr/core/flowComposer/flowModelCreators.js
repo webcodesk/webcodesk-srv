@@ -82,10 +82,12 @@ export function createFlowModelForComponent(resourceObject, inBasket) {
             properties: propertyRef ? cloneDeep(propertyRef) : {}
           });
         } else {
-          flowModel.props.inputs.push({
-            name: props.propertyName,
-            properties: propertyRef ? cloneDeep(propertyRef) : {}
-          });
+          if (props.propertyName !== constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
+            flowModel.props.inputs.push({
+              name: props.propertyName,
+              properties: propertyRef ? cloneDeep(propertyRef) : {}
+            });
+          }
         }
       });
     }

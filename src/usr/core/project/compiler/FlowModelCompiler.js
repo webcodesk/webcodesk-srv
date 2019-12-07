@@ -79,13 +79,13 @@ class FlowModelCompiler {
                 foundItemInput = flowItemInputs[propertyName];
                 if (!foundItemInput) {
                   // input is missing
-                  if (nodeModel.type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE) {
+                  if (propertyName !== constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
+                    nodeModel.props.inputs.push({
+                      name: propertyName,
+                      properties: propertyRef ? cloneDeep(propertyRef) : {},
+                    });
+                    this.changesCount++;
                   }
-                  nodeModel.props.inputs.push({
-                    name: propertyName,
-                    properties: propertyRef ? cloneDeep(propertyRef) : {},
-                  });
-                  this.changesCount++;
                 } else {
                   // update input props
                   foundItemInput.properties = propertyRef ? cloneDeep(propertyRef) : {};
