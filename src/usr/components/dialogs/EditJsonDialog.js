@@ -23,6 +23,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 import JsonEditor from '../commons/JsonEditor';
 
 const styles = theme => ({
@@ -48,6 +49,18 @@ const styles = theme => ({
   },
   errorText: {
     color: '#D50000',
+    cursor: 'pointer'
+  },
+  htmlPopper: {
+    opacity: 1,
+  },
+  htmlTooltip: {
+    backgroundColor: '#fff9c4',
+    border: '1px solid #dddddd',
+  },
+  htmlTooltipCode: {
+    backgroundColor: '#fff9c4',
+    border: 0,
   },
 });
 
@@ -74,10 +87,9 @@ class EditJsonDialog extends React.Component {
 
   constructor (props) {
     super(props);
-    const { script } = this.props;
     this.state = {
-      scriptLocal: script,
       hasErrors: false,
+      errorText: '',
     };
   }
 
@@ -85,8 +97,8 @@ class EditJsonDialog extends React.Component {
     const { script } = this.props;
     if (script !== prevProps.script) {
       this.setState({
-        scriptLocal: script,
         hasErrors: false,
+        errorText: '',
       });
     }
   }
@@ -108,19 +120,19 @@ class EditJsonDialog extends React.Component {
     }
   };
 
-  handleChangeScript = ({ script, hasErrors }) => {
-    const newState = { ...this.state, scriptLocal: script, hasErrors } ;
+  handleChangeScript = ({ script, hasErrors, errorText }) => {
+    const newState = { ...this.state, scriptLocal: script, hasErrors, errorText } ;
     this.setState(newState);
   };
 
   render () {
-    const { isOpen, classes, title } = this.props;
+    const { isOpen, classes, title, script } = this.props;
     if (!isOpen) {
       return null;
     }
     const {
-      scriptLocal,
       hasErrors,
+      errorText
     } = this.state;
     return (
       <Dialog
@@ -135,20 +147,39 @@ class EditJsonDialog extends React.Component {
           <DialogTitle id="EditJsonDialog-dialog-title" disableTypography={true}>
             {title
               ? title
-              : 'Edit Json'
+              : 'Edit JS object'
             }
           </DialogTitle>
           <DialogContent>
-            {hasErrors && (
+            {hasErrors
+              ? (
               <Typography variant="caption" gutterBottom={true}>
-                <span className={classes.errorText}>
-                  JSON has errors
+                <span>
+                  {'The script text is evaluated as "const s = <script text>" and has errors:'}&nbsp;
                 </span>
+                <Tooltip
+                  enterDelay={500}
+                  classes={{
+                    popper: classes.htmlPopper,
+                    tooltip: classes.htmlTooltip,
+                  }}
+                  title={<pre className={classes.htmlTooltipCode}><code>{errorText}</code></pre>}
+                >
+                  <span className={classes.errorText}>[show error text]</span>
+                </Tooltip>
               </Typography>
-            )}
+            )
+            : (
+                <Typography variant="caption" gutterBottom={true}>
+                <span>
+                  {'The script text is evaluated as "const s = <script text>"'}
+                </span>
+                </Typography>
+              )
+            }
             <div className={classes.dialogContent}>
               <JsonEditor
-                data={{script: scriptLocal}}
+                data={{script}}
                 isVisible={true}
                 onChange={this.handleChangeScript}
               />

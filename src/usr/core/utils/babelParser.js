@@ -15,6 +15,7 @@
  */
 
 import * as babel from '@babel/core';
+import generate from '@babel/generator';
 import presetReact from '@babel/preset-react';
 import pluginProposalClassProperties from '@babel/plugin-proposal-class-properties';
 import pluginSyntaxTypescript from '@babel/plugin-syntax-typescript';
@@ -34,4 +35,8 @@ export const getSourceAst = (sourceCode) => {
     // ranges: false,
   });
   return ast.program;
+};
+
+export const generateSource = (ast, code) => {
+  return generate(ast, {}, code);
 };

@@ -22,6 +22,7 @@ import 'codemirror/theme/idea.css';
 import 'codemirror/mode/javascript/javascript';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import { withStyles } from '@material-ui/core/styles';
+import { generateSource, getSourceAst } from '../../core/utils/babelParser';
 
 const styles = theme => ({
   root: {
@@ -32,6 +33,17 @@ const styles = theme => ({
     bottom: 0,
   }
 });
+
+function parseScript (script) {
+  try {
+    const validCode = `const s = ${script}`;
+    const objectAST = getSourceAst(validCode);
+    const { code } = generateSource(objectAST, validCode);
+    return code.substr(0, code.length - 1).replace('const s = ', '');
+  } catch (e) {
+    return script;
+  }
+}
 
 class JsonEditor extends React.Component {
   static propTypes = {
@@ -51,8 +63,15 @@ class JsonEditor extends React.Component {
   constructor (props) {
     super(props);
     const { data } = this.props;
+    let validScript;
+    if (data.script) {
+      validScript = parseScript(data.script);
+    } else {
+      validScript = data.script;
+    }
     this.state = {
-      script: data.script,
+      script: validScript,
+      cursorPosition: null,
     }
   }
 
@@ -61,9 +80,15 @@ class JsonEditor extends React.Component {
     if (isVisible === true && isVisible !== prevProps.isVisible) {
       this.instance.setCursor(1);
     }
-    if (data !== prevProps.data) {
+    if (data && prevProps.data && data !== prevProps.data && data.script !== prevProps.data.script) {
+      let validScript;
+      if (data.script) {
+        validScript = parseScript(data.script);
+      } else {
+        validScript = data.script;
+      }
       this.setState({
-        script: data.script,
+        script: validScript,
       });
     }
   }
@@ -76,20 +101,28 @@ class JsonEditor extends React.Component {
     this.handleOnChange(editor, data, value);
   }, 500);
 
-  handleOnChange = (editor, data, value) => {
+  handleOnChange = (editor, editorData, value) => {
     let hasErrors = false;
-    try {
-      JSON.parse(value);
-    } catch (e) {
-      hasErrors = true;
+    let errorText = '';
+    const { data, onChange } = this.props;
+    if (value && value.length > 0) {
+      try {
+        getSourceAst(`const s = ${value}`);
+        const resultValue = eval(`(${value})`);
+        value = JSON.stringify(resultValue);
+      } catch (e) {
+        hasErrors = true;
+        errorText = e.message;
+        value = data ? data.script : '';
+      }
     }
-    this.props.onChange({script: value, hasErrors});
+    onChange({script: value, hasErrors, errorText });
   };
 
-  handleBeforeChange =(editor, data, value) => {
+  handleBeforeChange = (editor, data, value) => {
     this.setState({
       script: value,
-    })
+    });
   };
 
   render () {

@@ -262,7 +262,9 @@ class PropsTree extends React.Component {
     const { editComponentPropertyModel } = this.state;
     editComponentPropertyModel.props = editComponentPropertyModel.props || {};
     try {
-      editComponentPropertyModel.props.propertyValue = JSON.parse(script);
+      editComponentPropertyModel.props.propertyValue = script && script.length > 0
+        ? JSON.parse(script)
+        : undefined;
     } catch(e) {
       // do nothing
     }
