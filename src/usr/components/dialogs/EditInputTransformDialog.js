@@ -74,6 +74,9 @@ const styles = theme => ({
   errorText: {
     color: '#D50000',
   },
+  usageArea: {
+    marginTop: '16px'
+  }
 });
 
 class EditInputTransformDialog extends React.Component {
@@ -326,6 +329,7 @@ class EditInputTransformDialog extends React.Component {
                       );
                     })
                   )}
+                  <div className={classes.usageArea}>
                   {usage && usage.length > 0 && (
                     usage.map((usageItem, idx) => {
                       return (
@@ -337,6 +341,7 @@ class EditInputTransformDialog extends React.Component {
                       );
                     })
                   )}
+                  </div>
                 </PanelWithTitle>
               </div>
             </SplitPane>

@@ -386,7 +386,7 @@ class ActionsLogViewer extends React.Component {
       <div className={classes.root}>
         <SplitPane
           split="vertical"
-          defaultSize={250}
+          defaultSize={500}
           primary="second"
         >
           <AutoScrollPanel elementId={scrollToRecordId}>

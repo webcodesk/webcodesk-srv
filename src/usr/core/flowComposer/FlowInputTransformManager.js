@@ -141,20 +141,23 @@ class FlowInputTransformManager {
     if (errors.length === 0) {
       try {
         const transformedDataObject = transformFunc(testDataObject);
-        if (!transformedDataObject && !isNull(transformedDataObject)) {
-          throw Error('The function should return a data object or null.')
+        if (typeof transformedDataObject === 'undefined') {
+          // the return type can be undefined in case we want to stop transferring data to the input
+          output.push('undefined // the transferring data will be skipped and the input endpoint will not receive new data.');
+        } else {
+          if (!transformedDataObject && !isNull(transformedDataObject)) {
+            throw Error('The function should return a data object or null.')
+          }
+          const samplePropTypes = this.getInputSamplePropTypes();
+          if (samplePropTypes) {
+            const checkingPropTypes = {inputObject: samplePropTypes};
+            const checkingPropValue = {inputObject: transformedDataObject};
+            let propTypesErrors =
+              PropTypes.checkPropTypes(checkingPropTypes, checkingPropValue, 'variable', 'Transformation script');
+            errors = errors.concat(propTypesErrors);
+          }
+          output.push(JSON.stringify(transformedDataObject, null, 2));
         }
-
-        const samplePropTypes = this.getInputSamplePropTypes();
-        if (samplePropTypes) {
-          const checkingPropTypes = {inputObject: samplePropTypes};
-          const checkingPropValue = {inputObject: transformedDataObject};
-          let propTypesErrors =
-            PropTypes.checkPropTypes(checkingPropTypes, checkingPropValue, 'variable', 'Transformation script');
-          errors = errors.concat(propTypesErrors);
-        }
-
-        output.push(JSON.stringify(transformedDataObject, null, 2));
         this._transformScript = format(transformScript);
         this._testDataScript = format(testDataScript);
       } catch (e) {
@@ -173,6 +176,8 @@ class FlowInputTransformManager {
       usage.push('3. The transformation script should return function: return function (data) { ... }');
       usage.push('4. The function in transformation script should return data that ' +
         'matches the structure and data type of the input endpoint');
+      usage.push('5. The function in transformation script can return undefined ' +
+        'in case we want to stop transferring data to the input endpoint.');
     }
 
     return {errors, output, usage};
