@@ -54,7 +54,7 @@ const styles = theme => ({
 
 class PanelWithTitle extends React.Component {
   static propTypes = {
-    title: PropTypes.string,
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
     propsSampleObjectText: PropTypes.string,
   };
 

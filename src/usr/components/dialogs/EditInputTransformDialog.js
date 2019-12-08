@@ -20,6 +20,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
 import Dialog from '@material-ui/core/Dialog';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 import ScriptView from '../commons/ScriptView';
 import SplitPane from '../splitPane';
 import SourceCodeEditor from '../commons/SourceCodeEditor';
@@ -71,12 +72,25 @@ const styles = theme => ({
   dialogTitle: {
     marginLeft: '16px',
   },
-  errorText: {
-    color: '#D50000',
-  },
   usageArea: {
     marginTop: '16px'
-  }
+  },
+  errorText: {
+    color: '#D50000',
+    cursor: 'pointer'
+  },
+  htmlPopper: {
+    opacity: 1,
+  },
+  htmlTooltip: {
+    backgroundColor: '#fff9c4',
+    border: '1px solid #dddddd',
+    minWidth: '500px'
+  },
+  htmlTooltipCode: {
+    backgroundColor: '#fff9c4',
+    border: 0,
+  },
 });
 
 class EditInputTransformDialog extends React.Component {
@@ -122,9 +136,13 @@ class EditInputTransformDialog extends React.Component {
     this.state = {
       testEditorDataObject: {
         script: testDataScript,
+        hasError: false,
+        errorText: ''
       },
       transformEditorDataObject: {
         script: transformScript,
+        hasError: false,
+        errorText: ''
       }
     };
   }
@@ -134,14 +152,18 @@ class EditInputTransformDialog extends React.Component {
     if (testDataScript !== prevProps.testDataScript) {
       this.setState({
         testEditorDataObject: {
-          script: testDataScript
+          script: testDataScript,
+          hasError: false,
+          errorText: ''
         }
       });
     }
     if (transformScript !== prevProps.transformScript) {
       this.setState({
         transformEditorDataObject: {
-          script: transformScript
+          script: transformScript,
+          hasError: false,
+          errorText: ''
         }
       });
     }
@@ -175,17 +197,21 @@ class EditInputTransformDialog extends React.Component {
     });
   };
 
-  handleChangeTestScript = ({ script, hasErrors }) => {
+  handleChangeTestScript = ({ script, hasError, errorText }) => {
     const newState = { ...this.state };
     newState.testEditorDataObject = newState.testEditorDataObject || {};
     newState.testEditorDataObject.script = script;
+    newState.testEditorDataObject.hasError = hasError;
+    newState.testEditorDataObject.errorText = errorText;
     this.setState(newState);
   };
 
-  handleChangeTransformScript = ({ script, hasErrors }) => {
+  handleChangeTransformScript = ({ script, hasError, errorText }) => {
     const newState = { ...this.state };
     newState.transformEditorDataObject = newState.transformEditorDataObject || {};
     newState.transformEditorDataObject.script = script;
+    newState.transformEditorDataObject.hasError = hasError;
+    newState.transformEditorDataObject.errorText = errorText;
     this.setState(newState);
   };
 
@@ -275,18 +301,64 @@ class EditInputTransformDialog extends React.Component {
                       primary="first"
                     >
                       <div className={classes.editorWrapper}>
-                        <PanelWithTitle title="Output endpoint test script">
+                        <PanelWithTitle
+                          title={testEditorDataObject.hasError
+                            ? (
+                              <span>
+                                Output endpoint test script&nbsp;
+                                <Tooltip
+                                  classes={{
+                                    popper: classes.htmlPopper,
+                                    tooltip: classes.htmlTooltip,
+                                  }}
+                                  title={
+                                    <pre className={classes.htmlTooltipCode}>
+                                      <code>{testEditorDataObject.errorText}</code>
+                                    </pre>
+                                  }
+                                >
+                                  <span className={classes.errorText}>[show error text]</span>
+                                </Tooltip>
+                              </span>
+                            )
+                            : (<span>Output endpoint test script</span>)
+                          }
+                        >
                           <SourceCodeEditor
                             data={testEditorDataObject}
+                            checkSyntax={true}
                             isVisible={activeTabIndex === 0}
                             onChange={this.handleChangeTestScript}
                           />
                         </PanelWithTitle>
                       </div>
                       <div className={classes.editorWrapper}>
-                        <PanelWithTitle title="Transformation script">
+                        <PanelWithTitle
+                          title={transformEditorDataObject.hasError
+                            ? (
+                              <span>
+                                Transformation script&nbsp;
+                                <Tooltip
+                                  classes={{
+                                    popper: classes.htmlPopper,
+                                    tooltip: classes.htmlTooltip,
+                                  }}
+                                  title={
+                                    <pre className={classes.htmlTooltipCode}>
+                                      <code>{transformEditorDataObject.errorText}</code>
+                                    </pre>
+                                  }
+                                >
+                                  <span className={classes.errorText}>[show error text]</span>
+                                </Tooltip>
+                              </span>
+                            )
+                            : (<span>Transformation script</span>)
+                          }
+                        >
                           <SourceCodeEditor
                             data={transformEditorDataObject}
+                            checkSyntax={true}
                             isVisible={activeTabIndex === 1}
                             onChange={this.handleChangeTransformScript}
                           />

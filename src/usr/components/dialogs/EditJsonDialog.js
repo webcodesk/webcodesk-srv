@@ -94,8 +94,8 @@ class EditJsonDialog extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
-    const { objectToEdit } = this.props;
-    if (objectToEdit !== prevProps.objectToEdit) {
+    const { objectToEdit, isOpen } = this.props;
+    if (objectToEdit !== prevProps.objectToEdit || (isOpen && !prevProps.isOpen)) {
       this.setState({
         hasErrors: false,
         errorText: '',

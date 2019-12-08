@@ -51,7 +51,7 @@ class FlowInputTransformManager {
 
   getDefaultTestDataScript() {
     return this._testDataScript ||
-      format(`return function () { ${this.getOutputSampleObjectText()} return outputObject; }`);
+      format(`() => {\n  ${this.getOutputSampleObjectText()}\n  return outputObject;\n}`);
   }
 
   setTestDataScript (value) {
@@ -63,7 +63,7 @@ class FlowInputTransformManager {
   }
 
   getDefaultTransformScript () {
-    return this._transformScript || 'return function (outputObject) { return inputObject; }';
+    return this._transformScript || '(outputObject) => {\n  return inputObject;\n}';
   }
 
   setTransformScript (value) {
@@ -103,25 +103,35 @@ class FlowInputTransformManager {
     let usage = [];
     let testFunc;
     let transformFunc;
-    try {
-      testFunc = new Function(testDataScript)();
-      if (!isFunction(testFunc)) {
-        throw Error('The test script must return a JavaScript function.');
-      }
-    } catch (e) {
-      errors.push('Error during the test script initialization:');
-      errors.push(e.message);
-      console.error(`Error during the test function initialization: ${e.message}`);
+    if (!testDataScript) {
+      errors.push('The test script is empty.');
     }
-    try {
-      transformFunc = new Function('data', transformScript)();
-      if (!isFunction(testFunc)) {
-        throw Error('The transformation script must return a JavaScript function.');
+    if (!transformScript) {
+      errors.push('The transformation script is empty.');
+    }
+    if (errors.length === 0) {
+      try {
+        testFunc = new Function(`return ${testDataScript}`)();
+        if (!isFunction(testFunc)) {
+          throw Error('The test script must be a JavaScript function.');
+        }
+      } catch (e) {
+        errors.push('Error during the test script initialization:');
+        errors.push(e.message);
+        console.error(`Error during the test function initialization: ${e.message}`);
       }
-    } catch (e) {
-      errors.push('Error during the transformation script initialization:');
-      errors.push(e.message);
-      console.error(`Error during the transformation function initialization: ${e.message}`);
+    }
+    if (errors.length === 0) {
+      try {
+        transformFunc = new Function('data', `return ${transformScript}`)();
+        if (!isFunction(testFunc)) {
+          throw Error('The transformation script must be a JavaScript function.');
+        }
+      } catch (e) {
+        errors.push('Error during the transformation script initialization:');
+        errors.push(e.message);
+        console.error(`Error during the transformation function initialization: ${e.message}`);
+      }
     }
 
     let testDataObject;
@@ -170,13 +180,11 @@ class FlowInputTransformManager {
     if (errors.length > 0) {
       usage.push('');
       usage.push('Usage: ');
-      usage.push('1. The test script should return function: return function () { ... }');
-      usage.push('2. The function in test script should return a data that ' +
+      usage.push('1. The function in test script should return a data that ' +
         'matches the structure and data type of the output endpoint or null.');
-      usage.push('3. The transformation script should return function: return function (data) { ... }');
-      usage.push('4. The function in transformation script should return data that ' +
+      usage.push('2. The function in transformation script should return data that ' +
         'matches the structure and data type of the input endpoint');
-      usage.push('5. The function in transformation script can return undefined ' +
+      usage.push('3. The function in transformation script can return undefined ' +
         'in case we want to stop transferring data to the input endpoint.');
     }
 

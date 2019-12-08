@@ -24,6 +24,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/jsx/jsx';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import { withStyles } from '@material-ui/core/styles';
+import { getSourceAst } from '../../core/utils/babelParser';
 
 const styles = theme => ({
   root: {
@@ -39,6 +40,7 @@ class SourceCodeEditor extends React.Component {
   static propTypes = {
     isVisible: PropTypes.bool,
     data: PropTypes.object,
+    checkSyntax: PropTypes.bool,
     onChange: PropTypes.func,
   };
 
@@ -72,6 +74,7 @@ class SourceCodeEditor extends React.Component {
 
   handleEditorDidMount = (editor) => {
     this.instance = editor;
+    this.doc = editor.getDoc();
   };
 
   debouncedHandleOnChange = debounce((editor, data, value) => {
@@ -79,13 +82,35 @@ class SourceCodeEditor extends React.Component {
   }, 500);
 
   handleOnChange = (editor, data, value) => {
-    let hasErrors = false;
-    // try {
-    // todo:  parse source code value somehow here
-    // } catch (e) {
-    //   hasErrors = true;
-    // }
-    this.props.onChange({script: value, hasErrors});
+    let hasError = false;
+    let errorText = '';
+    if (this.markPos) {
+      this.markPos.clear();
+    }
+    if (this.props.checkSyntax) {
+      if (value && value.length > 0) {
+        try {
+          getSourceAst(value);
+        } catch (e) {
+          if (e && e.loc) {
+            const { loc: { line, column } } = e;
+            if (line >= 1 && column >= 1) {
+              this.markPos = this.doc.markText(
+                { line: line - 1, ch: column },
+                { line: line - 1, ch: column + 1 },
+                { css: 'color: #D50000; outline: 1px dotted #D50000;' }
+              );
+            }
+          }
+          hasError = true;
+          errorText = e.message;
+          value = this.state.script;
+        }
+      } else {
+        value = undefined;
+      }
+    }
+    this.props.onChange({script: value, hasError, errorText});
   };
 
   handleBeforeChange =(editor, data, value) => {
