@@ -258,16 +258,17 @@ class PropsTree extends React.Component {
     });
   };
 
-  handleSubmitEditJsonDialog = ({script}) => {
+  handleSubmitEditJsonDialog = ({objectAfterEdit}) => {
     const { editComponentPropertyModel } = this.state;
     editComponentPropertyModel.props = editComponentPropertyModel.props || {};
-    try {
-      editComponentPropertyModel.props.propertyValue = script && script.length > 0
-        ? JSON.parse(script)
-        : undefined;
-    } catch(e) {
-      // do nothing
-    }
+    editComponentPropertyModel.props.propertyValue = objectAfterEdit;
+    // try {
+    //   editComponentPropertyModel.props.propertyValue = script && script.length > 0
+    //     ? JSON.parse(script)
+    //     : undefined;
+    // } catch(e) {
+    //   // do nothing
+    // }
     this.props.onUpdateComponentPropertyModel(editComponentPropertyModel);
     this.handleCloseEditJsonDialog();
   };
@@ -467,10 +468,10 @@ class PropsTree extends React.Component {
     const { propertiesLocal } = this.state;
     if (propertiesLocal && propertiesLocal.length > 0) {
       const { showEditJsonDialog, editComponentPropertyModel } = this.state;
-      let editJsonScript = '';
+      let editJsonObject;
       let editJsonDialogTitle = '';
       if (editComponentPropertyModel && editComponentPropertyModel.props) {
-        editJsonScript = JSON.stringify(editComponentPropertyModel.props.propertyValue, null, 2);
+        editJsonObject = editComponentPropertyModel.props.propertyValue;
         editJsonDialogTitle = `Edit property: ${editComponentPropertyModel.props.propertyName}`;
       }
       return (
@@ -493,7 +494,7 @@ class PropsTree extends React.Component {
           <EditJsonDialog
             title={editJsonDialogTitle}
             isOpen={showEditJsonDialog}
-            script={editJsonScript}
+            objectToEdit={editJsonObject}
             onClose={this.handleCloseEditJsonDialog}
             onSubmit={this.handleSubmitEditJsonDialog}
           />

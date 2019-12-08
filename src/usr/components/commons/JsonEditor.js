@@ -17,12 +17,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
+import stringifyObject from 'stringify-object';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/idea.css';
 import 'codemirror/mode/javascript/javascript';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import { withStyles } from '@material-ui/core/styles';
-import { generateSource, getSourceAst } from '../../core/utils/babelParser';
+import { getSourceAst } from '../../core/utils/babelParser';
 
 const styles = theme => ({
   root: {
@@ -34,27 +35,23 @@ const styles = theme => ({
   }
 });
 
-function parseScript (script) {
-  try {
-    const validCode = `const s = ${script}`;
-    const objectAST = getSourceAst(validCode);
-    const { code } = generateSource(objectAST, validCode);
-    return code.substr(0, code.length - 1).replace('const s = ', '');
-  } catch (e) {
-    return script;
-  }
+function parseData (data) {
+  return stringifyObject(data, {
+    indent: '  ',
+    singleQuotes: false
+  });
 }
 
 class JsonEditor extends React.Component {
   static propTypes = {
     isVisible: PropTypes.bool,
-    data: PropTypes.object,
+    data: PropTypes.any,
     onChange: PropTypes.func,
   };
 
   static defaultProps = {
     isVisible: false,
-    data: {},
+    data: undefined,
     onChange: () => {
       console.info('JsonEditor.onChange is not set');
     },
@@ -64,13 +61,11 @@ class JsonEditor extends React.Component {
     super(props);
     const { data } = this.props;
     let validScript;
-    if (data.script) {
-      validScript = parseScript(data.script);
-    } else {
-      validScript = data.script;
+    if (data) {
+      validScript = parseData(data);
     }
     this.state = {
-      script: validScript,
+      script: validScript || '',
       cursorPosition: null,
     }
   }
@@ -80,15 +75,13 @@ class JsonEditor extends React.Component {
     if (isVisible === true && isVisible !== prevProps.isVisible) {
       this.instance.setCursor(1);
     }
-    if (data && prevProps.data && data !== prevProps.data && data.script !== prevProps.data.script) {
+    if (data !== prevProps.data) {
       let validScript;
-      if (data.script) {
-        validScript = parseScript(data.script);
-      } else {
-        validScript = data.script;
+      if (data) {
+        validScript = parseData(data);
       }
       this.setState({
-        script: validScript,
+        script: validScript || '',
       });
     }
   }
@@ -108,15 +101,16 @@ class JsonEditor extends React.Component {
     if (value && value.length > 0) {
       try {
         getSourceAst(`const s = ${value}`);
-        const resultValue = eval(`(${value})`);
-        value = JSON.stringify(resultValue);
+        value = eval(`(${value})`);
       } catch (e) {
         hasErrors = true;
         errorText = e.message;
-        value = data ? data.script : '';
+        value = data;
       }
+    } else {
+      value = undefined;
     }
-    onChange({script: value, hasErrors, errorText });
+    onChange({object: value, hasErrors, errorText });
   };
 
   handleBeforeChange = (editor, data, value) => {

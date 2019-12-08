@@ -67,7 +67,7 @@ const styles = theme => ({
 class EditJsonDialog extends React.Component {
   static propTypes = {
     title: PropTypes.string,
-    script: PropTypes.string,
+    objectToEdit: PropTypes.any,
     isOpen: PropTypes.bool,
     onClose: PropTypes.func,
     onSubmit: PropTypes.func,
@@ -75,7 +75,7 @@ class EditJsonDialog extends React.Component {
 
   static defaultProps = {
     title: '',
-    script: '',
+    objectToEdit: undefined,
     isOpen: false,
     onClose: () => {
       console.info('EditJsonDialog.onClose is not set');
@@ -94,8 +94,8 @@ class EditJsonDialog extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
-    const { script } = this.props;
-    if (script !== prevProps.script) {
+    const { objectToEdit } = this.props;
+    if (objectToEdit !== prevProps.objectToEdit) {
       this.setState({
         hasErrors: false,
         errorText: '',
@@ -112,21 +112,21 @@ class EditJsonDialog extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const { scriptLocal, hasErrors } = this.state;
+    const { objectToEditLocal, hasErrors } = this.state;
     if (!hasErrors) {
       this.props.onSubmit({
-        script: scriptLocal
+        objectAfterEdit: objectToEditLocal
       });
     }
   };
 
-  handleChangeScript = ({ script, hasErrors, errorText }) => {
-    const newState = { ...this.state, scriptLocal: script, hasErrors, errorText } ;
+  handleChangeScript = ({ object, hasErrors, errorText }) => {
+    const newState = { ...this.state, objectToEditLocal: object, hasErrors, errorText } ;
     this.setState(newState);
   };
 
   render () {
-    const { isOpen, classes, title, script } = this.props;
+    const { isOpen, classes, title, objectToEdit } = this.props;
     if (!isOpen) {
       return null;
     }
@@ -155,10 +155,9 @@ class EditJsonDialog extends React.Component {
               ? (
               <Typography variant="caption" gutterBottom={true}>
                 <span>
-                  {'The script text is evaluated as "const s = <script text>" and has errors:'}&nbsp;
+                  {'Use JavaScript syntax to describe object. The script text is evaluated as "const s = <script text>" and has errors:'}&nbsp;
                 </span>
                 <Tooltip
-                  enterDelay={500}
                   classes={{
                     popper: classes.htmlPopper,
                     tooltip: classes.htmlTooltip,
@@ -172,14 +171,14 @@ class EditJsonDialog extends React.Component {
             : (
                 <Typography variant="caption" gutterBottom={true}>
                 <span>
-                  {'The script text is evaluated as "const s = <script text>"'}
+                  {'Use JavaScript syntax to describe object. The script text is evaluated as "const s = <script text>"'}
                 </span>
                 </Typography>
               )
             }
             <div className={classes.dialogContent}>
               <JsonEditor
-                data={{script}}
+                data={objectToEdit}
                 isVisible={true}
                 onChange={this.handleChangeScript}
               />
