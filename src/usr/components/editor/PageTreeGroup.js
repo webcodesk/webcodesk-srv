@@ -15,6 +15,7 @@
  */
 
 import values from 'lodash/values';
+import isNull from 'lodash/isNull';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -24,6 +25,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import IconButton from '@material-ui/core/IconButton';
 import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
+import FileCopy from '@material-ui/icons/FileCopy';
+import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
 
 const styles = theme => ({
   buttonIcon: {
@@ -86,11 +89,15 @@ export const PageTreeListGroupExtraButton = withStyles({
 class PageTreeGroup extends React.Component {
   static propTypes = {
     name: PropTypes.string,
+    parentKey: PropTypes.string,
     node: PropTypes.object,
+    arrayIndex: PropTypes.number,
     isArray: PropTypes.bool,
     onClick: PropTypes.func,
     onErrorClick: PropTypes.func,
     onIncreaseComponentPropertyArray: PropTypes.func,
+    onDeleteComponentProperty: PropTypes.func,
+    onDuplicateComponentProperty: PropTypes.func,
   };
 
   static defaultProps = {
@@ -105,6 +112,12 @@ class PageTreeGroup extends React.Component {
     },
     onIncreaseComponentPropertyArray: () => {
       console.info('PageTreeGroup.onIncreaseComponentPropertyArray is not set');
+    },
+    onDeleteComponentProperty: () => {
+      console.info('PageTreeGroup.onDeleteComponentProperty is not set');
+    },
+    onDuplicateComponentProperty: () => {
+      console.info('PageTreeGroup.onDuplicateComponentProperty is not set');
     },
   };
 
@@ -132,15 +145,37 @@ class PageTreeGroup extends React.Component {
     }
   };
 
+  handleDeleteComponentProperty = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { onDeleteComponentProperty, node } = this.props;
+    if (node) {
+      onDeleteComponentProperty(node.key);
+    }
+  };
+
+  handleDuplicateComponentProperty = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { parentKey, arrayIndex, node, onDuplicateComponentProperty } = this.props;
+    if (!isNull(arrayIndex) && arrayIndex >= 0 && parentKey && node) {
+      onDuplicateComponentProperty(node.key, parentKey, arrayIndex);
+    }
+  };
+
   render () {
     if (!this.props.name || !this.props.node) {
       return null;
     }
-    const { name, classes, isArray } = this.props;
+    const { name, classes, isArray, arrayIndex } = this.props;
     return (
       <PageTreeListGroup>
         <PageTreeListGroupIcon>
-          <RemoveCircleOutline className={classes.buttonIcon} color="primary" />
+          <RemoveCircleOutline className={classes.buttonIcon} color="disabled" />
         </PageTreeListGroupIcon>
         <PageTreeListGroupText
           title={name}
@@ -159,6 +194,29 @@ class PageTreeGroup extends React.Component {
             <ExposurePlus1 className={classes.buttonIcon} color="disabled"/>
           </PageTreeListGroupExtraButton>
         )}
+        {!isNull(arrayIndex)
+          ? (
+            <PageTreeListGroupExtraButton
+              title="Duplicate this item in the array"
+              onClick={this.handleDuplicateComponentProperty}
+            >
+              <FileCopy className={classes.buttonIcon}/>
+            </PageTreeListGroupExtraButton>
+          )
+          : null
+        }
+        {!isNull(arrayIndex)
+          ? (
+            <PageTreeListGroupExtraButton
+              title="Remove this item from the array"
+              className={classes.extraButtonDelete}
+              onClick={this.handleDeleteComponentProperty}
+            >
+              <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
+            </PageTreeListGroupExtraButton>
+          )
+          : null
+        }
       </PageTreeListGroup>
     );
   }

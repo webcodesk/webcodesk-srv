@@ -220,7 +220,7 @@ class PageTree extends React.Component {
       const { propertyName } = props;
       let listItemLabelName;
       if (!isNull(arrayIndex) && arrayIndex >= 0) {
-        listItemLabelName = `[${arrayIndex}]`;
+        listItemLabelName = `${arrayIndex} item`;
         isArrayItem = true;
       }
       if (propertyName) {
@@ -231,46 +231,34 @@ class PageTree extends React.Component {
         }
       }
       if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
-        let childLevel = level;
-        if (propertyName) {
-          // indentation if there is grouping property name
-          childLevel += 1;
-        }
         let childListItems = [];
         if (children && children.length > 0) {
           childListItems = children.reduce(
             (acc, child) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, node, childLevel)
+              this.createList(child, draggedItem, isDraggingItem, node, level + 1)
             ),
             childListItems
           );
         }
         if (childListItems.length > 0) {
-          if (propertyName) {
-            result.push(
-              <PageTreeGroup
-                key={key}
-                name={listItemLabelName}
-                node={node}
-              />
-            );
-            result.push(
-              <div key={`${key}_container`} className={classes.listItemContainer}>
-                <div className={classes.listContainer}>
-                  {childListItems}
-                </div>
+          result.push(
+            <PageTreeGroup
+              key={key}
+              name={listItemLabelName}
+              node={node}
+              parentKey={parent ? parent.key : null}
+              arrayIndex={arrayIndex}
+              onDeleteComponentProperty={this.handleDeleteComponentProperty}
+              onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
+            />
+          );
+          result.push(
+            <div key={`${key}_container`} className={classes.listItemContainer}>
+              <div className={classes.listContainer}>
+                {childListItems}
               </div>
-            );
-          } else {
-            result.push(
-              <div key={`${key}_container`} className={classes.listItemContainer}>
-                <div className={classes.arrayListContainer}>
-                  {childListItems}
-                </div>
-              </div>
-            );
-          }
-          // result = result.concat(childListItems);
+            </div>
+          );
         }
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         let childLevel = level;
@@ -294,8 +282,12 @@ class PageTree extends React.Component {
                 key={key}
                 name={listItemLabelName}
                 node={node}
+                parentKey={parent ? parent.key : null}
+                arrayIndex={arrayIndex}
                 isArray={true}
                 onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
               />
             );
           }

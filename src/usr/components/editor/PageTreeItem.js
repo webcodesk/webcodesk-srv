@@ -23,8 +23,6 @@ import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
-import PanoramaFishEye from '@material-ui/icons/PanoramaFishEye';
 import * as constants from '../../../commons/constants';
 import ResourceIcon from '../commons/ResourceIcon';
 import PlaceholderSpan from '../commons/PlaceholderSpan';
@@ -247,23 +245,17 @@ class PageTreeItem extends React.Component {
           <div className={classes.itemContentWrapper}>
             <div className={classes.itemContent}>
               <PageTreeListItemIcon>
-                {hasChildren
-                  ? (
-                    <RemoveCircleOutline className={classes.buttonIcon} color="primary"/>
-                  )
-                  : (
-                    <PanoramaFishEye className={classes.buttonIcon} color="primary"/>
-                  )
-                }
-
+                <div className={classes.buttonIcon}>
+                  <ResourceIcon resourceType={constants.PAGE_COMPONENT_TYPE}/>
+                </div>
               </PageTreeListItemIcon>
               <PageTreeListItemText
                 title={componentName}
                 primary={
                   <div
-                    className={!errors || isEmpty(errors) ? classes.mutedText : classes.errorText}
+                    className={!errors || isEmpty(errors) ? '' : classes.errorText}
                   >
-                    {name || 'root'}
+                    {componentInstance || 'root'}
                   </div>
                 }
               />
@@ -291,16 +283,6 @@ class PageTreeItem extends React.Component {
                 : null
               }
             </div>
-            <div className={classes.itemContent}>
-              <PageTreeListItemIcon>
-                <div className={classes.buttonIcon}>
-                  <ResourceIcon resourceType={constants.PAGE_COMPONENT_TYPE}/>
-                </div>
-              </PageTreeListItemIcon>
-              <PageTreeListItemText
-                primary={<span>{componentInstance}</span>}
-              />
-            </div>
           </div>
         </PageTreeListItem>
       );
@@ -312,38 +294,6 @@ class PageTreeItem extends React.Component {
         className={isSelected ? classes.selectedItem : ''}
       >
         <div className={classes.itemContentWrapper}>
-          <div className={classes.itemContent}>
-            <PageTreeListItemIcon>
-              <PanoramaFishEye className={classes.buttonIcon} color="primary"/>
-            </PageTreeListItemIcon>
-            <PageTreeListItemText
-              title={componentName}
-              primary={<span className={classes.mutedText}>{name || 'root'}</span>}
-            />
-            {!isNull(arrayIndex)
-              ? (
-                <PageTreeListItemExtraButton
-                  title="Duplicate this item in the array"
-                  onClick={this.handleDuplicateComponentProperty}
-                >
-                  <FileCopy className={classes.buttonIcon}/>
-                </PageTreeListItemExtraButton>
-              )
-              : null
-            }
-            {!isNull(arrayIndex)
-              ? (
-                <PageTreeListItemExtraButton
-                  title="Remove this item from the array"
-                  className={classes.extraButtonDelete}
-                  onClick={this.handleDeleteComponentProperty}
-                >
-                  <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
-                </PageTreeListItemExtraButton>
-              )
-              : null
-            }
-          </div>
           <div className={classes.itemContent}>
             <PageTreeListItemIcon>
               <div className={classes.buttonIcon}>
@@ -368,6 +318,29 @@ class PageTreeItem extends React.Component {
                   )
               }
             />
+            {!isNull(arrayIndex)
+              ? (
+                <PageTreeListItemExtraButton
+                  title="Duplicate this item in the array"
+                  onClick={this.handleDuplicateComponentProperty}
+                >
+                  <FileCopy className={classes.buttonIcon}/>
+                </PageTreeListItemExtraButton>
+              )
+              : null
+            }
+            {!isNull(arrayIndex)
+              ? (
+                <PageTreeListItemExtraButton
+                  title="Remove this item from the array"
+                  className={classes.extraButtonDelete}
+                  onClick={this.handleDeleteComponentProperty}
+                >
+                  <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
+                </PageTreeListItemExtraButton>
+              )
+              : null
+            }
           </div>
         </div>
       </PageTreeListItem>
