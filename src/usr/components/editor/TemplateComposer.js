@@ -153,7 +153,7 @@ class TemplateComposer extends React.Component {
       iFrameScaleIndex: this.getViewFlag('iFrameScaleIndex', 0),
       isPreviewMode: false,
       treeViewSplitterSize: this.getViewFlag('treeViewSplitterSize', 350),
-      treeViewHorizontalSplitterSize: this.getViewFlag('treeViewHorizontalSplitterSize', 300),
+      treeViewHorizontalSplitterSize: this.getViewFlag('treeViewHorizontalSplitterSize', 200),
       propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
       layoutMode: this.getViewFlag('treeViewLayoutMode', LAYOUT_MODE_VERTICAL),
     };
@@ -919,6 +919,7 @@ class TemplateComposer extends React.Component {
                 >
                   <SplitPane
                     split="horizontal"
+                    primary="second"
                     defaultSize={treeViewHorizontalSplitterSize}
                     onDragStarted={this.handleSplitterOnDragStarted}
                     onDragFinished={this.handleSplitterOnDragFinished('treeViewHorizontalSplitterSize')}
