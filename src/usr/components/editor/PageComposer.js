@@ -957,7 +957,7 @@ class PageComposer extends React.Component {
                     defaultSize={treeViewHorizontalSplitterSize}
                     onDragStarted={this.handleSplitterOnDragStarted}
                     onDragFinished={this.handleSplitterOnDragFinished('treeViewHorizontalSplitterSize')}
-                    pane1Style={{display: showTreeView ? 'block' : 'none'}}
+                    pane2Style={{display: showTreeView ? 'block' : 'none'}}
                     resizerStyle={{display: showTreeView ? 'block' : 'none'}}
                   >
                     <div className={classes.root}>
