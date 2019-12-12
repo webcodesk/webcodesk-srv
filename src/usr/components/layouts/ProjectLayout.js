@@ -44,13 +44,31 @@ const styles = theme => ({
     bottom: 0,
     overflow: 'hidden',
   },
+  leftPanel: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '30px',
+    bottom: 0,
+    overflow: 'hidden',
+  },
+  centralPanel: {
+    position: 'absolute',
+    top: 0,
+    left: '30px',
+    right: 0,
+    bottom: 0,
+    overflow: 'hidden',
+  }
 });
 
 class ProjectLayout extends React.Component {
   static propTypes = {
     notification: PropTypes.object,
     leftPanel: PropTypes.element,
+    leftMicroPanel: PropTypes.element,
     centralPanel: PropTypes.element,
+    showLeftPanel: PropTypes.bool,
     onMounted: PropTypes.func,
     onUnmount: PropTypes.func,
   };
@@ -58,7 +76,9 @@ class ProjectLayout extends React.Component {
   static defaultProps = {
     notification: null,
     leftPanel: null,
+    leftMicroPanel: null,
     centralPanel: null,
+    showLeftPanel: true,
     onMounted: () => {
       console.info('ProjectLayout.onMounted is not set');
     },
@@ -75,17 +95,18 @@ class ProjectLayout extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
-    const {notification} = this.props;
-    const {showCentralPanelCover} = this.state;
+    const { notification, showLeftPanel } = this.props;
+    const { showCentralPanelCover } = this.state;
     return notification !== nextProps.notification
+      || showLeftPanel !== nextProps.showLeftPanel
       || showCentralPanelCover !== nextState.showCentralPanelCover;
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
     const { notification, enqueueSnackbar } = this.props;
     if (notification && notification !== prevProps.notification) {
-      const {message, options} = notification;
-      enqueueSnackbar(message, options || {variant: 'info'});
+      const { message, options } = notification;
+      enqueueSnackbar(message, options || { variant: 'info' });
     }
   }
 
@@ -110,29 +131,44 @@ class ProjectLayout extends React.Component {
   };
 
   render () {
-    const {leftPanel, centralPanel, classes} = this.props;
-    const {showCentralPanelCover} = this.state;
+    const { leftPanel, leftMicroPanel, showLeftPanel, centralPanel, classes } = this.props;
+    const { showCentralPanelCover } = this.state;
     return (
       <div className={classes.root}>
-        <SplitPane
-          split="vertical"
-          minSize={100}
-          defaultSize={300}
-          onDragStarted={this.handleSplitterOnDragStarted}
-          onDragFinished={this.handleSplitterOnDragFinished}
-        >
-          <div className={classes.left}>
-            {leftPanel}
-          </div>
-          <div className={classes.central}>
-            {showCentralPanelCover &&
-            (
-              <div className={classes.central} style={{zIndex: 10}} />
-            )
-            }
-            {centralPanel}
-          </div>
-        </SplitPane>
+        {showLeftPanel
+          ? (
+            <SplitPane
+              split="vertical"
+              minSize={100}
+              defaultSize={300}
+              onDragStarted={this.handleSplitterOnDragStarted}
+              onDragFinished={this.handleSplitterOnDragFinished}
+            >
+              <div className={classes.left}>
+                {leftPanel}
+              </div>
+              <div className={classes.central}>
+                {showCentralPanelCover &&
+                (
+                  <div className={classes.central} style={{ zIndex: 10 }}/>
+                )
+                }
+                {centralPanel}
+              </div>
+            </SplitPane>
+
+          )
+          : (
+            <>
+              <div className={classes.leftPanel}>
+                {leftMicroPanel}
+              </div>
+              <div className={classes.centralPanel}>
+                {centralPanel}
+              </div>
+            </>
+          )
+        }
         {this.props.children}
       </div>
     );

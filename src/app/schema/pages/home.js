@@ -40,6 +40,10 @@ export default {
             },
           }
         },
+        leftMicroPanel: {
+          type: 'usr.components.panels.LeftMicroPanel.LeftMicroPanel',
+          instance: 'leftMicroPanel1',
+        },
         centralPanel: {
           type: 'usr.components.editor.ResourceEditor.ResourceEditor',
           instance: 'resourceEditor1'

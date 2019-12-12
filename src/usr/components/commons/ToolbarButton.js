@@ -80,6 +80,9 @@ import CollectionsBookmark from '@material-ui/icons/CollectionsBookmark';
 import SettingsApplications from '@material-ui/icons/SettingsApplications';
 import PlayArrow from '@material-ui/icons/PlayArrow';
 import PlayCircleOutline from '@material-ui/icons/PlayCircleOutline';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import HelpOutline from '@material-ui/icons/HelpOutline';
 
 import { CommonToolbarButton, CommonToolbarIconButton, CommonErrorBadge } from './Commons.parts';
 
@@ -203,6 +206,9 @@ const icons = {
   SettingsApplications,
   PlayArrow,
   PlayCircleOutline,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  HelpOutline,
 
   // extra icons
   CopyToClipboard,

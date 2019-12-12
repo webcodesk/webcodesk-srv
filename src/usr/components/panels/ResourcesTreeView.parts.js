@@ -105,10 +105,11 @@ export const ResourceListItemIcon = withStyles({
   root: {
     marginRight: 0,
     padding: 0,
-    width: '20px',
+    width: '18px',
     display: 'flex',
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'center',
+    fontSize: '14px'
   }
 })(ListItemIcon);
 
@@ -116,7 +117,7 @@ export const ResourceListItemExpandedIcon = withStyles({
   root: {
     marginRight: 0,
     padding: 0,
-    width: '21px',
+    width: '18px',
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center'

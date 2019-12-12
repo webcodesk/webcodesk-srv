@@ -14,11 +14,15 @@
  *    limitations under the License.
  */
 
+import debounce from 'lodash/debounce';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ToolbarButton from '../commons/ToolbarButton';
 import constants from '../../../commons/constants';
+import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import HelpOutline from '@material-ui/icons/HelpOutline';
 
 const styles = theme => ({
   root: {
@@ -32,6 +36,16 @@ const styles = theme => ({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+  biggerArea: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flexWrap: 'nowrap',
+    flexGrow: 2,
+  },
+  smallArea: {
+    flexGrow: 0,
+  }
 });
 
 class LeftTopPanel extends React.Component {
@@ -43,6 +57,7 @@ class LeftTopPanel extends React.Component {
     onInstallPackage: PropTypes.func,
     onShowSyslog: PropTypes.func,
     onShowProjectReadme: PropTypes.func,
+    onShowLeftPanel: PropTypes.func,
   };
 
   static defaultProps = {
@@ -65,11 +80,14 @@ class LeftTopPanel extends React.Component {
     onShowProjectReadme: () => {
       console.info('LeftTopPanel.onShowProjectReadme is not set');
     },
+    onShowLeftPanel: () => {
+      console.info('LeftTopPanel.onShowLeftPanel is not set');
+    },
   };
 
-  componentDidMount () {
-    // this.runCheckStatus();
-  }
+  // componentDidMount () {
+  // this.runCheckStatus();
+  // }
 
   componentWillUnmount () {
     this.stopCheckStatus();
@@ -120,86 +138,101 @@ class LeftTopPanel extends React.Component {
     window.open(constants.URL_WEBCODESK_USER_GUIDE, '__blank').focus();
   };
 
+  handleShowLeftPanel = () => {
+    this.props.onShowLeftPanel(false);
+  };
+
   render () {
-    const {classes, projectServerStatus} = this.props;
+    const { classes, projectServerStatus } = this.props;
     const { isWorking, isStarting } = projectServerStatus;
     return (
-      <div className={classes.root}>
-        <ToolbarButton
-          onClick={this.handleLivePreview}
-          title="Live Preview"
-          iconType="SlowMotionVideo"
-          iconColor="#2e7d32"
-          tooltip="Open Live Preview of the application"
-        />
-        {isStarting && (
+      <div ref={this.root} className={classes.root}>
+        <div className={classes.biggerArea}>
+          <ToolbarButton
+            iconType="MenuIcon"
+            tooltip="Click to see additional options"
+            menuItems={[
+              {
+                iconType: 'CloudDownload',
+                label: 'Install packages from the market',
+                onClick: this.handleInstallPackage,
+              },
+              {
+                label: 'divider'
+              },
+              {
+                iconType: 'Receipt',
+                label: 'Webcodesk console output',
+                onClick: this.handleShowSyslog,
+              },
+            ]}
+          />
+          <ToolbarButton
+            iconType="HelpOutline"
+            tooltip="Click to see help options"
+            menuItems={[
+              {
+                iconType: 'ChromeReaderMode',
+                label: 'Open Project Readme',
+                onClick: this.handleShowProjectReadme,
+              },
+              {
+                label: 'divider'
+              },
+              {
+                iconType: 'OpenInNew',
+                label: 'Issue Tracker',
+                onClick: this.handleOpenIssueTracker,
+              },
+              {
+                iconType: 'OpenInNew',
+                label: 'User Guide',
+                onClick: this.handleOpenUserGuide,
+              },
+            ]}
+          />
+          {isStarting && (
             <ToolbarButton
-              title="Starting..."
               iconType="Dvr"
               iconColor="#2e7d32"
               onClick={this.handleProjectServerDialog}
               tooltip="Development server is starting..."
             />
           )
-        }
-        {!isStarting && (isWorking
-          ? (
-            <ToolbarButton
-              title="Server"
-              iconType="Dvr"
-              iconColor="#2e7d32"
-              onClick={this.handleProjectServerDialog}
-              tooltip="Show development server log"
-            />
-          )
+          }
+          {!isStarting && (isWorking
+            ? (
+              <ToolbarButton
+                iconType="Dvr"
+                iconColor="#2e7d32"
+                onClick={this.handleProjectServerDialog}
+                tooltip="Show development server log"
+              />
+            )
             : (
-            <ToolbarButton
-              title="Server"
-              iconType="NotificationImportant"
-              iconColor="#BF360C"
-              onClick={this.handleProjectServerDialog}
-              tooltip="Show development server log"
-            />
-          ))
-        }
-        <ToolbarButton
-          title="More..."
-          iconType="MenuIcon"
-          tooltip="Click to see additional options"
-          menuItems={[
-            {
-              iconType: 'CloudDownload',
-              label: 'Install packages from the market',
-              onClick: this.handleInstallPackage,
-            },
-            {
-              label: 'divider'
-            },
-            {
-              iconType: 'Receipt',
-              label: 'Webcodesk console output',
-              onClick: this.handleShowSyslog,
-            },
-            {
-              iconType: 'OpenInNew',
-              label: 'Issue Tracker',
-              onClick: this.handleOpenIssueTracker,
-            },
-            {
-              label: 'divider'
-            },
-            {
-              iconType: 'ChromeReaderMode',
-              label: 'Open Project Readme',
-              onClick: this.handleShowProjectReadme,
-            },
-            {
-              iconType: 'OpenInNew',
-              label: 'User Guide',
-              onClick: this.handleOpenUserGuide,
-            },
-          ]}
-        />
+              <ToolbarButton
+                iconType="NotificationImportant"
+                iconColor="#BF360C"
+                onClick={this.handleProjectServerDialog}
+                tooltip="Show development server log"
+              />
+            ))
+          }
+          <ToolbarButton
+            onClick={this.handleLivePreview}
+            title="Live Preview"
+            iconType="SlowMotionVideo"
+            iconColor="#2e7d32"
+            tooltip="Open Live Preview of the application"
+          />
+        </div>
+        <div className={classes.smallArea}>
+          <ToolbarButton
+            iconType="KeyboardArrowLeft"
+            tooltip="Hide left panel"
+            onClick={this.handleShowLeftPanel}
+          />
+        </div>
       </div>
     );
   }

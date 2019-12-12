@@ -43,9 +43,8 @@ import ToolbarButton from '../commons/ToolbarButton';
 import constants from '../../../commons/constants';
 import DraggableWrapper from './DraggableWrapper';
 import ScriptView from '../commons/ScriptView';
-import superPropBase from '@babel/runtime/helpers/esm/superPropBase';
 
-const TREE_VIEW_INDENT = '21px';
+const TREE_VIEW_INDENT = '18px';
 const FIRST_LIST_INDENT = '17px';
 
 const styles = theme => ({
@@ -1529,17 +1528,25 @@ class ResourcesTreeView extends React.Component {
                 disableGutters={true}
               >
                 <div className={classes.subheaderContainer}>
-                  <ResourceListItemExpandedIcon onClick={this.handleToggleExpandItem(key)}>
-                    {rootListItem.list.length > 0
-                      ? (
-                        <ExpandMore fontSize="small" color="disabled"/>
-                      )
-                      : (
-                        <ChevronRight fontSize="small" color="disabled"/>
-                      )
-                    }
-
-                  </ResourceListItemExpandedIcon>
+                  {rootListItem.itemsCount > 0
+                    ? (
+                      <ResourceListItemExpandedIcon onClick={this.handleToggleExpandItem(key)}>
+                        {rootListItem.list.length > 0
+                          ? (
+                            <ExpandMore fontSize="small" color="disabled"/>
+                          )
+                          : (
+                            <ChevronRight fontSize="small" color="disabled"/>
+                          )
+                        }
+                      </ResourceListItemExpandedIcon>
+                    )
+                    : (
+                      <ResourceListItemExpandedIcon>
+                        <span/>
+                      </ResourceListItemExpandedIcon>
+                    )
+                  }
                   <div className={classes.subheaderText} onClick={this.handleToggleExpandItem(key)}>
                     {props.hasErrors
                       ? (

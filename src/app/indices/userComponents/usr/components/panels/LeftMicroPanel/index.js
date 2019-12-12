@@ -14,16 +14,8 @@
  *    limitations under the License.
  */
 
-import LeftContainer from "./LeftContainer";
-import LeftMicroPanel from "./LeftMicroPanel";
-import LeftTopPanel from "./LeftTopPanel";
-import ResourcesTreeView from "./ResourcesTreeView";
-import SearchPanel from "./SearchPanel";
+import LeftMicroPanel from "usr/components/panels/LeftMicroPanel";
 
 export default {
-  LeftContainer,
-  LeftMicroPanel,
-  LeftTopPanel,
-  ResourcesTreeView,
-  SearchPanel
+  LeftMicroPanel
 };

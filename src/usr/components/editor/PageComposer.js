@@ -329,31 +329,46 @@ class PageComposer extends React.Component {
       this.props.isVisible
       && e
       && e.target
-      && e.target.tagName !== 'INPUT'
-      && e.target.tagName !== 'TEXTAREA'
     ) {
       const {keyCode, metaKey, ctrlKey} = e;
-      if (metaKey || ctrlKey) {
-        if (keyCode === 90) { // Undo
-          this.undoUpdateLocalState();
-        } else if (keyCode === 67) { // Copy
-          this.handleCopyComponentInstance();
-        } else if (keyCode === 86) { // Paste
-          this.handlePasteComponentInstance();
-        } else if (keyCode === 88) { // Cut
-          this.handleCutComponentInstance();
-        } else if (keyCode === 83) { // Save
-          this.sendUpdate();
-        } else if (keyCode === 82) { // Reload
-          this.handleReload();
-        }
-      } else {
-        if (keyCode === 8 || keyCode === 46) { // Delete
-          this.handleDeleteComponentInstance();
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        if (metaKey || ctrlKey) {
+          if (keyCode === 90) { // Undo
+            this.undoUpdateLocalState();
+            e.stopPropagation();
+            e.preventDefault();
+          } else if (keyCode === 67) { // Copy
+            this.handleCopyComponentInstance();
+            e.stopPropagation();
+            e.preventDefault();
+          } else if (keyCode === 86) { // Paste
+            this.handlePasteComponentInstance();
+            e.stopPropagation();
+            e.preventDefault();
+          } else if (keyCode === 88) { // Cut
+            this.handleCutComponentInstance();
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        } else {
+          if (keyCode === 8 || keyCode === 46) { // Delete
+            this.handleDeleteComponentInstance();
+            e.stopPropagation();
+            e.preventDefault();
+          }
         }
       }
-      e.stopPropagation();
-      e.preventDefault();
+      if (metaKey || ctrlKey) {
+        if (keyCode === 83) { // Save
+          this.sendUpdate();
+          e.stopPropagation();
+          e.preventDefault();
+        } else if (keyCode === 82) { // Reload
+          this.handleReload();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }
     }
   };
 

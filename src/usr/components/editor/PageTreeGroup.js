@@ -30,7 +30,8 @@ import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
 
 const styles = theme => ({
   buttonIcon: {
-    fontSize: '12px'
+    fontSize: '12px',
+    display: 'flex'
   },
   extraButtonIncrease: {
     borderColor: '#81c784',

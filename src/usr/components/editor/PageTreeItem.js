@@ -109,7 +109,8 @@ const styles = theme => ({
     whiteSpace: 'nowrap',
   },
   buttonIcon: {
-    fontSize: '12px'
+    fontSize: '12px',
+    display: 'flex',
   },
   extraButtonDelete: {
     borderColor: '#ff8a80',

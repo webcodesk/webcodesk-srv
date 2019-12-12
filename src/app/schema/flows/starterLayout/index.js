@@ -16,10 +16,14 @@
 
 import Mount_Project_Layout from './Mount_Project_Layout';
 import Mount_Starter_Layout from './Mount_Starter_Layout';
+import Open_Live_Preview_Tab_From_Micro_Panel from './Open_Live_Preview_Tab_From_Micro_Panel';
+import Toggle_Left_Panel from './Toggle_Left_Panel';
 import Unmount_Project_Layout from './Unmount_Project_Layout';
 
 export default {
   Mount_Project_Layout,
   Mount_Starter_Layout,
+  Open_Live_Preview_Tab_From_Micro_Panel,
+  Toggle_Left_Panel,
   Unmount_Project_Layout,
 };

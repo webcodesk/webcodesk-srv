@@ -30,6 +30,11 @@ const PagesListItem = withStyles(theme => ({
   dense: {
     paddingTop: '0px',
     paddingBottom: '0px',
+    '&:hover': {
+      backgroundColor: '#eceff1',
+    },
+    userSelect: 'none',
+    borderRadius: '4px',
   }
 }))(ListItem);
 
@@ -91,9 +96,6 @@ class PagesList extends React.Component {
             <PagesListItemText primary={<span className={itemTextClassNames}>{`/${page.pagePath}`}</span>} />
           </PagesListItem>
         );
-        // list.push(
-        //   <Divider key={`pageDivider_${index}`} />
-        // )
       });
     }
     return (

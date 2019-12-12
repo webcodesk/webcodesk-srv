@@ -38,7 +38,8 @@ clearConsoleErrors().then(() => {
     typography: {
       useNextVariants: true,
       fontFamily: ['"Roboto"', 'sans-serif'],
-      // htmlFontSize: 8,
+      fontSize: 13,
+      htmlFontSize: 16,
     }
   });
 
