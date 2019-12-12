@@ -15,12 +15,11 @@
  */
 
 import React from 'react';
-// import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-const MarketLoadingProgress = withStyles(theme => ({
+const LoadingProgress = withStyles(theme => ({
   root: {
     borderRadius: '4px',
     height: '6px'
@@ -47,7 +46,7 @@ const styles = theme => ({
   }
 });
 
-class MarketLoadingPopover extends React.Component {
+class LoadingPopover extends React.Component {
   render () {
     const { classes } = this.props;
     return (
@@ -55,7 +54,7 @@ class MarketLoadingPopover extends React.Component {
         <div className={classes.progress}>
           <Typography variant="overline" align="center">Loading...</Typography>
           <div>
-            <MarketLoadingProgress />
+            <LoadingProgress />
           </div>
         </div>
       </div>
@@ -63,4 +62,4 @@ class MarketLoadingPopover extends React.Component {
   }
 }
 
-export default withStyles(styles)(MarketLoadingPopover);
+export default withStyles(styles)(LoadingPopover);

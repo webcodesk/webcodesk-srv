@@ -19,11 +19,11 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ToolbarButton from '../commons/ToolbarButton';
+import LoadingPopover from '../commons/LoadingPopover';
 import {
   MarketBoardToolbarPanel,
   MarketBoardToolbar,
 } from './Market.parts';
-import MarketLoadingPopover from './MarketLoadingPopover';
 import MarketErrorPopover from './MarketErrorPopover';
 import { CommonToolbarDivider } from '../commons/Commons.parts';
 import MarkdownView from '../commons/MarkdownView';
@@ -195,7 +195,7 @@ class MarketProjectView extends React.Component {
           </div>
           <div className={classes.centralContentPane}>
             <div className={classes.centralContent}>
-              {isLoading && <MarketLoadingPopover />}
+              {isLoading && <LoadingPopover />}
               {error && <MarketErrorPopover error={error} />}
               <MarkdownView markdownContent={projectReadmeContent} />
             </div>

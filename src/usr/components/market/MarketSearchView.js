@@ -21,13 +21,13 @@ import Typography from '@material-ui/core/Typography';
 import SplitPane from '../splitPane';
 import {CommonToolbarDivider} from '../commons/Commons.parts';
 import ToolbarButton from '../commons/ToolbarButton';
+import LoadingPopover from '../commons/LoadingPopover';
 import {
   MarketBoardToolbarPanel,
   MarketBoardToolbar,
 } from './Market.parts';
 import MarketGroupGrid from './MarketGroupGrid';
 import MarketFiltersPanel from './MarketFiltersPanel';
-import MarketLoadingPopover from './MarketLoadingPopover';
 import MarketErrorPopover from './MarketErrorPopover';
 import MarketBoardPager from './MarketBoardPager';
 
@@ -241,7 +241,7 @@ class MarketSearchView extends React.Component {
             </MarketBoardToolbarPanel>
           </div>
           <div className={classes.centralContentPane}>
-            {isLoading && <MarketLoadingPopover/>}
+            {isLoading && <LoadingPopover/>}
             {error && <MarketErrorPopover error={error}/>}
             <MarketGroupGrid>
               {pageProjectsList.map((projectItem, idx) => {

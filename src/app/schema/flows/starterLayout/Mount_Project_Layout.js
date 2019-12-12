@@ -32,6 +32,19 @@ export default [
             },
             events: [
               {
+                name: 'isOpening',
+                targets: [
+                  {
+                    type: 'component',
+                    props: {
+                      componentName: 'usr.components.layouts.ProjectLayout.ProjectLayout',
+                      componentInstance: 'projectLayout1',
+                      propertyName: 'isLoading',
+                    },
+                  }
+                ]
+              },
+              {
                 name: 'success',
                 targets: [
                   {

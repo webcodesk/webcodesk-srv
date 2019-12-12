@@ -42,6 +42,7 @@ export const testError = (error) => dispatch => {
 
 export const openExistingProject = () => async (dispatch) => {
   globalStore.clear();
+  dispatch('isOpening', true);
   try {
     await projectManager.initProjectConfiguration();
   } catch (e) {
@@ -55,6 +56,7 @@ export const openExistingProject = () => async (dispatch) => {
   } catch (e) {
     console.error(e);
   }
+  dispatch('isOpening', false);
 };
 
 export const closeExistingProject = () => dispatch => {

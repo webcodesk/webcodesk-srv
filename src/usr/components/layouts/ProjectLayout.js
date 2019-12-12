@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import SplitPane from '../splitPane';
+import LoadingPopover from "../commons/LoadingPopover";
 
 const styles = theme => ({
   root: {
@@ -51,6 +52,7 @@ const styles = theme => ({
 
 class ProjectLayout extends React.Component {
   static propTypes = {
+    isLoading: PropTypes.bool,
     notification: PropTypes.object,
     leftPanel: PropTypes.element,
     leftMicroPanel: PropTypes.element,
@@ -61,6 +63,7 @@ class ProjectLayout extends React.Component {
   };
 
   static defaultProps = {
+    isLoading: false,
     notification: null,
     leftPanel: null,
     leftMicroPanel: null,
@@ -82,9 +85,10 @@ class ProjectLayout extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
-    const { notification, showLeftPanel } = this.props;
+    const { isLoading, notification, showLeftPanel } = this.props;
     const { showCentralPanelCover } = this.state;
-    return notification !== nextProps.notification
+    return isLoading !== nextProps.isLoading
+      || notification !== nextProps.notification
       || showLeftPanel !== nextProps.showLeftPanel
       || showCentralPanelCover !== nextState.showCentralPanelCover;
   }
@@ -118,11 +122,12 @@ class ProjectLayout extends React.Component {
   };
 
   render () {
-    const { leftPanel, leftMicroPanel, showLeftPanel, centralPanel, classes } = this.props;
+    const { isLoading, leftPanel, leftMicroPanel, showLeftPanel, centralPanel, classes } = this.props;
     const { showCentralPanelCover } = this.state;
     const pane1Style = showLeftPanel ? {} : {width: '30px'};
     return (
       <div className={classes.root}>
+        {isLoading && <LoadingPopover />}
         <SplitPane
           split="vertical"
           minSize={showLeftPanel ? 100 : 30}

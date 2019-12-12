@@ -31,6 +31,9 @@ import ToolbarButton from '../commons/ToolbarButton';
 import ComponentPropsTree from './ComponentPropsTree';
 import globalStore from '../../core/config/globalStore';
 
+const LAYOUT_MODE_VERTICAL = 'LAYOUT_MODE_VERTICAL';
+const LAYOUT_MODE_HORIZONTAL = 'LAYOUT_MODE_HORIZONTAL';
+
 const styles = theme => ({
   root: {
     position: 'absolute',
@@ -40,6 +43,14 @@ const styles = theme => ({
     left: 0,
   },
   leftPane: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    overflow: 'auto',
+  },
+  bottomPane: {
     position: 'absolute',
     top: 0,
     bottom: 0,
@@ -142,7 +153,9 @@ class TemplateComposer extends React.Component {
       iFrameScaleIndex: this.getViewFlag('iFrameScaleIndex', 0),
       isPreviewMode: false,
       treeViewSplitterSize: this.getViewFlag('treeViewSplitterSize', 350),
+      treeViewHorizontalSplitterSize: this.getViewFlag('treeViewHorizontalSplitterSize', 300),
       propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
+      layoutMode: this.getViewFlag('treeViewLayoutMode', LAYOUT_MODE_VERTICAL),
     };
   }
 
@@ -579,6 +592,11 @@ class TemplateComposer extends React.Component {
     });
   };
 
+  handleToggleLayout = (layoutMode) => () => {
+    this.storeViewFlag('treeViewLayoutMode', layoutMode);
+    this.setState({ layoutMode });
+  };
+
   handleToggleScale = (scaleIndex) => () => {
     this.storeViewFlag('iFrameScaleIndex', scaleIndex);
     this.setState({
@@ -653,7 +671,9 @@ class TemplateComposer extends React.Component {
       iFrameScaleIndex,
       isPreviewMode,
       treeViewSplitterSize,
+      treeViewHorizontalSplitterSize,
       propertyEditorSplitterSize,
+      layoutMode,
     } = this.state;
     const {
       classes,
@@ -686,6 +706,16 @@ class TemplateComposer extends React.Component {
                 }
                 error={data.hasErrors}
               />
+              <ToolbarButton
+                iconType={layoutMode === LAYOUT_MODE_VERTICAL ? "DocBottom" : "DocLeft"}
+                tooltip="Change layout"
+                onClick={
+                  layoutMode === LAYOUT_MODE_VERTICAL
+                    ? this.handleToggleLayout(LAYOUT_MODE_HORIZONTAL)
+                    : this.handleToggleLayout(LAYOUT_MODE_VERTICAL)
+                }
+              />
+              <CommonToolbarDivider />
               <ToolbarButton
                 switchedOn={showPropertyEditor}
                 onClick={this.handleTogglePropertyEditor}
@@ -793,87 +823,174 @@ class TemplateComposer extends React.Component {
             </CommonToolbar>
           </div>
           <div className={classes.centralPane}>
-            <SplitPane
-              split="vertical"
-              defaultSize={treeViewSplitterSize}
-              onDragStarted={this.handleSplitterOnDragStarted}
-              onDragFinished={this.handleSplitterOnDragFinished('treeViewSplitterSize')}
-              pane1Style={{display: showTreeView ? 'block' : 'none'}}
-              resizerStyle={{display: showTreeView ? 'block' : 'none'}}
-            >
-              <div className={classes.leftPane}>
-                <PageTree
-                  componentsTree={localComponentsTree}
-                  onItemClick={this.handleSelectComponent}
-                  onItemDrop={this.handlePageTreeItemDrop}
-                  onItemErrorClick={this.handleErrorClick}
-                  onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                  onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                  onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                  onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                  draggedItem={
-                    draggedItem && (
-                      draggedItem.isComponent
-                      || draggedItem.isComponentInstance
-                      || draggedItem.isClipboardItem
-                      || draggedItem.isTemplate
-                    )
-                      ? draggedItem
-                      : null
-                  }
-                  isDraggingItem={isDraggingItem}
-                />
-              </div>
-              <SplitPane
-                split="vertical"
-                primary="second"
-                defaultSize={propertyEditorSplitterSize}
-                onDragStarted={this.handleSplitterOnDragStarted}
-                onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
-                pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
-                resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
-              >
-                <div className={classes.root}>
-                  {showPanelCover && (
-                    <div className={classes.root} style={{zIndex: 10}} />
-                  )}
-                  {showIframeDropPanelCover && (
-                    <div
-                      className={classes.root}
-                      style={{zIndex: 10}}
-                      onDragOver={this.handleDragOver}
-                    />
-                  )}
-                  {serverPort > 0 && (
-                    <IFrame
-                      ref={this.iFrameRef}
-                      width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
-                      // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
-                      url={isPreviewMode
-                        ? `http://localhost:${serverPort}/webcodesk__component_view`
-                        : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
+            {layoutMode === LAYOUT_MODE_VERTICAL
+              ? (
+                <SplitPane
+                  split="vertical"
+                  defaultSize={treeViewSplitterSize}
+                  onDragStarted={this.handleSplitterOnDragStarted}
+                  onDragFinished={this.handleSplitterOnDragFinished('treeViewSplitterSize')}
+                  pane1Style={{display: showTreeView ? 'block' : 'none'}}
+                  resizerStyle={{display: showTreeView ? 'block' : 'none'}}
+                >
+                  <div className={classes.leftPane}>
+                    <PageTree
+                      componentsTree={localComponentsTree}
+                      onItemClick={this.handleSelectComponent}
+                      onItemDrop={this.handlePageTreeItemDrop}
+                      onItemErrorClick={this.handleErrorClick}
+                      onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                      onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                      onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                      onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                      draggedItem={
+                        draggedItem && (
+                          draggedItem.isComponent
+                          || draggedItem.isComponentInstance
+                          || draggedItem.isClipboardItem
+                          || draggedItem.isTemplate
+                        )
+                          ? draggedItem
+                          : null
                       }
-                      onIFrameReady={this.handleIFrameReady}
-                      onIFrameMessage={this.handleIFrameMessage}
+                      isDraggingItem={isDraggingItem}
                     />
-                  )}
-                </div>
-                <div className={classes.editorPane}>
-                  <ComponentPropsTree
-                    componentModel={selectedComponentModel}
-                    onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
-                    onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                    onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                    onRenameComponentInstance={this.handleRenameComponentInstance}
-                    onErrorClick={this.handleErrorClick}
-                    onOpenComponent={this.handleOpenComponent}
-                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                    onSelectComponent={this.handleSelectComponent}
-                  />
-                </div>
-              </SplitPane>
-            </SplitPane>
+                  </div>
+                  <SplitPane
+                    split="vertical"
+                    primary="second"
+                    defaultSize={propertyEditorSplitterSize}
+                    onDragStarted={this.handleSplitterOnDragStarted}
+                    onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
+                    pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
+                    resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
+                  >
+                    <div className={classes.root}>
+                      {showPanelCover && (
+                        <div className={classes.root} style={{zIndex: 10}} />
+                      )}
+                      {showIframeDropPanelCover && (
+                        <div
+                          className={classes.root}
+                          style={{zIndex: 10}}
+                          onDragOver={this.handleDragOver}
+                        />
+                      )}
+                      {serverPort > 0 && (
+                        <IFrame
+                          ref={this.iFrameRef}
+                          width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
+                          // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
+                          url={isPreviewMode
+                            ? `http://localhost:${serverPort}/webcodesk__component_view`
+                            : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
+                          }
+                          onIFrameReady={this.handleIFrameReady}
+                          onIFrameMessage={this.handleIFrameMessage}
+                        />
+                      )}
+                    </div>
+                    <div className={classes.editorPane}>
+                      <ComponentPropsTree
+                        componentModel={selectedComponentModel}
+                        onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
+                        onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                        onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                        onRenameComponentInstance={this.handleRenameComponentInstance}
+                        onErrorClick={this.handleErrorClick}
+                        onOpenComponent={this.handleOpenComponent}
+                        onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                        onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                        onSelectComponent={this.handleSelectComponent}
+                      />
+                    </div>
+                  </SplitPane>
+                </SplitPane>
+              )
+              : (
+                <SplitPane
+                  split="vertical"
+                  primary="second"
+                  defaultSize={propertyEditorSplitterSize}
+                  onDragStarted={this.handleSplitterOnDragStarted}
+                  onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
+                  pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
+                  resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
+                >
+                  <SplitPane
+                    split="horizontal"
+                    defaultSize={treeViewHorizontalSplitterSize}
+                    onDragStarted={this.handleSplitterOnDragStarted}
+                    onDragFinished={this.handleSplitterOnDragFinished('treeViewHorizontalSplitterSize')}
+                    pane1Style={{display: showTreeView ? 'block' : 'none'}}
+                    resizerStyle={{display: showTreeView ? 'block' : 'none'}}
+                  >
+                    <div className={classes.root}>
+                      {showPanelCover && (
+                        <div className={classes.root} style={{zIndex: 10}} />
+                      )}
+                      {showIframeDropPanelCover && (
+                        <div
+                          className={classes.root}
+                          style={{zIndex: 10}}
+                          onDragOver={this.handleDragOver}
+                        />
+                      )}
+                      {serverPort > 0 && (
+                        <IFrame
+                          ref={this.iFrameRef}
+                          width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
+                          // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
+                          url={isPreviewMode
+                            ? `http://localhost:${serverPort}/webcodesk__component_view`
+                            : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
+                          }
+                          onIFrameReady={this.handleIFrameReady}
+                          onIFrameMessage={this.handleIFrameMessage}
+                        />
+                      )}
+                    </div>
+                    <div className={classes.bottomPane}>
+                      <PageTree
+                        componentsTree={localComponentsTree}
+                        onItemClick={this.handleSelectComponent}
+                        onItemDrop={this.handlePageTreeItemDrop}
+                        onItemErrorClick={this.handleErrorClick}
+                        onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                        onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                        onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                        onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                        draggedItem={
+                          draggedItem && (
+                            draggedItem.isComponent
+                            || draggedItem.isComponentInstance
+                            || draggedItem.isClipboardItem
+                            || draggedItem.isTemplate
+                          )
+                            ? draggedItem
+                            : null
+                        }
+                        isDraggingItem={isDraggingItem}
+                      />
+                    </div>
+                  </SplitPane>
+                  <div className={classes.editorPane}>
+                    <ComponentPropsTree
+                      componentModel={selectedComponentModel}
+                      onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
+                      onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                      onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                      onRenameComponentInstance={this.handleRenameComponentInstance}
+                      onErrorClick={this.handleErrorClick}
+                      onOpenComponent={this.handleOpenComponent}
+                      onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                      onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                      onSelectComponent={this.handleSelectComponent}
+                    />
+                  </div>
+                </SplitPane>
+              )
+            }
           </div>
         </div>
     );
