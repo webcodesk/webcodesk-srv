@@ -30,8 +30,7 @@ const styles = theme => ({
     right: 0,
     backgroundColor: '#f5f5f5',
     display: 'flex',
-    flexDirection: 'column',
-    borderRight: '1px solid #dddddd'
+    flexDirection: 'column'
   },
   cell: {
     display: 'flex',

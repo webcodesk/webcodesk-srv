@@ -44,21 +44,8 @@ const styles = theme => ({
     bottom: 0,
     overflow: 'hidden',
   },
-  leftPanel: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '30px',
-    bottom: 0,
-    overflow: 'hidden',
-  },
-  centralPanel: {
-    position: 'absolute',
-    top: 0,
-    left: '30px',
-    right: 0,
-    bottom: 0,
-    overflow: 'hidden',
+  hidden: {
+    display: 'none',
   }
 });
 
@@ -133,42 +120,35 @@ class ProjectLayout extends React.Component {
   render () {
     const { leftPanel, leftMicroPanel, showLeftPanel, centralPanel, classes } = this.props;
     const { showCentralPanelCover } = this.state;
+    const pane1Style = showLeftPanel ? {} : {width: '30px'};
     return (
       <div className={classes.root}>
-        {showLeftPanel
-          ? (
-            <SplitPane
-              split="vertical"
-              minSize={100}
-              defaultSize={300}
-              onDragStarted={this.handleSplitterOnDragStarted}
-              onDragFinished={this.handleSplitterOnDragFinished}
-            >
-              <div className={classes.left}>
-                {leftPanel}
-              </div>
-              <div className={classes.central}>
-                {showCentralPanelCover &&
-                (
-                  <div className={classes.central} style={{ zIndex: 10 }}/>
-                )
-                }
-                {centralPanel}
-              </div>
-            </SplitPane>
-
-          )
-          : (
-            <>
-              <div className={classes.leftPanel}>
-                {leftMicroPanel}
-              </div>
-              <div className={classes.centralPanel}>
-                {centralPanel}
-              </div>
-            </>
-          )
-        }
+        <SplitPane
+          split="vertical"
+          minSize={showLeftPanel ? 100 : 30}
+          defaultSize={showLeftPanel ? 300 : 30}
+          allowResize={showLeftPanel}
+          pane1Style={pane1Style}
+          onDragStarted={this.handleSplitterOnDragStarted}
+          onDragFinished={this.handleSplitterOnDragFinished}
+        >
+          <div className={classes.left}>
+            <div className={showLeftPanel ? classes.hidden : ''}>
+              {leftMicroPanel}
+            </div>
+            <div className={showLeftPanel ? '' : classes.hidden}>
+              {leftPanel}
+            </div>
+          </div>
+          <div className={classes.central}>
+            {showCentralPanelCover &&
+            (
+              <div className={classes.central} style={{ zIndex: 10 }}/>
+            )
+            }
+            {centralPanel}
+          </div>
+        </SplitPane>
         {this.props.children}
       </div>
     );
