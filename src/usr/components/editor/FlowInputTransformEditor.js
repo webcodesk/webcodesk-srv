@@ -72,8 +72,8 @@ const styles = theme => ({
   },
   transformEditButton: {
     position: 'absolute',
-    bottom: '1em',
-    left: '0.5em',
+    top: '3em',
+    right: '1em',
     zIndex: 5,
   },
   transformDeleteButton: {
@@ -256,6 +256,7 @@ class FlowInputTransformEditor extends React.Component {
           <SplitPane
             split="vertical"
             defaultSize={300}
+            minSize={130}
             primary="first"
           >
             <div className={classes.outputSamplePane}>
@@ -272,6 +273,7 @@ class FlowInputTransformEditor extends React.Component {
             <SplitPane
               split="vertical"
               defaultSize={300}
+              minSize={130}
               primary="second"
             >
               <div className={classes.transformFunctionPane}>

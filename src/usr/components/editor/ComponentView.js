@@ -21,7 +21,7 @@ import { withStyles } from '@material-ui/core/styles';
 import SplitPane from '../splitPane';
 import constants from '../../../commons/constants';
 import globalStore from '../../core/config/globalStore';
-import { CommonToolbar, CommonToolbarDivider, CommonTab, CommonTabs } from '../commons/Commons.parts';
+import { CommonToolbar, CommonToolbarDivider, CommonTab, CommonTabsWithBottomBorder } from '../commons/Commons.parts';
 import IFrame from './IFrame';
 import ToolbarButton from '../commons/ToolbarButton';
 import EventsLogViewer from './EventsLogViewer';
@@ -29,10 +29,6 @@ import SourceCodeEditor from '../commons/SourceCodeEditor';
 import MarkdownView from '../commons/MarkdownView';
 import PageComposerManager from '../../core/pageComposer/PageComposerManager';
 import ComponentPropsTree from './ComponentPropsTree';
-import {
-  generatePropertiesMarkDown,
-  generateSampleObjectScript
-} from '../../core/project/generator/propTypesGenerator';
 
 const styles = theme => ({
   root: {
@@ -593,16 +589,16 @@ class ComponentView extends React.Component {
                       )}
                     </div>
                     <div className={classes.root}>
-                      <CommonTabs
+                      <CommonTabsWithBottomBorder
                         value={infoTabActiveIndex}
                         indicatorColor="primary"
                         textColor="primary"
-                        fullWidth={true}
+                        fullWidth={false}
                         onChange={this.handleChangeInfoTab}
                       >
                         <CommonTab label="Component Readme"/>
                         <CommonTab label="Events Log"/>
-                      </CommonTabs>
+                      </CommonTabsWithBottomBorder>
                       {infoTabActiveIndex === 0 && (
                         <div className={classes.tabContentPane}>
                           <MarkdownView markdownContent={markdownContent} />

@@ -244,44 +244,20 @@ class EventsLogViewer extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <div className={classes.topPane}>
-          <CommonToolbar disableGutters={true} dense="true">
-            <ToolbarButton
-              iconType="Delete"
-              title="Clear log"
-              onClick={this.handleClearRecords}
-              tooltip="Clear log records"
-            />
-          </CommonToolbar>
-        </div>
-        <div className={classes.centralPane}>
-          <SplitPane
-            split="vertical"
-            defaultSize="50%"
-            primary="second"
-          >
-            <div className={classes.root}>
-              <AutoScrollPanel elementId={scrollToRecordId}>
-                <div>
-                  <Table className={classes.table} padding="dense">
-                    <TableBody>
-                      {records.map(record => {
-                        if (record.timestamp === selectedRecordId) {
-                          return (
-                            <ActionsLogTableRowSelected
-                              id={record.timestamp}
-                              key={record.timestamp}
-                              hover={true}
-                              onClick={this.handleRowClick(record)}
-                            >
-                              {this.createTimeCell(record)}
-                              {this.createEventCell(record)}
-                              <TableCell/>
-                            </ActionsLogTableRowSelected>
-                          );
-                        }
+        <SplitPane
+          split="vertical"
+          defaultSize="50%"
+          primary="second"
+        >
+          <div className={classes.root}>
+            <AutoScrollPanel elementId={scrollToRecordId}>
+              <div>
+                <Table className={classes.table} padding="dense">
+                  <TableBody>
+                    {records.map(record => {
+                      if (record.timestamp === selectedRecordId) {
                         return (
-                          <ActionsLogTableRow
+                          <ActionsLogTableRowSelected
                             id={record.timestamp}
                             key={record.timestamp}
                             hover={true}
@@ -290,20 +266,41 @@ class EventsLogViewer extends React.Component {
                             {this.createTimeCell(record)}
                             {this.createEventCell(record)}
                             <TableCell/>
-                          </ActionsLogTableRow>
+                          </ActionsLogTableRowSelected>
                         );
-                      })}
-                    </TableBody>
-                  </Table>
-                  <div style={{ width: '100%', height: '50px' }}/>
-                </div>
-              </AutoScrollPanel>
+                      }
+                      return (
+                        <ActionsLogTableRow
+                          id={record.timestamp}
+                          key={record.timestamp}
+                          hover={true}
+                          onClick={this.handleRowClick(record)}
+                        >
+                          {this.createTimeCell(record)}
+                          {this.createEventCell(record)}
+                          <TableCell/>
+                        </ActionsLogTableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+                <div style={{ width: '100%', height: '50px' }}/>
+              </div>
+            </AutoScrollPanel>
+            <div className={classes.recordsDeleteButton}>
+              <ToolbarButton
+                iconType="Delete"
+                iconColor="#ff8a80"
+                tooltip="Clear log records"
+                switchedOn={true}
+                onClick={this.handleClearRecords}
+              />
             </div>
-            <div className={classes.dataPane}>
-              {this.createDataView()}
-            </div>
-          </SplitPane>
-        </div>
+          </div>
+          <div className={classes.dataPane}>
+            {this.createDataView()}
+          </div>
+        </SplitPane>
       </div>
     );
   }

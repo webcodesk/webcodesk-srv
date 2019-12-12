@@ -538,6 +538,7 @@ class FlowComposer extends React.Component {
             split="horizontal"
             primary="second"
             defaultSize={propertyEditorSplitterSize}
+            minSize={130}
             onDragStarted={this.handleSplitterOnDragStarted}
             onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
             pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}

@@ -87,6 +87,15 @@ export const CommonTabs = withStyles(theme => ({
   }
 }))(Tabs);
 
+export const CommonTabsWithBottomBorder = withStyles(theme => ({
+  root: {
+    minHeight: 'auto',
+    minWidth: '190px',
+    backgroundColor: '#f5f5f5',
+    borderBottom: '1px solid #dddddd'
+  }
+}))(Tabs);
+
 export const CommonTab = withStyles(theme => ({
   root: {
     textTransform: 'none',
