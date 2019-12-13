@@ -38,6 +38,7 @@ function getPropertiesRef(properties) {
         || type === constants.COMPONENT_PROPERTY_ANY_TYPE
         || type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
         || type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE
+        || type === constants.COMPONENT_PROPERTY_NODE_TYPE
         || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
         const newPropertyRef = {
           type,

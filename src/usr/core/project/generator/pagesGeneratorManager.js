@@ -28,7 +28,7 @@ export function createComponentsTree(model, rootModelProps) {
       children,
       props: {componentName, componentInstance, propertyName, propertyValue}
     } = model;
-    if (type === constants.PAGE_COMPONENT_TYPE) {
+    if (type === constants.PAGE_COMPONENT_TYPE || type === constants.PAGE_NODE_TYPE) {
       let newComponentModel = {
         type: componentName,
         instance: componentInstance,
@@ -62,7 +62,10 @@ export function createComponentsTree(model, rootModelProps) {
           }
         }
       }
-    } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
+    } else if (
+      type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE
+      || type === constants.COMPONENT_PROPERTY_NODE_TYPE
+    ) {
       if (rootModelProps) {
         if (propertyName) {
           rootModelProps[propertyName] = null;

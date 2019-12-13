@@ -302,7 +302,10 @@ class PageTree extends React.Component {
             </div>
           );
         }
-      } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
+      } else if (
+        type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE
+        || type === constants.COMPONENT_PROPERTY_NODE_TYPE
+      ) {
         const { isSelected } = props;
         result.push(
           <PageTreeItem
@@ -323,7 +326,10 @@ class PageTree extends React.Component {
             onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
-      } else if (type === constants.PAGE_COMPONENT_TYPE) {
+      } else if (
+        type === constants.PAGE_COMPONENT_TYPE
+        || type === constants.PAGE_NODE_TYPE
+      ) {
         const { errors, componentName, componentInstance, isSelected } = props;
         let childListItems = [];
         if (children && children.length > 0) {

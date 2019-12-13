@@ -71,10 +71,14 @@ class ResourceIcon extends React.Component {
         break;
       case constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE:
       case constants.PAGE_COMPONENT_TYPE:
+      case constants.PAGE_NODE_TYPE:
       case constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE:
         result = (<Image fontSize="inherit" style={{color: '#2196F3'}} />);
         break;
       case constants.COMPONENT_PROPERTY_ELEMENT_TYPE:
+        result = (<Wallpaper fontSize="inherit" color="disabled" />);
+        break;
+      case constants.COMPONENT_PROPERTY_NODE_TYPE:
         result = (<Wallpaper fontSize="inherit" color="disabled" />);
         break;
       case constants.GRAPH_MODEL_PAGE_TYPE:

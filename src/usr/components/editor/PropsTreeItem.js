@@ -336,6 +336,7 @@ class PropsTreeItem extends React.Component {
     } = props;
     switch (type) {
       case constants.COMPONENT_PROPERTY_ELEMENT_TYPE:
+      case constants.COMPONENT_PROPERTY_NODE_TYPE:
         editorElementIcon = (
           <Wallpaper
             color="disabled"
@@ -354,6 +355,7 @@ class PropsTreeItem extends React.Component {
         );
         break;
       case constants.PAGE_COMPONENT_TYPE:
+      case constants.PAGE_NODE_TYPE:
         editorElementIcon = (
           <Image
             className={classes.listItemEditorIcon}

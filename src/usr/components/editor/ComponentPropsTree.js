@@ -157,6 +157,19 @@ class ComponentPropsTree extends React.Component {
             <PanelWithShortcutsHelp />
           </div>
         );
+      } else if (type === constants.COMPONENT_PROPERTY_NODE_TYPE) {
+        return (
+          <div className={classes.root}>
+            <Typography variant="subtitle2" gutterBottom={true}>
+              This is a placeholder for other components.
+            </Typography>
+            <Typography variant="subtitle2" gutterBottom={true}>
+              Drag & drop components or paste items from the clipboard
+              to the placeholder in the page's structure only.
+            </Typography>
+            <PanelWithShortcutsHelp />
+          </div>
+        );
       }
       return (
         <div className={classes.root}>

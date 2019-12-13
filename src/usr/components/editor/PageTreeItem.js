@@ -314,7 +314,7 @@ class PageTreeItem extends React.Component {
                       draggedItem={draggedItem}
                       onDrop={this.handleItemDrop}
                     >
-                      &nbsp;
+                      <span className={classes.mutedText}>{name}</span>
                     </PlaceholderSpan>
                   )
               }

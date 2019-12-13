@@ -79,7 +79,10 @@ export function traverseProperties(properties, defaults) {
           newChildItem.props.propertyValueVariants = cloneDeep(variants);
         }
         result.push(newChildItem);
-      } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
+      } else if (
+        type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE
+        || type === constants.COMPONENT_PROPERTY_NODE_TYPE
+      ) {
         // todo: it seems we don't need to specify the special component name for the placeholder on the page composer
         newChildItem.props.componentName = '__PlaceHolder';
         result.push(newChildItem);

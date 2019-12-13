@@ -114,6 +114,15 @@ const propertyTypeMap = {
       propTypesObject: PropTypes.element,
     };
   },
+  [constants.COMPONENT_PROPERTY_NODE_TYPE]: (propertyNode) => {
+    const { props: {propertyName, isRequired} } = propertyNode;
+    return {
+      typeInComment: `\`{Component, required: ${!!isRequired}}\``,
+      sampleCode: `${propertyName}: <Component />`,
+      singleSampleCode: '<Component />',
+      propTypesObject: PropTypes.element,
+    };
+  },
 };
 
 export function generatePropTypesObject(node) {
@@ -398,6 +407,7 @@ function createInputDescriptionNextLine (node, level = 0) {
       || type === constants.COMPONENT_PROPERTY_ANY_TYPE
       || type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
       || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE
+      || type === constants.COMPONENT_PROPERTY_NODE_TYPE
       || type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
       const typeDescriptionObject = propertyTypeMap[type](node);
       let typeString;

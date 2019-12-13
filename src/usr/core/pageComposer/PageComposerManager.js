@@ -42,7 +42,11 @@ class PageComposerManager {
 
   instanceVisitor = ({nodeModel}) => {
     const result = [];
-    if (nodeModel && nodeModel.props && nodeModel.type === constants.PAGE_COMPONENT_TYPE) {
+    if (
+      nodeModel
+      && nodeModel.props
+      && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
+    ) {
       const { key, props } = nodeModel;
       if (props) {
         const extractedModel = this.graphModel.extractModel(key, true);
@@ -109,13 +113,18 @@ class PageComposerManager {
 
   getSerializableModel = () => {
     return this.graphModel.getModel(false, null, (model) => {
-      if (model && model.props) {
-        delete model.props.propertyLabel;
-        delete model.props.propertyComment;
-        delete model.props.propertyValueVariants;
-        delete model.props.defaultChildren;
+      let skipModel = false;
+      if (model) {
+        if (model.type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
+          skipModel = true;
+        } else if (model.props) {
+          delete model.props.propertyLabel;
+          delete model.props.propertyComment;
+          delete model.props.propertyValueVariants;
+          delete model.props.defaultChildren;
+        }
       }
-      return false;
+      return skipModel;
     });
   };
 
@@ -131,6 +140,11 @@ class PageComposerManager {
         const {propertyName} = props;
         const newComponentInstanceModel =
           pageComposerFactory.createPageComponentModel(resourceObject, propertyName);
+        return this.graphModel.replaceNode(targetKey, newComponentInstanceModel);
+      } else if (type === constants.COMPONENT_PROPERTY_NODE_TYPE && props) {
+        const {propertyName} = props;
+        const newComponentInstanceModel =
+          pageComposerFactory.createPageNodeModel(resourceObject, propertyName);
         return this.graphModel.replaceNode(targetKey, newComponentInstanceModel);
       }
     }
@@ -179,7 +193,10 @@ class PageComposerManager {
 
   renameComponentInstance = (targetKey, componentInstance) => {
     const componentModel = this.graphModel.getNode(targetKey);
-    if (componentModel && componentModel.type === constants.PAGE_COMPONENT_TYPE) {
+    if (
+      componentModel
+      && (componentModel.type === constants.PAGE_COMPONENT_TYPE || componentModel.type === constants.PAGE_NODE_TYPE)
+    ) {
       componentModel.props = componentModel.props || {};
       componentModel.props.componentInstance = componentInstance;
     }
@@ -191,6 +208,9 @@ class PageComposerManager {
       const { type, props } = componentModel;
       if (type === constants.PAGE_COMPONENT_TYPE && props) {
         this.graphModel.replaceNode(targetKey, pageComposerFactory.createPagePlaceholderModel(props.propertyName));
+        this.removeAllSelectedCells();
+      } else if (type === constants.PAGE_NODE_TYPE && props) {
+        this.graphModel.replaceNode(targetKey, pageComposerFactory.createNodePlaceholderModel(props.propertyName));
         this.removeAllSelectedCells();
       }
     }

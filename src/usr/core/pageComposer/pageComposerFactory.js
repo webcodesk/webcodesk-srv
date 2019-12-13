@@ -52,9 +52,54 @@ export function createPageComponentModel(resourceObject, targetPropertyName) {
   return undefined;
 }
 
+export function createPageNodeModel(resourceObject, targetPropertyName) {
+  if (resourceObject.isComponent) {
+    return {
+      type: constants.PAGE_NODE_TYPE,
+      props: {
+        componentName: resourceObject.componentName,
+        componentInstance: resourceObject.componentInstance,
+        propertyName: targetPropertyName,
+      },
+      children: cloneDeep(resourceObject.properties),
+    };
+  } else if (resourceObject.isComponentInstance) {
+    return {
+      type: constants.PAGE_NODE_TYPE,
+      props: {
+        componentName: resourceObject.componentName,
+        componentInstance: resourceObject.componentInstance,
+        propertyName: targetPropertyName,
+      },
+      children: cloneDeep(resourceObject.properties),
+    };
+  } else if (resourceObject.isTemplate) {
+    const newPageComponentModel = cloneDeep(resourceObject.componentsTree);
+    newPageComponentModel.props = newPageComponentModel.props || {};
+    newPageComponentModel.props.propertyName = targetPropertyName;
+    return newPageComponentModel;
+  } else if (resourceObject.isClipboardItem) {
+    const newPageComponentModel = cloneDeep(resourceObject.itemModel);
+    newPageComponentModel.props = newPageComponentModel.props || {};
+    newPageComponentModel.props.propertyName = targetPropertyName;
+    return newPageComponentModel;
+  }
+  return undefined;
+}
+
 export function createPagePlaceholderModel(targetPropertyName) {
   return {
     type: constants.COMPONENT_PROPERTY_ELEMENT_TYPE,
+    props: {
+      componentName: '__PlaceHolder',
+      propertyName: targetPropertyName,
+    },
+  };
+}
+
+export function createNodePlaceholderModel(targetPropertyName) {
+  return {
+    type: constants.COMPONENT_PROPERTY_NODE_TYPE,
     props: {
       componentName: '__PlaceHolder',
       propertyName: targetPropertyName,

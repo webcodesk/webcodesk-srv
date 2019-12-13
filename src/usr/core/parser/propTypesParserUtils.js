@@ -24,6 +24,7 @@ import { repairPath } from "../utils/fileUtils";
 const identifierTypeMap = {
   'func': constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
   'element': constants.COMPONENT_PROPERTY_ELEMENT_TYPE,
+  'node': constants.COMPONENT_PROPERTY_NODE_TYPE,
   'any': constants.COMPONENT_PROPERTY_ANY_TYPE,
   'array': constants.COMPONENT_PROPERTY_ARRAY_TYPE,
   'bool': constants.COMPONENT_PROPERTY_BOOL_TYPE,

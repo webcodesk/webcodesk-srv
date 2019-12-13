@@ -404,7 +404,10 @@ class PropsTree extends React.Component {
             </div>
           );
         }
-      } else if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
+      } else if (
+        type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE
+        || type === constants.COMPONENT_PROPERTY_NODE_TYPE
+      ) {
           result.push(
             <PropsTreeItem
               key={key}
@@ -417,7 +420,10 @@ class PropsTree extends React.Component {
               onErrorClick={this.handleErrorClick}
             />
           );
-      } else if (type === constants.PAGE_COMPONENT_TYPE) {
+      } else if (
+        type === constants.PAGE_COMPONENT_TYPE
+        || type === constants.PAGE_NODE_TYPE
+      ) {
           result.push(
             <PropsTreeItem
               key={key}

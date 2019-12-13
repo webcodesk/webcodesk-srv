@@ -117,7 +117,9 @@ class PageModelCompiler {
         modelPropertyType !== instancePropertyType
         && (
           modelPropertyType !== constants.COMPONENT_PROPERTY_ELEMENT_TYPE
+          && modelPropertyType !== constants.COMPONENT_PROPERTY_NODE_TYPE
           && instancePropertyType !== constants.PAGE_COMPONENT_TYPE
+          && instancePropertyType !== constants.PAGE_NODE_TYPE
         )
       ) {
         // when there are different types change the entire property
@@ -149,7 +151,10 @@ class PageModelCompiler {
           this.changesCount++;
         }
 
-        if (instancePropertyType === constants.PAGE_COMPONENT_TYPE) {
+        if (
+          instancePropertyType === constants.PAGE_COMPONENT_TYPE
+          || instancePropertyType === constants.PAGE_NODE_TYPE
+        ) {
           instanceProperty = this.testComponentModel(instanceProperty);
         } else if (instancePropertyType === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
           instanceProperty.children =
@@ -246,7 +251,10 @@ class PageModelCompiler {
   }
 
   compile(nodeModel) {
-    if (nodeModel && nodeModel.type === constants.PAGE_COMPONENT_TYPE) {
+    if (
+      nodeModel
+      && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
+    ) {
         nodeModel = this.testComponentModel(nodeModel);
     }
     return nodeModel;
