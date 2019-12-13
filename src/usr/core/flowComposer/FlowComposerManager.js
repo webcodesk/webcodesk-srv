@@ -78,6 +78,16 @@ class FlowComposerManager {
     // return this.graphModel.getModel(false, flowModelComparator, ['acceptableTypes']);
     return this.graphModel.getModel(false, flowModelComparator, (model) => {
       if (model && model.props) {
+        if (model.props.inputs && model.props.inputs.length > 0) {
+          for (let i = 0; i < model.props.inputs.length; i++) {
+            delete model.props.inputs[i].properties;
+          }
+        }
+        if (model.props.outputs && model.props.outputs.length > 0) {
+          for (let i = 0; i < model.props.outputs.length; i++) {
+            delete model.props.outputs[i].properties;
+          }
+        }
         delete model.props['acceptableTypes'];
       }
       return false;

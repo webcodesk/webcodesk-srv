@@ -103,11 +103,20 @@ class PageComposerManager {
     return this.graphModel.getModel(false);
   };
 
-  getSerializableModel = (nodeKey = null) => {
-    if (nodeKey) {
-      return this.graphModel.extractModel(nodeKey, true);
-    }
-    return this.graphModel.getModel();
+  getModelWithoutKeys = (nodeKey) => {
+    return this.graphModel.extractModel(nodeKey, true);
+  };
+
+  getSerializableModel = () => {
+    return this.graphModel.getModel(false, null, (model) => {
+      if (model && model.props) {
+        delete model.props.propertyLabel;
+        delete model.props.propertyComment;
+        delete model.props.propertyValueVariants;
+        delete model.props.defaultChildren;
+      }
+      return false;
+    });
   };
 
   getParentKey = (nodeKey) => {

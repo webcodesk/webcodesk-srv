@@ -530,7 +530,7 @@ class PageComposer extends React.Component {
     const { selectedComponentModel } = this.state;
     if (selectedComponentModel) {
       this.props.onPushToClipboard(
-        this.pageComposerManager.getSerializableModel(selectedComponentModel.key)
+        this.pageComposerManager.getModelWithoutKeys(selectedComponentModel.key)
       );
       if (this.iFrameRef.current) {
         this.iFrameRef.current.setFocus();
@@ -542,7 +542,7 @@ class PageComposer extends React.Component {
     const { selectedComponentModel } = this.state;
     if (selectedComponentModel) {
       this.props.onPushToClipboard(
-        this.pageComposerManager.getSerializableModel(selectedComponentModel.key)
+        this.pageComposerManager.getModelWithoutKeys(selectedComponentModel.key)
       );
       this.handleDeleteComponentInstance();
     }
@@ -552,7 +552,7 @@ class PageComposer extends React.Component {
     const { selectedComponentModel } = this.state;
     if (selectedComponentModel) {
       this.props.onSaveAsTemplate(
-        this.pageComposerManager.getSerializableModel(selectedComponentModel.key)
+        this.pageComposerManager.getModelWithoutKeys(selectedComponentModel.key)
       );
     }
   };
