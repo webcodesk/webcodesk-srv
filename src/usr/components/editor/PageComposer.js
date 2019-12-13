@@ -30,6 +30,7 @@ import IFrame from './IFrame';
 import PageTree from './PageTree';
 import ToolbarButton from '../commons/ToolbarButton';
 import ComponentPropsTree from './ComponentPropsTree';
+import ScrollSlider from '../commons/ScrollSlider';
 
 const LAYOUT_MODE_VERTICAL = 'LAYOUT_MODE_VERTICAL';
 const LAYOUT_MODE_HORIZONTAL = 'LAYOUT_MODE_HORIZONTAL';
@@ -42,22 +43,22 @@ const styles = theme => ({
     right: 0,
     left: 0,
   },
-  leftPane: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 0,
-    overflow: 'auto',
-  },
-  bottomPane: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 0,
-    overflow: 'auto',
-  },
+  // leftPane: {
+  //   position: 'absolute',
+  //   top: 0,
+  //   bottom: 0,
+  //   right: 0,
+  //   left: 0,
+  //   overflow: 'auto',
+  // },
+  // bottomPane: {
+  //   position: 'absolute',
+  //   top: 0,
+  //   bottom: 0,
+  //   right: 0,
+  //   left: 0,
+  //   overflow: 'auto',
+  // },
   centralPane: {
     position: 'absolute',
     top: '39px',
@@ -867,7 +868,7 @@ class PageComposer extends React.Component {
                   pane1Style={{display: showTreeView ? 'block' : 'none'}}
                   resizerStyle={{display: showTreeView ? 'block' : 'none'}}
                 >
-                  <div className={classes.leftPane}>
+                  <ScrollSlider>
                     <PageTree
                       componentsTree={localComponentsTree}
                       onItemClick={this.handleSelectComponent}
@@ -889,7 +890,7 @@ class PageComposer extends React.Component {
                       }
                       isDraggingItem={isDraggingItem}
                     />
-                  </div>
+                  </ScrollSlider>
                   <SplitPane
                     split="vertical"
                     primary="second"
@@ -986,7 +987,7 @@ class PageComposer extends React.Component {
                         />
                       )}
                     </div>
-                    <div className={classes.bottomPane}>
+                    <ScrollSlider>
                       <PageTree
                         componentsTree={localComponentsTree}
                         onItemClick={this.handleSelectComponent}
@@ -1008,7 +1009,7 @@ class PageComposer extends React.Component {
                         }
                         isDraggingItem={isDraggingItem}
                       />
-                    </div>
+                    </ScrollSlider>
                   </SplitPane>
                   <div className={classes.editorPane}>
                     <ComponentPropsTree

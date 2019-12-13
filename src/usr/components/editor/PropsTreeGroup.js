@@ -29,7 +29,7 @@ import PanoramaFishEye from '@material-ui/icons/PanoramaFishEye';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
-import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
+import Close from '@material-ui/icons/Close';
 import FileCopy from '@material-ui/icons/FileCopy';
 import Delete from '@material-ui/icons/Delete';
 import * as constants from '../../../commons/constants';
@@ -41,7 +41,7 @@ const styles = theme => ({
     width: '18px',
   },
   buttonIcon: {
-    fontSize: '12px'
+    fontSize: '10px'
   },
   mutedText: {
     color: theme.palette.text.disabled,
@@ -76,7 +76,7 @@ const styles = theme => ({
     borderColor: '#81c784',
   },
   extraButtonDelete: {
-    borderColor: '#ff8a80',
+    borderColor: '#dddddd',
   },
   htmlPopper: {
     opacity: 1,
@@ -129,9 +129,9 @@ export const PropsListItemButton = withStyles({
 
 export const PropsListItemExtraButton = withStyles({
   root: {
-    padding: 0,
+    padding: '2px',
     fontSize: '12px',
-    border: '1px solid #b0bec5',
+    border: '1px solid #dddddd',
     backgroundColor: '#f5f5f5',
     marginLeft: '5px'
   }
@@ -320,19 +320,17 @@ class PropsTreeGroup extends React.Component {
               {type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE && (
                 <PropsListItemExtraButton
                   title="Add new item to the array"
-                  className={classes.extraButtonIncrease}
                   onClick={this.handleIncreaseComponentPropertyArray}
                 >
-                  <ExposurePlus1 className={classes.buttonIcon} color="disabled"/>
+                  <ExposurePlus1 className={classes.buttonIcon} />
                 </PropsListItemExtraButton>
               )}
               {!propertyName && (
                 <PropsListItemExtraButton
                   title="Remove this item from the array"
-                  className={classes.extraButtonDelete}
                   onClick={this.handleDeleteComponentProperty}
                 >
-                  <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
+                  <Close className={classes.buttonIcon} />
                 </PropsListItemExtraButton>
               )}
               {isError && (
@@ -341,7 +339,7 @@ class PropsTreeGroup extends React.Component {
                   className={classes.errorText}
                   onClick={this.handleDeleteComponentProperty}
                 >
-                  <Delete className={classes.buttonIcon} color="disabled"/>
+                  <Delete className={classes.buttonIcon} />
                 </PropsListItemExtraButton>
               )}
             </React.Fragment>

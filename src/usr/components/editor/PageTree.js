@@ -50,12 +50,8 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
     padding: '10px'
   },
-  contentPane: {
-    position: 'absolute',
-    top: '32px',
-    bottom: 0,
-    right: 0,
-    left: 0,
+  list: {
+    width: '800px'
   },
   footerArea: {
     height: '7em',
@@ -397,6 +393,7 @@ class PageTree extends React.Component {
           key="pageTree"
           dense={true}
           disablePadding={true}
+          className={classes.list}
         >
           <div className={classes.listItemContainer}>
             <div className={classes.firstListContainer}>

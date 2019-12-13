@@ -27,7 +27,7 @@ import * as constants from '../../../commons/constants';
 import ResourceIcon from '../commons/ResourceIcon';
 import PlaceholderSpan from '../commons/PlaceholderSpan';
 import FileCopy from '@material-ui/icons/FileCopy';
-import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
+import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 
 const PageTreeListItem = withStyles(theme => ({
@@ -35,11 +35,7 @@ const PageTreeListItem = withStyles(theme => ({
     alignItems: 'flex-start',
     position: 'relative',
     cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: '#eceff1',
-    },
     userSelect: 'none',
-    borderRadius: '4px',
   },
   dense: {
     paddingTop: 0,
@@ -72,11 +68,10 @@ const PageTreeListItemIcon = withStyles({
 
 export const PageTreeListItemExtraButton = withStyles({
   root: {
-    padding: 0,
+    padding: '2px',
     fontSize: '12px',
     border: '1px solid #dddddd',
     backgroundColor: '#f5f5f5',
-    marginRight: '5px'
   }
 })(IconButton);
 
@@ -96,24 +91,35 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    width: '100%'
+    // width: '100%',
+    '&:hover $button': {
+      display: 'flex'
+    },
+    '&:hover': {
+      backgroundColor: '#eceff1',
+    },
+    borderRadius: '4px',
   },
   itemContent: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     paddingRight: '2px',
-    width: '100%'
+    // width: '100%'
   },
   itemName: {
     whiteSpace: 'nowrap',
   },
-  buttonIcon: {
-    fontSize: '12px',
-    display: 'flex',
+  button: {
+    display: 'none',
+    marginLeft: '5px',
   },
-  extraButtonDelete: {
-    borderColor: '#ff8a80',
+  buttonVisible: {
+    marginLeft: '5px',
+  },
+  buttonIcon: {
+    fontSize: '10px',
+    display: 'flex',
   },
 });
 
@@ -240,10 +246,11 @@ class PageTreeItem extends React.Component {
         <PageTreeListItem
           key={itemKey}
           button={false}
-          onClick={!isEmpty(errors) ? this.handleErrorClick : this.handleClick}
-          className={isSelected ? classes.selectedItem : ''}
         >
-          <div className={classes.itemContentWrapper}>
+          <div
+            className={`${classes.itemContentWrapper} ${isSelected ? classes.selectedItem : ''}`}
+            onClick={!isEmpty(errors) ? this.handleErrorClick : this.handleClick}
+          >
             <div className={classes.itemContent}>
               <PageTreeListItemIcon>
                 <div className={classes.buttonIcon}>
@@ -257,6 +264,7 @@ class PageTreeItem extends React.Component {
                     className={!errors || isEmpty(errors) ? '' : classes.errorText}
                   >
                     {componentInstance || 'root'}
+                    {!isNull(arrayIndex) ? <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> : null}
                   </div>
                 }
               />
@@ -265,8 +273,9 @@ class PageTreeItem extends React.Component {
                   <PageTreeListItemExtraButton
                     title="Duplicate this item in the array"
                     onClick={this.handleDuplicateComponentProperty}
+                    className={isSelected ? classes.buttonVisible : classes.button}
                   >
-                    <FileCopy className={classes.buttonIcon}/>
+                    <FileCopy className={classes.buttonIcon} />
                   </PageTreeListItemExtraButton>
                 )
                 : null
@@ -275,10 +284,10 @@ class PageTreeItem extends React.Component {
                 ? (
                   <PageTreeListItemExtraButton
                     title="Remove this item from the array"
-                    className={classes.extraButtonDelete}
                     onClick={this.handleDeleteComponentProperty}
+                    className={isSelected ? classes.buttonVisible : classes.button}
                   >
-                    <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
+                    <Close className={classes.buttonIcon} />
                   </PageTreeListItemExtraButton>
                 )
                 : null
@@ -292,9 +301,8 @@ class PageTreeItem extends React.Component {
       <PageTreeListItem
         key={itemKey}
         onClick={this.handleClick}
-        className={isSelected ? classes.selectedItem : ''}
       >
-        <div className={classes.itemContentWrapper}>
+        <div className={`${classes.itemContentWrapper} ${isSelected ? classes.selectedItem : ''}`}>
           <div className={classes.itemContent}>
             <PageTreeListItemIcon>
               <div className={classes.buttonIcon}>
@@ -314,7 +322,7 @@ class PageTreeItem extends React.Component {
                       draggedItem={draggedItem}
                       onDrop={this.handleItemDrop}
                     >
-                      <span className={classes.mutedText}>{name}</span>
+                      <span className={classes.mutedText}>&nbsp;&nbsp;&nbsp;&nbsp;{name}&nbsp;&nbsp;&nbsp;&nbsp;</span>
                     </PlaceholderSpan>
                   )
               }
@@ -324,8 +332,9 @@ class PageTreeItem extends React.Component {
                 <PageTreeListItemExtraButton
                   title="Duplicate this item in the array"
                   onClick={this.handleDuplicateComponentProperty}
+                  className={isSelected ? classes.buttonVisible : classes.button}
                 >
-                  <FileCopy className={classes.buttonIcon}/>
+                  <FileCopy className={classes.buttonIcon} />
                 </PageTreeListItemExtraButton>
               )
               : null
@@ -334,10 +343,10 @@ class PageTreeItem extends React.Component {
               ? (
                 <PageTreeListItemExtraButton
                   title="Remove this item from the array"
-                  className={classes.extraButtonDelete}
                   onClick={this.handleDeleteComponentProperty}
+                  className={isSelected ? classes.buttonVisible : classes.button}
                 >
-                  <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
+                  <Close className={classes.buttonIcon} />
                 </PageTreeListItemExtraButton>
               )
               : null

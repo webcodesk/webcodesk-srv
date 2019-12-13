@@ -26,15 +26,36 @@ import IconButton from '@material-ui/core/IconButton';
 import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
 import FileCopy from '@material-ui/icons/FileCopy';
-import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
+import Close from '@material-ui/icons/Close';
 
 const styles = theme => ({
-  buttonIcon: {
-    fontSize: '12px',
-    display: 'flex'
+  itemContentWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    // width: '100%',
+    '&:hover $button': {
+      display: 'flex'
+    },
+    borderRadius: '4px',
+    '&:hover': {
+      backgroundColor: '#eceff1',
+    },
   },
-  extraButtonIncrease: {
-    borderColor: '#81c784',
+  itemContent: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: '2px',
+    flexWrap: 'nowrap',
+  },
+  button: {
+    display: 'none',
+    marginLeft: '5px',
+  },
+  buttonIcon: {
+    fontSize: '10px',
+    display: 'flex'
   },
 });
 
@@ -52,10 +73,6 @@ const PageTreeListGroup = withStyles(theme => ({
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: 0,
-    borderRadius: '4px',
-    '&:hover': {
-      backgroundColor: '#eceff1',
-    },
   },
 }))(ListItem);
 
@@ -79,11 +96,10 @@ const PageTreeListGroupIcon = withStyles({
 
 export const PageTreeListGroupExtraButton = withStyles({
   root: {
-    padding: 0,
+    padding: '2px',
     fontSize: '12px',
-    border: '1px solid #b0bec5',
+    border: '1px solid #dddddd',
     backgroundColor: '#f5f5f5',
-    marginRight: '5px'
   }
 })(IconButton);
 
@@ -102,7 +118,7 @@ class PageTreeGroup extends React.Component {
   };
 
   static defaultProps = {
-    name: "",
+    name: '',
     node: null,
     isArray: false,
     onClick: () => {
@@ -128,9 +144,9 @@ class PageTreeGroup extends React.Component {
   };
 
   handleErrorClick = () => {
-    const { node: {key, props}, onErrorClick, onClick } = this.props;
+    const { node: { key, props }, onErrorClick, onClick } = this.props;
     if (props && props.errors) {
-      onErrorClick(values(props.errors).map(error => ({message: error})));
+      onErrorClick(values(props.errors).map(error => ({ message: error })));
     }
     onClick(key);
   };
@@ -176,48 +192,54 @@ class PageTreeGroup extends React.Component {
     return (
       <PageTreeListGroup>
         <PageTreeListGroupIcon>
-          <RemoveCircleOutline className={classes.buttonIcon} color="disabled" />
+          <RemoveCircleOutline className={classes.buttonIcon} color="disabled"/>
         </PageTreeListGroupIcon>
-        <PageTreeListGroupText
-          title={name}
-          primary={
-            <span style={{ whiteSpace: 'nowrap' }}>
-              <span>{name}:</span>
-            </span>
-          }
-        />
-        {isArray && (
-          <PageTreeListGroupExtraButton
-            title="Add new item to the array"
-            className={classes.extraButtonIncrease}
-            onClick={this.handleIncreaseComponentPropertyArray}
-          >
-            <ExposurePlus1 className={classes.buttonIcon} color="disabled"/>
-          </PageTreeListGroupExtraButton>
-        )}
-        {!isNull(arrayIndex)
-          ? (
-            <PageTreeListGroupExtraButton
-              title="Duplicate this item in the array"
-              onClick={this.handleDuplicateComponentProperty}
-            >
-              <FileCopy className={classes.buttonIcon}/>
-            </PageTreeListGroupExtraButton>
-          )
-          : null
-        }
-        {!isNull(arrayIndex)
-          ? (
-            <PageTreeListGroupExtraButton
-              title="Remove this item from the array"
-              className={classes.extraButtonDelete}
-              onClick={this.handleDeleteComponentProperty}
-            >
-              <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
-            </PageTreeListGroupExtraButton>
-          )
-          : null
-        }
+        <div className={classes.itemContentWrapper}>
+          <div className={classes.itemContent}>
+            <PageTreeListGroupText
+              title={name}
+              primary={
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  <span>{name}:</span>
+                  {isArray ? <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> : null}
+                </span>
+              }
+            />
+            {isArray && (
+              <PageTreeListGroupExtraButton
+                title="Add new item to the array"
+                onClick={this.handleIncreaseComponentPropertyArray}
+                className={classes.button}
+              >
+                <ExposurePlus1 className={classes.buttonIcon}/>
+              </PageTreeListGroupExtraButton>
+            )}
+            {!isNull(arrayIndex)
+              ? (
+                <PageTreeListGroupExtraButton
+                  title="Duplicate this item in the array"
+                  onClick={this.handleDuplicateComponentProperty}
+                  className={classes.button}
+                >
+                  <FileCopy className={classes.buttonIcon}/>
+                </PageTreeListGroupExtraButton>
+              )
+              : null
+            }
+            {!isNull(arrayIndex)
+              ? (
+                <PageTreeListGroupExtraButton
+                  title="Remove this item from the array"
+                  onClick={this.handleDeleteComponentProperty}
+                  className={classes.button}
+                >
+                  <Close className={classes.buttonIcon}/>
+                </PageTreeListGroupExtraButton>
+              )
+              : null
+            }
+          </div>
+        </div>
       </PageTreeListGroup>
     );
   }

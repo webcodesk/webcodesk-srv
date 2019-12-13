@@ -33,7 +33,7 @@ import Image from '@material-ui/icons/Image';
 import Wallpaper from '@material-ui/icons/Wallpaper';
 import Delete from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
-import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
+import Close from '@material-ui/icons/Close';
 import FileCopy from '@material-ui/icons/FileCopy';
 
 import * as constants from '../../../commons/constants';
@@ -56,7 +56,7 @@ const styles = theme => ({
     paddingRight: '2px'
   },
   buttonIcon: {
-    fontSize: '12px'
+    fontSize: '10px'
   },
   listItemEditorIcon: {
     fontSize: '12px'
@@ -98,7 +98,7 @@ const styles = theme => ({
     width: '100%'
   },
   extraButtonDelete: {
-    borderColor: '#ff8a80',
+    borderColor: '#dddddd',
   },
   htmlPopper: {
     opacity: 1,
@@ -141,7 +141,7 @@ const PropsTreeListItemText = withStyles({
 
 export const PropsTreeItemExtraButton = withStyles({
   root: {
-    padding: 0,
+    padding: '2px',
     fontSize: '12px',
     border: '1px solid #dddddd',
     backgroundColor: '#f5f5f5',
@@ -528,10 +528,9 @@ class PropsTreeItem extends React.Component {
                       {!propertyName && (
                         <PropsTreeItemExtraButton
                           title="Remove this item from the array"
-                          className={classes.extraButtonDelete}
                           onClick={this.handleDeleteComponentProperty}
                         >
-                          <ExposureNeg1 className={classes.buttonIcon} color="disabled"/>
+                          <Close className={classes.buttonIcon} />
                         </PropsTreeItemExtraButton>
                       )}
                       {isError && (
@@ -540,7 +539,7 @@ class PropsTreeItem extends React.Component {
                           className={classes.errorText}
                           onClick={this.handleDeleteComponentProperty}
                         >
-                          <Delete className={classes.buttonIcon} color="disabled"/>
+                          <Delete className={classes.buttonIcon} />
                         </PropsTreeItemExtraButton>
                       )}
                     </React.Fragment>

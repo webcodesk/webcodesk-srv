@@ -33,7 +33,7 @@ const styleDropZoneAcceptable = {
   right: 0,
   bottom: 0,
   borderRadius: '4px',
-  border: '1px dashed #FFC107',
+  border: '1px dashed #7d7d7d',
   zIndex: 5,
 };
 
@@ -56,7 +56,7 @@ const styleDropZone = {
   right: 0,
   bottom: 0,
   borderRadius: '4px',
-  border: '1px dashed #dddddd',
+  border: '1px dashed #7d7d7d',
   zIndex: 5,
 };
 
@@ -127,10 +127,10 @@ class PlaceholderSpan extends React.Component {
       dropStyle = styleDropZoneAcceptable;
     }
     return (
-      <span
+      <div
         style={style}
       >
-        <span
+        <div
           onDragOver={this.handleItemDragOver}
           onDragEnter={this.handleItemDragEnter}
           onDragLeave={this.handleItemDragLeave}
@@ -138,7 +138,7 @@ class PlaceholderSpan extends React.Component {
           style={dropStyle}
         />
         {this.props.children}
-      </span>
+      </div>
     );
   }
 }
