@@ -93,7 +93,7 @@ const styles = theme => ({
     alignItems: 'flex-start',
     // width: '100%',
     '&:hover $button': {
-      display: 'flex'
+      opacity: 1,
     },
     '&:hover': {
       backgroundColor: '#eceff1',
@@ -111,7 +111,7 @@ const styles = theme => ({
     whiteSpace: 'nowrap',
   },
   button: {
-    display: 'none',
+    opacity: 0,
     marginLeft: '5px',
   },
   buttonVisible: {
@@ -264,7 +264,6 @@ class PageTreeItem extends React.Component {
                     className={!errors || isEmpty(errors) ? '' : classes.errorText}
                   >
                     {componentInstance || 'root'}
-                    {!isNull(arrayIndex) ? <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> : null}
                   </div>
                 }
               />

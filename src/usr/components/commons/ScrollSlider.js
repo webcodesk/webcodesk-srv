@@ -59,7 +59,8 @@ class ScrollSlider extends React.Component {
     if (this.isDown) {
       e.preventDefault();
       const x = e.pageX - this.root.current.offsetLeft;
-      const walkX = (x - this.startX) * 2; //scroll-fast
+      // const walkX = (x - this.startX) * 2; //scroll-fast
+      const walkX = x - this.startX;
       this.root.current.scrollLeft = this.scrollLeft - walkX;
       // const y = e.pageY - this.root.current.offsetTop;
       // const walkY = (y - this.startY) * 3; //scroll-fast

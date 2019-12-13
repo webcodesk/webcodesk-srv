@@ -35,7 +35,7 @@ const styles = theme => ({
     alignItems: 'flex-start',
     // width: '100%',
     '&:hover $button': {
-      display: 'flex'
+      opacity: 1,
     },
     borderRadius: '4px',
     '&:hover': {
@@ -50,7 +50,7 @@ const styles = theme => ({
     flexWrap: 'nowrap',
   },
   button: {
-    display: 'none',
+    opacity: 0,
     marginLeft: '5px',
   },
   buttonIcon: {
@@ -201,7 +201,6 @@ class PageTreeGroup extends React.Component {
               primary={
                 <span style={{ whiteSpace: 'nowrap' }}>
                   <span>{name}:</span>
-                  {isArray ? <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> : null}
                 </span>
               }
             />
