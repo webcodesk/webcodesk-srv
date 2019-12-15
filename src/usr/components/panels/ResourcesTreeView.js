@@ -25,11 +25,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import Badge from '@material-ui/core/Badge';
 import green from '@material-ui/core/colors/green';
 import ResourceIcon from '../commons/ResourceIcon';
 import {
   ResourceList,
-  ResourceSubheaderErrorBadge,
+  ResourceSubheaderBadge,
   ResourceListItem,
   ResourceListItemText,
   ResourceListItemErrorText,
@@ -43,6 +44,7 @@ import ToolbarButton from '../commons/ToolbarButton';
 import constants from '../../../commons/constants';
 import DraggableWrapper from './DraggableWrapper';
 import ScriptView from '../commons/ScriptView';
+import ScrollSlider from '../commons/ScrollSlider';
 
 const TREE_VIEW_INDENT = '18px';
 const FIRST_LIST_INDENT = '17px';
@@ -54,7 +56,7 @@ const styles = theme => ({
     left: 0,
     bottom: 0,
     right: 0,
-    overflow: 'auto',
+    overflow: 'hidden',
   },
   firstListContainer: {
     width: '100%',
@@ -64,6 +66,9 @@ const styles = theme => ({
     overflow: 'hidden',
     paddingLeft: FIRST_LIST_INDENT,
     paddingBottom: '5px'
+  },
+  list: {
+    width: '800px'
   },
   listContainer: {
     width: '100%',
@@ -90,25 +95,51 @@ const styles = theme => ({
     // paddingRight: '5px',
   },
   listItemTextContainer: {
-    flexGrow: 2,
+    // flexGrow: 2,
+    display: 'flex',
+    alignItems: 'center',
+    '&:hover': {
+      border: 0,
+      borderRadius: '4px',
+      backgroundColor: '#eceff1'
+    },
   },
   listItemTextContainerClickable: {
-    flexGrow: 2,
+    // flexGrow: 2,
+    display: 'flex',
+    alignItems: 'center',
     cursor: 'pointer',
     '&:hover': {
       border: 0,
       borderRadius: '4px',
       backgroundColor: '#eceff1'
-    }
+    },
   },
   listItemTextContainerDraggable: {
-    flexGrow: 2,
+    // flexGrow: 2,
+    display: 'flex',
+    alignItems: 'center',
     cursor: 'grab',
     '&:hover': {
       border: 0,
       borderRadius: '4px',
       backgroundColor: '#eceff1'
-    }
+    },
+  },
+  listItemButtonWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    '&:hover $listItemButton': {
+      opacity: 1,
+    },
+    '&:hover': {
+      border: 0,
+      borderRadius: '4px',
+      backgroundColor: '#eceff1'
+    },
+  },
+  listItemButton: {
+    opacity: 0,
   },
   listItemPrefixButtonSector: {
     display: 'flex',
@@ -157,7 +188,10 @@ const styles = theme => ({
     height: '24px',
   },
   subheaderText: {
-    flexGrow: 1,
+    flexGrow: 0,
+  },
+  subheaderButtonsWrapper: {
+    marginLeft: '36px'
   },
   subheaderItemsCountText: {
     color: '#7d7d7d',
@@ -474,7 +508,7 @@ class ResourcesTreeView extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    this.props.onToggleFlow({resourceKey, isDisabled: !isDisabled});
+    this.props.onToggleFlow({ resourceKey, isDisabled: !isDisabled });
   };
 
   handleToggleIsTest = (resourceKey, isTest) => (e) => {
@@ -482,7 +516,7 @@ class ResourcesTreeView extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    this.props.onToggleIsTest({resourceKey, isTest: !isTest});
+    this.props.onToggleIsTest({ resourceKey, isTest: !isTest });
   };
 
   handleClearClipboard = () => {
@@ -552,31 +586,37 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div className={classes.listItemTextContainer}>
-                  {props.hasErrors
-                    ? (
-                      <ResourceListItemErrorText
-                        primary={props.displayName}
-                      />
-                    )
-                    : (
-                      <ResourceListItemDimmedText
-                        primary={props.displayName}
-                      />
-                    )
-                  }
-                </div>
-                <ToolbarButton
-                  iconType="MoreVert"
-                  primary={true}
-                  tooltip="More actions"
-                  menuItems={[
-                    {
-                      label: 'Create new',
-                      onClick: this.handleCreateNewResourceByType(resourceType, parentVirtualPath),
+                <div className={classes.listItemButtonWrapper}>
+                  <div
+                    className={classes.listItemTextContainer}
+                    onClick={this.handleToggleExpandItem(key)}
+                  >
+                    {props.hasErrors
+                      ? (
+                        <ResourceListItemErrorText
+                          primary={props.displayName}
+                        />
+                      )
+                      : (
+                        <ResourceListItemDimmedText
+                          primary={props.displayName}
+                        />
+                      )
                     }
-                  ]}
-                />
+                  </div>
+                  <ToolbarButton
+                    iconType="MoreVert"
+                    primary={true}
+                    tooltip="More actions"
+                    className={classes.listItemButton}
+                    menuItems={[
+                      {
+                        label: 'Create new',
+                        onClick: this.handleCreateNewResourceByType(resourceType, parentVirtualPath),
+                      }
+                    ]}
+                  />
+                </div>
               </div>
             </ResourceListItem>
           );
@@ -639,7 +679,10 @@ class ResourcesTreeView extends React.Component {
                       />
                     </ResourceListItemIcon>
                   </div>
-                  <div className={classes.listItemTextContainer}>
+                  <div
+                    className={classes.listItemTextContainer}
+                    onClick={this.handleToggleExpandItem(key)}
+                  >
                     <ResourceListItemText primary={props.displayName}/>
                   </div>
                 </div>
@@ -730,7 +773,7 @@ class ResourcesTreeView extends React.Component {
                     <span>&nbsp;</span>
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
-                    <ResourceIcon resourceType={type} />
+                    <ResourceIcon resourceType={type}/>
                   </ResourceListItemIcon>
                 </div>
                 <div className={classes.listItemTextContainerDraggable}>
@@ -838,60 +881,63 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div
-                  className={classes.listItemTextContainerDraggable}
-                  onClick={this.handleDoubleClickItem(key)}
-                >
-                  <DraggableWrapper
-                    onDragStart={this.handleItemDragStart}
-                    onDragEnd={this.handleItemDragEnd}
-                    key={elementKey}
-                    resourceKey={key}
+                <div className={classes.listItemButtonWrapper}>
+                  <div
+                    className={classes.listItemTextContainerDraggable}
+                    onClick={this.handleDoubleClickItem(key)}
                   >
-                    {props.hasErrors
-                      ? (
-                        <ResourceListItemErrorText
-                          title="Click to open in the tab, or drag & drop into the flow."
-                          primary={props.displayName}
-                        />
-                      )
-                      : (
-                        <ResourceListItemText
-                          title="Click to open in the tab, or drag & drop into the flow."
-                          primary={<span className={itemTextClassNames}>{props.displayName}</span>}
-                        />
-                      )
-                    }
-                  </DraggableWrapper>
+                    <DraggableWrapper
+                      onDragStart={this.handleItemDragStart}
+                      onDragEnd={this.handleItemDragEnd}
+                      key={elementKey}
+                      resourceKey={key}
+                    >
+                      {props.hasErrors
+                        ? (
+                          <ResourceListItemErrorText
+                            title="Click to open in the tab, or drag & drop into the flow."
+                            primary={props.displayName}
+                          />
+                        )
+                        : (
+                          <ResourceListItemText
+                            title="Click to open in the tab, or drag & drop into the flow."
+                            primary={<span className={itemTextClassNames}>{props.displayName}</span>}
+                          />
+                        )
+                      }
+                    </DraggableWrapper>
+                  </div>
+                  <ToolbarButton
+                    iconType="MoreVert"
+                    className={classes.listItemButton}
+                    primary={true}
+                    onClick={this.handleCreateNewResourceByType(resourceType, '')}
+                    tooltip="More actions"
+                    menuItems={[
+                      {
+                        label: 'Copy page',
+                        onClick: this.handleCopyResource(key, resourceType, virtualPath),
+                      },
+                      {
+                        label: 'divider'
+                      },
+                      {
+                        label: props.isTest
+                          ? 'Mark as regular page'
+                          : 'Mark as test page',
+                        onClick: this.handleToggleIsTest(key, props.isTest),
+                      },
+                      {
+                        label: 'divider'
+                      },
+                      {
+                        label: 'Delete page',
+                        onClick: this.handleDeleteSelected(key, resourceType),
+                      }
+                    ]}
+                  />
                 </div>
-                <ToolbarButton
-                  iconType="MoreVert"
-                  primary={true}
-                  onClick={this.handleCreateNewResourceByType(resourceType, '')}
-                  tooltip="More actions"
-                  menuItems={[
-                    {
-                      label: 'Copy page',
-                      onClick: this.handleCopyResource(key, resourceType, virtualPath),
-                    },
-                    {
-                      label: 'divider'
-                    },
-                    {
-                      label: props.isTest
-                        ? 'Mark as regular page'
-                        : 'Mark as test page',
-                      onClick: this.handleToggleIsTest(key, props.isTest),
-                    },
-                    {
-                      label: 'divider'
-                    },
-                    {
-                      label: 'Delete page',
-                      onClick: this.handleDeleteSelected(key, resourceType),
-                    }
-                  ]}
-                />
               </div>
             </ResourceListItem>
           );
@@ -923,55 +969,58 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div
-                  className={classes.listItemTextContainerDraggable}
-                  onClick={this.handleDoubleClickItem(key)}
-                >
-                  <DraggableWrapper
-                    onDragStart={this.handleItemDragStart}
-                    onDragEnd={this.handleItemDragEnd}
-                    key={elementKey}
-                    resourceKey={key}
+                <div className={classes.listItemButtonWrapper}>
+                  <div
+                    className={classes.listItemTextContainerDraggable}
+                    onClick={this.handleDoubleClickItem(key)}
                   >
-                    {props.hasErrors
-                      ? (
-                        <ResourceListItemErrorText
-                          title="Click to open in the tab, or drag & drop into the page."
-                          primary={props.displayName}
-                        />
-                      )
-                      : (
-                        <ResourceListItemText
-                          title="Click to open in the tab, or drag & drop into the page."
-                          primary={
-                            highlightedResourceKeys[key]
-                              ? <span className={classes.highlightedText}>{props.displayName}</span>
-                              : props.displayName
-                          }
-                        />
-                      )
-                    }
-                  </DraggableWrapper>
+                    <DraggableWrapper
+                      onDragStart={this.handleItemDragStart}
+                      onDragEnd={this.handleItemDragEnd}
+                      key={elementKey}
+                      resourceKey={key}
+                    >
+                      {props.hasErrors
+                        ? (
+                          <ResourceListItemErrorText
+                            title="Click to open in the tab, or drag & drop into the page."
+                            primary={props.displayName}
+                          />
+                        )
+                        : (
+                          <ResourceListItemText
+                            title="Click to open in the tab, or drag & drop into the page."
+                            primary={
+                              highlightedResourceKeys[key]
+                                ? <span className={classes.highlightedText}>{props.displayName}</span>
+                                : props.displayName
+                            }
+                          />
+                        )
+                      }
+                    </DraggableWrapper>
+                  </div>
+                  <ToolbarButton
+                    iconType="MoreVert"
+                    primary={true}
+                    className={classes.listItemButton}
+                    onClick={this.handleCreateNewResourceByType(resourceType, '')}
+                    tooltip="More actions"
+                    menuItems={[
+                      {
+                        label: 'Copy template',
+                        onClick: this.handleCopyResource(key, resourceType, virtualPath),
+                      },
+                      {
+                        label: 'divider'
+                      },
+                      {
+                        label: 'Delete template',
+                        onClick: this.handleDeleteSelected(key, resourceType),
+                      }
+                    ]}
+                  />
                 </div>
-                <ToolbarButton
-                  iconType="MoreVert"
-                  primary={true}
-                  onClick={this.handleCreateNewResourceByType(resourceType, '')}
-                  tooltip="More actions"
-                  menuItems={[
-                    {
-                      label: 'Copy template',
-                      onClick: this.handleCopyResource(key, resourceType, virtualPath),
-                    },
-                    {
-                      label: 'divider'
-                    },
-                    {
-                      label: 'Delete template',
-                      onClick: this.handleDeleteSelected(key, resourceType),
-                    }
-                  ]}
-                />
               </div>
             </ResourceListItem>
           );
@@ -1060,58 +1109,61 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div
-                  className={classes.listItemTextContainerClickable}
-                  onClick={this.handleDoubleClickItem(key)}
-                >
-                  {props.hasErrors
-                    ? (
-                      <ResourceListItemErrorText
-                        title="Click to open in the tab"
-                        primary={<span className={itemTextClassNames}>{props.displayName}</span>}
-                      />
-                    )
-                    : (
-                      <ResourceListItemText
-                        title="Click to open in the tab"
-                        primary={<span className={itemTextClassNames}>{props.displayName}</span>}
-                      />
-                    )
-                  }
-                </div>
-                <ToolbarButton
-                  iconType="MoreVert"
-                  primary={true}
-                  tooltip="More actions"
-                  menuItems={[
-                    {
-                      label: 'Copy flow',
-                      onClick: this.handleCopyResource(key, resourceType, virtualPath),
-                    },
-                    {
-                      label: 'divider'
-                    },
-                    {
-                      label: props.isDisabled
-                        ? 'Enable flow'
-                        : 'Disable flow',
-                      onClick: this.handleToggleFlow(key, props.isDisabled),
-                    },
-                    {
-                      label: props.isTest
-                        ? 'Mark as regular flow'
-                        : 'Mark as test flow',
-                      onClick: this.handleToggleIsTest(key, props.isTest),
-                    },
-                    {
-                      label: 'divider'
-                    },
-                    {
-                      label: 'Delete flow',
-                      onClick: this.handleDeleteSelected(key, resourceType),
+                <div className={classes.listItemButtonWrapper}>
+                  <div
+                    className={classes.listItemTextContainerClickable}
+                    onClick={this.handleDoubleClickItem(key)}
+                  >
+                    {props.hasErrors
+                      ? (
+                        <ResourceListItemErrorText
+                          title="Click to open in the tab"
+                          primary={<span className={itemTextClassNames}>{props.displayName}</span>}
+                        />
+                      )
+                      : (
+                        <ResourceListItemText
+                          title="Click to open in the tab"
+                          primary={<span className={itemTextClassNames}>{props.displayName}</span>}
+                        />
+                      )
                     }
-                  ]}
-                />
+                  </div>
+                  <ToolbarButton
+                    iconType="MoreVert"
+                    className={classes.listItemButton}
+                    primary={true}
+                    tooltip="More actions"
+                    menuItems={[
+                      {
+                        label: 'Copy flow',
+                        onClick: this.handleCopyResource(key, resourceType, virtualPath),
+                      },
+                      {
+                        label: 'divider'
+                      },
+                      {
+                        label: props.isDisabled
+                          ? 'Enable flow'
+                          : 'Disable flow',
+                        onClick: this.handleToggleFlow(key, props.isDisabled),
+                      },
+                      {
+                        label: props.isTest
+                          ? 'Mark as regular flow'
+                          : 'Mark as test flow',
+                        onClick: this.handleToggleIsTest(key, props.isTest),
+                      },
+                      {
+                        label: 'divider'
+                      },
+                      {
+                        label: 'Delete flow',
+                        onClick: this.handleDeleteSelected(key, resourceType),
+                      }
+                    ]}
+                  />
+                </div>
               </div>
             </ResourceListItem>
           );
@@ -1150,43 +1202,45 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div className={classes.listItemTextContainerDraggable}>
-                  <DraggableWrapper
-                    onDragStart={this.handleItemDragStart}
-                    onDragEnd={this.handleItemDragEnd}
-                    key={elementKey}
-                    resourceKey={key}
-                  >
-                    <ResourceListItemText
-                      title="Drag & drop into the page or into the flow."
-                      primary={
-                        highlightedResourceKeys[key]
-                          ? <span className={classes.highlightedText}>{props.displayName}</span>
-                          : props.displayName
+                <div className={classes.listItemButtonWrapper}>
+                  <div className={classes.listItemTextContainerDraggable}>
+                    <DraggableWrapper
+                      onDragStart={this.handleItemDragStart}
+                      onDragEnd={this.handleItemDragEnd}
+                      key={elementKey}
+                      resourceKey={key}
+                    >
+                      <ResourceListItemText
+                        title="Drag & drop into the page or into the flow."
+                        primary={
+                          highlightedResourceKeys[key]
+                            ? <span className={classes.highlightedText}>{props.displayName}</span>
+                            : props.displayName
+                        }
+                      />
+                    </DraggableWrapper>
+                  </div>
+                  {transformScript && (
+                    <Tooltip
+                      classes={{
+                        popper: classes.htmlPopper,
+                        tooltip: classes.htmlTooltip,
+                      }}
+                      title={
+                        <React.Fragment>
+                          <Typography variant="caption">Transformation Script</Typography>
+                          <Divider className={classes.htmlTooltipDivider}/>
+                          <ScriptView
+                            propsSampleObjectText={transformScript}
+                            extraClassName={classes.htmlTooltipCode}
+                          />
+                        </React.Fragment>
                       }
-                    />
-                  </DraggableWrapper>
+                    >
+                      <FastForward color="disabled" className={classes.smallIcon}/>
+                    </Tooltip>
+                  )}
                 </div>
-                {transformScript && (
-                  <Tooltip
-                    classes={{
-                      popper: classes.htmlPopper,
-                      tooltip: classes.htmlTooltip,
-                    }}
-                    title={
-                      <React.Fragment>
-                        <Typography variant="caption">Transformation Script</Typography>
-                        <Divider className={classes.htmlTooltipDivider}/>
-                        <ScriptView
-                          propsSampleObjectText={transformScript}
-                          extraClassName={classes.htmlTooltipCode}
-                        />
-                      </React.Fragment>
-                    }
-                  >
-                    <FastForward color="disabled" className={classes.smallIcon}/>
-                  </Tooltip>
-                )}
               </div>
             </ResourceListItem>
           );
@@ -1217,43 +1271,45 @@ class ResourcesTreeView extends React.Component {
                     />
                   </ResourceListItemIcon>
                 </div>
-                <div className={classes.listItemTextContainerDraggable}>
-                  <DraggableWrapper
-                    onDragStart={this.handleItemDragStart}
-                    onDragEnd={this.handleItemDragEnd}
-                    key={elementKey}
-                    resourceKey={key}
-                  >
-                    <ResourceListItemText
-                      title="Drag & drop into the flow."
-                      primary={
-                        highlightedResourceKeys[key]
-                          ? <span className={classes.highlightedText}>{props.displayName}</span>
-                          : props.displayName
+                <div className={classes.listItemButtonWrapper}>
+                  <div className={classes.listItemTextContainerDraggable}>
+                    <DraggableWrapper
+                      onDragStart={this.handleItemDragStart}
+                      onDragEnd={this.handleItemDragEnd}
+                      key={elementKey}
+                      resourceKey={key}
+                    >
+                      <ResourceListItemText
+                        title="Drag & drop into the flow."
+                        primary={
+                          highlightedResourceKeys[key]
+                            ? <span className={classes.highlightedText}>{props.displayName}</span>
+                            : props.displayName
+                        }
+                      />
+                    </DraggableWrapper>
+                  </div>
+                  {transformScript && (
+                    <Tooltip
+                      classes={{
+                        popper: classes.htmlPopper,
+                        tooltip: classes.htmlTooltip,
+                      }}
+                      title={
+                        <React.Fragment>
+                          <Typography variant="caption">Transformation Script</Typography>
+                          <Divider className={classes.htmlTooltipDivider}/>
+                          <ScriptView
+                            propsSampleObjectText={transformScript}
+                            extraClassName={classes.htmlTooltipCode}
+                          />
+                        </React.Fragment>
                       }
-                    />
-                  </DraggableWrapper>
+                    >
+                      <FastForward color="disabled" className={classes.smallIcon}/>
+                    </Tooltip>
+                  )}
                 </div>
-                {transformScript && (
-                  <Tooltip
-                    classes={{
-                      popper: classes.htmlPopper,
-                      tooltip: classes.htmlTooltip,
-                    }}
-                    title={
-                      <React.Fragment>
-                        <Typography variant="caption">Transformation Script</Typography>
-                        <Divider className={classes.htmlTooltipDivider}/>
-                        <ScriptView
-                          propsSampleObjectText={transformScript}
-                          extraClassName={classes.htmlTooltipCode}
-                        />
-                      </React.Fragment>
-                    }
-                  >
-                    <FastForward color="disabled" className={classes.smallIcon}/>
-                  </Tooltip>
-                )}
               </div>
             </ResourceListItem>
           );
@@ -1278,46 +1334,48 @@ class ResourcesTreeView extends React.Component {
                     <span>&nbsp;</span>
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
-                    <ResourceIcon resourceType={type} />
+                    <ResourceIcon resourceType={type}/>
                   </ResourceListItemIcon>
                 </div>
-                <div className={classes.listItemTextContainerDraggable}>
-                  <DraggableWrapper
-                    onDragStart={this.handleItemDragStart}
-                    onDragEnd={this.handleItemDragEnd}
-                    key={elementKey}
-                    resourceKey={key}
-                  >
-                    <ResourceListItemText
-                      title="Drag & drop into the flow."
-                      primary={
-                        highlightedResourceKeys[key]
-                          ? <span className={classes.highlightedText}>{props.displayName}</span>
-                          : props.displayName
+                <div className={classes.listItemButtonWrapper}>
+                  <div className={classes.listItemTextContainerDraggable}>
+                    <DraggableWrapper
+                      onDragStart={this.handleItemDragStart}
+                      onDragEnd={this.handleItemDragEnd}
+                      key={elementKey}
+                      resourceKey={key}
+                    >
+                      <ResourceListItemText
+                        title="Drag & drop into the flow."
+                        primary={
+                          highlightedResourceKeys[key]
+                            ? <span className={classes.highlightedText}>{props.displayName}</span>
+                            : props.displayName
+                        }
+                      />
+                    </DraggableWrapper>
+                  </div>
+                  {transformScript && (
+                    <Tooltip
+                      classes={{
+                        popper: classes.htmlPopper,
+                        tooltip: classes.htmlTooltip,
+                      }}
+                      title={
+                        <React.Fragment>
+                          <Typography variant="caption">Transformation Script</Typography>
+                          <Divider className={classes.htmlTooltipDivider}/>
+                          <ScriptView
+                            propsSampleObjectText={transformScript}
+                            extraClassName={classes.htmlTooltipCode}
+                          />
+                        </React.Fragment>
                       }
-                    />
-                  </DraggableWrapper>
+                    >
+                      <FastForward color="disabled" className={classes.smallIcon}/>
+                    </Tooltip>
+                  )}
                 </div>
-                {transformScript && (
-                  <Tooltip
-                    classes={{
-                      popper: classes.htmlPopper,
-                      tooltip: classes.htmlTooltip,
-                    }}
-                    title={
-                      <React.Fragment>
-                        <Typography variant="caption">Transformation Script</Typography>
-                        <Divider className={classes.htmlTooltipDivider}/>
-                        <ScriptView
-                          propsSampleObjectText={transformScript}
-                          extraClassName={classes.htmlTooltipCode}
-                        />
-                      </React.Fragment>
-                    }
-                  >
-                    <FastForward color="disabled" className={classes.smallIcon}/>
-                  </Tooltip>
-                )}
               </div>
             </ResourceListItem>
           );
@@ -1337,7 +1395,7 @@ class ResourcesTreeView extends React.Component {
                       <span>&nbsp;</span>
                     </ResourceListItemExpandedIcon>
                     <ResourceListItemIcon>
-                      <ResourceIcon resourceType={itemModel.type} />
+                      <ResourceIcon resourceType={itemModel.type}/>
                     </ResourceListItemIcon>
                   </div>
                   <div className={classes.listItemTextContainerDraggable}>
@@ -1388,7 +1446,7 @@ class ResourcesTreeView extends React.Component {
   render () {
     const { resourcesTreeViewObject, classes } = this.props;
     if (!resourcesTreeViewObject || isEmpty(resourcesTreeViewObject)) {
-      return (<span />);
+      return (<span/>);
     }
     const rootLists = [];
     let maxWidth = 0;
@@ -1408,12 +1466,12 @@ class ResourcesTreeView extends React.Component {
     } = resourcesTreeViewObject;
     // sort roots in the custom order
     [
-      {object: clipboardItems, count: clipboardItemsCount},
-      {object: templates, count: templatesCount},
-      {object: pages, count: pagesCount},
-      {object: flows, count: flowsCount},
-      {object: userComponents, count: userComponentsCount},
-      {object: userFunctions, count: userFunctionsCount}
+      { object: clipboardItems, count: clipboardItemsCount },
+      { object: templates, count: templatesCount },
+      { object: pages, count: pagesCount },
+      { object: flows, count: flowsCount },
+      { object: userComponents, count: userComponentsCount },
+      { object: userFunctions, count: userFunctionsCount }
     ].forEach(resourceObject => {
       if (resourceObject.object) {
         const { totalLevels, rootResourceItem, list } = this.createRootList(resourceObject.object);
@@ -1527,10 +1585,13 @@ class ResourcesTreeView extends React.Component {
                 color="primary"
                 disableGutters={true}
               >
-                <div className={classes.subheaderContainer}>
+                <div
+                  className={classes.subheaderContainer}
+                  onClick={this.handleToggleExpandItem(key)}
+                >
                   {rootListItem.itemsCount > 0
                     ? (
-                      <ResourceListItemExpandedIcon onClick={this.handleToggleExpandItem(key)}>
+                      <ResourceListItemExpandedIcon>
                         {rootListItem.list.length > 0
                           ? (
                             <ExpandMore fontSize="small" color="disabled"/>
@@ -1547,24 +1608,19 @@ class ResourcesTreeView extends React.Component {
                       </ResourceListItemExpandedIcon>
                     )
                   }
-                  <div className={classes.subheaderText} onClick={this.handleToggleExpandItem(key)}>
-                    {props.hasErrors
-                      ? (
-                        <ResourceSubheaderErrorBadge badgeContent={' '} color="secondary">
-                          <span>{props.displayName}</span>
-                          &nbsp;
-                          <span className={classes.subheaderItemsCountText}>{`(${rootListItem.itemsCount})`}</span>
-                        </ResourceSubheaderErrorBadge>
-                      )
-                      : (
-                        <React.Fragment>
-                          <span>{props.displayName}</span>
-                          &nbsp;
-                          <span className={classes.subheaderItemsCountText}>{`(${rootListItem.itemsCount})`}</span>
-                        </React.Fragment>
-                      )}
+                  <div className={classes.subheaderText} >
+                    <ResourceSubheaderBadge
+                      max={10000}
+                      badgeContent={rootListItem.itemsCount}
+                      color={props.hasErrors ? "error" : "default"}
+                    >
+                      <span>{props.displayName}</span>
+                    </ResourceSubheaderBadge>
                   </div>
-                  {subheaderButtons}
+                  <div className={classes.subheaderButtonsWrapper}>
+                    {subheaderButtons}
+                  </div>
+
                 </div>
               </ResourceListSubheader>
             }
@@ -1582,8 +1638,12 @@ class ResourcesTreeView extends React.Component {
     }
     return (
       <div className={classes.root}>
-        {lists}
-        <div style={{ height: '7em', width: '100%' }}/>
+        <ScrollSlider>
+          <div className={classes.list}>
+            {lists}
+          </div>
+          <div style={{ height: '7em', width: '100%' }}/>
+        </ScrollSlider>
       </div>
     );
   }

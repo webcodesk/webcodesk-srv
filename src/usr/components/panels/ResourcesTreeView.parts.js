@@ -140,11 +140,23 @@ export const ResourceListSubheader = withStyles(theme => ({
   }
 }))(ListSubheader);
 
-export const ResourceSubheaderErrorBadge = withStyles(theme => ({
-  colorSecondary: {
-    width: '10px',
-    height: '10px',
+export const ResourceSubheaderBadge = withStyles(theme => ({
+  badge: {
+    width: '25px',
+    height: '14px',
     top: '-3px',
-    right: '-10px',
+    right: '-30px',
+    fontSize: '10px',
+    backgroundColor: '#dddddd',
+    borderRadius: '8px'
+  },
+  colorError: {
+    width: '25px',
+    height: '14px',
+    top: '-3px',
+    right: '-30px',
+    fontSize: '10px',
+    borderRadius: '8px',
+    backgroundColor: '#D50000',
   }
 }))(Badge);

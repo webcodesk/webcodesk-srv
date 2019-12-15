@@ -43,22 +43,6 @@ const styles = theme => ({
     right: 0,
     left: 0,
   },
-  // leftPane: {
-  //   position: 'absolute',
-  //   top: 0,
-  //   bottom: 0,
-  //   right: 0,
-  //   left: 0,
-  //   overflow: 'auto',
-  // },
-  // bottomPane: {
-  //   position: 'absolute',
-  //   top: 0,
-  //   bottom: 0,
-  //   right: 0,
-  //   left: 0,
-  //   overflow: 'auto',
-  // },
   centralPane: {
     position: 'absolute',
     top: '39px',

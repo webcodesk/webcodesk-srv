@@ -248,6 +248,7 @@ class ToolbarButton extends React.Component {
     titleLengthLimit: PropTypes.number,
     error: PropTypes.bool,
     menuItems: PropTypes.array,
+    className: PropTypes.string,
     onClick: PropTypes.func,
   };
 
@@ -263,6 +264,7 @@ class ToolbarButton extends React.Component {
     titleLengthLimit: 25,
     error: false,
     menuItems: [],
+    className: '',
     onClick: () => {
       console.info('ToolbarButton.onClick is not set');
     },
@@ -276,6 +278,10 @@ class ToolbarButton extends React.Component {
   }
 
   handleMenuClick = e => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     this.setState({ anchorEl: e.currentTarget });
   };
 
@@ -304,6 +310,7 @@ class ToolbarButton extends React.Component {
       titleLengthLimit,
       error,
       menuItems,
+      className,
       onClick
     } = this.props;
     let icon = icons[iconType] || null;
@@ -388,7 +395,7 @@ class ToolbarButton extends React.Component {
       if (menuItemsElements.length > 0) {
         const { anchorEl } = this.state;
         return (
-          <div>
+          <div className={className}>
             <CommonToolbarButton
               size="small"
               color={color}
@@ -421,6 +428,7 @@ class ToolbarButton extends React.Component {
           onClick={onClick}
           disabled={disabled}
           title={tooltip}
+          className={className}
         >
           {icon}
           {textElement}
@@ -431,7 +439,7 @@ class ToolbarButton extends React.Component {
     if (menuItemsElements.length > 0) {
       const { anchorEl } = this.state;
       return (
-        <div>
+        <div className={className}>
           <CommonToolbarIconButton
             size="small"
             color={color}
@@ -463,6 +471,7 @@ class ToolbarButton extends React.Component {
         onClick={onClick}
         disabled={disabled}
         title={tooltip}
+        className={className}
       >
         {icon}
       </CommonToolbarIconButton>
