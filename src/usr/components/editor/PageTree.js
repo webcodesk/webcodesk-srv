@@ -76,7 +76,7 @@ const styles = theme => ({
       content: `''`,
       position: 'absolute',
       top: 0,
-      left: '9px',
+      left: '8px',
       bottom: 0,
       width: 0,
       borderLeft: '1px dotted #cdcdcd',
@@ -94,7 +94,7 @@ const styles = theme => ({
       content: `''`,
       position: 'absolute',
       top: '-16px',
-      left: '9px',
+      left: '8px',
       bottom: 0,
       width: 0,
       borderLeft: '1px dotted #cdcdcd',
@@ -120,7 +120,7 @@ const styles = theme => ({
   dragHandler: {
     position: 'absolute',
     top: '5px',
-    left: '-13px',
+    left: '-14px',
     color: '#aaaaaa',
     cursor: 'move',
     fontSize: '13px',
@@ -214,7 +214,7 @@ class PageTree extends React.Component {
       let isArrayItem = false;
       const { key, type, props, children } = node;
       const { propertyName } = props;
-      let listItemLabelName;
+      let listItemLabelName = '';
       if (!isNull(arrayIndex) && arrayIndex >= 0) {
         listItemLabelName = `${arrayIndex} item`;
         isArrayItem = true;
@@ -224,6 +224,10 @@ class PageTree extends React.Component {
           listItemLabelName += `.${propertyName}`;
         } else {
           listItemLabelName = propertyName;
+        }
+      } else {
+        if (!listItemLabelName) {
+          listItemLabelName = 'root';
         }
       }
       if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
