@@ -40,11 +40,13 @@ export function createPageComponentModel(resourceObject, targetPropertyName) {
     };
   } else if (resourceObject.isTemplate) {
     const newPageComponentModel = cloneDeep(resourceObject.componentsTree);
+    newPageComponentModel.type = constants.PAGE_COMPONENT_TYPE;
     newPageComponentModel.props = newPageComponentModel.props || {};
     newPageComponentModel.props.propertyName = targetPropertyName;
     return newPageComponentModel;
   } else if (resourceObject.isClipboardItem) {
     const newPageComponentModel = cloneDeep(resourceObject.itemModel);
+    newPageComponentModel.type = constants.PAGE_COMPONENT_TYPE;
     newPageComponentModel.props = newPageComponentModel.props || {};
     newPageComponentModel.props.propertyName = targetPropertyName;
     return newPageComponentModel;
@@ -75,11 +77,13 @@ export function createPageNodeModel(resourceObject, targetPropertyName) {
     };
   } else if (resourceObject.isTemplate) {
     const newPageComponentModel = cloneDeep(resourceObject.componentsTree);
+    newPageComponentModel.type = constants.PAGE_NODE_TYPE;
     newPageComponentModel.props = newPageComponentModel.props || {};
     newPageComponentModel.props.propertyName = targetPropertyName;
     return newPageComponentModel;
   } else if (resourceObject.isClipboardItem) {
     const newPageComponentModel = cloneDeep(resourceObject.itemModel);
+    newPageComponentModel.type = constants.PAGE_NODE_TYPE;
     newPageComponentModel.props = newPageComponentModel.props || {};
     newPageComponentModel.props.propertyName = targetPropertyName;
     return newPageComponentModel;
