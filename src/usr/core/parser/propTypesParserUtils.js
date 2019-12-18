@@ -124,7 +124,7 @@ function testArrayExpression (node) {
       elements.forEach(arrayElement => {
         if (arrayElement) {
           const { type: elementType, value: elementValue } = arrayElement;
-          if (elementType === 'StringLiteral' && elementValue) {
+          if (elementType === 'StringLiteral' && typeof elementValue !== 'undefined') {
             // we take strings as variant values
             arrayElementValues.push({
               value: elementValue,

@@ -105,20 +105,23 @@ class PropertySelect extends React.Component {
           optionsList.push(
             <option key={'' + valueIdx} value={valueItem}>{valueItem}</option>
           );
+        } else {
+          optionsList.push(
+            <option key={'' + valueIdx} value="" style={{color: '#dddddd'}}>none</option>
+          );
         }
       });
     }
     return (
       <FormControl className={classes.root}>
         <PropertySelectElement
-          value={inputValue}
+          value={inputValue || ''}
           onChange={this.handleOnChange}
           input={<PropertySelectInput />}
         >
-          <option value="" style={{color: '#cdcdcd'}}>not set</option>
-          <option className={classes.optionsHeader} disabled={true}>
-            &#9472;&#9472;&#9472;
-          </option>
+          {/*<option className={classes.optionsHeader} disabled={true}>*/}
+          {/*  &#9472;&#9472;&#9472;*/}
+          {/*</option>*/}
           {optionsList}
         </PropertySelectElement>
       </FormControl>
