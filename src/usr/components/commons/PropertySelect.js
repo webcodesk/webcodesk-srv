@@ -75,8 +75,8 @@ class PropertySelect extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { values } = this.props;
-    const { inputText } = this.state;
-    return inputText !== nextProps.text || inputText !== nextState.inputText || values !== nextProps.values;
+    const { inputValue } = this.state;
+    return inputValue !== nextState.inputValue || values !== nextProps.values;
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
@@ -89,10 +89,11 @@ class PropertySelect extends React.Component {
   }
 
   handleOnChange = (e) => {
+    const inputValue = e.target.value && e.target.value.length > 0 ? e.target.value : undefined;
     this.setState({
-      inputValue: e.target.value,
+      inputValue,
     });
-    this.props.onChange(e.target.value);
+    this.props.onChange(inputValue);
   };
 
   render () {
@@ -107,7 +108,7 @@ class PropertySelect extends React.Component {
           );
         } else {
           optionsList.push(
-            <option key={'' + valueIdx} value="" style={{color: '#dddddd'}}>none</option>
+            <option key={'' + valueIdx} value="" style={{color: '#dddddd'}}>undefined</option>
           );
         }
       });
@@ -115,7 +116,7 @@ class PropertySelect extends React.Component {
     return (
       <FormControl className={classes.root}>
         <PropertySelectElement
-          value={inputValue || ''}
+          value={typeof inputValue === 'undefined' ? '' : inputValue}
           onChange={this.handleOnChange}
           input={<PropertySelectInput />}
         >

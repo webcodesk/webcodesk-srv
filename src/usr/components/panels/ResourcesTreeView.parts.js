@@ -79,10 +79,10 @@ export const ResourceListItemDimmedText = withStyles({
     textOverflow: 'ellipsis',
     display: 'flex',
     alignItems: 'center',
-    color: '#90a4ae',
+    color: '#607d8b',
   },
   primary: {
-    color: '#90a4ae',
+    color: '#607d8b',
     whiteSpace: 'nowrap',
   }
 })(ListItemText);

@@ -62,7 +62,7 @@ const styles = theme => ({
     alignText: 'center',
   },
   welcomeText: {
-    color: '#455a64',
+    color: '#b0bec5',
     fontWeight: 'normal'
   },
   resourceTabLabel: { display: 'flex', alignItems: 'center' },

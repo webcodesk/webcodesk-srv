@@ -131,7 +131,7 @@ class SearchTextField extends React.Component {
         className={classes.root}
         type="text"
         value={inputText}
-        placeholder="Search"
+        placeholder="Type a word & hit the enter to search"
         onChange={this.handleOnChange}
         onKeyDown={this.handleOnKeyDown}
         startAdornment={

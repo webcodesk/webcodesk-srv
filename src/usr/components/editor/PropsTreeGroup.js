@@ -67,7 +67,8 @@ const styles = theme => ({
   titleText: {
     fontWeight: 400,
     // fontSize: '14px',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    color: '#455a64',
   },
   errorText: {
     color: '#D50000',
@@ -304,9 +305,9 @@ class PropsTreeGroup extends React.Component {
                       {name}
                     </span>
                   </div>
-                  <div className={classes.titleSpacer}>
-                    <div className={classes.titleSpacerLine} />
-                  </div>
+                  {/*<div className={classes.titleSpacer}>*/}
+                  {/*  <div className={classes.titleSpacerLine} />*/}
+                  {/*</div>*/}
                 </div>
               </Tooltip>
               {!propertyName && (

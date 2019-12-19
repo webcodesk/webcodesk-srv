@@ -69,9 +69,10 @@ const styles = theme => ({
   },
   titleText: {
     fontWeight: 400,
-    color: '#90a4ae',
+    color: '#607d8b',
     '&:hover': {
       color: theme.palette.primary.main,
+      cursor: 'help'
     }
   },
   mutedText: {

@@ -14,7 +14,6 @@
  *    limitations under the License.
  */
 
-import isUndefined from 'lodash/isUndefined';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -49,7 +48,7 @@ class PropertyCheckbox extends React.Component {
     super(props);
     const {value} = this.props;
     this.state = {
-      inputValue: isUndefined(value) ? false : value,
+      inputValue: typeof value === 'undefined' ? false : value,
     };
   }
 
@@ -62,7 +61,7 @@ class PropertyCheckbox extends React.Component {
     const { value } = this.props;
     if (value !== prevProps.value) {
       this.setState({
-        inputValue: isUndefined(value) ? false : value,
+        inputValue: typeof value === 'undefined' ? false : value,
       });
     }
   }

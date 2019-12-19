@@ -148,10 +148,10 @@ class ComponentPropsTree extends React.Component {
       if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
         return (
           <div className={classes.root}>
-            <Typography variant="subtitle2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom={true}>
               This is a placeholder for other components.
             </Typography>
-            <Typography variant="subtitle2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom={true}>
               Drag & drop components or paste items from the clipboard.
             </Typography>
             <PanelWithShortcutsHelp />
@@ -160,10 +160,10 @@ class ComponentPropsTree extends React.Component {
       } else if (type === constants.COMPONENT_PROPERTY_NODE_TYPE) {
         return (
           <div className={classes.root}>
-            <Typography variant="subtitle2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom={true}>
               This is a placeholder for other components.
             </Typography>
-            <Typography variant="subtitle2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom={true}>
               Drag & drop components or paste items from the clipboard
               to the placeholder in the page's structure only.
             </Typography>
@@ -212,11 +212,14 @@ class ComponentPropsTree extends React.Component {
     }
     return (
       <div className={classes.root}>
-        <Typography variant="subtitle2" gutterBottom={true}>
-          Nothing is selected. Click on any highlighted element on the page to see its properties.
+        <Typography variant="body2" gutterBottom={true}>
+          Nothing is selected.
         </Typography>
-        <Typography variant="subtitle2" gutterBottom={true}>
-          Or drag and drop a component into the placeholder
+        <Typography variant="body2" gutterBottom={true}>
+          Click on any highlighted element on the page to see its properties.
+        </Typography>
+        <Typography variant="body2" gutterBottom={true}>
+          Drag & drop a component into the placeholder
         </Typography>
         <PanelWithShortcutsHelp />
       </div>

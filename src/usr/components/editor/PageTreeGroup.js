@@ -83,7 +83,7 @@ const PageTreeListGroupText = withStyles({
     textOverflow: 'ellipsis',
   },
   primary: {
-    color: '#90a4ae',
+    color: '#607d8b',
   }
 })(ListItemText);
 

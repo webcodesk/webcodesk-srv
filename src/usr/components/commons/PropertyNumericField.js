@@ -15,7 +15,6 @@
  */
 
 import debounce from 'lodash/debounce';
-import isNull from 'lodash/isNull';
 import isNumber from 'lodash/isNumber';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -114,7 +113,7 @@ class PropertyTextField extends React.Component {
     let inputValue = this.input.value;
     inputValue = isNumber(inputValue)
       ? inputValue
-      : inputValue && inputValue.length > 0 ? Number(inputValue) : null;
+      : inputValue && inputValue.length > 0 ? Number(inputValue) : undefined;
     this.setState({
       inputValue,
     });
@@ -151,7 +150,7 @@ class PropertyTextField extends React.Component {
       <PropertyNumericInput
         inputRef={me => this.input = me}
         type="number"
-        value={isNull(inputValue) ? '' : inputValue}
+        value={typeof inputValue === 'undefined' ? '' : inputValue}
         placeholder="Number"
         onChange={this.handleOnChange}
         onKeyDown={this.handleOnKeyDown}

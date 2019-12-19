@@ -20,7 +20,8 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   root: {
-    width: '100%'
+    width: '100%',
+    paddingTop: '12px',
   },
   shortcutWrapper: {
     padding: '3px',
@@ -41,6 +42,9 @@ class PanelWithShortcutsHelp extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
+        <Typography variant="body1" align="center" gutterBottom={true}>
+          Shortcuts
+        </Typography>
         <Typography variant="body2" gutterBottom={true}>
           Delete selected component:
         </Typography>

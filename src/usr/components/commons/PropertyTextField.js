@@ -104,7 +104,7 @@ class PropertyTextField extends React.Component {
     const { text } = this.props;
     if (text !== prevProps.text) {
       this.setState({
-        inputText: text || '',
+        inputText: text,
       });
     }
   }
@@ -114,15 +114,18 @@ class PropertyTextField extends React.Component {
   }, 500);
 
   handleOnChange = () => {
+    const inputText = this.input.current.value && this.input.current.value.length > 0
+      ? this.input.current.value
+      : undefined;
     this.setState({
-      inputText: this.input.current.value,
+      inputText,
     });
-    this.debounceOnChange(this.input.current.value);
+    this.debounceOnChange(inputText);
   };
 
   handleOnCancel = () => {
     this.setState({
-      inputText: '',
+      inputText: undefined,
     });
     this.input.current.focus();
     this.props.onChange();
@@ -150,7 +153,7 @@ class PropertyTextField extends React.Component {
       <PropertyTextInput
         inputRef={this.input}
         type="text"
-        value={inputText}
+        value={typeof inputText === 'undefined' ? '' : inputText}
         placeholder="String"
         onChange={this.handleOnChange}
         onKeyDown={this.handleOnKeyDown}
