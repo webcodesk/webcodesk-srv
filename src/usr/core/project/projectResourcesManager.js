@@ -24,6 +24,7 @@ import * as projectResourcesUtils from './projectResourcesUtils';
 import * as projectResourcesCompiler from './projectResourcesCompiler';
 import * as projectResourcesEnhancer from './projectResourcesEnhancer';
 import ResourceAdapter from './ResourceAdapter';
+import PageComposerManager from '../pageComposer/PageComposerManager';
 
 let pagesGraphModel = globalStore.get('pagesGraphModel');
 let flowsGraphModel = globalStore.get('flowsGraphModel');
@@ -150,7 +151,7 @@ export function initNewResourcesTrees () {
   //
 }
 
-export function resetResourcesTrees() {
+export function resetResourcesTrees () {
   globalStore.clear();
 }
 
@@ -192,7 +193,7 @@ export function updateResources (declarationsInFiles) {
   return { updatedResources, deletedResources, doUpdateAll };
 }
 
-export function getResourceByKey(resourceKey, specificResourceType = null) {
+export function getResourceByKey (resourceKey, specificResourceType = null) {
   return projectResourcesUtils.getResource(resourceKey, specificResourceType);
 }
 
@@ -204,10 +205,8 @@ const flowUserFunctionsModelsMap = new Map();
 
 function flowUserFunctionResourceVisitor ({ nodeModel, parentModel }) {
   const result = [];
-  if (nodeModel && nodeModel.props && nodeModel.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE) {
-    if (!nodeModel.props.isTest) {
-      result.push(nodeModel);
-    }
+  if (nodeModel && nodeModel.props && !nodeModel.props.isTest && nodeModel.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE) {
+    result.push(nodeModel);
   }
   return result;
 }
@@ -241,7 +240,7 @@ export function getUserFunctionsTreeProd (startKey = null) {
   });
 }
 
-export function getUserFunctionsCount() {
+export function getUserFunctionsCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE);
 }
 
@@ -252,10 +251,13 @@ export function getUserComponentsTree (startKey = null) {
 const componentInstanceModelsMap = new Map();
 
 function componentInstancesResourceVisitor ({ nodeModel, parentModel }) {
-  const result = [];
-  if (nodeModel && nodeModel.props && nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
-    if (!nodeModel.props.isTest) {
-      result.push(nodeModel);
+  let result = [];
+  if (nodeModel && nodeModel.props && !nodeModel.props.isTest && nodeModel.type === constants.GRAPH_MODEL_PAGE_TYPE) {
+    // We have to search in the real components tree
+    if (nodeModel.props.componentsTree) {
+      // find all components that page includes
+      const pageComposerManager = new PageComposerManager(nodeModel.props.componentsTree);
+      result = pageComposerManager.getComponentsList();
     }
   }
   return result;
@@ -268,9 +270,8 @@ export function getUserComponentsTreeProd (startKey = null) {
     const componentInstanceModels = pagesGraphModel.traverse(componentInstancesResourceVisitor);
     if (componentInstanceModels && componentInstanceModels.length > 0) {
       componentInstanceModels.forEach(componentInstanceModel => {
-        if (componentInstanceModel.props) {
-          const { props: { componentName } } = componentInstanceModel;
-          componentInstanceModelsMap.set(componentName, true);
+        if (componentInstanceModel.componentName) {
+          componentInstanceModelsMap.set(componentInstanceModel.componentName, true);
         }
       });
     }
@@ -290,7 +291,7 @@ export function getUserComponentsTreeProd (startKey = null) {
   });
 }
 
-export function getUserComponentsCount() {
+export function getUserComponentsCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_COMPONENTS_TYPE);
 }
 
@@ -308,7 +309,7 @@ export function getPagesTreeProd (startKey = null) {
   });
 }
 
-export function getPagesCount() {
+export function getPagesCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_PAGES_TYPE);
 }
 
@@ -316,7 +317,7 @@ export function getTemplatesTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_TEMPLATES_TYPE, startKey);
 }
 
-export function getTemplatesCount() {
+export function getTemplatesCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_TEMPLATES_TYPE);
 }
 
@@ -334,7 +335,7 @@ export function getFlowsTreeProd (startKey = null) {
   });
 }
 
-export function getFlowsCount() {
+export function getFlowsCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_FLOWS_TYPE);
 }
 
@@ -350,28 +351,28 @@ export function getClipboardTree (startKey = null) {
   return projectResourcesUtils.getResourceTreeOrderedByKey(constants.RESOURCE_IN_CLIPBOARD_TYPE, startKey, 'desc');
 }
 
-export function getClipboardItemsCount() {
+export function getClipboardItemsCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_CLIPBOARD_TYPE);
 }
 
-export function getAllPagesList() {
+export function getAllPagesList () {
   return projectResourcesUtils.getAllPagesList();
 }
 
-export function getApplicationSettings() {
+export function getApplicationSettings () {
   return projectResourcesUtils.getApplicationSettings();
 }
 
-export function findResourcesKeysByText(text) {
+export function findResourcesKeysByText (text) {
   return projectResourcesUtils.findResourcesKeysByText(text);
 }
 
-export function getProjectReadmeContent() {
+export function getProjectReadmeContent () {
   const projectReadmeResource = projectResourcesUtils.getResource('usr.README.readme');
   return projectReadmeResource.markdownContent;
 }
 
-export function pushUpdateToResourceHistory(resource, fileObject) {
+export function pushUpdateToResourceHistory (resource, fileObject) {
   if (!resourcesUpdateHistory) {
     resourcesUpdateHistory = {};
   }
@@ -380,7 +381,7 @@ export function pushUpdateToResourceHistory(resource, fileObject) {
   return getResourcesUpdateHistory();
 }
 
-export function getResourcesUpdateHistory() {
+export function getResourcesUpdateHistory () {
   const portableResourcesUpdateHistory = {};
   forOwn(resourcesUpdateHistory, (value, key) => {
     portableResourcesUpdateHistory[key] = value ? value.map(i => i.filePath) : [];
@@ -388,7 +389,7 @@ export function getResourcesUpdateHistory() {
   return portableResourcesUpdateHistory;
 }
 
-export function popUpdateFromResourceHistory(resource) {
+export function popUpdateFromResourceHistory (resource) {
   let fileObject = null;
   if (resourcesUpdateHistory) {
     const resourceHistory = resourcesUpdateHistory[resource.key];
@@ -399,11 +400,11 @@ export function popUpdateFromResourceHistory(resource) {
   return fileObject;
 }
 
-export function getComponentsGraphModel() {
+export function getComponentsGraphModel () {
   return userComponentsGraphModel;
 }
 
-export function getFlowsGraphModel() {
+export function getFlowsGraphModel () {
   return flowsGraphModel;
 }
 
@@ -411,7 +412,7 @@ export function getPagesGraphModel () {
   return pagesGraphModel;
 }
 
-export function getFunctionsGraphModel() {
+export function getFunctionsGraphModel () {
   return userFunctionsGraphModel;
 }
 

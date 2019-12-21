@@ -75,6 +75,24 @@ class PageComposerManager {
     return result;
   };
 
+  componentVisitor = ({ nodeModel }) => {
+    const result = [];
+    if (
+      nodeModel
+      && nodeModel.props
+      && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
+    ) {
+      const { key, props } = nodeModel;
+      if (props) {
+        result.push({
+          componentName: props.componentName,
+          componentInstance: props.componentInstance,
+        });
+      }
+    }
+    return result;
+  };
+
   selectedVisitor = ({nodeModel, parentModel}) => {
     const result = [];
     if (nodeModel && nodeModel.props && result.length === 0) {
@@ -101,6 +119,10 @@ class PageComposerManager {
   getInstancesListUniq = () => {
     // get all instance references with the component tree chunks that belong to each instance
     return this.graphModel.traverse(this.instanceVisitor);
+  };
+
+  getComponentsList = () => {
+    return this.graphModel.traverse(this.componentVisitor);
   };
 
   getModel = () => {
