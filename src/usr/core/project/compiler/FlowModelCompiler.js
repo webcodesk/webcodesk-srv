@@ -433,7 +433,46 @@ class FlowModelCompiler {
           this.errorsCount++;
         }
       } else if (nodeModel.type === constants.FLOW_PAGE_TYPE) {
-        const { props: { title, pagePath, inputs } } = nodeModel;
+        // add default properties to input and output of the page
+        const { props: { title, pagePath, inputs, outputs } } = nodeModel;
+        const forwardInput = inputs && inputs.length > 0
+          ? inputs.find(i => i.name === 'forward')
+          : null;
+        if (forwardInput) {
+          forwardInput.properties = {
+            type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+            children: [],
+          };
+        } else {
+          nodeModel.props.inputs = [
+            {
+              name: 'forward',
+              properties: {
+                type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+                children: [],
+              },
+            }
+          ];
+        }
+        const queryParamsOutput = outputs && outputs.length > 0
+          ? outputs.find(i => i.name === 'queryParams')
+          : null;
+        if (queryParamsOutput) {
+          queryParamsOutput.properties = {
+            type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+            children: [],
+          };
+        } else {
+          nodeModel.props.outputs = [
+            {
+              name: 'queryParams',
+              properties: {
+                type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+                children: [],
+              },
+            }
+          ];
+        }
         const foundPageModel = this.pagesGraphModel.getNode(pagePath);
         if (!foundPageModel) {
           // add error if it is not here
@@ -449,8 +488,10 @@ class FlowModelCompiler {
           this.errorsCount++;
         } else {
           if (parentModel) {
-            const findConnectedInputs = inputs && inputs.length > 0 ? inputs.find(i => !!i.connectedTo) : null;
-            if (!findConnectedInputs) {
+            const findConnectedInput = inputs && inputs.length > 0
+              ? inputs.find(i => !!i.connectedTo)
+              : null;
+            if (!findConnectedInput) {
               if (
                 !nodeModel.props.errors ||
                 !nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS]
@@ -476,6 +517,28 @@ class FlowModelCompiler {
             delete nodeModel.props.errors[constants.COMPILER_ERROR_PAGE_NOT_FOUND];
             this.changesCount++;
           }
+        }
+      } else if (nodeModel.type === constants.FLOW_APPLICATION_STARTER_TYPE) {
+        // add default properties to output of the application start
+        const { props: { outputs } } = nodeModel;
+        const applicationStartOutput = outputs && outputs.length > 0
+          ? outputs.find(i => i.name === 'onApplicationStart')
+          : null;
+        if (applicationStartOutput) {
+          applicationStartOutput.properties = {
+            type: constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
+            children: [],
+          };
+        } else {
+          nodeModel.props.outputs = [
+            {
+              name: 'onApplicationStart',
+              properties: {
+                type: constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
+                children: [],
+              }
+            }
+          ];
         }
       }
       if (nodeModel.children && nodeModel.children.length > 0) {

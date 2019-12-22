@@ -286,7 +286,7 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
             `}${level > 0 ? ',' : ';'}`
           );
         } else {
-          result.push(`const ${variableName} = null;`);
+          result.push(`const ${variableName} = undefined;`);
         }
       }
     } else if (type === constants.COMPONENT_PROPERTY_STRING_TYPE
