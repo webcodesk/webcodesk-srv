@@ -19,11 +19,13 @@ import generate from '@babel/generator';
 import presetReact from '@babel/preset-react';
 import pluginProposalClassProperties from '@babel/plugin-proposal-class-properties';
 import pluginSyntaxTypescript from '@babel/plugin-syntax-typescript';
+import pluginSyntaxDynamicImport from '@babel/plugin-syntax-dynamic-import';
 
 export const getSourceAst = (sourceCode) => {
   const ast = babel.parse(sourceCode, {
     plugins: [
       pluginProposalClassProperties,
+      pluginSyntaxDynamicImport,
       [pluginSyntaxTypescript, { isTSX: true }],
     ],
     presets: [

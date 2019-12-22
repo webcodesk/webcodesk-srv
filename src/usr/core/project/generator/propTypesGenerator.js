@@ -199,16 +199,9 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
   if (node) {
     const { type, props, children } = node;
     let propertyName;
-    // let propertyComment;
-    // let isRequired;
     if (props) {
       propertyName = props.propertyName;
-      // propertyComment = props.propertyComment;
-      // isRequired = props.isRequired;
     }
-    // if (propertyComment) {
-    //   result.push(`/* ${propertyComment} */`);
-    // }
     if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
       if (propertyName) {
         if (level > 0) {
@@ -216,7 +209,6 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
             `${propertyName}: {`
           );
         } else {
-          // result.push(`// type: object, required: ${!!isRequired}`);
           result.push(`const ${variableName} = {`);
         }
         if (children && children.length > 0) {
@@ -234,7 +226,6 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
             '{'
           );
         } else {
-          // result.push(`// type: object, required: ${!!isRequired}`);
           result.push(`const ${variableName} = {`);
         }
         if (children && children.length > 0) {
@@ -254,7 +245,6 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
             `${propertyName}: [`
           );
         } else {
-          // result.push(`// type: array, required: ${!isRequired}`);
           result.push(`const ${variableName} = [`);
         }
         if (children && children.length > 0) {
@@ -272,7 +262,6 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
             '['
           );
         } else {
-          // result.push(`// type: array, required: ${!!isRequired}`);
           result.push(`const ${variableName} = [`);
         }
         if (children && children.length > 0) {
@@ -286,26 +275,8 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
         );
       }
     } else if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
-      if (level > 0) {
+      if (level === 0) {
         if (children && children.length > 0) {
-          result.push(
-            '{'
-          );
-          result = children.reduce(
-            (acc, child) => acc.concat(createSampleObjectNextLine(child, variableName, level + 1)),
-            result
-          );
-          result.push(
-            `}${level > 0 ? ',' : ';'}`
-          );
-        } else {
-          result.push(
-            `null${level > 0 ? ',' : ';'}`
-          );
-        }
-      } else {
-        if (children && children.length > 0) {
-          // result.push(`// type: object, required: ${!!isRequired}`);
           result.push(`const ${variableName} = {`);
           result = children.reduce(
             (acc, child) => acc.concat(createSampleObjectNextLine(child, variableName, level + 1)),
@@ -315,7 +286,6 @@ function createSampleObjectNextLine (node, variableName, level = 0) {
             `}${level > 0 ? ',' : ';'}`
           );
         } else {
-          // result.push('// type: any');
           result.push(`const ${variableName} = null;`);
         }
       }
