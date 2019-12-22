@@ -83,6 +83,7 @@ import PlayCircleOutline from '@material-ui/icons/PlayCircleOutline';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import HelpOutline from '@material-ui/icons/HelpOutline';
+import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
 
 import { CommonToolbarButton, CommonToolbarIconButton, CommonErrorBadge } from './Commons.parts';
 
@@ -225,6 +226,7 @@ const icons = {
   KeyboardArrowLeft,
   KeyboardArrowRight,
   HelpOutline,
+  FormatListBulleted,
 
   // extra icons
   CopyToClipboard,

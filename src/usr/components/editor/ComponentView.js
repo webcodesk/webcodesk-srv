@@ -76,6 +76,14 @@ const styles = theme => ({
     left: 0,
     overflow: 'auto',
   },
+  contentPane: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    overflow: 'auto',
+  },
 });
 
 class ComponentView extends React.Component {
@@ -119,6 +127,7 @@ class ComponentView extends React.Component {
       iFrameWidthIndex: this.getViewFlag('iFrameWidthIndex', 0),
       lastDebugMsg: null,
       isSourceCodeOpen: false,
+      isReadmeOpen: this.getViewFlag('isReadmeOpen', false),
       localComponentViewModel: null,
       localComponentsTree: this.pageComposerManager.getModel(),
       localSourceCode: '',
@@ -198,6 +207,7 @@ class ComponentView extends React.Component {
       iFrameWidthIndex,
       lastDebugMsg,
       isSourceCodeOpen,
+      isReadmeOpen,
       sourceCodeUpdateCounter,
       localSourceCode,
       localComponentViewModel
@@ -211,6 +221,7 @@ class ComponentView extends React.Component {
       || iFrameWidthIndex !== nextState.iFrameWidthIndex
       || lastDebugMsg !== nextState.lastDebugMsg
       || isSourceCodeOpen !== nextState.isSourceCodeOpen
+      || isReadmeOpen !== nextState.isReadmeOpen
       || sourceCodeUpdateCounter !== nextState.sourceCodeUpdateCounter
       || localSourceCode !== nextState.localSourceCode
       || localComponentViewModel !== nextState.localComponentViewModel
@@ -351,6 +362,13 @@ class ComponentView extends React.Component {
     });
   };
 
+  handleToggleReadmeView = () => {
+    this.storeViewFlag('isReadmeOpen', !this.state.isReadmeOpen);
+    this.setState({
+      isReadmeOpen: !this.state.isReadmeOpen,
+    });
+  };
+
   handleSplitterOnDragStarted = () => {
     this.setState({
       showPanelCover: true,
@@ -436,7 +454,7 @@ class ComponentView extends React.Component {
   };
 
   render () {
-    const { classes, serverPort, data } = this.props;
+    const { classes, serverPort } = this.props;
     const {
       showPropertyEditor,
       showInfoView,
@@ -444,6 +462,7 @@ class ComponentView extends React.Component {
       infoTabActiveIndex,
       lastDebugMsg,
       isSourceCodeOpen,
+      isReadmeOpen,
       localSourceCode,
       markdownContent,
       sourceCodeUpdateCounter,
@@ -453,186 +472,208 @@ class ComponentView extends React.Component {
       storiesViewSplitterSize,
       iFrameWidthIndex
     } = this.state;
-    // const propertiesDescription = generatePropertiesMarkDown(data.propertiesRef);
-    // console.info(propertiesDescription);
-    //
-    // const readmeWithProperties = `${markdownContent}\n\n${propertiesDescription} `;
+    let topPanelContent;
+    let centralPaneContent;
+    if (isSourceCodeOpen) {
+      topPanelContent = (
+        <CommonToolbar disableGutters={true} dense="true">
+          <ToolbarButton
+            iconType="ArrowBack"
+            title="Component View"
+            onClick={this.handleToggleSourceCode}
+            tooltip="Switch to the component view"
+          />
+          <CommonToolbarDivider/>
+          <ToolbarButton
+            iconType="Save"
+            iconColor="#4caf50"
+            title="Save Changes"
+            onClick={this.handleSaveChanges}
+            tooltip="Save recent changes"
+            switchedOn={sourceCodeUpdateCounter > 0}
+            disabled={sourceCodeUpdateCounter === 0}
+          />
+        </CommonToolbar>
+      );
+      centralPaneContent = (
+        <SourceCodeEditor
+          isVisible={true}
+          data={{script: localSourceCode}}
+          onChange={this.handleChangeSourceCode}
+        />
+      );
+    } else if (isReadmeOpen) {
+      topPanelContent = (
+        <CommonToolbar disableGutters={true} dense="true">
+          <ToolbarButton
+            iconType="ArrowBack"
+            title="Component View"
+            onClick={this.handleToggleReadmeView}
+            tooltip="Switch to the component view"
+          />
+          <CommonToolbarDivider/>
+        </CommonToolbar>
+      );
+      centralPaneContent = (
+        <div className={classes.contentPane}>
+          <MarkdownView markdownContent={markdownContent} />
+        </div>
+      );
+    } else {
+      topPanelContent = (
+        <CommonToolbar disableGutters={true} dense="true">
+          <ToolbarButton
+            iconType="FormatListBulleted"
+            switchedOn={showInfoView}
+            onClick={this.handleToggleInfoView}
+            title="Events Log"
+            tooltip={showInfoView
+              ? 'Close component events log'
+              : 'Open component events log'
+            }
+          />
+          <ToolbarButton
+            iconType="Edit"
+            switchedOn={showPropertyEditor}
+            onClick={this.handleTogglePropsPanel}
+            title="Properties"
+            tooltip={showPropertyEditor
+              ? 'Close component properties'
+              : 'Open component properties'
+            }
+          />
+          <CommonToolbarDivider/>
+          <ToolbarButton
+            iconType="LibraryBooks"
+            onClick={this.handleToggleReadmeView}
+            title="Readme"
+            tooltip="Open component readme and events log"
+          />
+          <ToolbarButton
+            iconType="Edit"
+            title="Source Code"
+            onClick={this.handleToggleSourceCode}
+            tooltip="Switch to the source code editor"
+          />
+          <CommonToolbarDivider/>
+          <ToolbarButton
+            iconType="Undo"
+            title="Undo"
+            disabled={recentUpdateHistory.length === 0}
+            onClick={this.undoUpdateLocalState}
+            tooltip="Undo the last change of the property (⌘+z | ctrl+z)"
+          />
+          <ToolbarButton
+            iconType="Refresh"
+            title="Reload"
+            onClick={this.handleReload}
+            tooltip="Reload the entire page (⌘+r | ctrl+r)"
+          />
+          <CommonToolbarDivider/>
+          <ToolbarButton
+            iconType="Widgets"
+            title="Save Template"
+            onClick={this.handleSaveAsTemplate}
+            tooltip="Save the component with current settings as a template (⌘+s | ctrl+s)"
+          />
+          <CommonToolbarDivider/>
+          <ToolbarButton
+            iconType={constants.MEDIA_WIDTHS[iFrameWidthIndex].iconType}
+            title={constants.MEDIA_WIDTHS[iFrameWidthIndex].label}
+            tooltip={constants.MEDIA_WIDTHS[iFrameWidthIndex].tooltip}
+            titleLengthLimit={200}
+            menuItems={constants.MEDIA_WIDTHS.map((mediaWidthItem, itemIndex) => {
+              return {
+                label: mediaWidthItem.label,
+                iconType: mediaWidthItem.iconType,
+                tooltip: mediaWidthItem.tooltip,
+                onClick: this.handleToggleWidth(itemIndex),
+              }
+            })}
+          />
+        </CommonToolbar>
+      );
+      centralPaneContent = (
+        <SplitPane
+          key="storiesViewSplitter"
+          split="vertical"
+          primary="second"
+          defaultSize={storiesViewSplitterSize}
+          onDragStarted={this.handleSplitterOnDragStarted}
+          onDragFinished={this.handleSplitterOnDragFinished('storiesViewSplitterSize')}
+          pane2Style={{ display: showPropertyEditor ? 'block' : 'none' }}
+          resizerStyle={{ display: showPropertyEditor ? 'block' : 'none' }}
+        >
+          <div className={classes.leftPane}>
+            <SplitPane
+              key="actionsLogViewSplitter"
+              split="horizontal"
+              defaultSize={actionsLogViewSplitterSize}
+              primary="second"
+              onDragStarted={this.handleSplitterOnDragStarted}
+              onDragFinished={this.handleSplitterOnDragFinished('actionsLogViewSplitterSize')}
+              pane2Style={{ display: showInfoView ? 'block' : 'none' }}
+              resizerStyle={{ display: showInfoView ? 'block' : 'none' }}
+            >
+              <div className={classes.root}>
+                {showPanelCover && (
+                  <div className={classes.root} style={{ zIndex: 10 }}/>
+                )}
+                {serverPort > 0 && (
+                  <IFrame
+                    ref={this.iFrameRef}
+                    width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
+                    url={`http://localhost:${serverPort}/webcodesk__component_view`}
+                    onIFrameReady={this.handleIFrameReady}
+                    onIFrameMessage={this.handleFrameworkMessage}
+                  />
+                )}
+              </div>
+              <div className={classes.root}>
+                <CommonTabsWithBottomBorder
+                  value={infoTabActiveIndex}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  fullWidth={false}
+                  onChange={this.handleChangeInfoTab}
+                >
+                  <CommonTab label="Events Log"/>
+                  <CommonTab label="Component Readme"/>
+                </CommonTabsWithBottomBorder>
+                {infoTabActiveIndex === 0 && (
+                  <div className={classes.tabContentPane}>
+                    <EventsLogViewer lastRecord={lastDebugMsg}/>
+                  </div>
+                )}
+                {infoTabActiveIndex === 1 && (
+                  <div className={classes.tabContentPane}>
+                    <MarkdownView markdownContent={markdownContent} />
+                  </div>
+                )}
+              </div>
+            </SplitPane>
+          </div>
+          <div className={classes.editorPane}>
+            <ComponentPropsTree
+              componentModel={localComponentsTree}
+              isSampleComponent={true}
+              onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
+              onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+              onDeleteComponentProperty={this.handleDeleteComponentProperty}
+              onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+              onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+            />
+          </div>
+        </SplitPane>
+      );
+    }
     return (
       <div className={classes.root}>
         <div className={classes.topPane}>
-          {!isSourceCodeOpen
-            ? (
-              <CommonToolbar disableGutters={true} dense="true">
-                <ToolbarButton
-                  iconType="LibraryBooks"
-                  switchedOn={showInfoView}
-                  onClick={this.handleToggleInfoView}
-                  title="Readme"
-                  tooltip={showInfoView
-                    ? 'Close component readme and events log'
-                    : 'Open component readme and events log'
-                  }
-                />
-                <ToolbarButton
-                  iconType="Edit"
-                  switchedOn={showPropertyEditor}
-                  onClick={this.handleTogglePropsPanel}
-                  title="Properties"
-                  tooltip={showPropertyEditor
-                    ? 'Close component properties'
-                    : 'Open component properties'
-                  }
-                />
-                <CommonToolbarDivider/>
-                <ToolbarButton
-                  iconType="Undo"
-                  title="Undo"
-                  disabled={recentUpdateHistory.length === 0}
-                  onClick={this.undoUpdateLocalState}
-                  tooltip="Undo the last change of the property (⌘+z | ctrl+z)"
-                />
-                <CommonToolbarDivider/>
-                <ToolbarButton
-                  iconType="Edit"
-                  title="Source Code"
-                  onClick={this.handleToggleSourceCode}
-                  tooltip="Switch to the source code editor"
-                />
-                <ToolbarButton
-                  iconType="Refresh"
-                  title="Reload"
-                  onClick={this.handleReload}
-                  tooltip="Reload the entire page (⌘+r | ctrl+r)"
-                />
-                <CommonToolbarDivider/>
-                <ToolbarButton
-                  iconType="Widgets"
-                  title="Save Template"
-                  onClick={this.handleSaveAsTemplate}
-                  tooltip="Save the component with current settings as a template (⌘+s | ctrl+s)"
-                />
-                <CommonToolbarDivider/>
-                <ToolbarButton
-                  iconType={constants.MEDIA_WIDTHS[iFrameWidthIndex].iconType}
-                  title={constants.MEDIA_WIDTHS[iFrameWidthIndex].label}
-                  tooltip={constants.MEDIA_WIDTHS[iFrameWidthIndex].tooltip}
-                  titleLengthLimit={200}
-                  menuItems={constants.MEDIA_WIDTHS.map((mediaWidthItem, itemIndex) => {
-                    return {
-                      label: mediaWidthItem.label,
-                      iconType: mediaWidthItem.iconType,
-                      tooltip: mediaWidthItem.tooltip,
-                      onClick: this.handleToggleWidth(itemIndex),
-                    }
-                  })}
-                />
-              </CommonToolbar>
-            )
-            : (
-              <CommonToolbar disableGutters={true} dense="true">
-                <ToolbarButton
-                  iconType="ArrowBack"
-                  title="Component View"
-                  onClick={this.handleToggleSourceCode}
-                  tooltip="Switch to the component view"
-                />
-                <CommonToolbarDivider/>
-                <ToolbarButton
-                  iconType="Save"
-                  iconColor="#4caf50"
-                  title="Save Changes"
-                  onClick={this.handleSaveChanges}
-                  tooltip="Save recent changes"
-                  switchedOn={sourceCodeUpdateCounter > 0}
-                  disabled={sourceCodeUpdateCounter === 0}
-                />
-              </CommonToolbar>
-            )
-          }
+          {topPanelContent}
         </div>
         <div className={classes.centralPane}>
-          {!isSourceCodeOpen
-            ? (
-              <SplitPane
-                key="storiesViewSplitter"
-                split="vertical"
-                primary="second"
-                defaultSize={storiesViewSplitterSize}
-                onDragStarted={this.handleSplitterOnDragStarted}
-                onDragFinished={this.handleSplitterOnDragFinished('storiesViewSplitterSize')}
-                pane2Style={{ display: showPropertyEditor ? 'block' : 'none' }}
-                resizerStyle={{ display: showPropertyEditor ? 'block' : 'none' }}
-              >
-                <div className={classes.leftPane}>
-                  <SplitPane
-                    key="actionsLogViewSplitter"
-                    split="horizontal"
-                    defaultSize={actionsLogViewSplitterSize}
-                    primary="second"
-                    onDragStarted={this.handleSplitterOnDragStarted}
-                    onDragFinished={this.handleSplitterOnDragFinished('actionsLogViewSplitterSize')}
-                    pane2Style={{ display: showInfoView ? 'block' : 'none' }}
-                    resizerStyle={{ display: showInfoView ? 'block' : 'none' }}
-                  >
-                    <div className={classes.root}>
-                      {showPanelCover && (
-                        <div className={classes.root} style={{ zIndex: 10 }}/>
-                      )}
-                      {serverPort > 0 && (
-                        <IFrame
-                          ref={this.iFrameRef}
-                          width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
-                          url={`http://localhost:${serverPort}/webcodesk__component_view`}
-                          onIFrameReady={this.handleIFrameReady}
-                          onIFrameMessage={this.handleFrameworkMessage}
-                        />
-                      )}
-                    </div>
-                    <div className={classes.root}>
-                      <CommonTabsWithBottomBorder
-                        value={infoTabActiveIndex}
-                        indicatorColor="primary"
-                        textColor="primary"
-                        fullWidth={false}
-                        onChange={this.handleChangeInfoTab}
-                      >
-                        <CommonTab label="Component Readme"/>
-                        <CommonTab label="Events Log"/>
-                      </CommonTabsWithBottomBorder>
-                      {infoTabActiveIndex === 0 && (
-                        <div className={classes.tabContentPane}>
-                          <MarkdownView markdownContent={markdownContent} />
-                        </div>
-                      )}
-                      {infoTabActiveIndex === 1 && (
-                        <div className={classes.tabContentPane}>
-                          <EventsLogViewer lastRecord={lastDebugMsg}/>
-                        </div>
-                      )}
-                    </div>
-                  </SplitPane>
-                </div>
-                <div className={classes.editorPane}>
-                  <ComponentPropsTree
-                    componentModel={localComponentsTree}
-                    isSampleComponent={true}
-                    onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
-                    onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                    onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                  />
-                </div>
-              </SplitPane>
-            )
-            : (
-              <SourceCodeEditor
-                isVisible={true}
-                data={{script: localSourceCode}}
-                onChange={this.handleChangeSourceCode}
-              />
-            )
-          }
+          {centralPaneContent}
         </div>
       </div>
     );
