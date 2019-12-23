@@ -337,6 +337,9 @@ class FlowModelCompiler {
                 this.changesCount++;
               } else {
                 // update found output
+                foundItemOutput.properties = foundItemOutput.properties || {
+                  type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+                };
                 foundItemOutput.properties.children =
                   functionDispatch.propertiesRef ? cloneDeep(functionDispatch.propertiesRef) : [];
               }
