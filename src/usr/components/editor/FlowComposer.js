@@ -241,15 +241,17 @@ class FlowComposer extends React.Component {
       const {keyCode, metaKey, ctrlKey} = e;
       if (metaKey || ctrlKey) {
         if (keyCode === 90) { // Undo
+          e.stopPropagation();
+          e.preventDefault();
           this.handleUndo();
         }
       } else {
         if (keyCode === 8 || keyCode === 46) { // Delete
+          e.stopPropagation();
+          e.preventDefault();
           this.handleDeleteItem();
         }
       }
-      e.stopPropagation();
-      e.preventDefault();
     }
   };
 

@@ -111,6 +111,11 @@ pre {
   background-color: #eceff1;
   border: 1px solid #90a4ae;
   border-radius: 4px;
+  -webkit-user-select: text; /* Safari */
+  -moz-user-select: text; /* Old versions of Firefox */
+  -ms-user-select: text; /* Internet Explorer/Edge */
+  user-select: text; /* Non-prefixed version, currently
+                        supported by Chrome, Opera and Firefox */
 }
 
 pre code {
@@ -120,6 +125,11 @@ pre code {
   white-space: pre-wrap;
   background-color: transparent;
   border-radius: 0;
+  -webkit-user-select: text; /* Safari */
+  -moz-user-select: text; /* Old versions of Firefox */
+  -ms-user-select: text; /* Internet Explorer/Edge */
+  user-select: text; /* Non-prefixed version, currently
+                        supported by Chrome, Opera and Firefox */
 }
 
 code {
@@ -127,6 +137,11 @@ code {
   font-size: 90%;
   background-color: #f9f2f4;
   border-radius: 4px;
+  -webkit-user-select: text; /* Safari */
+  -moz-user-select: text; /* Old versions of Firefox */
+  -ms-user-select: text; /* Internet Explorer/Edge */
+  user-select: text; /* Non-prefixed version, currently
+                        supported by Chrome, Opera and Firefox */
 }
 
 code, kbd, pre, samp {
