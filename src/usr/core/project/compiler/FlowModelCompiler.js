@@ -61,19 +61,19 @@ class FlowModelCompiler {
             let foundItemInput;
             let foundItemOutput;
             propertiesRef.forEach(propertyRef => {
-              const { type: componentPropertyType, props: { propertyName } } = propertyRef;
+              const { type: componentPropertyType, props: { propertyName, propertiesArg } } = propertyRef;
               if (componentPropertyType === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
                 foundItemOutput = flowItemOutputs[propertyName];
                 if (!foundItemOutput) {
                   // output is missing
                   nodeModel.props.outputs.push({
                     name: propertyName,
-                    properties: propertyRef ? cloneDeep(propertyRef) : {},
+                    properties: propertiesArg ? cloneDeep(propertiesArg) : {},
                   });
                   this.changesCount++;
                 } else {
                   // update input props
-                  foundItemOutput.properties = propertyRef ? cloneDeep(propertyRef) : {};
+                  foundItemOutput.properties = propertiesArg ? cloneDeep(propertiesArg) : {};
                 }
               } else {
                 foundItemInput = flowItemInputs[propertyName];
@@ -306,16 +306,10 @@ class FlowModelCompiler {
         const functionModel = this.userFunctionsGraphModel.getNode(functionName);
         if (functionModel) {
           const { props: { inputs, outputs } } = nodeModel;
-          const { props: { propertiesRef, dispatches } } = functionModel;
+          const { props: { propertiesArg, dispatches } } = functionModel;
 
           if (inputs && inputs.length > 0) {
-            nodeModel.props.inputs[0].properties = {
-              type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-              props: {
-                isRequired: true,
-              },
-              children: propertiesRef ? cloneDeep(propertiesRef) : [],
-            };
+            nodeModel.props.inputs[0].properties = propertiesArg ? cloneDeep(propertiesArg) : {};
           }
 
           const functionDispatchesMap = keyBy(dispatches, 'name');
@@ -329,19 +323,13 @@ class FlowModelCompiler {
                 // output is missing
                 nodeModel.props.outputs.push({
                   name: functionDispatch.name,
-                  properties: {
-                    type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-                    children: functionDispatch.propertiesRef ? cloneDeep(functionDispatch.propertiesRef) : []
-                  }
+                  properties: functionDispatch.propertiesArg ? cloneDeep(functionDispatch.propertiesArg) : {}
                 });
                 this.changesCount++;
               } else {
                 // update found output
-                foundItemOutput.properties = foundItemOutput.properties || {
-                  type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-                };
-                foundItemOutput.properties.children =
-                  functionDispatch.propertiesRef ? cloneDeep(functionDispatch.propertiesRef) : [];
+                foundItemOutput.properties =
+                  functionDispatch.propertiesArg ? cloneDeep(functionDispatch.propertiesArg) : {};
               }
             });
           }

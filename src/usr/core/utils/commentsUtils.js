@@ -18,7 +18,7 @@
 import constants from '../../../commons/constants';
 
 const newLineRegExp = new RegExp(/\r?\n/);
-const paramLineRegExp = new RegExp('@param\?.*', 'i');
+const paramLineRegExp = new RegExp('@functionTypes\?.*', 'i');
 const paramTypeRegExp = new RegExp('\{([^}]+)\}', 'i');
 
 export const getWcdAnnotations = (commentRawValue) => {

@@ -20,6 +20,19 @@ import isUndefined from 'lodash/isUndefined';
 import * as projectResourcesManager from './projectResourcesManager';
 import constants from '../../../commons/constants';
 
+function getPropertyByName(properties, propertyName) {
+  let result = null;
+  if (properties && properties.length > 0) {
+    properties.forEach(property => {
+      const { props } = property;
+      if (props && props.propertyName === propertyName) {
+        result = property;
+      }
+    });
+  }
+  return result;
+}
+
 function getPropertiesRef(properties) {
   let result = [];
   if (properties && properties.length > 0) {
@@ -54,8 +67,7 @@ function getPropertiesRef(properties) {
           newPropertyRef.props.propertyValueVariants = cloneDeep(propertyValueVariants);
         }
         result.push(newPropertyRef);
-      } else if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE
-        || type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
+      } else if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         const newPropertyRef = {
           type,
           props: {
@@ -67,6 +79,24 @@ function getPropertiesRef(properties) {
         };
         if (children && children.length > 0) {
           newPropertyRef.children = getPropertiesRef(children);
+        }
+        result.push(newPropertyRef);
+      } else if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
+        const newPropertyRef = {
+          type,
+          props: {
+            propertyName,
+            propertyComment,
+            propertyLabel,
+            isRequired,
+          },
+        };
+        if (children && children.length > 0) {
+          const childrenRef = getPropertiesRef(children);
+          const firstArgumentProperty = getPropertyByName(childrenRef, constants.FUNCTION_TYPES_FIRST_ARGUMENT_PROP_NAME);
+          if (firstArgumentProperty) {
+            newPropertyRef.props.propertiesArg = cloneDeep(firstArgumentProperty);
+          }
         }
         result.push(newPropertyRef);
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
@@ -244,52 +274,33 @@ function componentEnrichVisitor ({ nodeModel, parentModel }) {
 function functionEnrichVisitor ({ nodeModel, parentModel }) {
   if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_USER_FUNCTION_TYPE) {
     const { props } = nodeModel;
+    let externalPropTypesResource;
+    let propertiesRef;
     if (props && props.externalProperties) {
-      const externalPropTypesResource = projectResourcesManager.getResourceByKey(props.externalProperties);
+      externalPropTypesResource =
+        projectResourcesManager.getResourceByKey(props.externalProperties);
       if (externalPropTypesResource) {
-        props.properties = cloneDeep(externalPropTypesResource.properties);
-        props.propertiesRef = getPropertiesRef(props.properties);
+        // The function types should have argument property to specify the types of the first argument
+        propertiesRef = getPropertiesRef(externalPropTypesResource.properties);
+        const firstArgumentProperties =
+          getPropertyByName(propertiesRef, constants.FUNCTION_TYPES_FIRST_ARGUMENT_PROP_NAME);
+        if (firstArgumentProperties) {
+          props.propertiesArg = cloneDeep(firstArgumentProperties);
+        }
       }
     }
     if (props && props.dispatches && props.dispatches.length > 0) {
       props.dispatches.forEach(dispatchItem => {
-        if (dispatchItem && dispatchItem.externalProperties) {
-          const externalPropTypesResource = projectResourcesManager.getResourceByKey(dispatchItem.externalProperties);
-          if (externalPropTypesResource) {
-            dispatchItem.properties = cloneDeep(externalPropTypesResource.properties);
-            dispatchItem.propertiesRef = getPropertiesRef(dispatchItem.properties);
+        if (externalPropTypesResource) {
+          // The function dispatch types should have argument property to specify the types of the dispatch argument
+          const dispatchObjectProperties =
+            getPropertyByName(propertiesRef, dispatchItem.name);
+          if (dispatchObjectProperties) {
+            dispatchItem.propertiesArg = cloneDeep(dispatchObjectProperties);
           }
-        }
-        if (dispatchItem && dispatchItem.properties) {
-          dispatchItem.properties = orderBy(dispatchItem.properties, propItem => {
-            if (propItem && propItem.props) {
-              return propItem.props.propertyName;
-            }
-            return undefined;
-          });
-        }
-        if (dispatchItem && dispatchItem.propertiesRef) {
-          dispatchItem.propertiesRef = orderBy(dispatchItem.propertiesRef, propItem => {
-            if (propItem && propItem.props) {
-              return propItem.props.propertyName;
-            }
-            return undefined;
-          });
         }
       });
     }
-    props.properties = orderBy(props.properties, propItem => {
-      if (propItem && propItem.props) {
-        return propItem.props.propertyName;
-      }
-      return undefined;
-    });
-    props.propertiesRef = orderBy(props.propertiesRef, propItem => {
-      if (propItem && propItem.props) {
-        return propItem.props.propertyName;
-      }
-      return undefined;
-    });
   }
 }
 

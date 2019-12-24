@@ -439,7 +439,7 @@ class ResourceAdapter {
         },
         'propertiesRef': {
           get: function () {
-            if (this.isComponent || this.isUserFunction) {
+            if (this.isComponent) {
               if (this.props) {
                 return this.props.propertiesRef || [];
               }
@@ -450,29 +450,46 @@ class ResourceAdapter {
                   .build();
               }
               return this.componentResourceObject.propertiesRef;
-            } else if (this.isFlowUserFunction) {
-              if (!this.userFunctionResourceObject) {
-                this.userFunctionResourceObject = new ResourceAdapter.Builder()
-                  .byKeyInGraphs(this.functionName, this.getGraphByType)
-                  .build();
-              }
-              return this.userFunctionResourceObject.propertiesRef;
             }
             return [];
           }
         },
-        'propertiesRefMap': {
-          get: function () {
-            if (!this.propertiesRefMapObject) {
-              if (this.propertiesRef) {
-                this.propertiesRefMapObject = keyBy(this.propertiesRef, ref => ref.props.propertyName);
-              } else {
-                this.propertiesRefMapObject = {};
-              }
-            }
-            return this.propertiesRefMapObject;
-          }
-        },
+        // 'propertiesRefMap': {
+        //   get: function () {
+        //     if (!this.propertiesRefMapObject) {
+        //       if (this.propertiesRef) {
+        //         this.propertiesRefMapObject = keyBy(this.propertiesRef, ref => ref.props.propertyName);
+        //       } else {
+        //         this.propertiesRefMapObject = {};
+        //       }
+        //     }
+        //     return this.propertiesRefMapObject;
+        //   }
+        // },
+        // 'propertiesArg': {
+        //   get: function () {
+        //     if (this.isUserFunction || this.isComponent) {
+        //       if (this.props) {
+        //         return this.props.propertiesArg || {};
+        //       }
+        //     } else if (this.isFlowUserFunction) {
+        //       if (!this.userFunctionResourceObject) {
+        //         this.userFunctionResourceObject = new ResourceAdapter.Builder()
+        //           .byKeyInGraphs(this.functionName, this.getGraphByType)
+        //           .build();
+        //       }
+        //       return this.userFunctionResourceObject.propertiesArg;
+        //     } else if (this.isComponentInstance) {
+        //       if (!this.componentResourceObject) {
+        //         this.componentResourceObject = new ResourceAdapter.Builder()
+        //           .byKeyInGraphs(this.componentName, this.getGraphByType)
+        //           .build();
+        //       }
+        //       return this.componentResourceObject.propertiesArg;
+        //     }
+        //     return {};
+        //   }
+        // },
         'inputs': {
           get: function () {
             if (this.props) {

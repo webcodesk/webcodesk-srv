@@ -75,7 +75,7 @@ class FlowInputTransformManager {
       const dataObjectCode = generateSampleObjectScript(this._inputPropertiesModel, 'inputObject');
       return dataObjectCode && dataObjectCode.length > 0
         ? format(dataObjectCode)
-        : 'const inputObject = null;';
+        : 'const inputObject = undefined;';
     }
     return '';
   }
@@ -85,7 +85,7 @@ class FlowInputTransformManager {
       const dataObjectCode = generateSampleObjectScript(this._outputPropertiesModel, 'outputObject');
       return dataObjectCode && dataObjectCode.length > 0
         ? format(dataObjectCode)
-        : 'const outputObject = null;';
+        : 'const outputObject = undefined;';
     }
     return '';
   }

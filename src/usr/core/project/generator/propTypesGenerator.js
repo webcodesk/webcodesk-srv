@@ -397,21 +397,19 @@ function createInputDescriptionNextLine (node, level = 0) {
 function createOutputDescriptionNextLine (node) {
   let result = [];
   if (node) {
-    const { type, props, children } = node;
+    const { type, props } = node;
     let propertyName;
     let propertyComment = '';
+    let propertiesArg;
     if (props) {
+      propertiesArg = props.propertiesArg;
       propertyName = props.propertyName;
       propertyComment = props.propertyComment ? props.propertyComment.trim().replace('\n', ' ') : '';
     }
     if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
       result.push(`   * __${propertyName}__ - \`{Function}\` ${propertyComment}`);
-      if (children && children.length > 0) {
-        result.push(`      * output object properties:`);
-        result = children.reduce(
-          (acc, child) => acc.concat(createInputDescriptionNextLine(child, 3)),
-          result
-        );
+      if (propertiesArg) {
+        result = result.concat(createInputDescriptionNextLine(propertiesArg, 2));
       } else {
         result.push(`      * output object has a structure of any type or is undefined`);
       }
@@ -454,17 +452,14 @@ export function generateFunctionsMarkDownSpecification(functions) {
   let resultMarkdownText = '## Specification\n\n';
   if (functions && functions.length > 0) {
     functions.forEach(functionModel => {
-      const { props: { functionComment, displayName, propertiesRef, dispatches } } = functionModel;
+      const { props: { functionComment, displayName, propertiesArg, dispatches } } = functionModel;
       resultMarkdownText += `### Function \`${displayName}\`\n`;
       if (functionComment) {
         resultMarkdownText += `${functionComment}\n\n`;
       }
       let inputs = [];
-      inputs.push(`   * __argument__ - \`{Object}\` The first function argument`);
-      if (propertiesRef && propertiesRef.length > 0) {
-        propertiesRef.forEach(property => {
-          inputs = inputs.concat(createInputDescriptionNextLine(property, 2));
-        });
+      if (propertiesArg) {
+        inputs = inputs.concat(createInputDescriptionNextLine(propertiesArg, 1));
       }
       if (inputs.length > 0) {
         let inputText = inputs.join('\n');
@@ -473,7 +468,7 @@ export function generateFunctionsMarkDownSpecification(functions) {
       let outputs = [];
       if (dispatches && dispatches.length > 0) {
         dispatches.forEach(dispatch => {
-          const { name, propertiesRef, wcdAnnotations } = dispatch;
+          const { name, propertiesArg, wcdAnnotations } = dispatch;
           let validComment = '';
           if (wcdAnnotations) {
             const wcdAnnotationComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
@@ -481,13 +476,10 @@ export function generateFunctionsMarkDownSpecification(functions) {
               validComment = wcdAnnotationComment.trim().replace('\n', '');
             }
           }
-          outputs.push(`   * __${name}__ - \`{dispatch}\` ${validComment}`);
-          if (propertiesRef && propertiesRef.length > 0) {
-            outputs.push(`      * output object properties:`);
-            propertiesRef.forEach(property => {
-              outputs = outputs.concat(createInputDescriptionNextLine(property, 3));
-            });
+          if (propertiesArg) {
+            outputs = outputs.concat(createInputDescriptionNextLine(propertiesArg, 1));
           } else {
+            outputs.push(`   * __${name}__ - \`{dispatch}\` ${validComment}`);
             outputs.push(`      * output object has a structure of any type or is undefined`);
           }
         });
