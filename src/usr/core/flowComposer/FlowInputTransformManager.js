@@ -138,9 +138,6 @@ class FlowInputTransformManager {
     if (errors.length === 0) {
       try {
         testDataObject = testFunc();
-        if (!testDataObject && !isNull(testDataObject)) {
-          throw Error('The function should return a data object or null.')
-        }
       } catch (e) {
         errors.push('Error during the test script execution:');
         errors.push(e.message);
@@ -155,9 +152,6 @@ class FlowInputTransformManager {
           // the return type can be undefined in case we want to stop transferring data to the input
           output.push('undefined // the transferring data will be skipped and the input endpoint will not receive new data.');
         } else {
-          if (!transformedDataObject && !isNull(transformedDataObject)) {
-            throw Error('The function should return a data object or null.')
-          }
           const samplePropTypes = this.getInputSamplePropTypes();
           if (samplePropTypes) {
             const checkingPropTypes = {inputObject: samplePropTypes};

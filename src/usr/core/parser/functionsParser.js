@@ -25,7 +25,7 @@ import { makeResourceModelCanonicalKey, makeResourceModelKey } from '../utils/re
 import { repairPath } from "../utils/fileUtils";
 
 function getAbsoluteImportPath (sourceImportPath, rootDirPath, currentFilePath) {
-  let absoluteImportPath = sourceImportPath;
+  let absoluteImportPath = repairPath(sourceImportPath);
   if (absoluteImportPath.charAt(0) === '.') {
     // we have relative import path
     const fileDirPath = path.dirname(currentFilePath);

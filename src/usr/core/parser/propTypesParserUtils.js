@@ -20,6 +20,7 @@ import { makeResourceModelCanonicalKey, makeResourceModelKey } from '../utils/re
 import { getWcdAnnotations } from '../utils/commentsUtils';
 import { traverse } from '../utils/astUtils';
 import { repairPath } from "../utils/fileUtils";
+import * as config from '../config/config';
 
 const identifierTypeMap = {
   'func': constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
@@ -38,20 +39,24 @@ const identifierTypeMap = {
 };
 
 function getAbsoluteImportPath (sourceImportPath, rootDirPath, currentFilePath) {
-  let absoluteImportPath = sourceImportPath;
-  if (absoluteImportPath.charAt(0) === '.') {
-    // we have relative import path
-    const fileDirPath = path.dirname(currentFilePath);
-    // need to resolve it to the absolute path
-    absoluteImportPath = repairPath(path.resolve(fileDirPath, absoluteImportPath));
-    // remove project root dir path part from the absolute path
-    absoluteImportPath = absoluteImportPath
-      .replace(`${rootDirPath}${constants.FILE_SEPARATOR}`, '');
-  } else if (!absoluteImportPath || absoluteImportPath.length === 0) {
+  sourceImportPath = repairPath(sourceImportPath);
+  let absoluteImportPath;
+  if (!sourceImportPath || sourceImportPath.length === 0) {
     // we have the import from the same file
     // remove project root dir path part from the absolute path
-    absoluteImportPath = currentFilePath
-      .replace(`${rootDirPath}${constants.FILE_SEPARATOR}`, '');
+    absoluteImportPath = repairPath(currentFilePath.replace(`${rootDirPath}${constants.FILE_SEPARATOR}`, ''));
+  } else {
+    if (sourceImportPath.charAt(0) === '.') {
+      // we have relative import path
+      const fileDirPath = path.dirname(currentFilePath);
+      // need to resolve it to the absolute path
+      absoluteImportPath = repairPath(path.resolve(fileDirPath, sourceImportPath));
+      // remove project root dir path part from the absolute path
+      absoluteImportPath = absoluteImportPath
+        .replace(`${rootDirPath}${constants.FILE_SEPARATOR}`, '');
+    } else {
+      absoluteImportPath = sourceImportPath;
+    }
   }
   return absoluteImportPath;
 }
@@ -343,7 +348,7 @@ export function getImportSpecifiers (ast, rootDirPath, filePath) {
     ...importSpecifiers,
     // treat the local prop types definitions as local imports to be able find them as the external prop types
     ...getLocals(ast, rootDirPath, filePath),
-    // and make @param annotation as the import specifier too
+    // and make @functionTypes annotation as the import specifier too
     ...getAnnotationImportSpecifiers(ast, rootDirPath, filePath)
   };
   return importSpecifiers;
