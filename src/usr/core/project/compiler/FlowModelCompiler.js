@@ -20,9 +20,9 @@ import remove from 'lodash/remove';
 import constants from '../../../../commons/constants';
 
 function propertiesComparator(a, b) {
-  if (a.name === 'caughtException') {
+  if (a.name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
     return 1;
-  } if (b.name === 'caughtException') {
+  } if (b.name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
     return -1;
   }
   return a.name.localeCompare(b.name);

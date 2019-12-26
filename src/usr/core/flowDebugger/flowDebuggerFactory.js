@@ -19,10 +19,10 @@ import * as constants from '../../../commons/constants';
 import * as textUtils from '../utils/textUtils';
 
 function propertiesComparator(a, b) {
-  if (a.name === 'caughtException') {
+  if (a.name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
     return 1;
   }
-  if (b.name === 'caughtException') {
+  if (b.name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
     return -1;
   }
   return a.name.localeCompare(b.name);
@@ -140,9 +140,9 @@ function createFlowByEventTargets(event) {
       model.props.inputs = model.props.inputs.sort((a, b) => a.name.localeCompare(b.name));
       // add extra output for caught error if there were assigned output
       if (model.type === constants.FLOW_USER_FUNCTION_TYPE) {
-        if (model.props.outputs.findIndex(i => i.name === 'caughtException') < 0) {
+        if (model.props.outputs.findIndex(i => i.name === constants.FUNCTION_OUTPUT_ERROR_NAME) < 0) {
           model.props.outputs.push({
-            name: 'caughtException'
+            name: constants.FUNCTION_OUTPUT_ERROR_NAME
           });
         }
       }

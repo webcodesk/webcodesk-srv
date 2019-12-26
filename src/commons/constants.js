@@ -151,6 +151,8 @@ module.exports = {
 
   COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME: 'doNotUseInFlows',
 
+  FUNCTION_OUTPUT_ERROR_NAME: 'caughtException',
+
   ANNOTATION_COMMENT: 'annotationComment',
   ANNOTATION_LABEL: 'annotationLabel',
   ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES: 'annotationFunctionArgumentPropTypes',

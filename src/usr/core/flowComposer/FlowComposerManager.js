@@ -48,9 +48,9 @@ const flowModelComparator = (aModel, bModel) => {
   } else if (!aInput && !bInput) {
     return 0;
   } else {
-    if (aInput.connectedTo === 'caughtException') {
+    if (aInput.connectedTo === constants.FUNCTION_OUTPUT_ERROR_NAME) {
       return 1;
-    } if (bInput.connectedTo === 'caughtException') {
+    } if (bInput.connectedTo === constants.FUNCTION_OUTPUT_ERROR_NAME) {
       return -1;
     }
     return aInput.connectedTo.localeCompare(bInput.connectedTo);

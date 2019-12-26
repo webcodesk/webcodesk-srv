@@ -478,8 +478,10 @@ export function generateFunctionsMarkDownSpecification(functions) {
           }
           if (propertiesArg) {
             outputs = outputs.concat(createInputDescriptionNextLine(propertiesArg, 1));
+          } else if (name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
+            outputs.push(`   * __${name}__ - \`{Error, required: false}\` ${validComment}`);
           } else {
-            outputs.push(`   * __${name}__ - \`{dispatch}\` ${validComment}`);
+            outputs.push(`   * __${name}__ - \`{any, required: false}\` ${validComment}`);
             outputs.push(`      * output object has a structure of any type or is undefined`);
           }
         });

@@ -18,10 +18,10 @@ import constants from '../../../commons/constants';
 import cloneDeep from 'lodash/cloneDeep';
 
 const propertiesComparator = (a, b) => {
-  if (a.name === 'caughtException') {
+  if (a.name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
     return 1;
   }
-  if (b.name === 'caughtException') {
+  if (b.name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
     return -1;
   }
   return a.name.localeCompare(b.name);

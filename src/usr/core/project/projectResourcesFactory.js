@@ -41,12 +41,12 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
       sortedDispatches = dispatches.sort((a, b) => a.name.localeCompare(b.name));
     }
     sortedDispatches.push({
-      name: 'caughtException',
+      name: constants.FUNCTION_OUTPUT_ERROR_NAME,
       wcdAnnotations: {
         [constants.ANNOTATION_COMMENT]:
         'A dispatch is added automatically to each function. ' +
-        'The dispatch is triggered with the error object ' +
-        'when the function does not catch error thrown during the function execution.'
+        'The dispatch is triggered when an error is not caught in the function body. ' +
+        'The output payload has the Error type.'
       }
     });
     functionsModel.children.push({

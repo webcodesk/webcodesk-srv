@@ -540,7 +540,7 @@ export const decoratePropertyUpdate = (node, nodeEnter) => {
       d3.select(this)
         .classed('selected', item => item.isSelected)
         .classed('blank', item => !item.hasData)
-        .classed('caughtException', item.name === 'caughtException' && item.hasData);
+        .classed('caughtException', item.name === constants.FUNCTION_OUTPUT_ERROR_NAME && item.hasData);
     });
 
   decoratedNode
@@ -549,7 +549,7 @@ export const decoratePropertyUpdate = (node, nodeEnter) => {
       d3.select(this)
         .classed('selected', item => item.isSelected)
         .classed('blank', item => !item.hasData)
-        .classed('caughtException', item.name === 'caughtException' && item.hasData);
+        .classed('caughtException', item.name === constants.FUNCTION_OUTPUT_ERROR_NAME && item.hasData);
     })
     .transition()
     .duration(duration)

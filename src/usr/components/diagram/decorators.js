@@ -516,7 +516,7 @@ class DiagramDecorator {
       .each(function (item) {
         const { error } = item;
         d3.select(this)
-          .classed('caughtException', item.name === 'caughtException')
+          .classed('caughtException', item.name === constants.FUNCTION_OUTPUT_ERROR_NAME)
           .classed('error', error && error.length > 0);
       });
 
@@ -527,7 +527,7 @@ class DiagramDecorator {
         const circle = d3.select(this);
         circle
           .classed('selected', isSelected)
-          .classed('caughtException', item.name === 'caughtException')
+          .classed('caughtException', item.name === constants.FUNCTION_OUTPUT_ERROR_NAME)
           .classed('error', error && error.length > 0);
 
         if (!isInBasket && isOut) {
