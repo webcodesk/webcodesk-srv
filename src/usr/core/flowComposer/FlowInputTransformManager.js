@@ -16,7 +16,6 @@
 
 /* eslint-disable no-new-func */
 import isFunction from 'lodash/isFunction';
-import isNull from 'lodash/isNull';
 import PropTypes from '../../core/propTypes';
 import { format } from '../../core/utils/textUtils';
 import { generatePropTypesObject, generateSampleObjectScript } from '../project/generator/propTypesGenerator';
