@@ -459,6 +459,7 @@ export function generateFunctionsMarkDownSpecification(functions) {
       }
       let inputs = [];
       if (propertiesArg) {
+        console.info('Properties arg: ', propertiesArg);
         inputs = inputs.concat(createInputDescriptionNextLine(propertiesArg, 1));
       }
       if (inputs.length > 0) {

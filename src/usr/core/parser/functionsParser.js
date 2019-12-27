@@ -85,8 +85,8 @@ function getExternalPropTypesImport(name, importSpecifiers) {
 }
 
 function testAnnotationsInComments(leadingComments, importSpecifiers, declaration) {
+  let wcdAnnotations = {};
   if (leadingComments && leadingComments.length > 0) {
-    let wcdAnnotations = {};
     leadingComments.forEach(leadingComment => {
       if (leadingComment && leadingComment.value) {
         wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
@@ -103,8 +103,8 @@ function testAnnotationsInComments(leadingComments, importSpecifiers, declaratio
       // we don't need this annotation any more - we resolve prop types for the argument
       delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
     }
-    declaration.wcdAnnotations = wcdAnnotations;
   }
+  declaration.wcdAnnotations = wcdAnnotations;
   return declaration;
 }
 

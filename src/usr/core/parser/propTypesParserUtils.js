@@ -204,8 +204,8 @@ function testObjectProperty (node, importSpecifiers, propTypesDeclaration = {}) 
       if (valueType !== 'Identifier') {
         propTypesDeclaration.name = key.name;
         // get comments
+        let wcdAnnotations = {};
         if (leadingComments && leadingComments.length > 0) {
-          let wcdAnnotations = {};
           leadingComments.forEach(leadingComment => {
             if (leadingComment && leadingComment.value) {
               wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
@@ -223,8 +223,8 @@ function testObjectProperty (node, importSpecifiers, propTypesDeclaration = {}) 
             }
             delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
           }
-          propTypesDeclaration.wcdAnnotations = wcdAnnotations;
         }
+        propTypesDeclaration.wcdAnnotations = wcdAnnotations;
         propTypesDeclaration = testObjectPropertyValue(value, importSpecifiers, propTypesDeclaration);
       } else {
         propTypesDeclaration = null;
