@@ -37,6 +37,24 @@ const styles = theme => ({
     padding: '5px',
     overflow: 'auto',
   },
+  contentWrapperNoOverflow: {
+    position: 'absolute',
+    top: '32px',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: '5px',
+    overflow: 'hidden',
+  },
+  coverContentWrapper: {
+    position: 'absolute',
+    top: '32px',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    // boxShadow: '0 22px 22px -22px rgba(255, 255, 255, 0.8) inset, 0 -22px 22px -22px rgba(255, 255, 255, 0.8) inset',
+    zIndex: 5,
+  },
   titleBar: {
     position: 'absolute',
     top: 0,
@@ -55,11 +73,12 @@ const styles = theme => ({
 class PanelWithTitle extends React.Component {
   static propTypes = {
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-    propsSampleObjectText: PropTypes.string,
+    noOverflow: PropTypes.bool,
   };
 
   static defaultProps = {
     title: null,
+    noOverflow: false,
   };
 
   // constructor (props, context) {
@@ -67,7 +86,7 @@ class PanelWithTitle extends React.Component {
   // }
 
   render () {
-    const { classes, title, children } = this.props;
+    const { classes, title, noOverflow, children } = this.props;
     return (
       <div className={classes.root}>
         {title && (
@@ -77,9 +96,12 @@ class PanelWithTitle extends React.Component {
             </Typography>
           </div>
         )}
-        <div className={classes.contentWrapper}>
+        <div className={noOverflow ? classes.contentWrapperNoOverflow : classes.contentWrapper}>
           {children}
         </div>
+        {/*{noOverflow && (*/}
+        {/*  <div className={classes.coverContentWrapper} />*/}
+        {/*)}*/}
       </div>
     );
   }

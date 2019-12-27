@@ -84,6 +84,8 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import HelpOutline from '@material-ui/icons/HelpOutline';
 import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 
 import { CommonToolbarButton, CommonToolbarIconButton, CommonErrorBadge } from './Commons.parts';
 
@@ -227,6 +229,8 @@ const icons = {
   KeyboardArrowRight,
   HelpOutline,
   FormatListBulleted,
+  ExpandMore,
+  ExpandLess,
 
   // extra icons
   CopyToClipboard,

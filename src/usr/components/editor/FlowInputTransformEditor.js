@@ -341,7 +341,7 @@ class FlowInputTransformEditor extends React.Component {
             title={
               parentNodeModel && selectedNodeModel
                 ? (
-                  `${parentNodeModel.props.searchName}.${parentOutputModel.name} --> ${selectedNodeModel.props.searchName}.${selectedInputModel.name}`
+                  `${parentNodeModel.props.searchName}.${parentOutputModel.name} >> ${selectedNodeModel.props.searchName}.${selectedInputModel.name}`
                 )
                 : ''
             }

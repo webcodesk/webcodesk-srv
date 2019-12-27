@@ -27,6 +27,7 @@ import SourceCodeEditor from '../commons/SourceCodeEditor';
 import PanelWithTitle from '../commons/PanelWithTitle';
 import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import ToolbarButton from '../commons/ToolbarButton';
+import PanelWithScriptList from '../commons/PanelWithScriptList';
 
 function Transition (props) {
   return <Slide direction="up" {...props} />;
@@ -55,6 +56,17 @@ const styles = theme => ({
     right: 0,
     overflow: 'auto',
   },
+  transformationListPane: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    overflow: 'auto',
+  },
+  transformationListItemWrapper: {
+
+  },
   editorWrapper: {
     position: 'absolute',
     top: 0,
@@ -71,6 +83,8 @@ const styles = theme => ({
   },
   dialogTitle: {
     marginLeft: '16px',
+    marginRight: '16px',
+    wordSpacing: '16px'
   },
   usageArea: {
     marginTop: '16px'
@@ -225,6 +239,7 @@ class EditInputTransformDialog extends React.Component {
       testEditorDataObject,
       transformEditorDataObject
     } = this.state;
+    console.info('title: ', title);
     return (
       <Dialog
         aria-labelledby="EditInputTransformDialog-dialog-title"
@@ -244,177 +259,226 @@ class EditInputTransformDialog extends React.Component {
                 tooltip="Close transformation script editor"
               />
               <CommonToolbarDivider/>
-              <ToolbarButton
-                iconType="PlayArrow"
-                onClick={this.handleTest}
-                title="Test"
-                tooltip="Test transformation script"
-              />
+              <Typography className={classes.dialogTitle} variant="body2">{title}</Typography>
+              <CommonToolbarDivider/>
               <ToolbarButton
                 iconType="PlayCircleOutline"
                 onClick={this.handleSubmit}
                 title="Submit"
                 tooltip="Test and save transformation script"
               />
-              <CommonToolbarDivider/>
-              <Typography className={classes.dialogTitle} variant="caption">{title}</Typography>
+              <ToolbarButton
+                iconType="PlayArrow"
+                onClick={this.handleTest}
+                title="Test"
+                tooltip="Test transformation script"
+              />
             </CommonToolbar>
           </div>
           <div className={classes.contentPane}>
             <SplitPane
-              split="horizontal"
+              split="vertical"
               defaultSize={500}
-              primary="first"
+              primary="second"
             >
-              <div>
-                <SplitPane
-                  split="vertical"
-                  defaultSize={300}
-                  primary="first"
-                >
-                  <div>
-                    <SplitPane
-                      split="horizontal"
-                      defaultSize={250}
-                      primary="first"
-                    >
-                      <div className={classes.sampleWrapper}>
-                        <PanelWithTitle title="Output endpoint sample object">
-                          <ScriptView
-                            propsSampleObjectText={outputSampleScript}
-                          />
-                        </PanelWithTitle>
-                      </div>
-                      <div className={classes.sampleWrapper}>
-                        <PanelWithTitle title="Input endpoint sample object">
-                          <ScriptView
-                            propsSampleObjectText={inputSampleScript}
-                          />
-                        </PanelWithTitle>
-                      </div>
-                    </SplitPane>
-                  </div>
-                  <div>
-                    <SplitPane
-                      split="horizontal"
-                      defaultSize={250}
-                      primary="first"
-                    >
-                      <div className={classes.editorWrapper}>
-                        <PanelWithTitle
-                          title={testEditorDataObject.hasError
-                            ? (
-                              <span>
+              <SplitPane
+                split="horizontal"
+                defaultSize={500}
+                primary="first"
+              >
+                <div>
+                  <SplitPane
+                    split="vertical"
+                    defaultSize={300}
+                    primary="first"
+                  >
+                    <div>
+                      <SplitPane
+                        split="horizontal"
+                        defaultSize={250}
+                        primary="first"
+                      >
+                        <div className={classes.sampleWrapper}>
+                          <PanelWithTitle title="Output endpoint sample object">
+                            <ScriptView
+                              propsSampleObjectText={outputSampleScript}
+                            />
+                          </PanelWithTitle>
+                        </div>
+                        <div className={classes.sampleWrapper}>
+                          <PanelWithTitle title="Input endpoint sample object">
+                            <ScriptView
+                              propsSampleObjectText={inputSampleScript}
+                            />
+                          </PanelWithTitle>
+                        </div>
+                      </SplitPane>
+                    </div>
+                    <div>
+                      <SplitPane
+                        split="horizontal"
+                        defaultSize={250}
+                        primary="first"
+                      >
+                        <div className={classes.editorWrapper}>
+                          <PanelWithTitle
+                            title={testEditorDataObject.hasError
+                              ? (
+                                <span>
                                 Output endpoint test script&nbsp;
-                                <Tooltip
-                                  classes={{
-                                    popper: classes.htmlPopper,
-                                    tooltip: classes.htmlTooltip,
-                                  }}
-                                  title={
-                                    <pre className={classes.htmlTooltipCode}>
+                                  <Tooltip
+                                    classes={{
+                                      popper: classes.htmlPopper,
+                                      tooltip: classes.htmlTooltip,
+                                    }}
+                                    title={
+                                      <pre className={classes.htmlTooltipCode}>
                                       <code>{testEditorDataObject.errorText}</code>
                                     </pre>
-                                  }
-                                >
+                                    }
+                                  >
                                   <span className={classes.errorText}>[show error text]</span>
                                 </Tooltip>
                               </span>
-                            )
-                            : (<span>Output endpoint test script</span>)
-                          }
-                        >
-                          <SourceCodeEditor
-                            data={testEditorDataObject}
-                            checkSyntax={true}
-                            isVisible={activeTabIndex === 0}
-                            onChange={this.handleChangeTestScript}
-                          />
-                        </PanelWithTitle>
-                      </div>
-                      <div className={classes.editorWrapper}>
-                        <PanelWithTitle
-                          title={transformEditorDataObject.hasError
-                            ? (
-                              <span>
+                              )
+                              : (<span>Output endpoint test script</span>)
+                            }
+                          >
+                            <SourceCodeEditor
+                              data={testEditorDataObject}
+                              checkSyntax={true}
+                              isVisible={activeTabIndex === 0}
+                              onChange={this.handleChangeTestScript}
+                            />
+                          </PanelWithTitle>
+                        </div>
+                        <div className={classes.editorWrapper}>
+                          <PanelWithTitle
+                            title={transformEditorDataObject.hasError
+                              ? (
+                                <span>
                                 Transformation script&nbsp;
-                                <Tooltip
-                                  classes={{
-                                    popper: classes.htmlPopper,
-                                    tooltip: classes.htmlTooltip,
-                                  }}
-                                  title={
-                                    <pre className={classes.htmlTooltipCode}>
+                                  <Tooltip
+                                    classes={{
+                                      popper: classes.htmlPopper,
+                                      tooltip: classes.htmlTooltip,
+                                    }}
+                                    title={
+                                      <pre className={classes.htmlTooltipCode}>
                                       <code>{transformEditorDataObject.errorText}</code>
                                     </pre>
-                                  }
-                                >
+                                    }
+                                  >
                                   <span className={classes.errorText}>[show error text]</span>
                                 </Tooltip>
                               </span>
-                            )
-                            : (<span>Transformation script</span>)
-                          }
-                        >
-                          <SourceCodeEditor
-                            data={transformEditorDataObject}
-                            checkSyntax={true}
-                            isVisible={activeTabIndex === 1}
-                            onChange={this.handleChangeTransformScript}
+                              )
+                              : (<span>Transformation script</span>)
+                            }
+                          >
+                            <SourceCodeEditor
+                              data={transformEditorDataObject}
+                              checkSyntax={true}
+                              isVisible={activeTabIndex === 1}
+                              onChange={this.handleChangeTransformScript}
+                            />
+                          </PanelWithTitle>
+                        </div>
+                      </SplitPane>
+                    </div>
+                  </SplitPane>
+                </div>
+                <div>
+                  <PanelWithTitle title="Execution result">
+                    {/*{errors && errors.length > 0 && (*/}
+                    {/*  <Typography variant="overline" component="h4">Errors:</Typography>*/}
+                    {/*)}*/}
+                    {errors && errors.length > 0 && (
+                      errors.map((error, idx) => {
+                        return (
+                          <Typography
+                            key={`error_${idx}`}
+                            component="h4"
+                            variant="body2"
+                            gutterBottom={idx < errors.length - 1}
+                            className={classes.errorText}
+                          >
+                            {error}
+                          </Typography>
+                        );
+                      })
+                    )}
+                    {output && output.length > 0 && (
+                      <Typography variant="overline" component="h4">Data on input endpoint:</Typography>
+                    )}
+                    {output && output.length > 0 && (
+                      output.map((outputItem, idx) => {
+                        return (
+                          <ScriptView
+                            key={`executionResult_${idx}`}
+                            propsSampleObjectText={outputItem}
                           />
-                        </PanelWithTitle>
-                      </div>
-                    </SplitPane>
-                  </div>
-                </SplitPane>
-              </div>
-              <div>
-                <PanelWithTitle title="Execution result">
-                  {/*{errors && errors.length > 0 && (*/}
-                  {/*  <Typography variant="overline" component="h4">Errors:</Typography>*/}
-                  {/*)}*/}
-                  {errors && errors.length > 0 && (
-                    errors.map((error, idx) => {
-                      return (
-                        <Typography
-                          key={`error_${idx}`}
-                          component="h4"
-                          variant="body2"
-                          gutterBottom={idx < errors.length - 1}
-                          className={classes.errorText}
-                        >
-                          {error}
-                        </Typography>
-                      );
+                        );
+                      })
+                    )}
+                    <div className={classes.usageArea}>
+                      {usage && usage.length > 0 && (
+                        usage.map((usageItem, idx) => {
+                          return (
+                            <Typography
+                              variant="caption"
+                              component="h4">
+                              {usageItem}
+                            </Typography>
+                          );
+                        })
+                      )}
+                    </div>
+                  </PanelWithTitle>
+                </div>
+              </SplitPane>
+              <div className={classes.transformationListPane}>
+                <PanelWithScriptList
+                  scriptList={
+                    [1, 2, 3, 4, 5].map((item, idx) => {
+                      return {
+                        id: `${idx}`,
+                        title: 'Test script ' + idx,
+                        scriptText: 'export async function createFiles (fileName, dirName, destDirPath, fileExtension) {\n' +
+                          '  const fileObjects = [];\n' +
+                          '  let fileExists;\n' +
+                          '  const functionsFilePath = repairPath(path.join(destDirPath, dirName, `${fileName}.funcs${fileExtension}`));\n' +
+                          '  fileExists = await checkFileExists(functionsFilePath);\n' +
+                          '  if (fileExists) {\n' +
+                          '    throw Error(`The file with the "${fileName}.funcs${fileExtension}" name already exists.`);\n' +
+                          '  }\n' +
+                          '  const functionsPropsFilePath = repairPath(path.join(destDirPath, dirName, `${fileName}.props${fileExtension}`));\n' +
+                          '  fileExists = await checkFileExists(functionsPropsFilePath);\n' +
+                          '  if (fileExists) {\n' +
+                          '    throw Error(`The file with the "${fileName}.props${fileExtension}" name already exists.`);\n' +
+                          '  }\n' +
+                          '  // const functionsReadmeFilePath = repairPath(path.join(destDirPath, dirName, `${fileName}.md`));\n' +
+                          '  // fileExists = await checkFileExists(functionsReadmeFilePath);\n' +
+                          '  // if (fileExists) {\n' +
+                          '  //   throw Error(`The file with the "${fileName}.md" name already exists.`);\n' +
+                          '  // }\n' +
+                          '  fileObjects.push({\n' +
+                          '    filePath: functionsFilePath,\n' +
+                          '    fileData: format(template(templateContent)({fileName}))\n' +
+                          '  });\n' +
+                          '  fileObjects.push({\n' +
+                          '    filePath: functionsPropsFilePath,\n' +
+                          '    fileData: format(template(templateContentProps)({fileName}))\n' +
+                          '  });\n' +
+                          '  // fileObjects.push({\n' +
+                          '  //   filePath: functionsReadmeFilePath,\n' +
+                          '  //   fileData: template(templateContentReadme)({fileName})\n' +
+                          '  // });\n' +
+                          '  return fileObjects;\n' +
+                          '}'
+                      }
                     })
-                  )}
-                  {output && output.length > 0 && (
-                    <Typography variant="overline" component="h4">Data on input endpoint:</Typography>
-                  )}
-                  {output && output.length > 0 && (
-                    output.map((outputItem, idx) => {
-                      return (
-                        <ScriptView
-                          key={`executionResult_${idx}`}
-                          propsSampleObjectText={outputItem}
-                        />
-                      );
-                    })
-                  )}
-                  <div className={classes.usageArea}>
-                  {usage && usage.length > 0 && (
-                    usage.map((usageItem, idx) => {
-                      return (
-                        <Typography
-                          variant="caption"
-                          component="h4">
-                          {usageItem}
-                        </Typography>
-                      );
-                    })
-                  )}
-                  </div>
-                </PanelWithTitle>
+                  } />
               </div>
             </SplitPane>
           </div>
