@@ -17,11 +17,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import PropsTreeElement from './PropsTreeElement';
 import PropsTree from './PropsTree';
 import SettingsManager from '../../core/settings/SettingsManager';
+import ToolbarButton from '../commons/ToolbarButton';
 
 const styles = theme => ({
   root: {
@@ -37,14 +36,17 @@ const styles = theme => ({
     position: 'absolute',
     top: 0,
     left: 0,
-    height: '50px',
+    height: '34px',
     right: 0,
-    padding: '10px',
     overflow: 'hidden',
+    borderBottom: '1px solid #cdcdcd'
+  },
+  fixedAreaContainer: {
+    padding: '5px 10px 5px 4px',
   },
   scrollArea: {
     position: 'absolute',
-    top: '50px',
+    top: '35px',
     left: 0,
     bottom: 0,
     right: 0,
@@ -131,23 +133,18 @@ class SettingsPropsTree extends React.Component {
       return (
         <div className={classes.root}>
           <div className={classes.fixedArea}>
-            <List
-              key="componentPropsTree"
-              dense={true}
-              disablePadding={true}
-            >
-              <PropsTreeElement
-                name="Save Changes"
-                title="Save recent changes in application settings"
-                type="button"
-                disabled={sendUpdateCounter === 0}
-                color={sendUpdateCounter === 0 ? 'default' : 'primary'}
-                onClick={this.handleSaveSettingsProperties}
-              />
-            </List>
+            <div className={classes.fixedAreaContainer}>
+            <ToolbarButton
+              iconType="Save"
+              onClick={this.handleSaveSettingsProperties}
+              iconColor="#2e7d32"
+              disabled={sendUpdateCounter === 0}
+              title="Save Changes"
+              tooltip="Save application settings changes"
+            />
+            </div>
           </div>
           <div className={classes.scrollArea}>
-            {/*<div className={classes.mainDivider} />*/}
             <PropsTree
               dataId="applicationSettings"
               properties={localSettingsModel.children}
