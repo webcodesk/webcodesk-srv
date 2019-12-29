@@ -108,11 +108,11 @@ function testAnnotationsInComments(leadingComments, importSpecifiers, declaratio
   return declaration;
 }
 
-function getFunctionBodyDispatches(functionBodyAst, importSpecifiers) {
+function getFunctionBodyDispatches(functionBodyAst) {
   let result = [];
   traverse(functionBodyAst, node => {
     if (node.type === 'ExpressionStatement') {
-      const { expression, leadingComments } = node;
+      const { expression } = node;
       if (expression && expression.type === 'CallExpression') {
         const { callee, arguments: expressionArguments } = expression;
         // see if the call is to dispatch
@@ -120,15 +120,19 @@ function getFunctionBodyDispatches(functionBodyAst, importSpecifiers) {
           // there 2 arguments have to be
           if (expressionArguments && expressionArguments.length > 0) {
             const firstArgument = expressionArguments[0];
-            // the first argument must be the string name
-            if (firstArgument && firstArgument.type === 'StringLiteral') {
-              let functionDispatchDeclaration = {};
-              // set dispatch declaration name
-              functionDispatchDeclaration.name = firstArgument.value;
-              // add comments if there are some
-              functionDispatchDeclaration =
-                testAnnotationsInComments(leadingComments, importSpecifiers, functionDispatchDeclaration);
-              result.push(functionDispatchDeclaration);
+            if (firstArgument && firstArgument.type === 'ObjectExpression') {
+              const { properties } = firstArgument;
+              if (properties && properties.length > 0) {
+                properties.forEach(property => {
+                  const { type: propertyType, key: propertyKey } = property;
+                  if (propertyType === 'ObjectProperty' && propertyKey && propertyKey.type === 'Identifier') {
+                    let functionDispatchDeclaration = {};
+                    // set dispatch declaration name
+                    functionDispatchDeclaration.name = propertyKey.name;
+                    result.push(functionDispatchDeclaration);
+                  }
+                });
+              }
             }
           }
         }
@@ -188,7 +192,7 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
                         // see if the parameter of the nested function has dispatch name only
                         if (varInitBodyParams[0].type === 'Identifier' && varInitBodyParams[0].name === 'dispatch') {
                           // get dispatches inside the function body
-                          functionDeclaration.dispatches = getFunctionBodyDispatches(varInitBodyBody, importSpecifiers);
+                          functionDeclaration.dispatches = getFunctionBodyDispatches(varInitBodyBody);
                           // that's valid function declaration - we add it the list of user functions
                           result.push(functionDeclaration);
                         }

@@ -23,12 +23,15 @@ import constants from '../../../commons/constants';
 function getPropertyByName(properties, propertyName) {
   let result = null;
   if (properties && properties.length > 0) {
-    properties.forEach(property => {
-      const { props } = property;
-      if (props && props.propertyName === propertyName) {
-        result = property;
-      }
+    result = properties.find(property => {
+      return property && property.props && property.props.propertyName === propertyName;
     });
+    // properties.forEach(property => {
+    //   const { props } = property;
+    //   if (props && props.propertyName === propertyName) {
+    //     result = property;
+    //   }
+    // });
   }
   return result;
 }
@@ -290,13 +293,15 @@ function functionEnrichVisitor ({ nodeModel, parentModel }) {
       }
     }
     if (props && props.dispatches && props.dispatches.length > 0) {
+      const dispatchObjectProperties =
+        getPropertyByName(propertiesRef, constants.FUNCTION_TYPES_DISPATCH_PROP_NAME);
       props.dispatches.forEach(dispatchItem => {
-        if (externalPropTypesResource) {
+        if (externalPropTypesResource && dispatchObjectProperties && dispatchObjectProperties.children) {
           // The function dispatch types should have argument property to specify the types of the dispatch argument
-          const dispatchObjectProperties =
-            getPropertyByName(propertiesRef, dispatchItem.name);
-          if (dispatchObjectProperties) {
-            dispatchItem.propertiesArg = cloneDeep(dispatchObjectProperties);
+          const dispatchProperties =
+            getPropertyByName(dispatchObjectProperties.children, dispatchItem.name);
+          if (dispatchProperties) {
+            dispatchItem.propertiesArg = cloneDeep(dispatchProperties);
           }
         }
       });

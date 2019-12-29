@@ -36,7 +36,7 @@ export const sampleFunction = (options) => dispatch => {
       extraFlag: extraOptions.extraFlag,
     }
   };
-  dispatch('optionsFromInput', dispatchOptions);
+  dispatch({optionsFromInput: dispatchOptions});
 };
 `;
 
@@ -58,12 +58,14 @@ export const SampleFunctionTypes = {
   /**
    * The function dispatch
    */
-  optionsFromInput: PropTypes.shape({
-    // text value
-    text: PropTypes.string,
-    // extra options after some processing
-    extraOptions: PropTypes.shape({
-      extraFlag: PropTypes.bool,
+  dispatch: PropTypes.shape({
+    optionsFromInput: PropTypes.shape({
+      // text value
+      text: PropTypes.string,
+      // extra options after some processing
+      extraOptions: PropTypes.shape({
+        extraFlag: PropTypes.bool,
+      }),
     }),
   }),
 };
