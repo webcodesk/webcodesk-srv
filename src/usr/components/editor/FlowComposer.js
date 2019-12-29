@@ -85,6 +85,7 @@ class FlowComposer extends React.Component {
     draggedItem: PropTypes.object,
     isDraggingItem: PropTypes.bool,
     updateHistory: PropTypes.array,
+    transformScriptList: PropTypes.array,
     onUpdate: PropTypes.func,
     onErrorClick: PropTypes.func,
     onSearchRequest: PropTypes.func,
@@ -99,6 +100,7 @@ class FlowComposer extends React.Component {
     draggedItem: null,
     isDraggingItem: false,
     updateHistory: [],
+    transformScriptList: [],
     onUpdate: () => {
       console.info('FlowComposer.onUpdate is not set.');
     },
@@ -430,7 +432,7 @@ class FlowComposer extends React.Component {
     if (!localFlowTree) {
       return <h1>Flow tree is not specified</h1>
     }
-    const { classes, draggedItem, isDraggingItem, updateHistory, isVisible } = this.props;
+    const { classes, draggedItem, isDraggingItem, updateHistory, transformScriptList, isVisible } = this.props;
     let title;
     // let searchName;
     // let className;
@@ -573,6 +575,7 @@ class FlowComposer extends React.Component {
                 parentOutputModel={parentOutputModel}
                 selectedInputModel={selectedInputModel}
                 selectedNodeModel={selectedNode}
+                transformScriptList={transformScriptList}
                 onUpdateTransformScript={this.handleUpdateTransformScript}
               />
             </div>

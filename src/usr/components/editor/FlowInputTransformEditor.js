@@ -94,6 +94,7 @@ class FlowInputTransformEditor extends React.Component {
     parentNodeModel: PropTypes.object,
     selectedInputModel: PropTypes.object,
     parentOutputModel: PropTypes.object,
+    transformScriptList: PropTypes.array,
     onUpdateTransformScript: PropTypes.func,
   };
 
@@ -102,6 +103,7 @@ class FlowInputTransformEditor extends React.Component {
     parentNodeModel: null,
     selectedInputModel: null,
     parentOutputModel: null,
+    transformScriptList: [],
     onUpdateTransformScript: () => {
       console.info('FlowInputTransformEditor.onUpdateTransformScript is not set');
     },
@@ -237,7 +239,8 @@ class FlowInputTransformEditor extends React.Component {
       parentNodeModel,
       selectedNodeModel,
       selectedInputModel,
-      parentOutputModel
+      parentOutputModel,
+      transformScriptList,
     } = this.props;
     const {
       isEditInputTransformDialogOpen,
@@ -352,6 +355,7 @@ class FlowInputTransformEditor extends React.Component {
             transformScript={editInputTransformDialogTransformationScript}
             outputSampleScript={outputSampleObjectText}
             inputSampleScript={inputSampleObjectText}
+            transformScriptList={transformScriptList}
             onSubmit={this.handleSubmitEditInputTransformDialog}
             onTest={this.handleTestEditInputTransformDialog}
             onClose={this.handleCloseEditInputTransformDialog}

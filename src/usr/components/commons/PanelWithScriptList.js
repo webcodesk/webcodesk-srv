@@ -31,26 +31,43 @@ const styles = theme => ({
     right: 0,
     bottom: 0,
   },
-  contentWrapper: {
+  topBar: {
     position: 'absolute',
-    top: '41px',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '38px',
+    overflow: 'hidden',
+    borderBottom: '1px solid #cdcdcd',
+  },
+  topBarContainer: {
+    padding: '3px 16px 3px 0',
+  },
+  content: {
+    position: 'absolute',
+    top: '39px',
     left: 0,
     right: 0,
     bottom: 0,
     overflow: 'auto',
   },
-  titleBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    padding: '5px',
-    overflow: 'hidden',
-    borderBottom: '1px solid #cdcdcd',
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  titleTextContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   titleText: {
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis'
+  },
+  subtitleText: {
+    whiteSpace: 'nowrap',
+    color: '#7d7d7d',
   },
   section: {
     marginBottom: '10px',
@@ -71,7 +88,7 @@ const styles = theme => ({
     padding: '5px 10px',
     overflow: 'hidden',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   }
 });
 
@@ -82,16 +99,21 @@ class PanelWithScriptList extends React.Component {
       title: PropTypes.string,
       scriptText: PropTypes.string,
     })),
+    onUseScript: PropTypes.func,
   };
 
   static defaultProps = {
     scriptList: [],
+    onUseScript: () => {
+      console.info('PanelWithScriptList.onUseScript is not set');
+    },
   };
 
   constructor (props, context) {
     super(props, context);
     this.state = {
-      expandedById: {}
+      expandedById: {},
+      filterText: '',
     };
   }
 
@@ -100,7 +122,7 @@ class PanelWithScriptList extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const expandedById = {...this.state.expandedById};
+    const expandedById = { ...this.state.expandedById };
     if (expandedById[id]) {
       delete expandedById[id];
     } else {
@@ -111,57 +133,156 @@ class PanelWithScriptList extends React.Component {
     });
   };
 
+  handleFilter = (text) => {
+    this.setState({
+      filterText: text,
+    });
+  };
+
+  handleUseScript = (scriptText, testScriptText) => e => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    this.props.onUseScript({scriptText, testScriptText});
+  };
+
+  createListElement = (
+    key,
+    id,
+    connectedToName,
+    connectedToOutput,
+    elementName,
+    inputName,
+    flowName,
+    scriptText,
+    testScriptText,
+    expandedById,
+    classes
+  ) => {
+    return (
+      <div
+        key={key}
+        className={expandedById[id] ? classes.sectionExpanded : classes.section}
+      >
+        <div className={classes.scriptTitleBar}>
+          <div className={classes.titleContainer}>
+            <div className={classes.titleTextContainer}>
+              <Typography variant="body2" className={classes.titleText}>
+                {connectedToName}
+                &nbsp;
+                <span className={classes.subtitleText}>({connectedToOutput})</span>
+                &nbsp;&nbsp;
+                <span className={classes.subtitleText}>&gt;&gt;</span>
+                &nbsp;&nbsp;
+                {elementName}
+                &nbsp;
+                <span className={classes.subtitleText}>({inputName})</span>
+              </Typography>
+            </div>
+            <div className={classes.titleTextContainer}>
+              <Typography variant="caption" className={classes.subtitleText}>
+                {flowName}
+              </Typography>
+              <ToolbarButton
+                title="Use script"
+                primary={true}
+                tooltip="Paste test and transformation scripts into the editor"
+                onClick={this.handleUseScript(scriptText, testScriptText)}
+              />
+              {expandedById[id]
+                ? (
+                  <ToolbarButton
+                    iconType="ExpandLess"
+                    primary={true}
+                    tooltip="Collapse"
+                    onClick={this.handleToggleExpandSection(id)}
+                  />
+                )
+                : (
+                  <ToolbarButton
+                    iconType="ExpandMore"
+                    primary={true}
+                    tooltip="Expand"
+                    onClick={this.handleToggleExpandSection(id)}
+                  />
+                )
+              }
+            </div>
+          </div>
+        </div>
+        <div className={classes.scriptViewWrapper}>
+          <ScriptView
+            propsSampleObjectText={scriptText}
+          />
+        </div>
+      </div>
+    );
+  };
+
   render () {
     const { classes, scriptList } = this.props;
-    const { expandedById } = this.state;
+    const { expandedById, filterText } = this.state;
+    const scriptListElements = [];
+    if (scriptList && scriptList.length > 0) {
+      for (let i = 0; i < scriptList.length; i++) {
+        const {
+          id,
+          connectedToName,
+          connectedToOutput,
+          elementName,
+          inputName,
+          flowName,
+          scriptText,
+          testScriptText
+        } = scriptList[i];
+        if (filterText) {
+          if (scriptText && scriptText.indexOf(filterText) >= 0) {
+            scriptListElements.push(
+              this.createListElement(
+                `wrapper${i}`,
+                id,
+                connectedToName,
+                connectedToOutput,
+                elementName,
+                inputName,
+                flowName,
+                scriptText,
+                testScriptText,
+                expandedById,
+                classes
+              )
+            );
+          }
+        } else {
+          scriptListElements.push(
+            this.createListElement(
+              `wrapper${i}`,
+              id,
+              connectedToName,
+              connectedToOutput,
+              elementName,
+              inputName,
+              flowName,
+              scriptText,
+              testScriptText,
+              expandedById,
+              classes
+            )
+          );
+        }
+      }
+    }
     return (
       <div className={classes.root}>
-        <div className={classes.titleBar}>
-          <FilterTextField />
+        <div className={classes.topBar}>
+          <div className={classes.topBarContainer}>
+            <FilterTextField placeholder="Filter by text in script" onChange={this.handleFilter}/>
+          </div>
         </div>
-        <div className={classes.contentWrapper}>
-          {scriptList.map((scriptItem, idx) => {
-            return (
-              <div
-                key={`wrapper${idx}`}
-                className={expandedById[scriptItem.id] ? classes.sectionExpanded : classes.section}
-              >
-                <div className={classes.scriptTitleBar}>
-                  <Typography variant="subtitle2" className={classes.titleText} >
-                    {scriptItem.title}
-                  </Typography>
-                  {expandedById[scriptItem.id]
-                    ? (
-                      <ToolbarButton
-                        iconType="ExpandLess"
-                        primary={true}
-                        tooltip="Collapse"
-                        onClick={this.handleToggleExpandSection(scriptItem.id)}
-                      />
-                    )
-                    : (
-                      <ToolbarButton
-                        iconType="ExpandMore"
-                        primary={true}
-                        tooltip="Expand"
-                        onClick={this.handleToggleExpandSection(scriptItem.id)}
-                      />
-                    )
-                  }
-                  <ToolbarButton
-                    iconType="FileCopy"
-                    primary={true}
-                    tooltip="Generate the source code for a new functions list"
-                  />
-                </div>
-                <div className={classes.scriptViewWrapper}>
-                  <ScriptView
-                    propsSampleObjectText={scriptItem.scriptText}
-                  />
-                </div>
-              </div>
-            );
-          })}
+        <div className={classes.content}>
+          {scriptListElements}
+          <div className={classes.section} />
         </div>
       </div>
     );

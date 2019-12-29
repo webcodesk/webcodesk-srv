@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+import debounce from 'lodash/debounce';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -65,6 +66,7 @@ class FilterTextField extends React.Component {
     text: PropTypes.string,
     placeholder: PropTypes.string,
     onCancel: PropTypes.func,
+    onChange: PropTypes.func,
     onSubmit: PropTypes.func,
   };
 
@@ -95,10 +97,17 @@ class FilterTextField extends React.Component {
     }
   }
 
+  debouncedOnChange = debounce((text) => {
+    if (this.props.onChange) {
+      this.props.onChange(text);
+    }
+  }, 500);
+
   handleOnChange = () => {
     this.setState({
       inputText: this.input.value,
-    })
+    });
+    this.debouncedOnChange(this.input.value);
   };
 
   handleOnCancel = () => {
@@ -140,7 +149,7 @@ class FilterTextField extends React.Component {
         startAdornment={
           <FilterInputAdornment position="start">
             <FilterIconButton onClick={this.handleOnSubmit}>
-              <FilterIcon color="default" />
+              <FilterIcon color="inherit" />
             </FilterIconButton>
           </FilterInputAdornment>
         }

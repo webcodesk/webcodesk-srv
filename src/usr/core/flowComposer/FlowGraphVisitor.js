@@ -126,29 +126,40 @@ class FlowGraphVisitor {
   getFlowParticles = ({ nodeModel, parentModel }) => {
     const result = [];
     const { type, props } = nodeModel;
+    let flowParticle;
     if (type === constants.FLOW_USER_FUNCTION_TYPE) {
-      result.push({
+      flowParticle = {
         flowParticleType: type,
         functionName: props.functionName,
         inputs: props.inputs,
         outputs: props.outputs
-      });
+      };
     } else if (type === constants.FLOW_COMPONENT_INSTANCE_TYPE) {
-      result.push({
+      flowParticle = {
         flowParticleType: type,
         componentName: props.componentName,
         componentInstance: props.componentInstance,
         inputs: props.inputs,
         outputs: props.outputs
-      });
+      };
     } else if (type === constants.FLOW_PAGE_TYPE) {
-      result.push({
+      flowParticle = {
         flowParticleType: type,
         pageName: props.pageName,
         pagePath: props.pagePath,
         inputs: props.inputs,
         outputs: props.outputs
-      });
+      };
+    }
+    if (flowParticle) {
+      if (props.inputs && props.inputs.length > 0 && parentModel && parentModel.props) {
+        const foundConnectedInput = props.inputs.find(i => !!i.connectedTo);
+        if (foundConnectedInput) {
+          flowParticle.connectedToName = parentModel.props.title;
+          flowParticle.connectedToOutput = foundConnectedInput.connectedTo;
+        }
+      }
+      result.push(flowParticle);
     }
     return result;
   };

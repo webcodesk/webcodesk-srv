@@ -114,6 +114,7 @@ class EditInputTransformDialog extends React.Component {
     inputSampleScript: PropTypes.string,
     testDataScript: PropTypes.string,
     transformScript: PropTypes.string,
+    transformScriptList: PropTypes.array,
     errors: PropTypes.array,
     output: PropTypes.array,
     usage: PropTypes.array,
@@ -129,6 +130,7 @@ class EditInputTransformDialog extends React.Component {
     inputSampleScript: '',
     testDataScript: '',
     transformScript: '',
+    transformScriptList: [],
     errors: [],
     output: [],
     usage: [],
@@ -229,8 +231,33 @@ class EditInputTransformDialog extends React.Component {
     this.setState(newState);
   };
 
+  handlePasteScripts = ({ scriptText, testScriptText }) => {
+    this.setState({
+      testEditorDataObject: {
+        script: testScriptText,
+        hasError: false,
+        errorText: ''
+      },
+      transformEditorDataObject: {
+        script: scriptText,
+        hasError: false,
+        errorText: ''
+      }
+    });
+  };
+
   render () {
-    const { isOpen, classes, title, inputSampleScript, outputSampleScript, errors, output, usage } = this.props;
+    const {
+      isOpen,
+      classes,
+      title,
+      inputSampleScript,
+      outputSampleScript,
+      transformScriptList,
+      errors,
+      output,
+      usage
+    } = this.props;
     if (!isOpen) {
       return null;
     }
@@ -239,7 +266,6 @@ class EditInputTransformDialog extends React.Component {
       testEditorDataObject,
       transformEditorDataObject
     } = this.state;
-    console.info('title: ', title);
     return (
       <Dialog
         aria-labelledby="EditInputTransformDialog-dialog-title"
@@ -249,7 +275,12 @@ class EditInputTransformDialog extends React.Component {
         scroll="paper"
         TransitionComponent={Transition}
       >
-        <div className={classes.root}>
+        <SplitPane
+          split="vertical"
+          defaultSize={500}
+          primary="second"
+        >
+          <div className={classes.root}>
           <div className={classes.topPane}>
             <CommonToolbar disableGutters={true} dense="true">
               <ToolbarButton
@@ -262,25 +293,20 @@ class EditInputTransformDialog extends React.Component {
               <Typography className={classes.dialogTitle} variant="body2">{title}</Typography>
               <CommonToolbarDivider/>
               <ToolbarButton
-                iconType="PlayCircleOutline"
-                onClick={this.handleSubmit}
-                title="Submit"
-                tooltip="Test and save transformation script"
-              />
-              <ToolbarButton
                 iconType="PlayArrow"
                 onClick={this.handleTest}
                 title="Test"
                 tooltip="Test transformation script"
               />
+              <ToolbarButton
+                iconType="Save"
+                onClick={this.handleSubmit}
+                title="Save"
+                tooltip="Test and save transformation script"
+              />
             </CommonToolbar>
           </div>
           <div className={classes.contentPane}>
-            <SplitPane
-              split="vertical"
-              defaultSize={500}
-              primary="second"
-            >
               <SplitPane
                 split="horizontal"
                 defaultSize={500}
@@ -437,52 +463,15 @@ class EditInputTransformDialog extends React.Component {
                   </PanelWithTitle>
                 </div>
               </SplitPane>
-              <div className={classes.transformationListPane}>
-                <PanelWithScriptList
-                  scriptList={
-                    [1, 2, 3, 4, 5].map((item, idx) => {
-                      return {
-                        id: `${idx}`,
-                        title: 'Test script ' + idx,
-                        scriptText: 'export async function createFiles (fileName, dirName, destDirPath, fileExtension) {\n' +
-                          '  const fileObjects = [];\n' +
-                          '  let fileExists;\n' +
-                          '  const functionsFilePath = repairPath(path.join(destDirPath, dirName, `${fileName}.funcs${fileExtension}`));\n' +
-                          '  fileExists = await checkFileExists(functionsFilePath);\n' +
-                          '  if (fileExists) {\n' +
-                          '    throw Error(`The file with the "${fileName}.funcs${fileExtension}" name already exists.`);\n' +
-                          '  }\n' +
-                          '  const functionsPropsFilePath = repairPath(path.join(destDirPath, dirName, `${fileName}.props${fileExtension}`));\n' +
-                          '  fileExists = await checkFileExists(functionsPropsFilePath);\n' +
-                          '  if (fileExists) {\n' +
-                          '    throw Error(`The file with the "${fileName}.props${fileExtension}" name already exists.`);\n' +
-                          '  }\n' +
-                          '  // const functionsReadmeFilePath = repairPath(path.join(destDirPath, dirName, `${fileName}.md`));\n' +
-                          '  // fileExists = await checkFileExists(functionsReadmeFilePath);\n' +
-                          '  // if (fileExists) {\n' +
-                          '  //   throw Error(`The file with the "${fileName}.md" name already exists.`);\n' +
-                          '  // }\n' +
-                          '  fileObjects.push({\n' +
-                          '    filePath: functionsFilePath,\n' +
-                          '    fileData: format(template(templateContent)({fileName}))\n' +
-                          '  });\n' +
-                          '  fileObjects.push({\n' +
-                          '    filePath: functionsPropsFilePath,\n' +
-                          '    fileData: format(template(templateContentProps)({fileName}))\n' +
-                          '  });\n' +
-                          '  // fileObjects.push({\n' +
-                          '  //   filePath: functionsReadmeFilePath,\n' +
-                          '  //   fileData: template(templateContentReadme)({fileName})\n' +
-                          '  // });\n' +
-                          '  return fileObjects;\n' +
-                          '}'
-                      }
-                    })
-                  } />
-              </div>
-            </SplitPane>
           </div>
         </div>
+          <div className={classes.transformationListPane}>
+            <PanelWithScriptList
+              scriptList={transformScriptList}
+              onUseScript={this.handlePasteScripts}
+            />
+          </div>
+        </SplitPane>
       </Dialog>
     );
   }

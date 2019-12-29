@@ -204,7 +204,9 @@ export function createFlowModels(modelKey, declarationsInFile) {
           pagePath,
           pageName,
           inputs,
-          outputs
+          outputs,
+          connectedToName,
+          connectedToOutput
         } = flowParticle;
         if (flowParticleType === constants.FLOW_USER_FUNCTION_TYPE) {
           particleDisplayName = getParticleName(functionName);
@@ -217,6 +219,8 @@ export function createFlowModels(modelKey, declarationsInFile) {
               isTest,
               displayName: particleDisplayName,
               functionName: functionName,
+              connectedToName,
+              connectedToOutput,
               inputs: cloneDeep(inputs),
               outputs: cloneDeep(outputs),
             }
@@ -232,6 +236,8 @@ export function createFlowModels(modelKey, declarationsInFile) {
               displayName: componentInstance,
               componentName: componentName,
               componentInstance: componentInstance,
+              connectedToName,
+              connectedToOutput,
               isTest,
               inputs: cloneDeep(inputs),
               outputs: cloneDeep(outputs),
@@ -247,6 +253,8 @@ export function createFlowModels(modelKey, declarationsInFile) {
               displayName: pageName,
               pageName,
               pagePath,
+              connectedToName,
+              connectedToOutput,
               isTest,
               inputs: cloneDeep(inputs),
               outputs: cloneDeep(outputs),
