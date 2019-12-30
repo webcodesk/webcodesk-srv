@@ -64,13 +64,15 @@ export const openTabWithResourceByKey = (resourceKey) => (dispatch) => {
       });
       activeEditorTabIndex = resourceEditorTabs.length - 1;
       resourceEditorTabs = [...resourceEditorTabs];
-      dispatch('resourceEditorTabs', resourceEditorTabs);
-      dispatch('activeEditorTabIndex', activeEditorTabIndex);
+      dispatch({
+        resourceEditorTabs: resourceEditorTabs,
+        activeEditorTabIndex: activeEditorTabIndex
+      });
     }
   } else {
     activeEditorTabIndex = foundIndex;
     resourceEditorTabs[foundIndex].timestamp = Date.now();
-    dispatch('activeEditorTabIndex', activeEditorTabIndex);
+    dispatch({activeEditorTabIndex: activeEditorTabIndex});
   }
   globalStore.set('resourceEditorTabs', resourceEditorTabs);
   globalStore.set('activeEditorTabIndex', activeEditorTabIndex);
@@ -87,7 +89,7 @@ export const openTabWithResourceByIndex = (selectedIndex) => (dispatch) => {
   resourceEditorTabs[selectedIndex].timestamp = Date.now();
   globalStore.set('activeEditorTabIndex', selectedIndex);
   globalStore.set('resourceEditorTabs', resourceEditorTabs);
-  dispatch('activeEditorTabIndex', selectedIndex);
+  dispatch({activeEditorTabIndex: selectedIndex});
 };
 
 /**
@@ -109,8 +111,10 @@ export const closeTabWithResourceByIndex = (closingIndex) => (dispatch) => {
     }
     globalStore.set('resourceEditorTabs', resourceEditorTabs);
     globalStore.set('activeEditorTabIndex', activeEditorTabIndex);
-    dispatch('resourceEditorTabs', resourceEditorTabs);
-    dispatch('activeEditorTabIndex', activeEditorTabIndex);
+    dispatch({
+      resourceEditorTabs: resourceEditorTabs,
+      activeEditorTabIndex: activeEditorTabIndex
+    });
   }
 };
 
@@ -161,8 +165,10 @@ export const updateAllTabs = () => (dispatch) => {
   activeEditorTabIndex = activeEditorTabIndex < newResourceEditorTabs.length ? activeEditorTabIndex : 0;
   globalStore.set('resourceEditorTabs', newResourceEditorTabs);
   globalStore.set('activeEditorTabIndex', activeEditorTabIndex);
-  dispatch('activeEditorTabIndex', activeEditorTabIndex);
-  dispatch('resourceEditorTabs', newResourceEditorTabs);
+  dispatch({
+    activeEditorTabIndex: activeEditorTabIndex,
+    resourceEditorTabs: newResourceEditorTabs
+  });
 };
 
 export const openTabWithLivePreview = () => (dispatch) => {
@@ -179,11 +185,15 @@ export const openTabWithLivePreview = () => (dispatch) => {
     });
     activeEditorTabIndex = resourceEditorTabs.length - 1;
     resourceEditorTabs = [...resourceEditorTabs];
-    dispatch('activeEditorTabIndex', activeEditorTabIndex);
-    dispatch('resourceEditorTabs', resourceEditorTabs);
+    dispatch({
+      activeEditorTabIndex: activeEditorTabIndex,
+      resourceEditorTabs: resourceEditorTabs
+    });
   } else {
     activeEditorTabIndex = foundIndex;
-    dispatch('activeEditorTabIndex', activeEditorTabIndex);
+    dispatch({
+      activeEditorTabIndex: activeEditorTabIndex
+    });
   }
   globalStore.set('resourceEditorTabs', resourceEditorTabs);
   globalStore.set('activeEditorTabIndex', activeEditorTabIndex);
@@ -203,11 +213,13 @@ export const openTabWithReadmePreview = () => (dispatch) => {
     });
     activeEditorTabIndex = resourceEditorTabs.length - 1;
     resourceEditorTabs = [...resourceEditorTabs];
-    dispatch('activeEditorTabIndex', activeEditorTabIndex);
-    dispatch('resourceEditorTabs', resourceEditorTabs);
+    dispatch({
+      activeEditorTabIndex: activeEditorTabIndex,
+      resourceEditorTabs: resourceEditorTabs
+    });
   } else {
     activeEditorTabIndex = foundIndex;
-    dispatch('activeEditorTabIndex', activeEditorTabIndex);
+    dispatch({activeEditorTabIndex: activeEditorTabIndex});
   }
   globalStore.set('resourceEditorTabs', resourceEditorTabs);
   globalStore.set('activeEditorTabIndex', activeEditorTabIndex);
@@ -216,12 +228,14 @@ export const openTabWithReadmePreview = () => (dispatch) => {
 export const resourceItemDragStart = (resourceKey) => (dispatch) => {
   const resourceEditorDraggedObject =
     projectObjectFactory.createResourceEditorDraggedObject(resourceKey);
-  dispatch('draggedItem', resourceEditorDraggedObject);
-  dispatch('isDraggingItem', true);
+  dispatch({
+    draggedItem: resourceEditorDraggedObject,
+    isDraggingItem: true
+  });
 };
 
 export const resourceItemDragEnd = () => (dispatch) => {
-  dispatch('isDraggingItem', false);
+  dispatch({isDraggingItem: false});
 };
 
 export const updateResourceByTab = ({resource, data}) => async (dispatch) => {
@@ -230,9 +244,9 @@ export const updateResourceByTab = ({resource, data}) => async (dispatch) => {
     const oldFileObject = projectFileFactory.createFileObject(resource);
     if (oldFileObject && oldFileObject.filePath && oldFileObject.fileData) {
       const updateResourceHistory = projectResourcesManager.pushUpdateToResourceHistory(resource, oldFileObject);
-      dispatch('updateResourceHistory', updateResourceHistory);
+      dispatch({updateResourceHistory: updateResourceHistory});
     }
-    dispatch('fileObject', fileObject);
+    dispatch({fileObject: fileObject});
   }
 };
 
@@ -240,8 +254,10 @@ export const undoUpdateResourceByTab = (resource) => async (dispatch) => {
   const fileObject = projectResourcesManager.popUpdateFromResourceHistory(resource);
   if (fileObject && fileObject.filePath && fileObject.fileData) {
     const updateResourceHistory = projectResourcesManager.getResourcesUpdateHistory();
-    dispatch('updateResourceHistory', updateResourceHistory);
-    dispatch('fileObject', fileObject);
+    dispatch({
+      updateResourceHistory: updateResourceHistory,
+      fileObject: fileObject
+    });
   }
 };
 
@@ -249,25 +265,25 @@ export const writeResourceSourceCode = ({resource, script}) => async (dispatch) 
   const fileObject = projectFileFactory.createFileObjectWithNewSourceCode(resource, script);
   if (fileObject && fileObject.filePath && fileObject.fileData) {
     await projectManager.writeSourceFile(fileObject.filePath, fileObject.fileData);
-    dispatch('success', 'Source code has been successfully saved');
+    dispatch({success: 'Source code has been successfully saved'});
   }
 };
 
 export const updateSettings = (settings) => async (dispatch) => {
   const fileObject = projectFileFactory.createSettingsFileObject(settings);
   if (fileObject && fileObject.filePath && fileObject.fileData) {
-    dispatch('fileObject', fileObject);
+    dispatch({fileObject: fileObject});
   }
 };
 
 export const openUrlInExternalBrowser = (url) => (dispatch) => {
   projectManager.openUrlInExternalBrowser(url);
-  dispatch('success');
+  dispatch({success: true});
 };
 
 export const pushItemToClipboard = (newItem) => (dispatch) => {
   projectResourcesManager.addItemToClipboard(newItem);
-  dispatch('success');
+  dispatch({success: true});
 };
 
 export const clearClipboard = () => (dispatch) => {

@@ -40,7 +40,7 @@ export const restoreExpandedResourceKeys = () => async (dispatch) => {
   try {
     const expandedResourceKeys = await globalStore.restore(constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS);
     if (expandedResourceKeys) {
-      dispatch('expandedResourceKeys', expandedResourceKeys);
+      dispatch({expandedResourceKeys: expandedResourceKeys});
     }
   } catch (e) {
     // do nothing;
@@ -49,7 +49,7 @@ export const restoreExpandedResourceKeys = () => async (dispatch) => {
 
 export const updateResourcesTreeView = () => (dispatch) => {
   const resourcesTreeViewObject = projectObjectFactory.createResourcesTreeViewObject();
-  dispatch('resourcesTreeViewObject', resourcesTreeViewObject);
+  dispatch({resourcesTreeViewObject: resourcesTreeViewObject});
 };
 
 export const selectResourceByKey = ({ resourceKey, virtualPath }) => (dispatch) => {
@@ -59,16 +59,23 @@ export const selectResourceByKey = ({ resourceKey, virtualPath }) => (dispatch) 
   //     ? `${virtualPath}${constants.FILE_SEPARATOR}${selectedResource.displayName}`
   //     : selectedResource.displayName;
   // }
-  dispatch('selectedResourceKey', resourceKey);
-  dispatch('selectedResource', selectedResource);
-  dispatch('selectedVirtualPath', virtualPath);
-  dispatch('selected', { resource: selectedResource, virtualPath });
+  dispatch({
+    selectedResourceKey: resourceKey,
+    selectedResource: selectedResource,
+    selectedVirtualPath: virtualPath,
+    selected: { resource: selectedResource, virtualPath }
+  });
+  // dispatch('selectedResource', selectedResource);
+  // dispatch('selectedVirtualPath', virtualPath);
+  // dispatch('selected', { resource: selectedResource, virtualPath });
 };
 
 export const removeSelectedResource = () => (dispatch) => {
-  dispatch('selectedResourceKey', null);
-  dispatch('selectedResource', null);
-  dispatch('selectedVirtualPath', '');
+  dispatch({
+    selectedResourceKey: null,
+    selectedResource: null,
+    selectedVirtualPath: ''
+  });
 };
 
 export const findResourcesByText = (text) => (dispatch) => {
@@ -76,7 +83,7 @@ export const findResourcesByText = (text) => (dispatch) => {
   let foundKeysObject = foundKeys.reduce((acc, value) => {
     return { ...acc, ...{ [value]: true } };
   }, {});
-  dispatch('foundResourceKeys', foundKeysObject);
+  dispatch({foundResourceKeys: foundKeysObject});
   const keysToExpand = {};
   foundKeys.forEach(foundKey => {
     const pageResource = projectResourcesManager.getResourceByKey(foundKey);
@@ -90,15 +97,15 @@ export const findResourcesByText = (text) => (dispatch) => {
       keysToExpand,
       true
     );
-  dispatch('expandedResourceKeys', expandedResourceKeys);
+  dispatch({expandedResourceKeys: expandedResourceKeys});
 };
 
 export const cancelFindResourcesByText = () => (dispatch) => {
-  dispatch('foundResourceKeys', {});
+  dispatch({foundResourceKeys: {}});
 };
 
 export const findResourcesByEditorRequest = (text) => (dispatch) => {
-  dispatch('searchText', text);
+  dispatch({searchText: text});
   findResourcesByText(text)(dispatch);
 };
 
@@ -111,8 +118,10 @@ export const showContextMenu = ({ resource, virtualPath }) => (dispatch) => {
 };
 
 export const createNewPageStart = ({ virtualPath }) => (dispatch) => {
-  dispatch('dirPath', virtualPath);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
 };
 
 export const createNewPageSubmit = (options) => async (dispatch) => {
@@ -130,11 +139,13 @@ export const createNewPageSubmit = (options) => async (dispatch) => {
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
     const newResource = newResources.updatedResources[0];
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
     if (newResource && newResource.hasChildren) {
       const pageResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
-      dispatch('selectedResourceKey', pageResource.key);
-      dispatch('selectedResource', pageResource);
+      dispatch({
+        selectedResourceKey: pageResource.key,
+        selectedResource: pageResource
+      });
       const keysToExpand = {};
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
@@ -145,17 +156,21 @@ export const createNewPageSubmit = (options) => async (dispatch) => {
           keysToExpand,
           true
         );
-      dispatch('expandedResourceKeys', expandedResourceKeys);
+      dispatch({expandedResourceKeys: expandedResourceKeys});
     }
   }
-  dispatch('isDialogOpen', false);
-  dispatch('fileObject', fileObject);
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
 };
 
 export const createNewTemplateStart = ({ virtualPath, templateModel }) => (dispatch) => {
-  dispatch('dirPath', virtualPath);
-  dispatch('templateModel', templateModel || null);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    dirPath: virtualPath,
+    templateModel: templateModel || null,
+    isDialogOpen: true
+  });
 };
 
 export const createNewTemplateSubmit = (options) => async (dispatch) => {
@@ -173,11 +188,13 @@ export const createNewTemplateSubmit = (options) => async (dispatch) => {
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
     const newResource = newResources.updatedResources[0];
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
     if (newResource && newResource.hasChildren) {
       const pageResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
-      dispatch('selectedResourceKey', pageResource.key);
-      dispatch('selectedResource', pageResource);
+      dispatch({
+        selectedResourceKey: pageResource.key,
+        selectedResource: pageResource
+      });
       const keysToExpand = {};
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
@@ -188,18 +205,22 @@ export const createNewTemplateSubmit = (options) => async (dispatch) => {
           keysToExpand,
           true
         );
-      dispatch('expandedResourceKeys', expandedResourceKeys);
+      dispatch({expandedResourceKeys: expandedResourceKeys});
     }
   }
-  dispatch('isDialogOpen', false);
-  dispatch('fileObject', fileObject);
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
 };
 
 export const copyPageStart = ({ resourceKey, virtualPath }) => (dispatch) => {
   const resource = projectResourcesManager.getResourceByKey(resourceKey);
-  dispatch('resource', resource);
-  dispatch('dirPath', virtualPath);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    resource: resource,
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
 };
 
 export const copyPageSubmit = ({ resource, name, directoryName }) => async (dispatch) => {
@@ -216,11 +237,13 @@ export const copyPageSubmit = ({ resource, name, directoryName }) => async (disp
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
     const newResource = newResources.updatedResources[0];
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
     if (newResource && newResource.hasChildren) {
       const pageResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
-      dispatch('selectedResourceKey', pageResource.key);
-      dispatch('selectedResource', pageResource);
+      dispatch({
+        selectedResourceKey: pageResource.key,
+        selectedResource: pageResource
+      });
       const keysToExpand = {};
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
@@ -231,18 +254,22 @@ export const copyPageSubmit = ({ resource, name, directoryName }) => async (disp
           keysToExpand,
           true
         );
-      dispatch('expandedResourceKeys', expandedResourceKeys);
+      dispatch({expandedResourceKeys: expandedResourceKeys});
     }
   }
-  dispatch('isDialogOpen', false);
-  dispatch('fileObject', fileObject);
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
 };
 
 export const copyTemplateStart = ({ resourceKey, virtualPath }) => (dispatch) => {
   const resource = projectResourcesManager.getResourceByKey(resourceKey);
-  dispatch('resource', resource);
-  dispatch('dirPath', virtualPath);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    resource: resource,
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
 };
 
 export const copyTemplateSubmit = ({ resource, name, directoryName }) => async (dispatch) => {
@@ -259,11 +286,13 @@ export const copyTemplateSubmit = ({ resource, name, directoryName }) => async (
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
     const newResource = newResources.updatedResources[0];
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
     if (newResource && newResource.hasChildren) {
       const pageResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
-      dispatch('selectedResourceKey', pageResource.key);
-      dispatch('selectedResource', pageResource);
+      dispatch({
+        selectedResourceKey: pageResource.key,
+        selectedResource: pageResource
+      });
       const keysToExpand = {};
       pageResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
@@ -274,11 +303,13 @@ export const copyTemplateSubmit = ({ resource, name, directoryName }) => async (
           keysToExpand,
           true
         );
-      dispatch('expandedResourceKeys', expandedResourceKeys);
+      dispatch({expandedResourceKeys: expandedResourceKeys});
     }
   }
-  dispatch('isDialogOpen', false);
-  dispatch('fileObject', fileObject);
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
 };
 
 export const removePageStart = (resourceKey) => (dispatch) => {
@@ -286,17 +317,19 @@ export const removePageStart = (resourceKey) => (dispatch) => {
   if (foundResource && foundResource.isPage) {
     // we can delete only file
     const resourceToDelete = projectResourcesManager.getResourceByKey(foundResource.parentKey);
-    dispatch('resource', resourceToDelete);
-    dispatch('resourceName', foundResource.displayName);
-    dispatch('isDialogOpen', true);
+    dispatch({
+      resource: resourceToDelete,
+      resourceName: foundResource.displayName,
+      isDialogOpen: true
+    });
   }
 };
 
 export const removePageSubmit = (resource) => async (dispatch) => {
   if (resource && resource.absolutePath) {
-    dispatch('deleteFilePath', resource.absolutePath);
+    dispatch({deleteFilePath: resource.absolutePath});
   }
-  dispatch('isDialogOpen', false);
+  dispatch({isDialogOpen: false});
 };
 
 export const removeTemplateStart = (resourceKey) => (dispatch) => {
@@ -304,22 +337,26 @@ export const removeTemplateStart = (resourceKey) => (dispatch) => {
   if (foundResource && foundResource.isTemplate) {
     // we can delete only file
     const resourceToDelete = projectResourcesManager.getResourceByKey(foundResource.parentKey);
-    dispatch('resource', resourceToDelete);
-    dispatch('resourceName', foundResource.displayName);
-    dispatch('isDialogOpen', true);
+    dispatch({
+      resource: resourceToDelete,
+      resourceName: foundResource.displayName,
+      isDialogOpen: true
+    });
   }
 };
 
 export const removeTemplateSubmit = (resource) => async (dispatch) => {
   if (resource && resource.absolutePath) {
-    dispatch('deleteFilePath', resource.absolutePath);
+    dispatch({deleteFilePath: resource.absolutePath});
   }
-  dispatch('isDialogOpen', false);
+  dispatch({isDialogOpen: false});
 };
 
 export const createNewFlowStart = ({ virtualPath }) => (dispatch) => {
-  dispatch('dirPath', virtualPath);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
 };
 
 export const createNewFlowSubmit = ({ name, directoryName }) => async (dispatch) => {
@@ -336,11 +373,13 @@ export const createNewFlowSubmit = ({ name, directoryName }) => async (dispatch)
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
     const newResource = newResources.updatedResources[0];
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
     if (newResource.hasChildren) {
       const flowResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
-      dispatch('selectedResourceKey', flowResource.key);
-      dispatch('selectedResource', flowResource);
+      dispatch({
+        selectedResourceKey: flowResource.key,
+        selectedResource: flowResource
+      });
       const keysToExpand = {};
       flowResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
@@ -351,18 +390,22 @@ export const createNewFlowSubmit = ({ name, directoryName }) => async (dispatch)
           keysToExpand,
           true
         );
-      dispatch('expandedResourceKeys', expandedResourceKeys);
+      dispatch({expandedResourceKeys: expandedResourceKeys});
     }
   }
-  dispatch('isDialogOpen', false);
-  dispatch('fileObject', fileObject);
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
 };
 
 export const copyFlowStart = ({ resourceKey, virtualPath }) => (dispatch) => {
   const resource = projectResourcesManager.getResourceByKey(resourceKey);
-  dispatch('resource', resource);
-  dispatch('dirPath', virtualPath);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    resource: resource,
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
 };
 
 export const copyFlowSubmit = ({ resource, name, directoryName }) => async (dispatch) => {
@@ -378,11 +421,13 @@ export const copyFlowSubmit = ({ resource, name, directoryName }) => async (disp
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
     const newResource = newResources.updatedResources[0];
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
     if (newResource.hasChildren) {
       const flowResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
-      dispatch('selectedResourceKey', flowResource.key);
-      dispatch('selectedResource', flowResource);
+      dispatch({
+        selectedResourceKey: flowResource.key,
+        selectedResource: flowResource
+      });
       const keysToExpand = {};
       flowResource.allParentKeys.forEach(parentKey => {
         keysToExpand[parentKey] = true;
@@ -393,11 +438,13 @@ export const copyFlowSubmit = ({ resource, name, directoryName }) => async (disp
           keysToExpand,
           true
         );
-      dispatch('expandedResourceKeys', expandedResourceKeys);
+      dispatch({expandedResourceKeys: expandedResourceKeys});
     }
   }
-  dispatch('isDialogOpen', false);
-  dispatch('fileObject', fileObject);
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
 };
 
 export const removeFlowStart = (resourceKey) => (dispatch) => {
@@ -405,22 +452,26 @@ export const removeFlowStart = (resourceKey) => (dispatch) => {
   if (foundResource && foundResource.isFlow) {
     // we can delete only file
     const resourceToDelete = projectResourcesManager.getResourceByKey(foundResource.parentKey);
-    dispatch('resource', resourceToDelete);
-    dispatch('resourceName', foundResource.displayName);
-    dispatch('isDialogOpen', true);
+    dispatch({
+      resource: resourceToDelete,
+      resourceName: foundResource.displayName,
+      isDialogOpen: true
+    });
   }
 };
 
 export const removeFlowSubmit = (resource) => async (dispatch) => {
   if (resource && resource.absolutePath) {
-    dispatch('deleteFilePath', resource.absolutePath);
+    dispatch({deleteFilePath: resource.absolutePath});
   }
-  dispatch('isDialogOpen', false);
+  dispatch({isDialogOpen: false});
 };
 
 export const createNewComponentStart = ({ virtualPath }) => (dispatch) => {
-  dispatch('dirPath', virtualPath);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
 };
 
 export const createNewComponentSubmit = (options) => async (dispatch) => {
@@ -429,12 +480,14 @@ export const createNewComponentSubmit = (options) => async (dispatch) => {
     throw Error(`${name} is a reserved name.`);
   }
   await scaffoldManager.generateComponentScaffold(name, directoryName, fileExtension, componentScaffold);
-  dispatch('isDialogOpen', false);
+  dispatch({isDialogOpen: false});
 };
 
 export const createNewFunctionsStart = ({ virtualPath }) => (dispatch) => {
-  dispatch('dirPath', virtualPath);
-  dispatch('isDialogOpen', true);
+  dispatch({
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
 };
 
 export const createNewFunctionsSubmit = (options) => async (dispatch) => {
@@ -447,7 +500,7 @@ export const createNewFunctionsSubmit = (options) => async (dispatch) => {
     throw Error(`${name} is a reserved name.`);
   }
   await scaffoldManager.generateFunctionsScaffold(name, directoryName, fileExtension);
-  dispatch('isDialogOpen', false);
+  dispatch({isDialogOpen: false});
 };
 
 export const toggleFlow = ({ resourceKey, isDisabled }) => async (dispatch) => {
@@ -455,9 +508,9 @@ export const toggleFlow = ({ resourceKey, isDisabled }) => async (dispatch) => {
   const fileObject = projectFileFactory.createFileObject(foundResource, { isDisabled });
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
   }
-  dispatch('fileObject', fileObject);
+  dispatch({fileObject: fileObject});
 };
 
 export const toggleIsTest = ({ resourceKey, isTest }) => async (dispatch) => {
@@ -465,9 +518,9 @@ export const toggleIsTest = ({ resourceKey, isTest }) => async (dispatch) => {
   const fileObject = projectFileFactory.createFileObject(foundResource, { isTest });
   const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
-    dispatch('resourceUpdatedSuccessfully');
+    dispatch({resourceUpdatedSuccessfully: true});
   }
-  dispatch('fileObject', fileObject);
+  dispatch({fileObject: fileObject});
 };
 
 export const toggleExpandedResourceKey = (key) => (dispatch) => {
@@ -479,7 +532,7 @@ export const toggleExpandedResourceKey = (key) => (dispatch) => {
       { [key]: !expandedResourceKeys[key] },
       true
     );
-  dispatch('expandedResourceKeys', expandedResourceKeys);
+  dispatch({expandedResourceKeys: expandedResourceKeys});
 };
 
 export const getProjectServerStatus = () => (dispatch) => {
@@ -491,7 +544,7 @@ export const getProjectServerLog = () => (dispatch) => {
 };
 
 export const getProjectSettings = () => (dispatch) => {
-  dispatch('projectSettings', projectManager.getProjectSettings());
+  dispatch({projectSettings: projectManager.getProjectSettings()});
 };
 
 export const restartProjectServer = () => dispatch => {
@@ -505,8 +558,8 @@ export const stopProjectServer = () => dispatch => {
 export const setProjectServerPort = (newPort) => async (dispatch) => {
   const newProjectSettings = await projectManager.mergeProjectSettings({ port: newPort });
   projectManager.restartProjectServer();
-  dispatch('projectSettings', newProjectSettings);
+  dispatch({projectSettings: newProjectSettings});
   setTimeout(() => {
-    dispatch('doUpdateAll');
+    dispatch({doUpdateAll: true});
   }, 10000);
 };

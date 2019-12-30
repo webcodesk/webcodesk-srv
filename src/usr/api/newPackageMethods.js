@@ -18,31 +18,44 @@ import * as constants from '../../commons/constants';
 import * as projectInstaller from '../core/project/projectInstaller';
 
 export const startInstallPackage = () => dispatch => {
-  dispatch('isOpen', true);
-  dispatch('error', '');
-  dispatch('data', {projectModel: null});
+  dispatch({
+    isOpen: true,
+    error: '',
+    data: {projectModel: null}
+  });
+  // dispatch('error', '');
+  // dispatch('data', {projectModel: null});
 };
 
 export const submitInstallPackage = ({directoryName, projectModel}) => async (dispatch) => {
-  dispatch('isLoading', true);
-  dispatch('error', '');
+  dispatch({isLoading: true, error: ''});
+  // dispatch({error: ''});
   try {
     await projectInstaller.installNewPackage({directoryName, projectModel});
-    dispatch('isOpen', false);
-    dispatch('success', 'Package has been successfully installed');
+    dispatch({
+      isOpen: false,
+      success: 'Package has been successfully installed'
+    });
+    // dispatch('success', 'Package has been successfully installed');
   } catch(e) {
-    dispatch('error', e.message);
+    dispatch({error: e.message});
   } finally {
-    dispatch('isLoading', false);
+    dispatch({isLoading: false});
   }
 };
 
 export const openMarket = () => async (dispatch) => {
-  dispatch('projectsType', constants.MARKET_NEW_PACKAGES_TYPE);
-  dispatch('isOpen', true);
+  dispatch({
+    projectsType: constants.MARKET_NEW_PACKAGES_TYPE,
+    isOpen: true
+  });
+  // dispatch('isOpen', true);
 };
 
 export const submitMarket = ({projectModel}) => (dispatch) => {
-  dispatch('data', {projectModel: projectModel});
-  dispatch('isOpen', false);
+  dispatch({
+    data: {projectModel: projectModel},
+    isOpen: false
+  });
+  // dispatch('isOpen', false);
 };

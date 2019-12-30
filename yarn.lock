@@ -1436,9 +1436,15 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.4":
+"@babel/runtime@^7.3.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.4":
   version "7.7.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.6.tgz#d18c511121aff1b4f2cd1d452f1bac9601dd830f"
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
+"@babel/runtime@^7.4.0", "@babel/runtime@^7.5.5":
+  version "7.7.7"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.7.tgz#194769ca8d6d7790ec23605af9ee3e42a0aa79cf"
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -2174,9 +2180,9 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@webcodesk/react-app-framework@2.0.21":
-  version "2.0.21"
-  resolved "https://registry.yarnpkg.com/@webcodesk/react-app-framework/-/react-app-framework-2.0.21.tgz#ca7048009f32eb00648274f8b5cbb776ecb4e2b8"
+"@webcodesk/react-app-framework@2.0.23":
+  version "2.0.23"
+  resolved "https://registry.yarnpkg.com/@webcodesk/react-app-framework/-/react-app-framework-2.0.23.tgz#c8c8ef368583fd35661622bd4d24d3572effa1c1"
   dependencies:
     lodash "4.17.15"
     prop-types "15.7.2"
@@ -11151,7 +11157,7 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-stringify-object@^3.3.0:
+stringify-object@3.3.0, stringify-object@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/stringify-object/-/stringify-object-3.3.0.tgz#703065aefca19300d3ce88af4f5b3956d7556629"
   dependencies:

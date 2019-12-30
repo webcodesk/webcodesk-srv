@@ -26,23 +26,25 @@ export const testProjectConfiguration = () => async (dispatch) => {
       projectName = validPaths.projectName;
       projectDirPath = validPaths.testProjectDirPath;
     }
-    dispatch('projectConfigStatus', {projectName, projectDirPath, ready: true});
+    dispatch({projectConfigStatus: {projectName, projectDirPath, ready: true}});
   } catch (e) {
     console.error(e);
-    dispatch('projectConfigStatus', {ready: false});
-    dispatch('error', {message: e.message});
+    dispatch({
+      projectConfigStatus: {ready: false},
+      error: {message: e.message}
+    });
   }
 };
 
 export const testError = (error) => dispatch => {
   if (error && error.message) {
-    dispatch('success', error);
+    dispatch({success: error});
   }
 };
 
 export const openExistingProject = () => async (dispatch) => {
   globalStore.clear();
-  dispatch('isOpening', true);
+  dispatch({isOpening: true});
   try {
     await projectManager.initProjectConfiguration();
   } catch (e) {
@@ -51,20 +53,22 @@ export const openExistingProject = () => async (dispatch) => {
   // dispatch('infoMessage', 'Reading source files. Please wait...');
   try {
     await projectManager.watchUsrSourceDir();
-    dispatch('success');
+    dispatch({success: true});
     // dispatch('successMessage', 'Project initialised successfully');
   } catch (e) {
     console.error(e);
   }
-  dispatch('isOpening', false);
+  dispatch({isOpening: false});
 };
 
 export const closeExistingProject = () => dispatch => {
   globalStore.clear();
-  dispatch('activeEditorTabIndex', -1);
-  dispatch('resourceEditorTabs', []);
-  dispatch('selectedResourceKey', null);
-  dispatch('selectedResource', null);
-  dispatch('selectedVirtualPath', '');
-  dispatch('success');
+  dispatch({
+    activeEditorTabIndex: -1,
+    resourceEditorTabs: [],
+    selectedResourceKey: null,
+    selectedResource: null,
+    selectedVirtualPath: '',
+    success: true,
+  });
 };
