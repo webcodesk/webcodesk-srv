@@ -432,6 +432,7 @@ class FlowModelCompiler {
         if (forwardInput) {
           forwardInput.properties = {
             type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+            props: {},
             children: [],
           };
         } else {
@@ -440,6 +441,7 @@ class FlowModelCompiler {
               name: 'forward',
               properties: {
                 type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+                props: {},
                 children: [],
               },
             }
@@ -451,6 +453,7 @@ class FlowModelCompiler {
         if (queryParamsOutput) {
           queryParamsOutput.properties = {
             type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+            props: {},
             children: [],
           };
         } else {
@@ -459,6 +462,7 @@ class FlowModelCompiler {
               name: 'queryParams',
               properties: {
                 type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
+                props: {},
                 children: [],
               },
             }
@@ -518,6 +522,7 @@ class FlowModelCompiler {
         if (applicationStartOutput) {
           applicationStartOutput.properties = {
             type: constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
+            props: {},
             children: [],
           };
         } else {
@@ -526,6 +531,7 @@ class FlowModelCompiler {
               name: 'onApplicationStart',
               properties: {
                 type: constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
+                props: {},
                 children: [],
               }
             }

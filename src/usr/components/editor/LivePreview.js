@@ -262,7 +262,7 @@ class LivePreview extends React.Component {
         this.actionLog.push(payload);
       } else if (type === constants.FRAMEWORK_MESSAGE_CHANGE_URL) {
         this.setState({
-          activeUrl: payload,
+          frameUrl: payload,
         });
       }
     }
@@ -342,7 +342,7 @@ class LivePreview extends React.Component {
     const { serverPort } = this.props;
     this.setState({
       frameUrl: url ? url.replace(`http://localhost:${serverPort}`, '') : '',
-    })
+    });
   };
 
   handleOpenExternal = () => {
