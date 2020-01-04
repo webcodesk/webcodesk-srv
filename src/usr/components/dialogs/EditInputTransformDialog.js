@@ -64,9 +64,6 @@ const styles = theme => ({
     right: 0,
     overflow: 'auto',
   },
-  transformationListItemWrapper: {
-
-  },
   editorWrapper: {
     position: 'absolute',
     top: 0,
@@ -281,32 +278,32 @@ class EditInputTransformDialog extends React.Component {
           primary="second"
         >
           <div className={classes.root}>
-          <div className={classes.topPane}>
-            <CommonToolbar disableGutters={true} dense="true">
-              <ToolbarButton
-                iconType="Close"
-                onClick={this.handleClose}
-                title="Close"
-                tooltip="Close transformation script editor"
-              />
-              <CommonToolbarDivider/>
-              <Typography className={classes.dialogTitle} variant="body2">{title}</Typography>
-              <CommonToolbarDivider/>
-              <ToolbarButton
-                iconType="PlayArrow"
-                onClick={this.handleTest}
-                title="Test"
-                tooltip="Test transformation script"
-              />
-              <ToolbarButton
-                iconType="Save"
-                onClick={this.handleSubmit}
-                title="Save"
-                tooltip="Test and save transformation script"
-              />
-            </CommonToolbar>
-          </div>
-          <div className={classes.contentPane}>
+            <div className={classes.topPane}>
+              <CommonToolbar disableGutters={true} dense="true">
+                <ToolbarButton
+                  iconType="Close"
+                  onClick={this.handleClose}
+                  title="Close"
+                  tooltip="Close transformation script editor"
+                />
+                <CommonToolbarDivider/>
+                <Typography className={classes.dialogTitle} variant="body2">{title}</Typography>
+                <CommonToolbarDivider/>
+                <ToolbarButton
+                  iconType="PlayArrow"
+                  onClick={this.handleTest}
+                  title="Test"
+                  tooltip="Test transformation script"
+                />
+                <ToolbarButton
+                  iconType="Save"
+                  onClick={this.handleSubmit}
+                  title="Save"
+                  tooltip="Test and save transformation script"
+                />
+              </CommonToolbar>
+            </div>
+            <div className={classes.contentPane}>
               <SplitPane
                 split="horizontal"
                 defaultSize={500}
@@ -463,8 +460,8 @@ class EditInputTransformDialog extends React.Component {
                   </PanelWithTitle>
                 </div>
               </SplitPane>
+            </div>
           </div>
-        </div>
           <div className={classes.transformationListPane}>
             <PanelWithScriptList
               scriptList={transformScriptList}
