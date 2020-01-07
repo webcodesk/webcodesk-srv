@@ -16,6 +16,7 @@
 
 import isNull from 'lodash/isNull';
 import cloneDeep from 'lodash/cloneDeep';
+import startCase from 'lodash/startCase';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -241,7 +242,7 @@ class PropsTree extends React.Component {
     this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
     this.setState({
       expandedGroupKeys: newExpandedGroupKeys,
-    })
+    });
   };
 
   handleOpenEditJsonDialog = (editComponentPropertyModel) => {
@@ -338,11 +339,11 @@ class PropsTree extends React.Component {
         isArrayItem = false;
       }
       if (propertyName) {
-        if (listItemLabelName) {
-          listItemLabelName = propertyName;
-        } else {
-          listItemLabelName = propertyName;
-        }
+        listItemLabelName = startCase(propertyName);
+        // if (listItemLabelName) {
+        //   listItemLabelName = propertyName;
+        // } else {
+        // }
       }
       if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         result.push(

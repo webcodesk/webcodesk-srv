@@ -25,12 +25,11 @@ import SplitPane from '../splitPane';
 import globalStore from '../../core/config/globalStore';
 import constants from '../../../commons/constants';
 import PageComposerManager from '../../core/pageComposer/PageComposerManager';
-import { CommonToolbar, CommonToolbarDivider, CommonTab, CommonTabs } from '../commons/Commons.parts';
+import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import IFrame from './IFrame';
 import PageTree from './PageTree';
 import ToolbarButton from '../commons/ToolbarButton';
 import ComponentPropsTree from './ComponentPropsTree';
-import ScrollSlider from '../commons/ScrollSlider';
 
 const LAYOUT_MODE_VERTICAL = 'LAYOUT_MODE_VERTICAL';
 const LAYOUT_MODE_HORIZONTAL = 'LAYOUT_MODE_HORIZONTAL';
@@ -328,7 +327,7 @@ class PageComposer extends React.Component {
       && e
       && e.target
     ) {
-      const {keyCode, metaKey, ctrlKey} = e;
+      const { keyCode, metaKey, ctrlKey } = e;
       if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
         if (metaKey || ctrlKey) {
           if (keyCode === 90) { // Undo
@@ -378,7 +377,7 @@ class PageComposer extends React.Component {
 
   handleSendMessage = (message) => {
     if (this.iFrameRef.current && this.state.iFrameReadyCounter > 0) {
-      this.iFrameRef.current.sendMessage({...message, sourceId: this.iframeId});
+      this.iFrameRef.current.sendMessage({ ...message, sourceId: this.iframeId });
     }
   };
 
@@ -617,7 +616,7 @@ class PageComposer extends React.Component {
   handleOpenComponent = () => {
     const { selectedComponentModel } = this.state;
     if (selectedComponentModel) {
-      const {props} = selectedComponentModel;
+      const { props } = selectedComponentModel;
       if (props) {
         this.props.onOpenComponent(props.componentName);
       }
@@ -649,14 +648,14 @@ class PageComposer extends React.Component {
       // send coordinates that do not intersect with any element on the page
       this.handleSendMessage({
         type: constants.WEBCODESK_MESSAGE_COMPONENT_ITEM_DRAG_MOVE,
-        payload: {left: -1, top: -1}
+        payload: { left: -1, top: -1 }
       });
     }
   }, 20);
 
   handleDragOver = (e) => {
     e.preventDefault();
-    this.debouncedSendMessage({x: e.pageX, y: e.pageY});
+    this.debouncedSendMessage({ x: e.pageX, y: e.pageY });
   };
 
   handleDragLeave = (e) => {
@@ -693,308 +692,223 @@ class PageComposer extends React.Component {
       updateHistory,
       serverPort,
       data,
-      clipboardItems
+      clipboardItems,
+      dataId,
     } = this.props;
     let hasSelectedComponentErrors = false;
     if (selectedComponentModel) {
-      const {props} = selectedComponentModel;
+      const { props } = selectedComponentModel;
       if (props && props.errors) {
         hasSelectedComponentErrors = !isEmpty(props.errors);
       }
     }
     return (
-        <div className={classes.root}>
-          <div className={classes.topPane}>
-            <CommonToolbar disableGutters={true} dense="true">
-              <ToolbarButton
-                switchedOn={showTreeView}
-                onClick={this.handleToggleTreeView}
-                title="Structure"
-                iconType="FormatAlignRight"
-                tooltip={showTreeView
-                  ? 'Close page tree structure'
-                  : 'Open page tree structure'
-                }
-                error={data.hasErrors}
-              />
-              <ToolbarButton
-                iconType={layoutMode === LAYOUT_MODE_VERTICAL ? "DocBottom" : "DocLeft"}
-                tooltip="Change layout"
-                onClick={
-                  layoutMode === LAYOUT_MODE_VERTICAL
-                    ? this.handleToggleLayout(LAYOUT_MODE_HORIZONTAL)
-                    : this.handleToggleLayout(LAYOUT_MODE_VERTICAL)
-                }
-              />
-              <CommonToolbarDivider />
-              <ToolbarButton
-                switchedOn={showPropertyEditor}
-                onClick={this.handleTogglePropertyEditor}
-                title="Properties"
-                iconType="Edit"
-                tooltip={showPropertyEditor
-                  ? 'Close component\'s properties editor'
-                  : 'Open component\'s properties editor'
-                }
-                error={hasSelectedComponentErrors}
-              />
-              <CommonToolbarDivider />
-              <ToolbarButton
-                iconType="CopyToClipboard"
-                disabled={!selectedComponentModel}
-                onClick={this.handleCopyComponentInstance}
-                tooltip="Copy selected element into the clipboard (⌘+c | ctrl+c)"
-              />
-              <ToolbarButton
-                iconType="CutToClipboard"
-                disabled={!selectedComponentModel}
-                onClick={this.handleCutComponentInstance}
-                tooltip="Cut selected element into the clipboard (⌘+x | ctrl+x)"
-              />
-              <ToolbarButton
-                iconType="PasteFromClipboard"
-                disabled={!selectedComponentModel || !clipboardItems || clipboardItems.length === 0}
-                onClick={this.handlePasteComponentInstance}
-                tooltip="Replace the selected element with the last clipboard item (⌘+v | ctrl+v)"
-              />
-              <ToolbarButton
-                iconType="Undo"
-                disabled={recentUpdateHistory.length === 0}
-                onClick={this.undoUpdateLocalState}
-                tooltip="Undo the last recent change on the page (⌘+z | ctrl+z)"
-              />
-              <ToolbarButton
-                iconType="Delete"
-                iconColor="#E53935"
-                disabled={!selectedComponentModel}
-                onClick={this.handleDeleteComponentInstance}
-                tooltip="Remove the selected component instance from the page (Delete | Back Space)"
-              />
-              <CommonToolbarDivider />
-              <ToolbarButton
-                iconType="Cached"
-                disabled={!updateHistory || updateHistory.length === 0}
-                onClick={this.handleUndo}
-                title="Last Saved"
-                tooltip="Restore the last saving"
-              />
-              <ToolbarButton
-                iconType="Save"
-                iconColor="#4caf50"
-                onClick={this.sendUpdate}
-                title="Save"
-                switchedOn={recentUpdateHistory.length > 0}
-                disabled={recentUpdateHistory.length === 0}
-                tooltip="Save all recent changes (⌘+s | ctrl+s)"
-              />
-              <ToolbarButton
-                iconType="Refresh"
-                title="Reload"
-                onClick={this.handleReload}
-                tooltip="Reload the entire page (⌘+r | ctrl+r)"
-              />
-              <CommonToolbarDivider />
-              <ToolbarButton
-                iconType="SlowMotionVideo"
-                title="Preview"
-                switchedOn={isPreviewMode}
-                onClick={this.handleTogglePreviewMode}
-                tooltip={isPreviewMode
-                  ? "Switch to edit mode"
-                  : "Switch to live preview mode"
-                }
-              />
-              <CommonToolbarDivider />
-              <ToolbarButton
-                iconType="Widgets"
-                title="Save Template"
-                disabled={!selectedComponentModel}
-                onClick={this.handleSaveAsTemplate}
-                tooltip="Save the selected element as a template"
-              />
-              <CommonToolbarDivider />
-              <ToolbarButton
-                iconType={constants.MEDIA_WIDTHS[iFrameWidthIndex].iconType}
-                title={constants.MEDIA_WIDTHS[iFrameWidthIndex].label}
-                tooltip={constants.MEDIA_WIDTHS[iFrameWidthIndex].tooltip}
-                titleLengthLimit={200}
-                menuItems={constants.MEDIA_WIDTHS.map((mediaWidthItem, itemIndex) => {
-                  return {
-                    label: mediaWidthItem.label,
-                    iconType: mediaWidthItem.iconType,
-                    tooltip: mediaWidthItem.tooltip,
-                    onClick: this.handleToggleWidth(itemIndex),
+      <div className={classes.root}>
+        <div className={classes.topPane}>
+          <CommonToolbar disableGutters={true} dense="true">
+            <ToolbarButton
+              switchedOn={showTreeView}
+              onClick={this.handleToggleTreeView}
+              title="Structure"
+              iconType="FormatAlignRight"
+              tooltip={showTreeView
+                ? 'Close page tree structure'
+                : 'Open page tree structure'
+              }
+              error={data.hasErrors}
+            />
+            <ToolbarButton
+              iconType={layoutMode === LAYOUT_MODE_VERTICAL ? 'DocBottom' : 'DocLeft'}
+              tooltip="Change layout"
+              onClick={
+                layoutMode === LAYOUT_MODE_VERTICAL
+                  ? this.handleToggleLayout(LAYOUT_MODE_HORIZONTAL)
+                  : this.handleToggleLayout(LAYOUT_MODE_VERTICAL)
+              }
+            />
+            <CommonToolbarDivider/>
+            <ToolbarButton
+              switchedOn={showPropertyEditor}
+              onClick={this.handleTogglePropertyEditor}
+              title="Properties"
+              iconType="Edit"
+              tooltip={showPropertyEditor
+                ? 'Close component\'s properties editor'
+                : 'Open component\'s properties editor'
+              }
+              error={hasSelectedComponentErrors}
+            />
+            <CommonToolbarDivider/>
+            <ToolbarButton
+              iconType="CopyToClipboard"
+              disabled={!selectedComponentModel}
+              onClick={this.handleCopyComponentInstance}
+              tooltip="Copy selected element into the clipboard (⌘+c | ctrl+c)"
+            />
+            <ToolbarButton
+              iconType="CutToClipboard"
+              disabled={!selectedComponentModel}
+              onClick={this.handleCutComponentInstance}
+              tooltip="Cut selected element into the clipboard (⌘+x | ctrl+x)"
+            />
+            <ToolbarButton
+              iconType="PasteFromClipboard"
+              disabled={!selectedComponentModel || !clipboardItems || clipboardItems.length === 0}
+              onClick={this.handlePasteComponentInstance}
+              tooltip="Replace the selected element with the last clipboard item (⌘+v | ctrl+v)"
+            />
+            <ToolbarButton
+              iconType="Undo"
+              disabled={recentUpdateHistory.length === 0}
+              onClick={this.undoUpdateLocalState}
+              tooltip="Undo the last recent change on the page (⌘+z | ctrl+z)"
+            />
+            <ToolbarButton
+              iconType="Delete"
+              iconColor="#E53935"
+              disabled={!selectedComponentModel}
+              onClick={this.handleDeleteComponentInstance}
+              tooltip="Remove the selected component instance from the page (Delete | Back Space)"
+            />
+            <CommonToolbarDivider/>
+            <ToolbarButton
+              iconType="Cached"
+              disabled={!updateHistory || updateHistory.length === 0}
+              onClick={this.handleUndo}
+              title="Last Saved"
+              tooltip="Restore the last saving"
+            />
+            <ToolbarButton
+              iconType="Save"
+              iconColor="#4caf50"
+              onClick={this.sendUpdate}
+              title="Save"
+              switchedOn={recentUpdateHistory.length > 0}
+              disabled={recentUpdateHistory.length === 0}
+              tooltip="Save all recent changes (⌘+s | ctrl+s)"
+            />
+            <ToolbarButton
+              iconType="Refresh"
+              title="Reload"
+              onClick={this.handleReload}
+              tooltip="Reload the entire page (⌘+r | ctrl+r)"
+            />
+            <CommonToolbarDivider/>
+            <ToolbarButton
+              iconType="SlowMotionVideo"
+              title="Preview"
+              switchedOn={isPreviewMode}
+              onClick={this.handleTogglePreviewMode}
+              tooltip={isPreviewMode
+                ? 'Switch to edit mode'
+                : 'Switch to live preview mode'
+              }
+            />
+            <CommonToolbarDivider/>
+            <ToolbarButton
+              iconType="Widgets"
+              title="Save Template"
+              disabled={!selectedComponentModel}
+              onClick={this.handleSaveAsTemplate}
+              tooltip="Save the selected element as a template"
+            />
+            <CommonToolbarDivider/>
+            <ToolbarButton
+              iconType={constants.MEDIA_WIDTHS[iFrameWidthIndex].iconType}
+              title={constants.MEDIA_WIDTHS[iFrameWidthIndex].label}
+              tooltip={constants.MEDIA_WIDTHS[iFrameWidthIndex].tooltip}
+              titleLengthLimit={200}
+              menuItems={constants.MEDIA_WIDTHS.map((mediaWidthItem, itemIndex) => {
+                return {
+                  label: mediaWidthItem.label,
+                  iconType: mediaWidthItem.iconType,
+                  tooltip: mediaWidthItem.tooltip,
+                  onClick: this.handleToggleWidth(itemIndex),
+                };
+              })}
+            />
+            {/*<CommonToolbarDivider />*/}
+            {/*<ToolbarButton*/}
+            {/*  iconType={iFrameScaleIndex > 0 ? 'ZoomIn' : 'ZoomOut'}*/}
+            {/*  title={constants.MEDIA_SCALE[iFrameScaleIndex].label}*/}
+            {/*  titleLengthLimit={200}*/}
+            {/*  menuItems={constants.MEDIA_SCALE.map((mediaScaleItem, itemIndex) => {*/}
+            {/*    return {*/}
+            {/*      label: mediaScaleItem.label,*/}
+            {/*      onClick: this.handleToggleScale(itemIndex),*/}
+            {/*    }*/}
+            {/*  })}*/}
+            {/*/>*/}
+          </CommonToolbar>
+        </div>
+        <div className={classes.centralPane}>
+          {layoutMode === LAYOUT_MODE_VERTICAL
+            ? (
+              <SplitPane
+                split="vertical"
+                defaultSize={treeViewSplitterSize}
+                onDragStarted={this.handleSplitterOnDragStarted}
+                onDragFinished={this.handleSplitterOnDragFinished('treeViewSplitterSize')}
+                pane1Style={{ display: showTreeView ? 'block' : 'none' }}
+                resizerStyle={{ display: showTreeView ? 'block' : 'none' }}
+              >
+                <PageTree
+                  dataId={dataId}
+                  componentsTree={localComponentsTree}
+                  onItemClick={this.handleSelectComponent}
+                  onItemDrop={this.handlePageTreeItemDrop}
+                  onItemErrorClick={this.handleErrorClick}
+                  onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                  onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                  onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                  onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                  draggedItem={
+                    draggedItem && (
+                      draggedItem.isComponent ||
+                      draggedItem.isComponentInstance ||
+                      draggedItem.isClipboardItem ||
+                      draggedItem.isTemplate
+                    )
+                      ? draggedItem
+                      : null
                   }
-                })}
-              />
-              {/*<CommonToolbarDivider />*/}
-              {/*<ToolbarButton*/}
-              {/*  iconType={iFrameScaleIndex > 0 ? 'ZoomIn' : 'ZoomOut'}*/}
-              {/*  title={constants.MEDIA_SCALE[iFrameScaleIndex].label}*/}
-              {/*  titleLengthLimit={200}*/}
-              {/*  menuItems={constants.MEDIA_SCALE.map((mediaScaleItem, itemIndex) => {*/}
-              {/*    return {*/}
-              {/*      label: mediaScaleItem.label,*/}
-              {/*      onClick: this.handleToggleScale(itemIndex),*/}
-              {/*    }*/}
-              {/*  })}*/}
-              {/*/>*/}
-            </CommonToolbar>
-          </div>
-          <div className={classes.centralPane}>
-            {layoutMode === LAYOUT_MODE_VERTICAL
-              ? (
-                <SplitPane
-                  split="vertical"
-                  defaultSize={treeViewSplitterSize}
-                  onDragStarted={this.handleSplitterOnDragStarted}
-                  onDragFinished={this.handleSplitterOnDragFinished('treeViewSplitterSize')}
-                  pane1Style={{display: showTreeView ? 'block' : 'none'}}
-                  resizerStyle={{display: showTreeView ? 'block' : 'none'}}
-                >
-                  <ScrollSlider>
-                    <PageTree
-                      componentsTree={localComponentsTree}
-                      onItemClick={this.handleSelectComponent}
-                      onItemDrop={this.handlePageTreeItemDrop}
-                      onItemErrorClick={this.handleErrorClick}
-                      onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                      onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                      onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                      onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                      draggedItem={
-                        draggedItem && (
-                          draggedItem.isComponent ||
-                          draggedItem.isComponentInstance ||
-                          draggedItem.isClipboardItem ||
-                          draggedItem.isTemplate
-                        )
-                          ? draggedItem
-                          : null
-                      }
-                      isDraggingItem={isDraggingItem}
-                    />
-                  </ScrollSlider>
-                  <SplitPane
-                    split="vertical"
-                    primary="second"
-                    defaultSize={propertyEditorSplitterSize}
-                    onDragStarted={this.handleSplitterOnDragStarted}
-                    onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
-                    pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
-                    resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
-                  >
-                    <div className={classes.root}>
-                      {showPanelCover && (
-                        <div className={classes.root} style={{zIndex: 10}} />
-                      )}
-                      {showIframeDropPanelCover && (
-                        <div
-                          className={classes.root}
-                          style={{zIndex: 10}}
-                          onDragOver={this.handleDragOver}
-                          onDragLeave={this.handleDragLeave}
-                        />
-                      )}
-                      {serverPort > 0 && (
-                        <IFrame
-                          ref={this.iFrameRef}
-                          width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
-                          // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
-                          url={isPreviewMode
-                            ? `http://localhost:${serverPort}/webcodesk__component_view`
-                            : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
-                          }
-                          onIFrameReady={this.handleIFrameReady}
-                          onIFrameMessage={this.handleIFrameMessage}
-                        />
-                      )}
-                    </div>
-                    <div className={classes.editorPane}>
-                      <ComponentPropsTree
-                        componentModel={selectedComponentModel}
-                        onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
-                        onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                        onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                        onRenameComponentInstance={this.handleRenameComponentInstance}
-                        onErrorClick={this.handleErrorClick}
-                        onOpenComponent={this.handleOpenComponent}
-                        onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                        onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                        onSelectComponent={this.handleSelectComponent}
-                      />
-                    </div>
-                  </SplitPane>
-                </SplitPane>
-              ) : (
+                  isDraggingItem={isDraggingItem}
+                />
                 <SplitPane
                   split="vertical"
                   primary="second"
                   defaultSize={propertyEditorSplitterSize}
                   onDragStarted={this.handleSplitterOnDragStarted}
                   onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
-                  pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
-                  resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
+                  pane2Style={{ display: showPropertyEditor ? 'block' : 'none' }}
+                  resizerStyle={{ display: showPropertyEditor ? 'block' : 'none' }}
                 >
-                  <SplitPane
-                    split="horizontal"
-                    primary="second"
-                    defaultSize={treeViewHorizontalSplitterSize}
-                    onDragStarted={this.handleSplitterOnDragStarted}
-                    onDragFinished={this.handleSplitterOnDragFinished('treeViewHorizontalSplitterSize')}
-                    pane2Style={{display: showTreeView ? 'block' : 'none'}}
-                    resizerStyle={{display: showTreeView ? 'block' : 'none'}}
-                  >
-                    <div className={classes.root}>
-                      {showPanelCover && (
-                        <div className={classes.root} style={{zIndex: 10}} />
-                      )}
-                      {showIframeDropPanelCover && (
-                        <div
-                          className={classes.root}
-                          style={{zIndex: 10}}
-                          onDragOver={this.handleDragOver}
-                          onDragLeave={this.handleDragLeave}
-                        />
-                      )}
-                      {serverPort > 0 && (
-                        <IFrame
-                          ref={this.iFrameRef}
-                          width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
-                          // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
-                          url={isPreviewMode
-                            ? `http://localhost:${serverPort}/webcodesk__component_view`
-                            : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
-                          }
-                          onIFrameReady={this.handleIFrameReady}
-                          onIFrameMessage={this.handleIFrameMessage}
-                        />
-                      )}
-                    </div>
-                    <ScrollSlider>
-                      <PageTree
-                        componentsTree={localComponentsTree}
-                        onItemClick={this.handleSelectComponent}
-                        onItemDrop={this.handlePageTreeItemDrop}
-                        onItemErrorClick={this.handleErrorClick}
-                        onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                        onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                        onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                        onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                        draggedItem={
-                          draggedItem && (
-                            draggedItem.isComponent ||
-                            draggedItem.isComponentInstance ||
-                            draggedItem.isClipboardItem ||
-                            draggedItem.isTemplate
-                          )
-                            ? draggedItem
-                            : null
-                        }
-                        isDraggingItem={isDraggingItem}
+                  <div className={classes.root}>
+                    {showPanelCover && (
+                      <div className={classes.root} style={{ zIndex: 10 }}/>
+                    )}
+                    {showIframeDropPanelCover && (
+                      <div
+                        className={classes.root}
+                        style={{ zIndex: 10 }}
+                        onDragOver={this.handleDragOver}
+                        onDragLeave={this.handleDragLeave}
                       />
-                    </ScrollSlider>
-                  </SplitPane>
+                    )}
+                    {serverPort > 0 && (
+                      <IFrame
+                        ref={this.iFrameRef}
+                        width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
+                        // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
+                        url={isPreviewMode
+                          ? `http://localhost:${serverPort}/webcodesk__component_view`
+                          : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
+                        }
+                        onIFrameReady={this.handleIFrameReady}
+                        onIFrameMessage={this.handleIFrameMessage}
+                      />
+                    )}
+                  </div>
                   <div className={classes.editorPane}>
                     <ComponentPropsTree
                       componentModel={selectedComponentModel}
@@ -1010,10 +924,93 @@ class PageComposer extends React.Component {
                     />
                   </div>
                 </SplitPane>
-              )
-            }
-          </div>
+              </SplitPane>
+            ) : (
+              <SplitPane
+                split="vertical"
+                primary="second"
+                defaultSize={propertyEditorSplitterSize}
+                onDragStarted={this.handleSplitterOnDragStarted}
+                onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
+                pane2Style={{ display: showPropertyEditor ? 'block' : 'none' }}
+                resizerStyle={{ display: showPropertyEditor ? 'block' : 'none' }}
+              >
+                <SplitPane
+                  split="horizontal"
+                  primary="second"
+                  defaultSize={treeViewHorizontalSplitterSize}
+                  onDragStarted={this.handleSplitterOnDragStarted}
+                  onDragFinished={this.handleSplitterOnDragFinished('treeViewHorizontalSplitterSize')}
+                  pane2Style={{ display: showTreeView ? 'block' : 'none' }}
+                  resizerStyle={{ display: showTreeView ? 'block' : 'none' }}
+                >
+                  <div className={classes.root}>
+                    {showPanelCover && (
+                      <div className={classes.root} style={{ zIndex: 10 }}/>
+                    )}
+                    {showIframeDropPanelCover && (
+                      <div
+                        className={classes.root}
+                        style={{ zIndex: 10 }}
+                        onDragOver={this.handleDragOver}
+                        onDragLeave={this.handleDragLeave}
+                      />
+                    )}
+                    {serverPort > 0 && (
+                      <IFrame
+                        ref={this.iFrameRef}
+                        width={constants.MEDIA_WIDTHS[iFrameWidthIndex].width}
+                        // scale={constants.MEDIA_SCALE[iFrameScaleIndex].value}
+                        url={isPreviewMode
+                          ? `http://localhost:${serverPort}/webcodesk__component_view`
+                          : `http://localhost:${serverPort}/webcodesk__page_composer?iframeId=${this.iframeId}`
+                        }
+                        onIFrameReady={this.handleIFrameReady}
+                        onIFrameMessage={this.handleIFrameMessage}
+                      />
+                    )}
+                  </div>
+                  <PageTree
+                    componentsTree={localComponentsTree}
+                    onItemClick={this.handleSelectComponent}
+                    onItemDrop={this.handlePageTreeItemDrop}
+                    onItemErrorClick={this.handleErrorClick}
+                    onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                    onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                    draggedItem={
+                      draggedItem && (
+                        draggedItem.isComponent ||
+                        draggedItem.isComponentInstance ||
+                        draggedItem.isClipboardItem ||
+                        draggedItem.isTemplate
+                      )
+                        ? draggedItem
+                        : null
+                    }
+                    isDraggingItem={isDraggingItem}
+                  />
+                </SplitPane>
+                <div className={classes.editorPane}>
+                  <ComponentPropsTree
+                    componentModel={selectedComponentModel}
+                    onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
+                    onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                    onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                    onRenameComponentInstance={this.handleRenameComponentInstance}
+                    onErrorClick={this.handleErrorClick}
+                    onOpenComponent={this.handleOpenComponent}
+                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                    onSelectComponent={this.handleSelectComponent}
+                  />
+                </div>
+              </SplitPane>
+            )
+          }
         </div>
+      </div>
     );
   }
 }

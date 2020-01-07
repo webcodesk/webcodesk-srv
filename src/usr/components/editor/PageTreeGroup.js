@@ -27,6 +27,8 @@ import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
 import FileCopy from '@material-ui/icons/FileCopy';
 import Close from '@material-ui/icons/Close';
+import PanoramaFishEye from '@material-ui/icons/PanoramaFishEye';
+import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 
 const styles = theme => ({
   itemContentWrapper: {
@@ -81,6 +83,7 @@ const PageTreeListGroupText = withStyles({
     padding: 0,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    cursor: 'pointer',
   },
   primary: {
     color: '#607d8b',
@@ -110,17 +113,20 @@ class PageTreeGroup extends React.Component {
     node: PropTypes.object,
     arrayIndex: PropTypes.number,
     isArray: PropTypes.bool,
+    isCollapsed: PropTypes.bool,
     onClick: PropTypes.func,
     onErrorClick: PropTypes.func,
     onIncreaseComponentPropertyArray: PropTypes.func,
     onDeleteComponentProperty: PropTypes.func,
     onDuplicateComponentProperty: PropTypes.func,
+    onToggleCollapseItem: PropTypes.func,
   };
 
   static defaultProps = {
     name: '',
     node: null,
     isArray: false,
+    isCollapsed: false,
     onClick: () => {
       console.info('PageTreeGroup.onClick is not set');
     },
@@ -136,11 +142,14 @@ class PageTreeGroup extends React.Component {
     onDuplicateComponentProperty: () => {
       console.info('PageTreeGroup.onDuplicateComponentProperty is not set');
     },
+    onToggleCollapseItem: () => {
+      console.info('PageTreeGroup.onToggleCollapseItem is not set');
+    },
   };
 
   handleClick = () => {
     const { node: { key } } = this.props;
-    this.props.onClick(key);
+    this.props.onToggleCollapseItem(key);
   };
 
   handleErrorClick = () => {
@@ -188,16 +197,23 @@ class PageTreeGroup extends React.Component {
     if (!this.props.name || !this.props.node) {
       return null;
     }
-    const { name, classes, isArray, arrayIndex } = this.props;
+    const { name, classes, isArray, arrayIndex, isCollapsed } = this.props;
+    let expandIcon;
+    if (isCollapsed) {
+      expandIcon = (<AddCircleOutline className={classes.buttonIcon} color="disabled" />);
+    } else {
+      expandIcon = (<RemoveCircleOutline className={classes.buttonIcon} color="disabled" />);
+    }
     return (
       <PageTreeListGroup>
         <PageTreeListGroupIcon>
-          <RemoveCircleOutline className={classes.buttonIcon} color="disabled"/>
+          {expandIcon}
         </PageTreeListGroupIcon>
         <div className={classes.itemContentWrapper}>
           <div className={classes.itemContent}>
             <PageTreeListGroupText
               title={name}
+              onClick={this.handleClick}
               primary={
                 <span style={{ whiteSpace: 'nowrap' }}>
                   <span>{name}:</span>

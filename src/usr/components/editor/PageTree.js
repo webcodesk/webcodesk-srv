@@ -15,6 +15,7 @@
  */
 
 import isNull from 'lodash/isNull';
+import startCase from 'lodash/startCase';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -25,6 +26,9 @@ import PageTreeItem from './PageTreeItem';
 import * as constants from '../../../commons/constants';
 import { arrayMove } from '../../core/utils/arrayUtils';
 import DragIndicator from '@material-ui/icons/DragIndicator';
+import globalStore from '../../core/config/globalStore';
+import AutoScrollPanel from '../commons/AutoScrollPanel';
+import ToolbarButton from '../commons/ToolbarButton';
 
 const DragHandler = SortableHandle(({element}) => element);
 
@@ -47,6 +51,13 @@ const FIRST_LIST_INDENT = '0px';
 
 const styles = theme => ({
   root: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+  },
+  rootWrapper: {
     backgroundColor: theme.palette.background.paper,
     padding: '10px'
   },
@@ -125,11 +136,18 @@ const styles = theme => ({
     cursor: 'move',
     fontSize: '13px',
     zIndex: 10
-  }
+  },
+  autoScrollButton: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 5,
+  },
 });
 
 class PageTree extends React.Component {
   static propTypes = {
+    dataId: PropTypes.string,
     componentsTree: PropTypes.object,
     draggedItem: PropTypes.object,
     isDraggingItem: PropTypes.bool,
@@ -143,6 +161,7 @@ class PageTree extends React.Component {
   };
 
   static defaultProps = {
+    dataId: '',
     componentsTree: null,
     draggedItem: null,
     isDraggingItem: false,
@@ -169,12 +188,71 @@ class PageTree extends React.Component {
     },
   };
 
+  constructor (props, context) {
+    super(props, context);
+    const { dataId } = this.props;
+    this.autoScrollRef = React.createRef();
+    this.state = {
+      collapsedGroupKeys: this.getStoredCollapsedKeys(dataId),
+      scrollCounter: 0,
+    };
+  }
+
+  componentDidMount () {
+    if (this.autoScrollRef.current) {
+      this.autoScrollRef.current.scrollToElement(this.selectedKey);
+    }
+  }
+
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { componentsTree, draggedItem, isDraggingItem } = this.props;
+    const { collapsedGroupKeys, scrollCounter } = this.state;
     return componentsTree !== nextProps.componentsTree
       || draggedItem !== nextProps.draggedItem
-      || isDraggingItem !== nextProps.isDraggingItem;
+      || isDraggingItem !== nextProps.isDraggingItem
+      || collapsedGroupKeys !== nextState.collapsedGroupKeys
+      || scrollCounter !== nextState.scrollCounter;
   }
+
+  componentDidUpdate (prevProps, prevState, snapshot) {
+    const {componentsTree} = this.props;
+    const {scrollCounter} = this.state;
+    if (componentsTree !== prevProps.componentsTree) {
+      this.setState({scrollCounter: this.state.scrollCounter + 1});
+    }
+    if (scrollCounter !== prevState.scrollCounter && this.autoScrollRef.current) {
+      this.autoScrollRef.current.scrollToElement(this.selectedKey);
+    }
+  }
+
+  getStoredCollapsedKeys = (dataId) => {
+    if (dataId) {
+      const recordOfCollapsedKeys = globalStore.get(constants.STORAGE_RECORD_COLLAPSED_PAGE_TREE_GROUPS_KEYS) || {};
+      return recordOfCollapsedKeys[dataId] || {};
+    }
+    return {};
+  };
+
+  storeCollapsedKeys = (dataId, collapsedKeys) => {
+    if (dataId) {
+      const recordOfCollapsedKeys = globalStore.get(constants.STORAGE_RECORD_COLLAPSED_PAGE_TREE_GROUPS_KEYS) || {};
+      recordOfCollapsedKeys[dataId] = collapsedKeys;
+      globalStore.set(constants.STORAGE_RECORD_COLLAPSED_PAGE_TREE_GROUPS_KEYS, recordOfCollapsedKeys, true);
+    }
+  };
+
+  handleToggleCollapseItem = (groupKey) => {
+    const collapsedGroupKeys = {...this.state.collapsedGroupKeys};
+    if (collapsedGroupKeys[groupKey]) {
+      delete collapsedGroupKeys[groupKey];
+    } else {
+      collapsedGroupKeys[groupKey] = true;
+    }
+    this.storeCollapsedKeys(this.props.dataId, collapsedGroupKeys);
+    this.setState({
+      collapsedGroupKeys,
+    });
+  };
 
   handleItemClick = (key) => {
     this.props.onItemClick(key);
@@ -221,9 +299,9 @@ class PageTree extends React.Component {
       }
       if (propertyName) {
         if (listItemLabelName) {
-          listItemLabelName += `.${propertyName}`;
+          listItemLabelName += `.${startCase(propertyName)}`;
         } else {
-          listItemLabelName = propertyName;
+          listItemLabelName = startCase(propertyName);
         }
       } else {
         if (!listItemLabelName) {
@@ -248,17 +326,21 @@ class PageTree extends React.Component {
               node={node}
               parentKey={parent ? parent.key : null}
               arrayIndex={arrayIndex}
+              isCollapsed={this.state.collapsedGroupKeys[key]}
               onDeleteComponentProperty={this.handleDeleteComponentProperty}
               onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
+              onToggleCollapseItem={this.handleToggleCollapseItem}
             />
           );
-          result.push(
-            <div key={`${key}_container`} className={classes.listItemContainer}>
-              <div className={classes.listContainer}>
-                {childListItems}
+          if (!this.state.collapsedGroupKeys[key]) {
+            result.push(
+              <div key={`${key}_container`} className={classes.listItemContainer}>
+                <div className={classes.listContainer}>
+                  {childListItems}
+                </div>
               </div>
-            </div>
-          );
+            );
+          }
         }
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         let childLevel = level;
@@ -285,28 +367,35 @@ class PageTree extends React.Component {
                 parentKey={parent ? parent.key : null}
                 arrayIndex={arrayIndex}
                 isArray={true}
+                isCollapsed={this.state.collapsedGroupKeys[key]}
                 onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
                 onDeleteComponentProperty={this.handleDeleteComponentProperty}
                 onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
+                onToggleCollapseItem={this.handleToggleCollapseItem}
               />
             );
           }
-          result.push(
-            <div key={`${key}_container`} className={classes.listItemContainer}>
-              <SortableTreeList
-                classes={classes}
-                useDragHandle={true}
-                items={childListItems}
-                onSortEnd={this.handleUpdateComponentPropertyArrayOrder(node)}
-              />
-            </div>
-          );
+          if (!this.state.collapsedGroupKeys[key]) {
+            result.push(
+              <div key={`${key}_container`} className={classes.listItemContainer}>
+                <SortableTreeList
+                  classes={classes}
+                  useDragHandle={true}
+                  items={childListItems}
+                  onSortEnd={this.handleUpdateComponentPropertyArrayOrder(node)}
+                />
+              </div>
+            );
+          }
         }
       } else if (
         type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE
         || type === constants.COMPONENT_PROPERTY_NODE_TYPE
       ) {
         const { isSelected } = props;
+        if (isSelected) {
+          this.selectedKey = key;
+        }
         result.push(
           <PageTreeItem
             key={key}
@@ -339,6 +428,9 @@ class PageTree extends React.Component {
             ),
             childListItems
           );
+        }
+        if (isSelected) {
+          this.selectedKey = key;
         }
         result.push(
           <PageTreeItem
@@ -393,19 +485,23 @@ class PageTree extends React.Component {
     const {classes, draggedItem, isDraggingItem, componentsTree} = this.props;
     return (
       <div className={classes.root}>
-        <List
-          key="pageTree"
-          dense={true}
-          disablePadding={true}
-          className={classes.list}
-        >
-          <div className={classes.listItemContainer}>
-            <div className={classes.firstListContainer}>
-              {this.createList(componentsTree, draggedItem, isDraggingItem)}
-            </div>
+        <AutoScrollPanel ref={this.autoScrollRef}>
+          <div className={classes.rootWrapper}>
+              <List
+                key="pageTree"
+                dense={true}
+                disablePadding={true}
+                className={classes.list}
+              >
+                <div className={classes.listItemContainer}>
+                  <div className={classes.firstListContainer}>
+                    {this.createList(componentsTree, draggedItem, isDraggingItem)}
+                  </div>
+                </div>
+              </List>
+              <div className={classes.footerArea} />
           </div>
-        </List>
-        <div className={classes.footerArea} />
+        </AutoScrollPanel>
       </div>
     );
   }

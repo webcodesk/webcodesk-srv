@@ -86,6 +86,7 @@ import HelpOutline from '@material-ui/icons/HelpOutline';
 import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import LocationSearching from '@material-ui/icons/LocationSearching';
 
 import { CommonToolbarButton, CommonToolbarIconButton, CommonErrorBadge } from './Commons.parts';
 
@@ -231,6 +232,7 @@ const icons = {
   FormatListBulleted,
   ExpandMore,
   ExpandLess,
+  LocationSearching,
 
   // extra icons
   CopyToClipboard,

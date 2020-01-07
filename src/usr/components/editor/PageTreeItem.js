@@ -244,6 +244,7 @@ class PageTreeItem extends React.Component {
     if (!isPlaceholder) {
       return (
         <PageTreeListItem
+          id={itemKey}
           key={itemKey}
           button={false}
         >
@@ -298,6 +299,7 @@ class PageTreeItem extends React.Component {
     }
     return (
       <PageTreeListItem
+        id={itemKey}
         key={itemKey}
         onClick={this.handleClick}
       >

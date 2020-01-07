@@ -18,7 +18,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Motion, spring } from 'react-motion';
 import ScrollPanel from './ScrollPanel';
-import { offset } from './utils';
 
 class AutoScrollPanel extends React.Component {
   static propTypes = {
@@ -31,6 +30,7 @@ class AutoScrollPanel extends React.Component {
 
   constructor (props) {
     super(props);
+    this.scrollPanel = React.createRef();
     this.state = {
       scrollTop: 0,
     };
@@ -52,12 +52,19 @@ class AutoScrollPanel extends React.Component {
 
   scrollToElement = (elementId) => {
     if (elementId) {
-      const elOffset = offset(document.getElementById(elementId));
-      this.setState({
-        scrollTop: (this.scrollPanel.getScrollTop() + elOffset.top) -
-          (this.scrollPanel.getOffset().top) -
-          (elOffset.bottom - elOffset.top),
-      });
+      const elOffset = this.scrollPanel.current.getElementOffset(elementId);
+      const panelOffset = this.scrollPanel.current.getOffset();
+      if (elOffset) {
+        const bottomBorder = panelOffset.bottom - elOffset.bottom;
+        const topBorder = panelOffset.top - elOffset.top;
+        if (bottomBorder < 0 || topBorder > 0) {
+          this.setState({
+            scrollTop:
+              (this.scrollPanel.current.getScrollTop() + elOffset.top) -
+              panelOffset.top - (elOffset.bottom - elOffset.top),
+          });
+        }
+      }
     }
   };
 
@@ -67,7 +74,7 @@ class AutoScrollPanel extends React.Component {
       <Motion style={{scrollTop: spring(scrollTop)}}>
         {interpolatingStyle => {
           return (
-            <ScrollPanel ref={me => this.scrollPanel = me} scrollTop={interpolatingStyle.scrollTop}>
+            <ScrollPanel ref={this.scrollPanel} scrollTop={interpolatingStyle.scrollTop}>
               {this.props.children}
             </ScrollPanel>
           )
