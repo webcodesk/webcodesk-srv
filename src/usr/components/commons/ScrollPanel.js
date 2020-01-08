@@ -64,7 +64,7 @@ class ScrollPanel extends React.Component {
   };
 
   getElementOffset = (elementId) => {
-    const foundElement = this.rootElement.current.querySelector(`#${elementId}`);
+    const foundElement = this.rootElement.current.querySelector(`[id='${elementId}']`);
     if (foundElement) {
       return offset(foundElement);
     }
