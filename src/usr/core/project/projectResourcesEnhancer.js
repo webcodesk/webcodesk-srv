@@ -180,13 +180,17 @@ function traversePropertiesWithDefaultValues(properties, defaults) {
         // named array field in the defaults
         if (defaultValue && defaultValue.length > 0 && props.defaultChildren && props.defaultChildren[0]) {
           property.children = property.children || [];
-          defaultValue.forEach(defaultValueArrayItem => {
+          defaultValue.forEach((defaultValueArrayItem, defaultValueArrayItemIndex) => {
+            // todo: should we preserve the default children values array in order to give the ability to create new array item with the default values
+            // todo: bu then the user will be able to create item only with the item with values from the first array item...
             // set up the default values into the default children reference
-            traversePropertiesWithDefaultValues(props.defaultChildren, defaultValueArrayItem);
-            // add new child property with the default value
-            const newChild = cloneDeep(props.defaultChildren[0]);
-            traversePropertiesWithDefaultValues([newChild], defaultValueArrayItem);
-            property.children.push(newChild);
+            // traversePropertiesWithDefaultValues(props.defaultChildren, defaultValueArrayItem);
+            // add new child property with the default value if there is no child
+            if (!property.children[defaultValueArrayItemIndex]) {
+              const newChild = cloneDeep(props.defaultChildren[0]);
+              traversePropertiesWithDefaultValues([newChild], defaultValueArrayItem);
+              property.children.push(newChild);
+            }
           });
         }
       }

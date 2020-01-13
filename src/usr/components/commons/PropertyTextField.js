@@ -153,7 +153,7 @@ class PropertyTextField extends React.Component {
       <PropertyTextInput
         inputRef={this.input}
         type="text"
-        value={typeof inputText === 'undefined' ? '' : inputText}
+        value={inputText || ''}
         placeholder="String"
         onChange={this.handleOnChange}
         onKeyDown={this.handleOnKeyDown}
