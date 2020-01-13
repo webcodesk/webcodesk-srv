@@ -16,6 +16,7 @@
 
 import isNull from 'lodash/isNull';
 import cloneDeep from 'lodash/cloneDeep';
+import omitBy from 'lodash/omitBy';
 import startCase from 'lodash/startCase';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -199,14 +200,18 @@ class PropsTree extends React.Component {
     this.props.onUpdateComponentPropertyModel(newComponentPropertyModel);
   };
 
-  handleIncreaseComponentPropertyArray = (propertyKey) => {
+  handleIncreaseComponentPropertyArray = (propertyKey, parentKey) => {
     this.props.onIncreaseComponentPropertyArray(propertyKey);
-    const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
-    newExpandedGroupKeys[propertyKey] = true;
-    this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
-    this.setState({
-      expandedGroupKeys: newExpandedGroupKeys,
-    });
+    if (!this.state.expandedGroupKeys[propertyKey]) {
+      const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
+      newExpandedGroupKeys[propertyKey] = {
+        parentKey
+      };
+      this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
+      this.setState({
+        expandedGroupKeys: newExpandedGroupKeys,
+      });
+    }
   };
 
   handleDeleteComponentProperty = (propertyKey) => {
@@ -232,12 +237,16 @@ class PropsTree extends React.Component {
     this.props.onSelectComponent(componentKey);
   };
 
-  handleToggleExpandItem = (groupKey) => {
-    const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
+  handleToggleExpandItem = (groupKey, parentKey) => {
+    let newExpandedGroupKeys = {...this.state.expandedGroupKeys};
     if (newExpandedGroupKeys[groupKey]) {
+      newExpandedGroupKeys =
+        omitBy(newExpandedGroupKeys, (value) => value && value.parentKey === groupKey);
       delete newExpandedGroupKeys[groupKey];
     } else {
-      newExpandedGroupKeys[groupKey] = true;
+      newExpandedGroupKeys[groupKey] = {
+        parentKey,
+      };
     }
     this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
     this.setState({
@@ -354,7 +363,7 @@ class PropsTree extends React.Component {
             arrayIndex={arrayIndex}
             propertyModel={node}
             type={type}
-            isExpanded={this.state.expandedGroupKeys[key]}
+            isExpanded={!!this.state.expandedGroupKeys[key]}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
             onToggleExpandItem={this.handleToggleExpandItem}
@@ -382,7 +391,7 @@ class PropsTree extends React.Component {
             arrayIndex={arrayIndex}
             propertyModel={node}
             type={type}
-            isExpanded={this.state.expandedGroupKeys[key]}
+            isExpanded={!!this.state.expandedGroupKeys[key]}
             onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}

@@ -193,9 +193,9 @@ class PropsTreeGroup extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const { onIncreaseComponentPropertyArray, propertyModel } = this.props;
+    const { onIncreaseComponentPropertyArray, propertyModel, parentKey } = this.props;
     if (propertyModel) {
-      onIncreaseComponentPropertyArray(propertyModel.key);
+      onIncreaseComponentPropertyArray(propertyModel.key, parentKey);
     }
   };
 
@@ -226,9 +226,9 @@ class PropsTreeGroup extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const { onToggleExpandItem, propertyModel } = this.props;
+    const { onToggleExpandItem, propertyModel, parentKey } = this.props;
     if (propertyModel) {
-      onToggleExpandItem(propertyModel.key);
+      onToggleExpandItem(propertyModel.key, parentKey);
     }
   };
 

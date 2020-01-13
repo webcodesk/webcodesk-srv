@@ -67,6 +67,12 @@ const styles = theme => ({
   }
 });
 
+function makeValidValue(value) {
+  return isNumber(value)
+    ? value
+    : value && value.length > 0 ? Number(value) : undefined
+}
+
 class PropertyTextField extends React.Component {
   static propTypes = {
     value: PropTypes.number,
@@ -87,7 +93,7 @@ class PropertyTextField extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      inputValue: this.props.value,
+      inputValue: makeValidValue(this.props.value),
     };
   }
 
@@ -100,7 +106,7 @@ class PropertyTextField extends React.Component {
     const { value } = this.props;
     if (value !== prevProps.value) {
       this.setState({
-        inputValue: value,
+        inputValue: makeValidValue(value),
       });
     }
   }
@@ -110,10 +116,7 @@ class PropertyTextField extends React.Component {
   }, 500);
 
   handleOnChange = () => {
-    let inputValue = this.input.value;
-    inputValue = isNumber(inputValue)
-      ? inputValue
-      : inputValue && inputValue.length > 0 ? Number(inputValue) : undefined;
+    const inputValue = makeValidValue(this.input.value);
     this.setState({
       inputValue,
     });
@@ -122,7 +125,7 @@ class PropertyTextField extends React.Component {
 
   handleOnCancel = () => {
     this.setState({
-      inputValue: null,
+      inputValue: undefined,
     });
     this.input.focus();
     this.props.onChange();
