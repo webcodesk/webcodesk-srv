@@ -38,14 +38,6 @@ const styles = theme => ({
     right: 0,
     left: 0,
   },
-  editorPane: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 0,
-    overflow: 'auto',
-  },
   centralPane: {
     position: 'absolute',
     top: '39px',
@@ -653,17 +645,15 @@ class ComponentView extends React.Component {
               </div>
             </SplitPane>
           </div>
-          <div className={classes.editorPane}>
-            <ComponentPropsTree
-              componentModel={localComponentsTree}
-              isSampleComponent={true}
-              onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
-              onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-              onDeleteComponentProperty={this.handleDeleteComponentProperty}
-              onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-              onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-            />
-          </div>
+          <ComponentPropsTree
+            componentModel={localComponentsTree}
+            isSampleComponent={true}
+            onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
+            onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+            onDeleteComponentProperty={this.handleDeleteComponentProperty}
+            onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+            onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+          />
         </SplitPane>
       );
     }

@@ -106,6 +106,8 @@ const PropsTreeGroupListItem = withStyles(theme => ({
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: 0,
+    position: 'sticky',
+    top: 0,
   }
 }))(ListItem);
 

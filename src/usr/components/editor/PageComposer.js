@@ -58,14 +58,6 @@ const styles = theme => ({
     right: 0,
     minWidth: '1100px'
   },
-  editorPane: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 0,
-    overflow: 'auto',
-  },
 });
 
 class PageComposer extends React.Component {
@@ -909,20 +901,18 @@ class PageComposer extends React.Component {
                       />
                     )}
                   </div>
-                  <div className={classes.editorPane}>
-                    <ComponentPropsTree
-                      componentModel={selectedComponentModel}
-                      onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
-                      onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                      onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                      onRenameComponentInstance={this.handleRenameComponentInstance}
-                      onErrorClick={this.handleErrorClick}
-                      onOpenComponent={this.handleOpenComponent}
-                      onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                      onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                      onSelectComponent={this.handleSelectComponent}
-                    />
-                  </div>
+                  <ComponentPropsTree
+                    componentModel={selectedComponentModel}
+                    onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
+                    onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                    onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                    onRenameComponentInstance={this.handleRenameComponentInstance}
+                    onErrorClick={this.handleErrorClick}
+                    onOpenComponent={this.handleOpenComponent}
+                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                    onSelectComponent={this.handleSelectComponent}
+                  />
                 </SplitPane>
               </SplitPane>
             ) : (
@@ -992,20 +982,18 @@ class PageComposer extends React.Component {
                     isDraggingItem={isDraggingItem}
                   />
                 </SplitPane>
-                <div className={classes.editorPane}>
-                  <ComponentPropsTree
-                    componentModel={selectedComponentModel}
-                    onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
-                    onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-                    onDeleteComponentProperty={this.handleDeleteComponentProperty}
-                    onRenameComponentInstance={this.handleRenameComponentInstance}
-                    onErrorClick={this.handleErrorClick}
-                    onOpenComponent={this.handleOpenComponent}
-                    onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-                    onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-                    onSelectComponent={this.handleSelectComponent}
-                  />
-                </div>
+                <ComponentPropsTree
+                  componentModel={selectedComponentModel}
+                  onUpdateComponentPropertyModel={this.handleUpdateComponentProperty}
+                  onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+                  onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                  onRenameComponentInstance={this.handleRenameComponentInstance}
+                  onErrorClick={this.handleErrorClick}
+                  onOpenComponent={this.handleOpenComponent}
+                  onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+                  onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+                  onSelectComponent={this.handleSelectComponent}
+                />
               </SplitPane>
             )
           }

@@ -28,15 +28,16 @@ import PropsTree from './PropsTree';
 
 const styles = theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
-    padding: '10px'
-  },
-  contentPane: {
     position: 'absolute',
-    top: '32px',
+    top: 0,
     bottom: 0,
     right: 0,
     left: 0,
+    overflow: 'auto',
+  },
+  content: {
+    backgroundColor: theme.palette.background.paper,
+    padding: '10px'
   },
   mainDivider: {
     margin: '8px 0',
@@ -140,88 +141,101 @@ class ComponentPropsTree extends React.Component {
     this.props.onSelectComponent(componentKey);
   };
 
+  // todo: make the expanded groups sticky...
+  // handleScrollPropsEditor = (e) => {
+  //   console.info(e.target.scrollTop);
+  // };
+
   render () {
     const { classes, componentModel, isSampleComponent } = this.props;
     if (componentModel && componentModel.props) {
-      const { type, props: {componentInstance, componentName}, children } = componentModel;
+      const { type, props: { componentInstance, componentName }, children } = componentModel;
       const propsTreeDataId = componentName;
       if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
         return (
           <div className={classes.root}>
-            <Typography variant="body2" gutterBottom={true}>
-              This is a placeholder for other components.
-            </Typography>
-            <Typography variant="body2" gutterBottom={true}>
-              Drag & drop components or paste items from the clipboard.
-            </Typography>
-            <PanelWithShortcutsHelp />
+            <div className={classes.content}>
+              <Typography variant="body2" gutterBottom={true}>
+                This is a placeholder for other components.
+              </Typography>
+              <Typography variant="body2" gutterBottom={true}>
+                Drag & drop components or paste items from the clipboard.
+              </Typography>
+              <PanelWithShortcutsHelp/>
+            </div>
           </div>
         );
       } else if (type === constants.COMPONENT_PROPERTY_NODE_TYPE) {
         return (
           <div className={classes.root}>
-            <Typography variant="body2" gutterBottom={true}>
-              This is a placeholder for other components.
-            </Typography>
-            <Typography variant="body2" gutterBottom={true}>
-              Drag & drop components or paste items from the clipboard
-              to the placeholder in the page's structure only.
-            </Typography>
-            <PanelWithShortcutsHelp />
+            <div className={classes.content}>
+              <Typography variant="body2" gutterBottom={true}>
+                This is a placeholder for other components.
+              </Typography>
+              <Typography variant="body2" gutterBottom={true}>
+                Drag & drop components or paste items from the clipboard
+                to the placeholder in the page's structure only.
+              </Typography>
+              <PanelWithShortcutsHelp/>
+            </div>
           </div>
         );
       }
       return (
         <div className={classes.root}>
-          <List
-            key="componentPropsTree"
-            dense={true}
-            disablePadding={true}
-          >
-            {!isSampleComponent && (
-              <PropsTreeElement
-                name={getComponentName(componentName)}
-                title={`Open the ${componentName} component's view`}
-                type="button"
-                onClick={this.handleOpenComponent}
-              />
-            )}
-            {!isSampleComponent && (
-              <PropsTreeElement
-                paddingLeft="0px"
-                name="Instance name"
-                subname={componentName}
-                value={componentInstance}
-                onChange={this.handleRenameComponentInstance}
-              />
-            )}
-          </List>
-          <PropsTree
-            dataId={propsTreeDataId}
-            properties={children}
-            onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
-            onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
-            onDeleteComponentProperty={this.handleDeleteComponentProperty}
-            onErrorClick={this.handleErrorClick}
-            onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
-            onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
-            onSelectComponent={this.handleSelectComponent}
-          />
+          <div className={classes.content}>
+            <List
+              key="componentPropsTree"
+              dense={true}
+              disablePadding={true}
+            >
+              {!isSampleComponent && (
+                <PropsTreeElement
+                  name={getComponentName(componentName)}
+                  title={`Open the ${componentName} component's view`}
+                  type="button"
+                  onClick={this.handleOpenComponent}
+                />
+              )}
+              {!isSampleComponent && (
+                <PropsTreeElement
+                  paddingLeft="0px"
+                  name="Instance name"
+                  subname={componentName}
+                  value={componentInstance}
+                  onChange={this.handleRenameComponentInstance}
+                />
+              )}
+            </List>
+            <PropsTree
+              dataId={propsTreeDataId}
+              properties={children}
+              onUpdateComponentPropertyModel={this.handleUpdateComponentPropertyModel}
+              onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
+              onDeleteComponentProperty={this.handleDeleteComponentProperty}
+              onErrorClick={this.handleErrorClick}
+              onUpdateComponentPropertyArrayOrder={this.handleUpdateComponentPropertyArrayOrder}
+              onDuplicateComponentPropertyArrayItem={this.handleDuplicateComponentPropertyArrayItem}
+              onSelectComponent={this.handleSelectComponent}
+            />
+          </div>
         </div>
       );
     }
     return (
       <div className={classes.root}>
-        <Typography variant="body2" gutterBottom={true}>
-          Nothing is selected.
-        </Typography>
-        <Typography variant="body2" gutterBottom={true}>
-          Click on any highlighted element on the page to see its properties.
-        </Typography>
-        <Typography variant="body2" gutterBottom={true}>
-          Drag & drop a component into the placeholder
-        </Typography>
-        <PanelWithShortcutsHelp />
+        <div className={classes.content}>
+          <Typography variant="body2" gutterBottom={true}>
+            Nothing is selected.
+          </Typography>
+          <Typography variant="body2" gutterBottom={true}>
+            Click on any highlighted element on the page to see its properties.
+          </Typography>
+          <Typography variant="body2" gutterBottom={true}>
+            Drag & drop a component into the placeholder
+          </Typography>
+          <PanelWithShortcutsHelp/>
+        </div>
       </div>
     );
   }
