@@ -21,7 +21,7 @@ const duration = 300;
 
 const defaultLineHeight = 30;
 const defaultTitleHeight = 50;
-const defaultRectWidth = 250;
+const defaultRectWidth = 370;
 
 function topRoundedRect(x, y, width, height, radius) {
   return "M" + x + "," + y
@@ -35,7 +35,7 @@ function topRoundedRect(x, y, width, height, radius) {
 
 const adjustDimensions = (item) => {
   // Normalize for fixed-depth.
-  item.y = item.depth * 480;
+  item.y = item.depth * 600;
   item.dimensions = {};
   const {data: {props}} = item;
   if (props) {

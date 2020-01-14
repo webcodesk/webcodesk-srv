@@ -67,7 +67,7 @@ export function getSeparation(bottomItem, topItem) {
 
 const defaultLineHeight = 30;
 const defaultTitleHeight = 50;
-const defaultRectWidth = 250;
+const defaultRectWidth = 370;
 
 export function adjustDimensions(item) {
   const {data: {type, props}} = item;
@@ -84,7 +84,7 @@ export function adjustDimensions(item) {
     }
   } else {
     // Normalize for fixed-depth.
-    item.y = item.depth * 480;
+    item.y = item.depth * 600;
   }
   item.dimensions = {};
   if (props) {

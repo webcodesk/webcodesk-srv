@@ -105,10 +105,10 @@ function createFlowByEventTargets(event) {
         let searchName;
         const nameParts = functionName ? functionName.split(constants.MODEL_KEY_SEPARATOR) : [];
         if (nameParts.length > 1) {
-          title = textUtils.cutText(nameParts[nameParts.length - 1], 25);
+          title = textUtils.cutText(nameParts[nameParts.length - 1], 35);
           searchName = nameParts[nameParts.length - 1];
         } else {
-          title = textUtils.cutText(functionName, 25);
+          title = textUtils.cutText(functionName, 35);
           searchName = functionName;
         }
         model = {
@@ -195,7 +195,7 @@ function createFlowBySequence(actionSequence) {
       } else {
         // this is the top level page component
         model.type = constants.FLOW_COMPONENT_INSTANCE_TYPE;
-        model.props.title = textUtils.cutText(componentInstance, 25);
+        model.props.title = textUtils.cutText(componentInstance, 35);
         model.props.searchName = componentInstance;
         model.props.componentName = componentName;
         model.props.componentInstance = componentInstance;

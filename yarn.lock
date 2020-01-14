@@ -1443,8 +1443,8 @@
     regenerator-runtime "^0.13.2"
 
 "@babel/runtime@^7.4.0", "@babel/runtime@^7.5.5":
-  version "7.7.7"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.7.tgz#194769ca8d6d7790ec23605af9ee3e42a0aa79cf"
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.3.tgz#0811944f73a6c926bb2ad35e918dcc1bfab279f1"
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -2180,9 +2180,9 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@webcodesk/react-app-framework@2.0.23":
-  version "2.0.23"
-  resolved "https://registry.yarnpkg.com/@webcodesk/react-app-framework/-/react-app-framework-2.0.23.tgz#c8c8ef368583fd35661622bd4d24d3572effa1c1"
+"@webcodesk/react-app-framework@2.0.24":
+  version "2.0.24"
+  resolved "https://registry.yarnpkg.com/@webcodesk/react-app-framework/-/react-app-framework-2.0.24.tgz#b19fba6bf5a20872cc5f56162483cf7bb6d21d76"
   dependencies:
     lodash "4.17.15"
     prop-types "15.7.2"

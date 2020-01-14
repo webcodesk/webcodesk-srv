@@ -38,7 +38,7 @@ export function createDefaultFlowModel() {
 }
 
 export function createFlowModelForComponent(resourceObject, inBasket) {
-  let title = textUtils.cutText(resourceObject.componentInstance, 25);
+  let title = textUtils.cutText(resourceObject.componentInstance, 35);
   // let subtitle = componentName;
   // if (subtitle) {
   //   const nameParts = componentName.split(constants.MODEL_KEY_SEPARATOR);
@@ -105,10 +105,10 @@ export function createFlowModelForFunction(resourceObject, inBasket) {
     ? resourceObject.functionName.split(constants.MODEL_KEY_SEPARATOR)
     : [];
   if (nameParts.length > 1) {
-    title = textUtils.cutText(nameParts[nameParts.length - 1], 25);
+    title = textUtils.cutText(nameParts[nameParts.length - 1], 35);
     searchName = nameParts[nameParts.length - 1];
   } else {
-    title = textUtils.cutText(resourceObject.functionName, 25);
+    title = textUtils.cutText(resourceObject.functionName, 35);
     searchName = resourceObject.functionName;
   }
   const flowModel = {
