@@ -17,6 +17,7 @@
 import isNull from 'lodash/isNull';
 import cloneDeep from 'lodash/cloneDeep';
 import omitBy from 'lodash/omitBy';
+import forOwn from 'lodash/forOwn';
 import startCase from 'lodash/startCase';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -126,6 +127,24 @@ const propertyComparator = (aModel, bModel) => {
     return aPropertyName.localeCompare(bPropertyName);
   }
 };
+
+function omitParentKey(expandedGroupKeys, parentKey) {
+  let result = {};
+  const nestedKeys = [];
+  forOwn(expandedGroupKeys, (value, key) => {
+      if (value.parentKey !== parentKey) {
+        result[key] = value;
+      } else {
+        nestedKeys.push(key);
+      }
+  });
+  if (nestedKeys.length > 0) {
+    for(let i = 0; i < nestedKeys.length; i++) {
+      result = omitParentKey(result, nestedKeys[i]);
+    }
+  }
+  return result;
+}
 
 class PropsTree extends React.Component {
   static propTypes = {
@@ -240,8 +259,7 @@ class PropsTree extends React.Component {
   handleToggleExpandItem = (groupKey, parentKey) => {
     let newExpandedGroupKeys = {...this.state.expandedGroupKeys};
     if (newExpandedGroupKeys[groupKey]) {
-      newExpandedGroupKeys =
-        omitBy(newExpandedGroupKeys, (value) => value && value.parentKey === groupKey);
+      newExpandedGroupKeys = omitParentKey(newExpandedGroupKeys, groupKey);
       delete newExpandedGroupKeys[groupKey];
     } else {
       newExpandedGroupKeys[groupKey] = {

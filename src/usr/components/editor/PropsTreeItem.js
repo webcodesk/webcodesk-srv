@@ -62,7 +62,7 @@ const styles = theme => ({
     fontSize: '12px'
   },
   title: {
-    flexGrow: 2,
+    flexGrow: 0,
   },
   titleContainer: {
     width: '100%',

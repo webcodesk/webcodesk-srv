@@ -47,22 +47,10 @@ const styles = theme => ({
     color: theme.palette.text.disabled,
   },
   title: {
-    flexGrow: 2,
+    flexGrow: 0,
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row'
-  },
-  titleSpacer: {
-    flexGrow: 2,
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
-    padding: '0 5px',
-  },
-  titleSpacerLine: {
-    height: 0,
-    borderTop: '1px dotted #e3f2fd',
-    width: '100%'
   },
   titleText: {
     fontWeight: 400,
@@ -307,9 +295,6 @@ class PropsTreeGroup extends React.Component {
                       {name}
                     </span>
                   </div>
-                  {/*<div className={classes.titleSpacer}>*/}
-                  {/*  <div className={classes.titleSpacerLine} />*/}
-                  {/*</div>*/}
                 </div>
               </Tooltip>
               {!propertyName && (
