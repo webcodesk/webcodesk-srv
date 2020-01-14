@@ -219,8 +219,12 @@ export function getUserFunctionsTreeProd (startKey = null) {
     if (flowFunctionsModels && flowFunctionsModels.length > 0) {
       flowFunctionsModels.forEach(flowFunctionsModel => {
         if (flowFunctionsModel.props) {
-          const { props: { parentFunctionsKey } } = flowFunctionsModel;
-          flowUserFunctionsModelsMap.set(parentFunctionsKey, true);
+          const { props: { functionName } } = flowFunctionsModel;
+          const foundUserFunctionModel = userFunctionsGraphModel.getNode(functionName);
+          if (foundUserFunctionModel) {
+            const { props: { parentFunctionsKey } } = foundUserFunctionModel;
+            flowUserFunctionsModelsMap.set(parentFunctionsKey, true);
+          }
         }
       });
     }
