@@ -167,12 +167,16 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
                   functionDeclaration.functionName = varIdName;
                   // get parameters of the user function (arrow function)
                   if (varInitParams && varInitParams.length > 0) {
-                    functionDeclaration.parameters = [];
-                    varInitParams.forEach(varInitParam => {
-                      functionDeclaration.parameters.push({
-                        name: varInitParam.name,
-                      });
-                    });
+                    // functionDeclaration.parameters = [];
+                    // varInitParams.forEach(varInitParam => {
+                    //   functionDeclaration.parameters.push({
+                    //     name: varInitParam.name,
+                    //   });
+                    // });
+                    if (varInitParams.length > 1) {
+                      // the user wants to use the target state in the function
+                      functionDeclaration.isUsingTargetState = true;
+                    }
                   }
                   // add comments if there are some
                   functionDeclaration =

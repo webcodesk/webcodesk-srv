@@ -45,6 +45,7 @@ function createFlow (model, level = 0) {
       localRoot.type = 'userFunction';
       localRoot.props = {
         functionName: model.props.functionName,
+        isUsingTargetState: model.props.isUsingTargetState,
       };
     } else if (type === constants.FLOW_PAGE_TYPE) {
       localRoot.type = 'component';

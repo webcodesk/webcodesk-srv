@@ -34,7 +34,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
     children: [],
   };
   declarationsInFile.declarations.forEach(functionDeclaration => {
-    const { functionName, parameters, dispatches, wcdAnnotations, externalProperties } = functionDeclaration;
+    const { functionName, isUsingTargetState, dispatches, wcdAnnotations, externalProperties } = functionDeclaration;
     const canonicalFunctionName = makeResourceModelCanonicalKey(modelKey, functionName);
     let sortedDispatches = [];
     if (dispatches && dispatches.length > 0) {
@@ -60,7 +60,8 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         functionComment: wcdAnnotations[constants.ANNOTATION_COMMENT],
         parentFunctionsKey: modelKey,
         dispatches: cloneDeep(sortedDispatches),
-        parameters: cloneDeep(parameters),
+        // parameters: cloneDeep(parameters),
+        isUsingTargetState,
         externalProperties,
       }
     });

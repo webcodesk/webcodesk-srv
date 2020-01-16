@@ -306,7 +306,11 @@ class FlowModelCompiler {
         const functionModel = this.userFunctionsGraphModel.getNode(functionName);
         if (functionModel) {
           const { props: { inputs, outputs } } = nodeModel;
-          const { props: { propertiesArg, dispatches } } = functionModel;
+          const { props: { propertiesArg, dispatches, isUsingTargetState } } = functionModel;
+
+          // Keep flag about the second parameter in the function that is used for getting
+          // the global state from React App Framework
+          nodeModel.props.isUsingTargetState = isUsingTargetState;
 
           if (inputs && inputs.length > 0) {
             nodeModel.props.inputs[0].properties = propertiesArg ? cloneDeep(propertiesArg) : {};

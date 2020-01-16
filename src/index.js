@@ -21,7 +21,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import { SnackbarProvider } from 'notistack';
-import App, { initApp } from './app';
+import App from './app';
 import { consoleError, clearConsoleErrors } from './usr/core/config/storage';
 import './index.css';
 import './usr/css/github-markdown.css';
@@ -42,8 +42,6 @@ clearConsoleErrors().then(() => {
       htmlFontSize: 16,
     }
   });
-
-  initApp();
 
   window.addEventListener('contextmenu', (e) => {
     if (e) {
