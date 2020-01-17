@@ -56,7 +56,7 @@ class DebuggerDiagram extends Component {
 
     // Init zoom callback function
     this.zoom = d3.zoom()
-      .scaleExtent([.1, 1])
+      .scaleExtent([.1, 0.8])
       .on("zoom", this.zoomed)
       .on('end', this.zoomEnd);
 
@@ -135,7 +135,7 @@ class DebuggerDiagram extends Component {
       // let scaleK = k * scaleKoef <= 2 ? scaleKoef : 1;
       let scaleK = k;
       // let newK = k * scaleK;
-      let newK = 0.6;
+      let newK = 0.5;
       const {data, x: itemX, y: itemY} = node;
       const selectorNode = this.container.select(`#${data.key}`).node();
       if (selectorNode) {
@@ -180,7 +180,7 @@ class DebuggerDiagram extends Component {
       // let scaleK = k * scaleKoef <= 2 ? scaleKoef : 1;
       let scaleK = k;
       // let newK = k * scaleK;
-      let newK = 0.3;
+      let newK = 0.5;
       const {data, x: itemX, y: itemY} = node;
       const selectorNode = this.container.select(`#${data.key}`).node();
       if (selectorNode) {

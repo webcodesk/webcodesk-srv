@@ -33,7 +33,7 @@ class DiagramDecorator {
     const self = this;
     this.drag = d3.drag()
       .subject(function (d) { return d; })
-      .on('start', function(){
+      .on('start', function () {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).raise();
       })
@@ -44,9 +44,9 @@ class DiagramDecorator {
           return 'translate(' + item.y + ',' + item.x + ')';
         });
       })
-      .on('end', function(d) {
-        const {data: {key}} = d;
-        self.diagramContext.getHandleDragEnd()(key, {x: d.x, y: d.y});
+      .on('end', function (d) {
+        const { data: { key } } = d;
+        self.diagramContext.getHandleDragEnd()(key, { x: d.x, y: d.y });
       });
 
   }
@@ -72,7 +72,6 @@ class DiagramDecorator {
   //   const {data: {key}} = d;
   //   this.diagramContext.getHandleDragEnd()(key, {x: d.x, y: d.y});
   // }
-
 
   decorateNodeEnter (node) {
     const self = this;
@@ -217,10 +216,10 @@ class DiagramDecorator {
             .attr('y', 0)
             .attr('height', rectHeight)
             .attr('width', rectWidth)
-            .on('dragover', function() { self.diagramContext.onDragOver(); })
-            .on('drop', function(item) { self.diagramContext.onDrop(this, item); })
-            .on('dragenter', function(item) { self.diagramContext.onDragEnter(this, item); })
-            .on('dragleave', function(item) { self.diagramContext.onDragLeave(this, item); });
+            .on('dragover', function () { self.diagramContext.onDragOver(); })
+            .on('drop', function (item) { self.diagramContext.onDrop(this, item); })
+            .on('dragenter', function (item) { self.diagramContext.onDragEnter(this, item); })
+            .on('dragleave', function (item) { self.diagramContext.onDragLeave(this, item); });
         }
       }
     });
@@ -229,25 +228,38 @@ class DiagramDecorator {
     decoratedNode
       .select('rect.node')
       .each(function (item) {
-        const { data: { type, props: { isSelected } } } = item;
+        const { data: { type, props: { isSelected, isUsingTargetState } } } = item;
         const selectThis = d3.select(this);
+        if (type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE) {
+          if (isUsingTargetState) {
+            selectThis
+              .classed(
+                'target-function',
+                true
+              );
+          } else {
+            selectThis
+              .classed(
+                'function',
+                true
+              );
+          }
+        } else {
+          selectThis
+            .classed(
+              'component',
+              type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+            )
+            .classed(
+              'application',
+              type === constants.FLOW_APPLICATION_STARTER_TYPE
+            )
+            .classed(
+              'page',
+              type === constants.FLOW_PAGE_TYPE || type === constants.FLOW_PAGE_IN_BASKET_TYPE
+            );
+        }
         selectThis
-          .classed(
-            'function',
-            type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
-          )
-          .classed(
-            'component',
-            type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
-          )
-          .classed(
-            'application',
-            type === constants.FLOW_APPLICATION_STARTER_TYPE
-          )
-          .classed(
-            'page',
-            type === constants.FLOW_PAGE_TYPE || type === constants.FLOW_PAGE_IN_BASKET_TYPE
-          )
           .classed(
             'inbasket',
             type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE ||
@@ -265,25 +277,38 @@ class DiagramDecorator {
     decoratedNode
       .select('path.header')
       .each(function (item) {
-        const { data: { type, props: { isSelected } } } = item;
-        d3.select(this)
-          .classed(
-            'function',
-            type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
-          )
-          .classed(
-            'component',
-            type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
-          )
-          .classed(
-            'application',
-            type === constants.FLOW_APPLICATION_STARTER_TYPE
-          )
-          .classed(
-            'page',
-            type === constants.FLOW_PAGE_TYPE || type === constants.FLOW_PAGE_IN_BASKET_TYPE
-          )
-          .classed('selected', isSelected);
+        const { data: { type, props: { isSelected, isUsingTargetState } } } = item;
+        const selectThis = d3.select(this);
+        if (type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE) {
+          if (isUsingTargetState) {
+            selectThis
+              .classed(
+                'target-function',
+                true
+              );
+          } else {
+            selectThis
+              .classed(
+                'function',
+                true
+              );
+          }
+        } else {
+          selectThis
+            .classed(
+              'component',
+              type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+            )
+            .classed(
+              'application',
+              type === constants.FLOW_APPLICATION_STARTER_TYPE
+            )
+            .classed(
+              'page',
+              type === constants.FLOW_PAGE_TYPE || type === constants.FLOW_PAGE_IN_BASKET_TYPE
+            );
+        }
+        selectThis.classed('selected', isSelected);
       });
 
     // update header text
@@ -568,7 +593,7 @@ class DiagramDecorator {
         const { startX, startY, endX, endY } = item;
         return utils.diagonal({ x: startX, y: startY }, { x: endX, y: endY });
       })
-      .each(function(item) {
+      .each(function (item) {
         const { isSelected, hasTransformScript } = item;
         const link = d3.select(this);
         link.classed('selected', isSelected);

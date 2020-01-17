@@ -126,7 +126,7 @@ class FlowComposer extends React.Component {
       updateCounter: 0,
       showPanelCover: false,
       showPropertyEditor: this.getViewFlag('showPropertyEditor', true),
-      zoomK: this.getViewFlag('zoomK', 0.6),
+      zoomK: this.getViewFlag('zoomK', 0.5),
       propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
     };
     const { data } = this.props;
@@ -390,7 +390,7 @@ class FlowComposer extends React.Component {
 
   handleIncreaseZoom = () => {
     const {zoomK} = this.state;
-    const newZoomK = zoomK < 1 ? zoomK + 0.2 : zoomK;
+    const newZoomK = zoomK < 0.8 ? zoomK + 0.1 : zoomK;
     this.storeViewFlag('zoomK', Number(newZoomK));
     this.setState({
       zoomK: Number(newZoomK)
@@ -399,7 +399,7 @@ class FlowComposer extends React.Component {
 
   handleDecreaseZoom = () => {
     const {zoomK} = this.state;
-    const newZoomK = zoomK > 0.3 ? zoomK - 0.2 : zoomK;
+    const newZoomK = zoomK > 0.2 ? zoomK - 0.1 : zoomK;
     this.storeViewFlag('zoomK', Number(newZoomK));
     this.setState({
       zoomK: Number(newZoomK)
@@ -407,9 +407,9 @@ class FlowComposer extends React.Component {
   };
 
   handleInitialZoom = () => {
-    this.storeViewFlag('zoomK', 0.6);
+    this.storeViewFlag('zoomK', 0.5);
     this.setState({
-      zoomK: 0.6
+      zoomK: 0.5
     })
   };
 

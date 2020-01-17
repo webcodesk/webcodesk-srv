@@ -42,6 +42,10 @@ rect.node_debug.function {
   fill: #26A69A;
 }
 
+rect.node_debug.target-function {
+  fill: #9e9e9e;
+}
+
 rect.node_debug.application {
   fill: #90A4AE;
 }
@@ -93,6 +97,10 @@ path.header_debug.component {
 
 path.header_debug.function {
   fill: #00796B;
+}
+
+path.header_debug.target-function {
+  fill: #616161;
 }
 
 path.header_debug.application {

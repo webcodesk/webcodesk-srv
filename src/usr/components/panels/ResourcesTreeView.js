@@ -773,7 +773,14 @@ class ResourcesTreeView extends React.Component {
                     <span>&nbsp;</span>
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
-                    <ResourceIcon resourceType={type}/>
+                    <ResourceIcon
+                      resourceType={type}
+                      resourceSubtype={
+                        props.isUsingTargetState
+                          ? constants.GRAPH_MODEL_TARGET_FUNCTION_TYPE
+                          : ''
+                      }
+                    />
                   </ResourceListItemIcon>
                 </div>
                 <div className={classes.listItemTextContainerDraggable}>
@@ -1321,6 +1328,7 @@ class ResourcesTreeView extends React.Component {
               transformScript = foundConnectedInput.transformScript;
             }
           }
+          const isUsingTargetState = props.isUsingTargetState;
           list.push(
             <ResourceListItem
               key={elementKey}
@@ -1334,7 +1342,14 @@ class ResourcesTreeView extends React.Component {
                     <span>&nbsp;</span>
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
-                    <ResourceIcon resourceType={type}/>
+                    <ResourceIcon
+                        resourceType={type}
+                        resourceSubtype={
+                          isUsingTargetState
+                            ? constants.GRAPH_MODEL_FLOW_TARGET_FUNCTION_TYPE
+                            : ''
+                        }
+                    />
                   </ResourceListItemIcon>
                 </div>
                 <div className={classes.listItemButtonWrapper}>

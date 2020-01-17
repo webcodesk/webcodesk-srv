@@ -92,7 +92,7 @@ class Diagram extends Component {
 
     // Init zoom callback function
     this.zoom = d3.zoom()
-      .scaleExtent([.3, 1])
+      .scaleExtent([.2, 0.8])
       .on("zoom", this.zoomed)
       .on('end', this.zoomEnd);
 
@@ -215,7 +215,7 @@ class Diagram extends Component {
       // let scaleK = k * scaleKoef <= 2 ? scaleKoef : 1;
       let scaleK = k;
       // let newK = k * scaleK;
-      let newK = 0.6;
+      let newK = 0.5;
       const {data, x: itemX, y: itemY} = node;
       const selectorNode = this.container.select(`#${data.key}`).node();
       if (selectorNode) {

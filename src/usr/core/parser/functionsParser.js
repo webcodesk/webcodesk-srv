@@ -186,7 +186,6 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
                     const {
                       type: varInitBodyType,
                       generator: varInitBodyGenerator,
-                      //async: varInitBodyAsync, // todo: should we pass/test async declaration here?
                       params: varInitBodyParams,
                       body: varInitBodyBody,
                     } = varInitBody;

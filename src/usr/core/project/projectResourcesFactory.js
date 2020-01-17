@@ -61,6 +61,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         parentFunctionsKey: modelKey,
         dispatches: cloneDeep(sortedDispatches),
         // parameters: cloneDeep(parameters),
+        // todo: I'd like to change the entity type to another function type instead of using just a isUsingTargetState flag....
         isUsingTargetState,
         externalProperties,
       }
