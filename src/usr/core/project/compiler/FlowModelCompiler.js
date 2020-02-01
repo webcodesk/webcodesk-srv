@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+import cloneDeep from 'lodash/cloneDeep';
 import keyBy from 'lodash/keyBy';
 import remove from 'lodash/remove';
 import constants from '../../../../commons/constants';
@@ -54,10 +55,8 @@ class FlowModelCompiler {
 
           const componentPropertiesMap = keyBy(propertiesRef, p => p.props.propertyName);
 
-          const flowItemInputs = keyBy(inputs, 'name');
           const flowItemOutputs = keyBy(outputs, 'name');
           if (propertiesRef && propertiesRef.length > 0) {
-            let foundItemInput;
             let foundItemOutput;
             propertiesRef.forEach(propertyRef => {
               const { type: componentPropertyType, props: { propertyName } } = propertyRef;
@@ -70,45 +69,11 @@ class FlowModelCompiler {
                   });
                   this.changesCount++;
                 }
-              } else {
-                foundItemInput = flowItemInputs[propertyName];
-                if (!foundItemInput) {
-                  // input is missing
-                  nodeModel.props.inputs.push({
-                    name: propertyName,
-                  });
-                  this.changesCount++;
-                }
               }
             });
-            nodeModel.props.inputs = nodeModel.props.inputs.sort(propertiesComparator);
             nodeModel.props.outputs = nodeModel.props.outputs.sort(propertiesComparator);
 
             let foundProperty;
-            inputs.forEach((flowItemInput, index) => {
-              foundProperty = componentPropertiesMap[flowItemInput.name];
-              if (!foundProperty) {
-                if (!nodeModel.props.inputs[index].connectedTo) {
-                  // this input does not have connections, should be removed
-                  nodeModel.props.inputs[index].toRemove = true;
-                } else {
-                  if (!nodeModel.props.inputs[index].error) {
-                    nodeModel.props.inputs[index].error =
-                      `The "${flowItemInput.name}" property was not found.`;
-                    this.changesCount++;
-                  }
-                  this.errorsCount++;
-                }
-              } else {
-                if (nodeModel.props.inputs[index].error) {
-                  delete nodeModel.props.inputs[index].error;
-                  this.changesCount++;
-                }
-              }
-            });
-            // remove all that was specified as to remove
-            remove(nodeModel.props.inputs, i => !!i.toRemove);
-
             outputs.forEach((flowItemOutput, index) => {
               foundProperty = componentPropertiesMap[flowItemOutput.name];
               if (!foundProperty) {

@@ -84,6 +84,17 @@ function getPropertiesRef(properties) {
           newPropertyRef.children = getPropertiesRef(children);
         }
         result.push(newPropertyRef);
+      } else if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
+        const newPropertyRef = {
+          type,
+          props: {
+            propertyName,
+            propertyComment,
+            propertyLabel,
+            isRequired,
+          },
+        };
+        result.push(newPropertyRef);
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         const newPropertyRef = {
           type,

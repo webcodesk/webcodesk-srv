@@ -66,7 +66,9 @@ export function createFlowModelForComponent(resourceObject, inBasket) {
       }
     }
   } else if (resourceObject.isComponentInstance) {
-    flowModel.props.inputs = [];
+    flowModel.props.inputs = [{
+      name: 'props',
+    }];
     flowModel.props.outputs = [];
     if (resourceObject.properties && resourceObject.properties.length > 0) {
       resourceObject.properties.forEach(property => {
@@ -74,10 +76,6 @@ export function createFlowModelForComponent(resourceObject, inBasket) {
         // const propertyRef = resourceObject.propertiesRefMap[props.propertyName];
         if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
           flowModel.props.outputs.push({
-            name: props.propertyName,
-          });
-        } else {
-          flowModel.props.inputs.push({
             name: props.propertyName,
           });
         }

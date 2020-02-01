@@ -37,10 +37,6 @@ function createFlow (model, level = 0) {
         componentName: model.props.componentName,
         componentInstance: model.props.componentInstance,
       };
-      if (model.props.populatePath) {
-        // was set in the previous iteration when the page node was visited
-        localRoot.props.populatePath = model.props.populatePath;
-      }
     } else if (type === constants.FLOW_USER_FUNCTION_TYPE) {
       localRoot.type = 'userFunction';
       localRoot.props = {
@@ -82,9 +78,6 @@ function createFlow (model, level = 0) {
     } else if (inputs && inputs.length > 0) {
       inputs.forEach(input => {
         if (input.connectedTo && input.connectedTo.length > 0) {
-          if (type === constants.FLOW_COMPONENT_INSTANCE_TYPE) {
-            localRoot.props.propertyName = input.name;
-          }
           targetsPerEvents.push({
             eventName: input.connectedTo,
             target: localRoot,
