@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import Application from '@webcodesk/react-app-framework';
+import Application from '../framework';
 import schema from './schema';
 import userComponents from './indices/userComponents';
 import userFunctions from './indices/userFunctions';
