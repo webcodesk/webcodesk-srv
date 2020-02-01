@@ -17,9 +17,12 @@
 /* eslint-disable no-useless-escape */
 import constants from '../../../commons/constants';
 
+const PARAM_KEYWORD_WITH = 'with';
+const PARAM_KEYWORD_FROM = 'from';
+
 const newLineRegExp = new RegExp(/\r?\n/);
-const paramLineRegExp = new RegExp('@functionTypes\?.*', 'i');
-const paramTypeRegExp = new RegExp('\{([^}]+)\}', 'i');
+const paramLineRegExp = new RegExp('@connect\?.*', 'i');
+// const paramTypeRegExp = new RegExp('\{([^}]+)\}', 'i');
 
 export const getWcdAnnotations = (commentRawValue) => {
   const result = {};
@@ -36,13 +39,32 @@ export const getWcdAnnotations = (commentRawValue) => {
       paramLineRegExp.lastIndex = 0;
       const matches = paramLineRegExp.exec(testCommentLine);
       if (matches && matches.length > 0) {
-        paramTypeRegExp.lastIndex = 0;
-        const paramTypesMatches = paramTypeRegExp.exec(matches[0]);
-        if (paramTypesMatches && paramTypesMatches.length > 0) {
-          result[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES] = paramTypesMatches[0]
-            .substring(1, paramTypesMatches[0].length - 1)
-            .trim()
-            .split(' ');
+        const paramValueParts = matches[0].trim().split(' ');
+        if (
+          paramValueParts.length === 5
+          && paramValueParts[1] === PARAM_KEYWORD_WITH
+          && paramValueParts[3] === PARAM_KEYWORD_FROM
+        ) {
+          // we have the component's function connect parameter
+          // example: @connect with Component from usr/dir/dir/Component.comp.js
+          result[constants.ANNOTATION_CONNECT] = result[constants.ANNOTATION_CONNECT] || [];
+          result[constants.ANNOTATION_CONNECT].push({
+            connectTarget: paramValueParts[2].trim(),
+            connectTargetFilePath: paramValueParts[4].trim(),
+          });
+        } else if (
+          paramValueParts.length === 6
+          && paramValueParts[2] === PARAM_KEYWORD_WITH
+          && paramValueParts[4] === PARAM_KEYWORD_FROM
+        ) {
+          // we have user function connect parameter
+          // example: @connect dispatchName with Component from usr/dir/dir/Component.comp.js
+          result[constants.ANNOTATION_CONNECT] = result[constants.ANNOTATION_CONNECT] || [];
+          result[constants.ANNOTATION_CONNECT].push({
+            connectName: paramValueParts[1].trim(),
+            connectTarget: paramValueParts[3].trim(),
+            connectTargetFilePath: paramValueParts[5].trim(),
+          });
         }
       } else {
         concatenatedCommentLine += `${testCommentLine}\n`;

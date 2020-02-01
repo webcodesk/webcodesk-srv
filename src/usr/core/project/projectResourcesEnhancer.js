@@ -20,22 +20,6 @@ import isUndefined from 'lodash/isUndefined';
 import * as projectResourcesManager from './projectResourcesManager';
 import constants from '../../../commons/constants';
 
-function getPropertyByName(properties, propertyName) {
-  let result = null;
-  if (properties && properties.length > 0) {
-    result = properties.find(property => {
-      return property && property.props && property.props.propertyName === propertyName;
-    });
-    // properties.forEach(property => {
-    //   const { props } = property;
-    //   if (props && props.propertyName === propertyName) {
-    //     result = property;
-    //   }
-    // });
-  }
-  return result;
-}
-
 function getPropertiesRef(properties) {
   let result = [];
   if (properties && properties.length > 0) {
@@ -323,13 +307,6 @@ export function enrichResources () {
   if (componentsGraphModel) {
     componentsGraphModel.traverse(componentEnrichVisitor);
   }
-
-  // todo: removing externalProperties from functions
-  // // enhance Function: replace external prop types with their real props
-  // const functionsGraphModel = projectResourcesManager.getFunctionsGraphModel();
-  // if (functionsGraphModel) {
-  //   functionsGraphModel.traverse(functionEnrichVisitor);
-  // }
 
   // enhance Settings: replace external prop types with their real props
   const settingsConfGraphModel = projectResourcesManager.getSettingsConfGraphModel();

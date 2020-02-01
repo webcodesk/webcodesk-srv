@@ -134,7 +134,7 @@ export function createPageModels(modelKey, declarationsInFile) {
     let componentInstanceModel;
     if (componentInstances && componentInstances.length > 0) {
       componentInstances.forEach((componentInstanceItem, instanceIndex) => {
-        const { componentName, componentInstance, componentsTree } = componentInstanceItem;
+        const { componentName, componentInstance } = componentInstanceItem;
         componentInstanceModel = {
           key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${instanceIndex}`,
           type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,
@@ -144,7 +144,6 @@ export function createPageModels(modelKey, declarationsInFile) {
             displayName: componentInstance,
             componentName: componentName,
             componentInstance: componentInstance,
-            componentsTreeChunk: cloneDeep(componentsTree),
             pageName,
             pagePath,
             isTest,
@@ -204,12 +203,8 @@ export function createFlowModels(modelKey, declarationsInFile) {
           functionName,
           componentName,
           componentInstance,
-          pagePath,
-          pageName,
           inputs,
           outputs,
-          connectedToName,
-          connectedToOutput
         } = flowParticle;
         if (flowParticleType === constants.FLOW_USER_FUNCTION_TYPE) {
           particleDisplayName = getParticleName(functionName);
@@ -222,8 +217,6 @@ export function createFlowModels(modelKey, declarationsInFile) {
               isTest,
               displayName: particleDisplayName,
               functionName: functionName,
-              connectedToName,
-              connectedToOutput,
               inputs: cloneDeep(inputs),
               outputs: cloneDeep(outputs),
             }
@@ -239,8 +232,6 @@ export function createFlowModels(modelKey, declarationsInFile) {
               displayName: componentInstance,
               componentName: componentName,
               componentInstance: componentInstance,
-              connectedToName,
-              connectedToOutput,
               isTest,
               inputs: cloneDeep(inputs),
               outputs: cloneDeep(outputs),

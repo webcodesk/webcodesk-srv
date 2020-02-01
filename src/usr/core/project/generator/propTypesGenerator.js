@@ -15,7 +15,6 @@
  */
 
 import * as constants from '../../../../commons/constants';
-import PropTypes from '../../propTypes';
 
 const propertyTypeMap = {
   [constants.COMPONENT_PROPERTY_STRING_TYPE]: (propertyNode) => {
@@ -24,7 +23,6 @@ const propertyTypeMap = {
       typeInComment: `\`{string, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: "text"`,
       singleSampleCode: '"text"',
-      propTypesObject: PropTypes.string,
     };
   },
   [constants.COMPONENT_PROPERTY_OBJECT_TYPE]: (propertyNode) => {
@@ -33,19 +31,16 @@ const propertyTypeMap = {
       typeInComment: `\`{Object, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: {}`,
       singleSampleCode: '{}',
-      propTypesObject: PropTypes.object,
     };
   },
   [constants.COMPONENT_PROPERTY_ONE_OF_TYPE]: (propertyNode) => {
     const { props: {propertyName, propertyValueVariants, isRequired} } = propertyNode;
     let variantValue;
     let variantsString = '';
-    let variantsPropTypesArray = [];
     if (propertyValueVariants && propertyValueVariants.length > 0) {
       variantValue = propertyValueVariants[0].value;
       propertyValueVariants.forEach(propertyValueVariantItem => {
         variantsString += `${propertyValueVariantItem.value}, `;
-        variantsPropTypesArray.push(propertyValueVariantItem.value);
       });
       if (variantsString.length > 4) {
         variantsString = variantsString.substring(0, variantsString.length - 2);
@@ -57,7 +52,6 @@ const propertyTypeMap = {
       typeInComment: `\`{string, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: "${variantValue}"`,
       singleSampleCode: `"${variantValue}"`,
-      propTypesObject: PropTypes.oneOf(variantsPropTypesArray),
     };
   },
   [constants.COMPONENT_PROPERTY_SYMBOL_TYPE]: (propertyNode) => {
@@ -66,7 +60,6 @@ const propertyTypeMap = {
       typeInComment: `\`{string, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: "text"`,
       singleSampleCode: '"text"',
-      propTypesObject: PropTypes.symbol,
     };
   },
   [constants.COMPONENT_PROPERTY_BOOL_TYPE]: (propertyNode) => {
@@ -75,7 +68,6 @@ const propertyTypeMap = {
       typeInComment: `\`{boolean, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: true`,
       singleSampleCode: 'true',
-      propTypesObject: PropTypes.bool,
     };
   },
   [constants.COMPONENT_PROPERTY_ANY_TYPE]: (propertyNode) => {
@@ -84,7 +76,6 @@ const propertyTypeMap = {
       typeInComment: `\`{any, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: {}`,
       singleSampleCode: '{}',
-      propTypesObject: PropTypes.any,
     };
   },
   [constants.COMPONENT_PROPERTY_ARRAY_TYPE]: (propertyNode) => {
@@ -93,7 +84,6 @@ const propertyTypeMap = {
       typeInComment: `\`{array, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: []`,
       singleSampleCode: '[]',
-      propTypesObject: PropTypes.array,
     };
   },
   [constants.COMPONENT_PROPERTY_NUMBER_TYPE]: (propertyNode) => {
@@ -102,7 +92,6 @@ const propertyTypeMap = {
       typeInComment: `\`{number, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: 25`,
       singleSampleCode: '25',
-      propTypesObject: PropTypes.number,
     };
   },
   [constants.COMPONENT_PROPERTY_ELEMENT_TYPE]: (propertyNode) => {
@@ -111,7 +100,6 @@ const propertyTypeMap = {
       typeInComment: `\`{Component, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: <Component />`,
       singleSampleCode: '<Component />',
-      propTypesObject: PropTypes.element,
     };
   },
   [constants.COMPONENT_PROPERTY_NODE_TYPE]: (propertyNode) => {
@@ -120,79 +108,9 @@ const propertyTypeMap = {
       typeInComment: `\`{Component, required: ${!!isRequired}}\``,
       sampleCode: `${propertyName}: <Component />`,
       singleSampleCode: '<Component />',
-      propTypesObject: PropTypes.element,
     };
   },
 };
-
-export function generatePropTypesObject(node) {
-  let result = null;
-  if (node) {
-    const { type, props: { isRequired }, children } = node;
-    if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
-      let shapeObject = null;
-      if (children && children.length > 0) {
-        shapeObject = {};
-        children.forEach(childNode => {
-          const { props: {propertyName: childPropertyName} } = childNode;
-          if (childPropertyName) {
-            shapeObject[childPropertyName] = generatePropTypesObject(childNode);
-          }
-        });
-      }
-      if (shapeObject) {
-        if (isRequired) {
-          result = PropTypes.shape(shapeObject).isRequired;
-        } else {
-          result = PropTypes.shape(shapeObject);
-        }
-      } else {
-        if (isRequired) {
-          result = PropTypes.object.isRequired;
-        } else {
-          result = PropTypes.object;
-        }
-      }
-    } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
-      let arrayOfObject = null;
-      if (children && children.length > 0) {
-        children.forEach(childNode => {
-          arrayOfObject = generatePropTypesObject(childNode);
-        });
-      }
-      if (arrayOfObject) {
-        if (isRequired) {
-          result = PropTypes.arrayOf(arrayOfObject).isRequired;
-        } else {
-          result = PropTypes.arrayOf(arrayOfObject);
-        }
-      } else {
-        if (isRequired) {
-          result = PropTypes.array.isRequired;
-        } else {
-          result = PropTypes.array;
-        }
-      }
-    } else if (type === constants.COMPONENT_PROPERTY_STRING_TYPE
-      || type === constants.COMPONENT_PROPERTY_OBJECT_TYPE
-      || type === constants.COMPONENT_PROPERTY_ONE_OF_TYPE
-      || type === constants.COMPONENT_PROPERTY_SYMBOL_TYPE
-      || type === constants.COMPONENT_PROPERTY_BOOL_TYPE
-      || type === constants.COMPONENT_PROPERTY_ANY_TYPE
-      || type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
-      || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
-      const propertyTypeObject = propertyTypeMap[type](node);
-      if (propertyTypeObject) {
-        if (isRequired) {
-          result = propertyTypeObject.propTypesObject.isRequired;
-        } else {
-          result = propertyTypeObject.propTypesObject;
-        }
-      }
-    }
-  }
-  return result;
-}
 
 function createSampleObjectNextLine (node, variableName, level = 0) {
   let result = [];

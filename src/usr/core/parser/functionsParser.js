@@ -90,6 +90,7 @@ function testAnnotationsInComments(leadingComments, importSpecifiers, declaratio
     leadingComments.forEach(leadingComment => {
       if (leadingComment && leadingComment.value) {
         wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
+        // console.info('Function wcdAnnotations: ', wcdAnnotations);
       }
     });
     // todo: add compatibility paths from annotations
@@ -174,11 +175,6 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
                     //     name: varInitParam.name,
                     //   });
                     // });
-                    // todo: removing isUsingTargetState
-                    // if (varInitParams.length > 1) {
-                    //   // the user wants to use the target state in the function
-                    //   functionDeclaration.isUsingTargetState = true;
-                    // }
                   }
                   // add comments if there are some
                   functionDeclaration =

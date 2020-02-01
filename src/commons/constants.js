@@ -155,6 +155,7 @@ module.exports = {
   ANNOTATION_COMMENT: 'annotationComment',
   ANNOTATION_LABEL: 'annotationLabel',
   ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES: 'annotationFunctionArgumentPropTypes',
+  ANNOTATION_CONNECT: 'annotationConnect',
 
   FUNCTION_TYPES_FIRST_ARGUMENT_PROP_NAME: 'argument',
   FUNCTION_TYPES_DISPATCH_PROP_NAME: 'dispatch',

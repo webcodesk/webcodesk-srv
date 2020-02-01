@@ -85,11 +85,6 @@ export function createResourceEditorTabObject(resourceKey) {
       if (componentResource && componentResource.isComponent) {
         return componentResource;
       }
-    } else if (resource.isFlowPage) {
-      const pageResource = projectResourcesManager.getResourceByKey(resource.pagePath);
-      if (pageResource && pageResource.isPage) {
-        return pageResource;
-      }
     } else if (resource.isUserFunction) {
       const functionsResource = projectResourcesManager.getResourceByKey(resource.parentKey);
       if (functionsResource && functionsResource.isFunctions) {

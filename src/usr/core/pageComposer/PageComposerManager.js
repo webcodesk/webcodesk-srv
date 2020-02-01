@@ -47,15 +47,11 @@ class PageComposerManager {
       && nodeModel.props
       && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
     ) {
-      const { key, props } = nodeModel;
+      const { props } = nodeModel;
       if (props) {
-        const extractedModel = this.graphModel.extractModel(key, true);
         result.push({
           componentName: props.componentName,
           componentInstance: props.componentInstance,
-          // no need to clone all model as components tree chunk,
-          // it is used for pasting into flows and pages
-          componentsTree: extractedModel,
         });
       }
     }

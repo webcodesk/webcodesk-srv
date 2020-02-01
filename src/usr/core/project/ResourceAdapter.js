@@ -15,7 +15,6 @@
  */
 
 import omit from 'lodash/omit';
-import keyBy from 'lodash/keyBy';
 import lowerFirst from 'lodash/lowerFirst';
 import cloneDeep from 'lodash/cloneDeep';
 import constants from '../../../commons/constants';
@@ -415,23 +414,17 @@ class ResourceAdapter {
             return undefined;
           }
         },
-        'componentsTreeChunk': {
-          get: function () {
-            if (this.props) {
-              return this.props.componentsTreeChunk;
-            }
-            return undefined;
-          }
-        },
+        // 'componentsTreeChunk': {
+        //   get: function () {
+        //     if (this.props) {
+        //       return this.props.componentsTreeChunk;
+        //     }
+        //     return undefined;
+        //   }
+        // },
         'properties': {
           get: function () {
-            if (this.isComponentInstance) {
-              // in case of component instance we have only components tree chunk
-              // then properties are children of this chunk
-              if (this.componentsTreeChunk) {
-                return this.componentsTreeChunk.children;
-              }
-            } else if (this.props) {
+            if (this.props) {
               return this.props.properties || [];
             }
             return [];

@@ -93,14 +93,6 @@ const pagesResourceVisitor = ({pageModelCompiler, pagesGraphModel}) => ({ nodeMo
         errorsCount,
         changesCount,
       });
-    } else if (
-      nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE
-      && nodeModel.props.componentsTreeChunk
-    ) {
-      // we have to compile all referenced component instance in the graph,
-      // because they are used for dropping into flows
-      pageModelCompiler.resetCounters();
-      nodeModel.props.componentsTreeChunk = pageModelCompiler.compile(nodeModel.props.componentsTreeChunk);
     }
   }
   return result;
@@ -164,36 +156,6 @@ function componentInstancesResourceVisitor ({ nodeModel, parentModel }) {
   }
   return result;
 }
-
-// export function checkResources(declarationsInFiles) {
-//   let newFlowsCount = 0;
-//   let newPagesCount = 0;
-//   if (declarationsInFiles && declarationsInFiles.length > 0) {
-//     declarationsInFiles.forEach(declarationsInFile => {
-//       if (declarationsInFile.isInFlows){
-//         newFlowsCount++;
-//       }
-//       if (declarationsInFile.isInPages) {
-//         newPagesCount++;
-//       }
-//     });
-//   }
-//   let flowModels = [];
-//   const flowsGraphModel =
-//     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_FLOWS_TYPE);
-//   if (flowsGraphModel) {
-//     flowModels = flowsGraphModel.traverse(flowsResourceVisitor);
-//   }
-//   let pageModels = [];
-//   const pagesGraphModel = projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_PAGES_TYPE);
-//   if (pagesGraphModel) {
-//     pageModels = pagesGraphModel.traverse(pagesResourceVisitor);
-//   }
-//   if ((flowModels.length + newFlowsCount) > 10 ||
-//     (pageModels.length + newPagesCount) > 5) {
-//     throw Error('Wrong resources');
-//   }
-// }
 
 export function compileResources () {
 
