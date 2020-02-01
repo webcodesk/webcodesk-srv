@@ -21,7 +21,7 @@ import { getDefaultPropsObject } from './defaultPropsParserUtils';
 import { traverseProperties } from './propTypesTransformer';
 import { getWcdAnnotations } from '../utils/commentsUtils';
 
-const getPropTypesOutOfBody = (ast, classDeclarationName, importSpecifiers, classDeclaration = {}) => {
+const getPropTypesOutOfBody = (ast, classDeclarationName, importSpecifiers, pathsSpecifiers, classDeclaration = {}) => {
   if (!ast) {
     return classDeclaration;
   }
@@ -39,7 +39,7 @@ const getPropTypesOutOfBody = (ast, classDeclarationName, importSpecifiers, clas
             if (leftProperty.name === 'propTypes') {
               // this is definitely a propTypes assignment, now read the right object definition
               if (right) {
-                classDeclaration = getPropTypesObject(right, importSpecifiers, classDeclaration);
+                classDeclaration = getPropTypesObject(right, importSpecifiers, pathsSpecifiers, classDeclaration);
               }
             } else if (leftProperty.name === 'defaultProps') {
               // this is definitely a defaultProps assignment, now read the right object definition
@@ -57,7 +57,7 @@ const getPropTypesOutOfBody = (ast, classDeclarationName, importSpecifiers, clas
   return classDeclaration;
 };
 
-const getPropTypesInBody = (astNode, importSpecifiers, classDeclaration = {}) => {
+const getPropTypesInBody = (astNode, importSpecifiers, pathsSpecifiers, classDeclaration = {}) => {
   if (!astNode) {
     return classDeclaration;
   }
@@ -69,7 +69,9 @@ const getPropTypesInBody = (astNode, importSpecifiers, classDeclaration = {}) =>
         if (bodyItemKey && bodyItemKey.type === 'Identifier' && bodyItemValue) {
           if (bodyItemKey.name === 'propTypes') {
             // here propTypes declaration should be
-            classDeclaration = getPropTypesObject(bodyItemValue, importSpecifiers, classDeclaration);
+            classDeclaration = getPropTypesObject(
+              bodyItemValue, importSpecifiers, pathsSpecifiers, classDeclaration
+            );
           } else if (bodyItemKey.name === 'defaultProps') {
             // here defaultProps declaration should be
             classDeclaration.defaultProps = getDefaultPropsObject(bodyItemValue);
@@ -101,7 +103,7 @@ const isSuperClassReactComponent = (astNode) => {
   }
 };
 
-const getClassDeclaration = (ast, componentName, importSpecifiers) => {
+const getClassDeclaration = (ast, componentName, importSpecifiers, pathsSpecifiers) => {
   const classDeclarations = {};
   let foundClassDeclaration = null;
   if (ast && ast.body && ast.body.length > 0) {
@@ -119,7 +121,8 @@ const getClassDeclaration = (ast, componentName, importSpecifiers) => {
           let classDeclaration = {
             componentName: classDeclarationId.name,
           };
-          classDeclaration = getPropTypesInBody(classDeclarationBody, importSpecifiers, classDeclaration);
+          classDeclaration =
+            getPropTypesInBody(classDeclarationBody, importSpecifiers, pathsSpecifiers, classDeclaration);
           let wcdAnnotations = {};
           // get comments
           if (classDeclarationComments && classDeclarationComments.length > 0) {
@@ -191,21 +194,25 @@ const findConstFunctionDeclaration = (ast, componentName) => {
   return foundDeclaration;
 };
 
-const findAllPossibleComponentDeclarations = (ast, componentName, importSpecifiers) => {
+const findAllPossibleComponentDeclarations = (ast, componentName, importSpecifiers, pathsSpecifiers) => {
   const result = [];
-  let foundClassDeclaration = getClassDeclaration(ast, componentName, importSpecifiers);
+  let foundClassDeclaration = getClassDeclaration(ast, componentName, importSpecifiers, pathsSpecifiers);
   if (foundClassDeclaration) {
     if ((!foundClassDeclaration.properties || foundClassDeclaration.properties.length === 0)
       && !foundClassDeclaration.externalProperties) {
       // probably the propTypes are declared outside the class declaration block
-      foundClassDeclaration = getPropTypesOutOfBody(ast, componentName, importSpecifiers, foundClassDeclaration);
+      foundClassDeclaration = getPropTypesOutOfBody(
+        ast, componentName, importSpecifiers, pathsSpecifiers, foundClassDeclaration
+      );
     }
     result.push(foundClassDeclaration);
   } else {
     let foundFunctionDeclaration = findConstFunctionDeclaration(ast, componentName);
     if (foundFunctionDeclaration) {
       // the propTypes should be declared outside the function declaration block
-      foundFunctionDeclaration = getPropTypesOutOfBody(ast, componentName, importSpecifiers, foundFunctionDeclaration);
+      foundFunctionDeclaration = getPropTypesOutOfBody(
+        ast, componentName, importSpecifiers, pathsSpecifiers, foundFunctionDeclaration
+      );
       result.push(foundFunctionDeclaration);
     }
   }
@@ -215,5 +222,6 @@ const findAllPossibleComponentDeclarations = (ast, componentName, importSpecifie
 export const findComponentDeclarations = (sourceCode, rootDirPath, filePath, componentName) => {
   const ast = getSourceAst(sourceCode);
   const importSpecifiers = getImportSpecifiers(ast, rootDirPath, filePath);
-  return findAllPossibleComponentDeclarations(ast, componentName, importSpecifiers);
+  console.info('importSpecifiers: ', importSpecifiers);
+  return findAllPossibleComponentDeclarations(ast, componentName, importSpecifiers, {rootDirPath, filePath});
 };

@@ -86,7 +86,7 @@ function testPropertyIdentifier (node, importSpecifiers) {
   return result;
 }
 
-function testCallExpression (node, importSpecifiers, propTypesDeclaration = {}) {
+function testCallExpression (node, importSpecifiers, pathsSpecifiers, propTypesDeclaration = {}) {
   if (node) {
     const { type, callee, arguments: calleeArgs } = node;
     if (type === 'CallExpression' && callee) {
@@ -104,13 +104,17 @@ function testCallExpression (node, importSpecifiers, propTypesDeclaration = {}) 
                   propTypesDeclaration.externalProperties = externalProperties;
                 }
               } else if (calleeArgumentType === 'CallExpression') {
-                propTypesDeclaration.properties = [testCallExpression(calleeArgs[0], importSpecifiers)];
+                propTypesDeclaration.properties =
+                  [testCallExpression(calleeArgs[0], importSpecifiers, pathsSpecifiers)];
               } else if (calleeArgumentType === 'ObjectExpression') {
-                propTypesDeclaration = testObjectExpression(calleeArgs[0], importSpecifiers, propTypesDeclaration);
+                propTypesDeclaration =
+                  testObjectExpression(calleeArgs[0], importSpecifiers, pathsSpecifiers, propTypesDeclaration);
               } else if (calleeArgumentType === 'MemberExpression') {
-                propTypesDeclaration.properties = [testMemberExpression(calleeArgs[0], importSpecifiers)];
+                propTypesDeclaration.properties =
+                  [testMemberExpression(calleeArgs[0], importSpecifiers, pathsSpecifiers)];
               } else if (calleeArgumentType === 'ArrayExpression') {
-                propTypesDeclaration.variants = testArrayExpression(calleeArgs[0]);
+                propTypesDeclaration.variants =
+                  testArrayExpression(calleeArgs[0]);
               }
             }
           }
@@ -147,7 +151,7 @@ function testArrayExpression (node) {
   return arrayElementValues;
 }
 
-function testMemberExpression (node, importSpecifiers, propTypesDeclaration = {}) {
+function testMemberExpression (node, importSpecifiers, pathsSpecifiers, propTypesDeclaration = {}) {
   if (node) {
     const { type, object, property } = node;
     if (type === 'MemberExpression') {
@@ -165,27 +169,31 @@ function testMemberExpression (node, importSpecifiers, propTypesDeclaration = {}
         if (propertyType === 'Identifier' && propertyName === 'isRequired') {
           propTypesDeclaration.isRequired = true;
         }
-        propTypesDeclaration = testCallExpression(object, importSpecifiers, propTypesDeclaration);
+        propTypesDeclaration = testCallExpression(
+          object, importSpecifiers, pathsSpecifiers, propTypesDeclaration
+        );
       } else if (objectType === 'MemberExpression') {
         // PropTypes.*.isRequired
         const { type: propertyType, name: propertyName } = property;
         if (propertyType === 'Identifier' && propertyName === 'isRequired') {
           propTypesDeclaration.isRequired = true;
         }
-        propTypesDeclaration = testMemberExpression(object, importSpecifiers, propTypesDeclaration);
+        propTypesDeclaration = testMemberExpression(
+          object, importSpecifiers, pathsSpecifiers, propTypesDeclaration
+        );
       }
     }
   }
   return propTypesDeclaration;
 }
 
-function testObjectPropertyValue (node, importSpecifiers, propTypesDeclaration = {}) {
+function testObjectPropertyValue (node, importSpecifiers, pathsSpecifiers, propTypesDeclaration = {}) {
   if (node) {
     const { type } = node;
     if (type === 'MemberExpression') {
-      return testMemberExpression(node, importSpecifiers, propTypesDeclaration);
+      return testMemberExpression(node, importSpecifiers, pathsSpecifiers, propTypesDeclaration);
     } else if (type === 'CallExpression') {
-      return testCallExpression(node, importSpecifiers, propTypesDeclaration);
+      return testCallExpression(node, importSpecifiers, pathsSpecifiers, propTypesDeclaration);
     } else if (type === 'Identifier') {
       // it is prohibited to use a plain object as the field value in the prop types object
       // use Prop.Types.shape()
@@ -194,7 +202,7 @@ function testObjectPropertyValue (node, importSpecifiers, propTypesDeclaration =
   }
 }
 
-function testObjectProperty (node, importSpecifiers, propTypesDeclaration = {}) {
+function testObjectProperty (node, importSpecifiers, pathsSpecifiers, propTypesDeclaration = {}) {
   if (node) {
     const { type, key, value, leadingComments } = node;
     if (type === 'ObjectProperty' && key && key.type === 'Identifier' && value) {
@@ -211,21 +219,48 @@ function testObjectProperty (node, importSpecifiers, propTypesDeclaration = {}) 
               wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
             }
           });
-          if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
-            const annotationParts =
-              wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-            if (annotationParts.length === 3 || annotationParts.length === 1) {
-              const externalProperties =
-                getExternalPropTypesImport(annotationParts[0], importSpecifiers);
-              if (externalProperties) {
-                propTypesDeclaration.externalProperties = externalProperties;
+
+          const connectReferences = wcdAnnotations[constants.ANNOTATION_CONNECT];
+          console.info('connectReferences: ', connectReferences);
+          console.info('wcdAnnotations: ', key.name, wcdAnnotations);
+          if (pathsSpecifiers && connectReferences && connectReferences.length > 0) {
+            propTypesDeclaration.possibleConnectionTargets =
+              propTypesDeclaration.possibleConnectionTargets || {};
+            let absoluteImportPath;
+            const { rootDirPath, filePath } = pathsSpecifiers;
+            for(let i = 0; i < connectReferences.length; i++) {
+              const { connectTarget, connectTargetFilePath } = connectReferences[i];
+              absoluteImportPath = getAbsoluteImportPath(connectTargetFilePath, rootDirPath, filePath);
+              if (absoluteImportPath) {
+                propTypesDeclaration.possibleConnectionTargets[key.name] =
+                  propTypesDeclaration.possibleConnectionTargets[key.name] || [];
+                if (connectTarget) {
+                  propTypesDeclaration.possibleConnectionTargets[key.name].push(
+                    makeResourceModelCanonicalKey(makeResourceModelKey(absoluteImportPath), connectTarget)
+                  );
+                }
               }
             }
-            delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
+            delete wcdAnnotations[constants.ANNOTATION_CONNECT];
           }
+
+          // if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
+          //   const annotationParts =
+          //     wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
+          //   if (annotationParts.length === 3 || annotationParts.length === 1) {
+          //     const externalProperties =
+          //       getExternalPropTypesImport(annotationParts[0], importSpecifiers);
+          //     if (externalProperties) {
+          //       propTypesDeclaration.externalProperties = externalProperties;
+          //     }
+          //   }
+          //   delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
+          // }
         }
         propTypesDeclaration.wcdAnnotations = wcdAnnotations;
-        propTypesDeclaration = testObjectPropertyValue(value, importSpecifiers, propTypesDeclaration);
+        propTypesDeclaration = testObjectPropertyValue(
+          value, importSpecifiers, pathsSpecifiers, propTypesDeclaration
+        );
       } else {
         propTypesDeclaration = null;
       }
@@ -234,7 +269,7 @@ function testObjectProperty (node, importSpecifiers, propTypesDeclaration = {}) 
   return propTypesDeclaration;
 }
 
-function testObjectExpression (node, importSpecifiers, propTypesDeclaration = {}) {
+function testObjectExpression (node, importSpecifiers, pathsSpecifiers, propTypesDeclaration = {}) {
   if (node) {
     const { type, properties } = node;
     if (type === 'ObjectExpression' && properties && properties.length > 0) {
@@ -242,7 +277,7 @@ function testObjectExpression (node, importSpecifiers, propTypesDeclaration = {}
       let propertyValueObject;
       properties.forEach(property => {
         if (property) {
-          propertyValueObject = testObjectProperty(property, importSpecifiers);
+          propertyValueObject = testObjectProperty(property, importSpecifiers, pathsSpecifiers);
           if (propertyValueObject) {
             propTypesDeclaration.properties.push(propertyValueObject);
           }
@@ -253,45 +288,45 @@ function testObjectExpression (node, importSpecifiers, propTypesDeclaration = {}
   return propTypesDeclaration;
 }
 
-function getAnnotationImportSpecifiers (ast, rootDirPath, filePath) {
-  const importSpecifiers = {};
-  traverse(ast, node => {
-    const { type, key, value, leadingComments } = node;
-    if (type === 'ObjectProperty' && key && key.type === 'Identifier' && value) {
-      // get comments
-      if (leadingComments && leadingComments.length > 0) {
-        let wcdAnnotations = {};
-        leadingComments.forEach(leadingComment => {
-          if (leadingComment && leadingComment.value) {
-            wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
-          }
-        });
-        if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
-          const annotationParts =
-            wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-          if (annotationParts.length === 3) {
-            // there should be: PropTypesVariableName from some/path/to/File
-            // there should be: PropTypesVariableName from ./FilePath
-            // [0]: PropTypesVariableName
-            // [2]: ./FilePath
-            importSpecifiers[annotationParts[0]] = {
-              importName: annotationParts[0],
-              importPath: getAbsoluteImportPath(annotationParts[2], rootDirPath, filePath),
-            };
-          } else if (annotationParts.length === 1) {
-            // there should be: PropTypesVariableName
-            // [0]: PropTypesVariableName
-            importSpecifiers[annotationParts[0]] = {
-              importName: annotationParts[0],
-              importPath: getAbsoluteImportPath('', rootDirPath, filePath),
-            };
-          }
-        }
-      }
-    }
-  });
-  return importSpecifiers;
-}
+// function getAnnotationImportSpecifiers (ast, rootDirPath, filePath) {
+//   const importSpecifiers = {};
+//   traverse(ast, node => {
+//     const { type, key, value, leadingComments } = node;
+//     if (type === 'ObjectProperty' && key && key.type === 'Identifier' && value) {
+//       // get comments
+//       if (leadingComments && leadingComments.length > 0) {
+//         let wcdAnnotations = {};
+//         leadingComments.forEach(leadingComment => {
+//           if (leadingComment && leadingComment.value) {
+//             wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
+//           }
+//         });
+//         if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
+//           const annotationParts =
+//             wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
+//           if (annotationParts.length === 3) {
+//             // there should be: PropTypesVariableName from some/path/to/File
+//             // there should be: PropTypesVariableName from ./FilePath
+//             // [0]: PropTypesVariableName
+//             // [2]: ./FilePath
+//             importSpecifiers[annotationParts[0]] = {
+//               importName: annotationParts[0],
+//               importPath: getAbsoluteImportPath(annotationParts[2], rootDirPath, filePath),
+//             };
+//           } else if (annotationParts.length === 1) {
+//             // there should be: PropTypesVariableName
+//             // [0]: PropTypesVariableName
+//             importSpecifiers[annotationParts[0]] = {
+//               importName: annotationParts[0],
+//               importPath: getAbsoluteImportPath('', rootDirPath, filePath),
+//             };
+//           }
+//         }
+//       }
+//     }
+//   });
+//   return importSpecifiers;
+// }
 
 function getLocals (ast, rootDirPath, filePath) {
   const localSpecifiers = {};
@@ -349,18 +384,19 @@ export function getImportSpecifiers (ast, rootDirPath, filePath) {
     // treat the local prop types definitions as local imports to be able find them as the external prop types
     ...getLocals(ast, rootDirPath, filePath),
     // and make @functionTypes annotation as the import specifier too
-    ...getAnnotationImportSpecifiers(ast, rootDirPath, filePath)
+    // ...getAnnotationImportSpecifiers(ast, rootDirPath, filePath)
   };
   return importSpecifiers;
 }
 
-export function getPropTypesObject (node, importSpecifiers, propTypesDeclaration = {}) {
+export function getPropTypesObject (node, importSpecifiers, pathsSpecifiers, propTypesDeclaration = {}) {
   if (node) {
     const { type, name } = node;
     if (type === 'ObjectExpression') {
-      propTypesDeclaration = testObjectExpression(node, importSpecifiers, propTypesDeclaration);
+      propTypesDeclaration = testObjectExpression(node, importSpecifiers, pathsSpecifiers, propTypesDeclaration);
+      console.info('testObjectExpression: ', propTypesDeclaration);
     } else if (type === 'CallExpression') {
-      propTypesDeclaration.properties = [testCallExpression(node, importSpecifiers)];
+      propTypesDeclaration.properties = [testCallExpression(node, importSpecifiers, pathsSpecifiers)];
     } else if (type === 'Identifier') {
       const externalPropTypesImport = importSpecifiers[name];
       if (externalPropTypesImport) {

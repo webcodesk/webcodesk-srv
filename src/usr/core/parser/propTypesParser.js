@@ -18,7 +18,7 @@ import { getSourceAst } from '../utils/babelParser';
 import { getImportSpecifiers, getPropTypesObject } from './propTypesParserUtils';
 import { traverseProperties } from './propTypesTransformer';
 
-function getPropTypes(ast, importSpecifiers) {
+function getPropTypes(ast, importSpecifiers, pathsSpecifiers) {
   const result = [];
   if (ast && ast.body && ast.body.length > 0) {
     ast.body.forEach(node => {
@@ -32,7 +32,9 @@ function getPropTypes(ast, importSpecifiers) {
             let propTypesDeclaration = {
               name: declaratorId.name,
             };
-            propTypesDeclaration = getPropTypesObject(declaratorInit, importSpecifiers, propTypesDeclaration);
+            propTypesDeclaration = getPropTypesObject(
+              declaratorInit, importSpecifiers, pathsSpecifiers, propTypesDeclaration
+            );
             if (propTypesDeclaration.properties && propTypesDeclaration.properties.length > 0) {
               propTypesDeclaration.properties = traverseProperties(propTypesDeclaration.properties);
             }
@@ -49,5 +51,5 @@ export const findPropTypesDeclarations = (sourceCode, rootDirPath, filePath) => 
   // console.info('AST: ', JSON.stringify(getSourceAst(sourceCode), null, 4));
   const ast = getSourceAst(sourceCode);
   let importSpecifiers = getImportSpecifiers(ast, rootDirPath, filePath);
-  return getPropTypes(ast, importSpecifiers);
+  return getPropTypes(ast, importSpecifiers, {rootDirPath, filePath});
 };

@@ -38,73 +38,37 @@ function getAbsoluteImportPath (sourceImportPath, rootDirPath, currentFilePath) 
   return absoluteImportPath;
 }
 
-function getAnnotationImportSpecifiers (ast, rootDirPath, filePath) {
-  const importSpecifiers = {};
-  traverse(ast, node => {
-    const {type, leadingComments} = node;
-    if (type === 'ExpressionStatement' || type === 'ExportNamedDeclaration') {
-      // get comments
-      if (leadingComments && leadingComments.length > 0) {
-        let wcdAnnotations = {};
-        leadingComments.forEach(leadingComment => {
-          if (leadingComment && leadingComment.value) {
-            wcdAnnotations = {...wcdAnnotations, ...getWcdAnnotations(leadingComment.value)};
-          }
-        });
-        if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
-          if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES].length === 3) {
-            const annotationParts = wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-            // there should be: PropTypesVariableName from some/path/to/File
-            // there should be: PropTypesVariableName from ./FilePath
-            // [0]: PropTypesVariableName
-            // [2]: ./FilePath
-            importSpecifiers[annotationParts[0]] = {
-              importName: annotationParts[0],
-              importPath: getAbsoluteImportPath(annotationParts[2], rootDirPath, filePath),
-            };
-          }
-        }
-      }
-    }
-  });
-  return importSpecifiers;
-}
-
-function getExternalPropTypesImport(name, importSpecifiers) {
-  let result = null;
-  const externalPropTypesImport = importSpecifiers[name];
-  if (externalPropTypesImport) {
-    // we have to use common resource keys for the imported values in the props
-    // then we can find the PropTypes resource description in the graph model
-    result = makeResourceModelCanonicalKey(
-      makeResourceModelKey(externalPropTypesImport.importPath),
-      name
-    )
-  }
-  return result;
-}
-
-function testAnnotationsInComments(leadingComments, importSpecifiers, declaration) {
+function testAnnotationsInComments(leadingComments, {rootDirPath, filePath}, declaration) {
   let wcdAnnotations = {};
   if (leadingComments && leadingComments.length > 0) {
     leadingComments.forEach(leadingComment => {
       if (leadingComment && leadingComment.value) {
         wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
-        // console.info('Function wcdAnnotations: ', wcdAnnotations);
+        const connectReferences = wcdAnnotations[constants.ANNOTATION_CONNECT];
+        if (connectReferences && connectReferences.length > 0) {
+          declaration.possibleConnectionTargets = declaration.possibleConnectionTargets || {};
+          let absoluteImportPath;
+          for(let i = 0; i < connectReferences.length; i++) {
+            const { connectName, connectTarget, connectTargetFilePath } = connectReferences[i];
+            absoluteImportPath = getAbsoluteImportPath(connectTargetFilePath, rootDirPath, filePath);
+            if (absoluteImportPath) {
+              declaration.possibleConnectionTargets[connectName] =
+                declaration.possibleConnectionTargets[connectName] || [];
+              if (connectTarget) {
+                declaration.possibleConnectionTargets[connectName].push(
+                  makeResourceModelCanonicalKey(makeResourceModelKey(absoluteImportPath), connectTarget)
+                );
+              } else {
+                declaration.possibleConnectionTargets[connectName].push(
+                  makeResourceModelKey(absoluteImportPath)
+                );
+              }
+            }
+          }
+          delete wcdAnnotations[constants.ANNOTATION_CONNECT];
+        }
       }
     });
-    // todo: add compatibility paths from annotations
-    // if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
-    //   if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES].length === 3) {
-    //     const annotationParts = wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-    //     const externalProperties = getExternalPropTypesImport(annotationParts[0], importSpecifiers);
-    //     if (externalProperties) {
-    //       declaration.externalProperties = externalProperties;
-    //     }
-    //   }
-    //   // we don't need this annotation any more - we resolve prop types for the argument
-    //   delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-    // }
   }
   declaration.wcdAnnotations = wcdAnnotations;
   return declaration;
@@ -145,7 +109,7 @@ function getFunctionBodyDispatches(functionBodyAst) {
   return result;
 }
 
-export const getFunctionDeclarations = (ast, importSpecifiers) => {
+export const getFunctionDeclarations = (ast, pathsSpecifiers) => {
   const result = [];
   if (ast && ast.body && ast.body.length > 0) {
     ast.body.forEach(node => {
@@ -178,7 +142,7 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
                   }
                   // add comments if there are some
                   functionDeclaration =
-                    testAnnotationsInComments(leadingComments, importSpecifiers, functionDeclaration);
+                    testAnnotationsInComments(leadingComments, pathsSpecifiers, functionDeclaration);
                   // check user function body, it has to be the arrow function with dispatch parameter
                   if (varInitBody) {
                     const {
@@ -194,6 +158,19 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
                         if (varInitBodyParams[0].type === 'Identifier' && varInitBodyParams[0].name === 'dispatch') {
                           // get dispatches inside the function body
                           functionDeclaration.dispatches = getFunctionBodyDispatches(varInitBodyBody);
+                          // add possible connections to each dispatch
+                          if (
+                            functionDeclaration.possibleConnectionTargets
+                            && functionDeclaration.dispatches
+                            && functionDeclaration.dispatches.length > 0
+                          ) {
+                            for (let i = 0; i < functionDeclaration.dispatches.length; i++) {
+                              functionDeclaration.dispatches[i].possibleConnectionTargets =
+                                functionDeclaration.possibleConnectionTargets[functionDeclaration.dispatches[i].name];
+                            }
+                          }
+                          // we don't need connection targets in the function declaration any more
+                          delete functionDeclaration.possibleConnectionTargets;
                           // that's valid function declaration - we add it the list of user functions
                           result.push(functionDeclaration);
                         }
@@ -213,6 +190,5 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
 
 export const findFunctionDeclarations = (sourceCode, rootDirPath, filePath) => {
   const ast = getSourceAst(sourceCode);
-  const importSpecifiers = getAnnotationImportSpecifiers(ast, rootDirPath, filePath);
-  return getFunctionDeclarations(ast, importSpecifiers);
+  return getFunctionDeclarations(ast, {rootDirPath, filePath});
 };

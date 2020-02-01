@@ -17,7 +17,7 @@
 /* eslint-disable no-useless-escape */
 import constants from '../../../commons/constants';
 
-const PARAM_KEYWORD_WITH = 'with';
+const PARAM_KEYWORD_WITH = 'to';
 const PARAM_KEYWORD_FROM = 'from';
 
 const newLineRegExp = new RegExp(/\r?\n/);
@@ -45,20 +45,31 @@ export const getWcdAnnotations = (commentRawValue) => {
           && paramValueParts[1] === PARAM_KEYWORD_WITH
           && paramValueParts[3] === PARAM_KEYWORD_FROM
         ) {
-          // we have the component's function connect parameter
-          // example: @connect with Component from usr/dir/dir/Component.comp.js
+          // we have the component's function connect parameter to user function
+          // example: @connect to Function from usr/dir/dir/Component.comp.js
           result[constants.ANNOTATION_CONNECT] = result[constants.ANNOTATION_CONNECT] || [];
           result[constants.ANNOTATION_CONNECT].push({
             connectTarget: paramValueParts[2].trim(),
             connectTargetFilePath: paramValueParts[4].trim(),
           });
         } else if (
+          paramValueParts.length === 4
+          && paramValueParts[2] === PARAM_KEYWORD_WITH
+        ) {
+          // we have user function connect parameter to component instance
+          // example: @connect dispatchName to usr/dir/dir/Component.comp.js
+          result[constants.ANNOTATION_CONNECT] = result[constants.ANNOTATION_CONNECT] || [];
+          result[constants.ANNOTATION_CONNECT].push({
+            connectName: paramValueParts[1].trim(),
+            connectTargetFilePath: paramValueParts[3].trim(),
+          });
+        } else if (
           paramValueParts.length === 6
           && paramValueParts[2] === PARAM_KEYWORD_WITH
           && paramValueParts[4] === PARAM_KEYWORD_FROM
         ) {
-          // we have user function connect parameter
-          // example: @connect dispatchName with Component from usr/dir/dir/Component.comp.js
+          // we have user function connect parameter to another function
+          // example: @connect dispatchName to Component from usr/dir/dir/Component.comp.js
           result[constants.ANNOTATION_CONNECT] = result[constants.ANNOTATION_CONNECT] || [];
           result[constants.ANNOTATION_CONNECT].push({
             connectName: paramValueParts[1].trim(),
