@@ -341,8 +341,7 @@ class ResourceEditor extends React.Component {
               readmePreviewObject,
               resourceObject,
               projectSettingsObject,
-              clipboardItems,
-              transformScriptList
+              clipboardItems
             } = resource;
             if (resourceObject) {
               if (resourceObject.isComponent) {
@@ -427,7 +426,6 @@ class ResourceEditor extends React.Component {
                       updateHistory={updateResourceHistory[resourceObject.key]}
                       isVisible={index === activeEditorTabIndex}
                       data={resourceObject}
-                      transformScriptList={transformScriptList}
                       onUpdate={this.handleUpdateTab(index)}
                       onErrorClick={this.handleErrorClick}
                       onSearchRequest={this.handleSearchRequest}

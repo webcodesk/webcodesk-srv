@@ -27,10 +27,6 @@ export function createDefaultFlowModel() {
       outputs: [
         {
           name: 'onApplicationStart',
-          // properties: {
-          //   type: constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
-          //   children: [],
-          // }
         }
       ],
     },
@@ -77,20 +73,13 @@ export function createFlowModelForComponent(resourceObject, inBasket) {
         const {type, props} = property;
         // const propertyRef = resourceObject.propertiesRefMap[props.propertyName];
         if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
-          // let propertiesArg = propertyRef && propertyRef.props
-          //   ? propertyRef.props.propertiesArg || {}
-          //   : {};
           flowModel.props.outputs.push({
             name: props.propertyName,
-            // properties: propertiesArg ? cloneDeep(propertiesArg) : {}
           });
         } else {
-          if (props.propertyName !== constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
-            flowModel.props.inputs.push({
-              name: props.propertyName,
-              // properties: propertyRef ? cloneDeep(propertyRef) : {}
-            });
-          }
+          flowModel.props.inputs.push({
+            name: props.propertyName,
+          });
         }
       });
     }
@@ -138,82 +127,15 @@ export function createFlowModelForFunction(resourceObject, inBasket) {
   } else if (resourceObject.isUserFunction) {
     flowModel.props.inputs = [{
         name: 'callFunction',
-        // properties: resourceObject.propertiesArg ? cloneDeep(resourceObject.propertiesArg) : {},
       }];
     flowModel.props.outputs = [];
     if (resourceObject.dispatches && resourceObject.dispatches.length > 0) {
       resourceObject.dispatches.forEach(dispatch => {
         flowModel.props.outputs.push({
           name: dispatch.name,
-          // properties: dispatch.propertiesArg ? cloneDeep(dispatch.propertiesArg) : {},
         });
       });
     }
-  }
-  return flowModel;
-}
-
-export function createFlowModelForPage(resourceObject, inBasket) {
-  let searchName;
-  let title = textUtils.cutPagePath(resourceObject.pagePath, 20, 2);
-  const pagePathParts = resourceObject.pagePath
-    ? resourceObject.pagePath.split(constants.FILE_SEPARATOR)
-    : [];
-  if (pagePathParts.length > 1) {
-    searchName = pagePathParts[pagePathParts.length - 1];
-  } else {
-    searchName = resourceObject.pagePath;
-  }
-  const flowModel = {
-    type: constants.FLOW_PAGE_TYPE,
-    props: {
-      pageName: resourceObject.pageName,
-      pagePath: resourceObject.pagePath,
-      title,
-      subtitle: '',
-      searchName,
-    }
-  };
-  if (inBasket) {
-    flowModel.type = constants.FLOW_PAGE_IN_BASKET_TYPE;
-    flowModel.props.position = inBasket.position;
-  }
-  if (resourceObject.isFlowPage) {
-    flowModel.props.inputs = cloneDeep(resourceObject.inputs);
-    flowModel.props.outputs = cloneDeep(resourceObject.outputs);
-    if (inBasket) {
-      // we don't need connection point in the input if we pass the copy of the page instance
-      if (flowModel.props.inputs.length > 0) {
-        for (let i = 0; i < flowModel.props.inputs.length; i++) {
-          delete flowModel.props.inputs[i].connectedTo;
-        }
-      }
-    }
-  } else if (resourceObject.isPage) {
-    flowModel.props.inputs = [
-      {
-        name: 'forward',
-        // properties: {
-        //   type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-        //   props: {
-        //     propertyComment: 'Accepting object'
-        //   },
-        //   children: [],
-        // },
-      }
-    ];
-    flowModel.props.outputs = [
-      {
-        name: 'queryParams',
-        // properties: {
-        //   type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-        //   props: {
-        //     propertyComment: 'Object has the same fields in the object passed in to the forward input.'
-        //   },
-        //   children: [],
-        // },
-      }
-    ];
   }
   return flowModel;
 }

@@ -84,24 +84,6 @@ function getPropertiesRef(properties) {
           newPropertyRef.children = getPropertiesRef(children);
         }
         result.push(newPropertyRef);
-      } else if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
-        const newPropertyRef = {
-          type,
-          props: {
-            propertyName,
-            propertyComment,
-            propertyLabel,
-            isRequired,
-          },
-        };
-        if (children && children.length > 0) {
-          const childrenRef = getPropertiesRef(children);
-          const firstArgumentProperty = getPropertyByName(childrenRef, constants.FUNCTION_TYPES_FIRST_ARGUMENT_PROP_NAME);
-          if (firstArgumentProperty) {
-            newPropertyRef.props.propertiesArg = cloneDeep(firstArgumentProperty);
-          }
-        }
-        result.push(newPropertyRef);
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         const newPropertyRef = {
           type,
@@ -278,41 +260,6 @@ function componentEnrichVisitor ({ nodeModel, parentModel }) {
   }
 }
 
-function functionEnrichVisitor ({ nodeModel, parentModel }) {
-  if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_USER_FUNCTION_TYPE) {
-    const { props } = nodeModel;
-    let externalPropTypesResource;
-    let propertiesRef;
-    if (props && props.externalProperties) {
-      externalPropTypesResource =
-        projectResourcesManager.getResourceByKey(props.externalProperties);
-      if (externalPropTypesResource) {
-        // The function types should have argument property to specify the types of the first argument
-        propertiesRef = getPropertiesRef(externalPropTypesResource.properties);
-        const firstArgumentProperties =
-          getPropertyByName(propertiesRef, constants.FUNCTION_TYPES_FIRST_ARGUMENT_PROP_NAME);
-        if (firstArgumentProperties) {
-          props.propertiesArg = cloneDeep(firstArgumentProperties);
-        }
-      }
-    }
-    if (props && props.dispatches && props.dispatches.length > 0) {
-      const dispatchObjectProperties =
-        getPropertyByName(propertiesRef, constants.FUNCTION_TYPES_DISPATCH_PROP_NAME);
-      props.dispatches.forEach(dispatchItem => {
-        if (externalPropTypesResource && dispatchObjectProperties && dispatchObjectProperties.children) {
-          // The function dispatch types should have argument property to specify the types of the dispatch argument
-          const dispatchProperties =
-            getPropertyByName(dispatchObjectProperties.children, dispatchItem.name);
-          if (dispatchProperties) {
-            dispatchItem.propertiesArg = cloneDeep(dispatchProperties);
-          }
-        }
-      });
-    }
-  }
-}
-
 function settingsConfEnrichVisitor ({ nodeModel, parentModel }) {
   if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_SETTINGS_CONF_TYPE) {
     const { props } = nodeModel;
@@ -366,11 +313,12 @@ export function enrichResources () {
     componentsGraphModel.traverse(componentEnrichVisitor);
   }
 
-  // enhance Function: replace external prop types with their real props
-  const functionsGraphModel = projectResourcesManager.getFunctionsGraphModel();
-  if (functionsGraphModel) {
-    functionsGraphModel.traverse(functionEnrichVisitor);
-  }
+  // todo: removing externalProperties from functions
+  // // enhance Function: replace external prop types with their real props
+  // const functionsGraphModel = projectResourcesManager.getFunctionsGraphModel();
+  // if (functionsGraphModel) {
+  //   functionsGraphModel.traverse(functionEnrichVisitor);
+  // }
 
   // enhance Settings: replace external prop types with their real props
   const settingsConfGraphModel = projectResourcesManager.getSettingsConfGraphModel();

@@ -37,10 +37,8 @@ export function topRoundedRect(x, y, width, height, radius) {
 export function getSeparation(bottomItem, topItem) {
   const { data: { type: topType, props: topProps, } } = topItem;
   const { data: { type: bottomType, props: bottomProps } } = bottomItem;
-  if (topType === constants.FLOW_PAGE_IN_BASKET_TYPE
-    || topType === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
+  if (topType === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
     || topType === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
-    || bottomType === constants.FLOW_PAGE_IN_BASKET_TYPE
     || bottomType === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
     || bottomType === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE) {
     return 0;
@@ -71,8 +69,7 @@ const defaultRectWidth = 370;
 
 export function adjustDimensions(item) {
   const {data: {type, props}} = item;
-  if (type === constants.FLOW_PAGE_IN_BASKET_TYPE
-    || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+  if (type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
     || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE) {
     if (props) {
       const { position } = props;
@@ -119,9 +116,7 @@ export function createPropertiesAndLinks(item) {
     },
     parent
   } = item;
-  const isInBasket =
-    type === constants.FLOW_PAGE_IN_BASKET_TYPE ||
-    type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE ||
+  const isInBasket = type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE ||
     type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE;
   if (props) {
     const { inputs, outputs } = props;
@@ -159,7 +154,6 @@ export function createPropertiesAndLinks(item) {
           isInBasket,
           error: input.error,
           isSelected: input.isSelected,
-          hasTransformScript: !!input.transformScript,
         });
         if (input.connectedTo && parentOutputs && parentOutputs.length > 0) {
           const foundOutputIndex = parentOutputs.findIndex(i => i.name === input.connectedTo);
@@ -176,7 +170,6 @@ export function createPropertiesAndLinks(item) {
               endX: x + (index * lineHeight + titleHeight + 15),
               endY: y,
               isSelected: input.isSelected,
-              hasTransformScript: !!input.transformScript,
             });
           }
         }

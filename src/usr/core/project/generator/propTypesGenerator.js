@@ -400,19 +400,12 @@ function createOutputDescriptionNextLine (node) {
     const { type, props } = node;
     let propertyName;
     let propertyComment = '';
-    let propertiesArg;
     if (props) {
-      propertiesArg = props.propertiesArg;
       propertyName = props.propertyName;
       propertyComment = props.propertyComment ? props.propertyComment.trim().replace('\n', ' ') : '';
     }
     if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
       result.push(`   * __${propertyName}__ - \`{Function}\` ${propertyComment}`);
-      if (propertiesArg) {
-        result = result.concat(createInputDescriptionNextLine(propertiesArg, 2));
-      } else {
-        result.push(`      * output object has a structure of any type or is undefined`);
-      }
     }
   }
   return result;
@@ -452,24 +445,15 @@ export function generateFunctionsMarkDownSpecification(functions) {
   let resultMarkdownText = '## Specification\n\n';
   if (functions && functions.length > 0) {
     functions.forEach(functionModel => {
-      const { props: { functionComment, displayName, propertiesArg, dispatches } } = functionModel;
+      const { props: { functionComment, displayName, dispatches } } = functionModel;
       resultMarkdownText += `### Function \`${displayName}\`\n`;
       if (functionComment) {
         resultMarkdownText += `${functionComment}\n\n`;
       }
-      let inputs = [];
-      if (propertiesArg) {
-        console.info('Properties arg: ', propertiesArg);
-        inputs = inputs.concat(createInputDescriptionNextLine(propertiesArg, 1));
-      }
-      if (inputs.length > 0) {
-        let inputText = inputs.join('\n');
-        resultMarkdownText += `*Input*\n\n${inputText}\n\n`;
-      }
       let outputs = [];
       if (dispatches && dispatches.length > 0) {
         dispatches.forEach(dispatch => {
-          const { name, propertiesArg, wcdAnnotations } = dispatch;
+          const { name, wcdAnnotations } = dispatch;
           let validComment = '';
           if (wcdAnnotations) {
             const wcdAnnotationComment = wcdAnnotations[constants.ANNOTATION_COMMENT];
@@ -477,13 +461,10 @@ export function generateFunctionsMarkDownSpecification(functions) {
               validComment = wcdAnnotationComment.trim().replace('\n', '');
             }
           }
-          if (propertiesArg) {
-            outputs = outputs.concat(createInputDescriptionNextLine(propertiesArg, 1));
-          } else if (name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
-            outputs.push(`   * __${name}__ - \`{Error, required: false}\` ${validComment}`);
+          if (name === constants.FUNCTION_OUTPUT_ERROR_NAME) {
+            outputs.push(`   * __${name}__ - ${validComment}`);
           } else {
-            outputs.push(`   * __${name}__ - \`{any, required: false}\` ${validComment}`);
-            outputs.push(`      * output object has a structure of any type or is undefined`);
+            outputs.push(`   * __${name}__ - ${validComment}`);
           }
         });
       }

@@ -60,7 +60,6 @@ export const openTabWithResourceByKey = (resourceKey) => (dispatch) => {
         timestamp: Date.now(),
         projectSettingsObject: projectManager.getProjectSettings(),
         clipboardItems: projectResourcesManager.getClipboardItemList(),
-        transformScriptList: projectResourcesManager.getTransformScriptList(),
       });
       activeEditorTabIndex = resourceEditorTabs.length - 1;
       resourceEditorTabs = [...resourceEditorTabs];
@@ -135,7 +134,6 @@ export const updateAllTabs = () => (dispatch) => {
             resourceObject: resourceEditorTabObject,
             projectSettingsObject: projectManager.getProjectSettings(),
             clipboardItems: projectResourcesManager.getClipboardItemList(),
-            transformScriptList: projectResourcesManager.getTransformScriptList(),
             timestamp: Date.now(),
           });
         }

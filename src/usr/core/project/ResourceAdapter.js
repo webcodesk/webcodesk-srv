@@ -454,42 +454,6 @@ class ResourceAdapter {
             return [];
           }
         },
-        // 'propertiesRefMap': {
-        //   get: function () {
-        //     if (!this.propertiesRefMapObject) {
-        //       if (this.propertiesRef) {
-        //         this.propertiesRefMapObject = keyBy(this.propertiesRef, ref => ref.props.propertyName);
-        //       } else {
-        //         this.propertiesRefMapObject = {};
-        //       }
-        //     }
-        //     return this.propertiesRefMapObject;
-        //   }
-        // },
-        // 'propertiesArg': {
-        //   get: function () {
-        //     if (this.isUserFunction || this.isComponent) {
-        //       if (this.props) {
-        //         return this.props.propertiesArg || {};
-        //       }
-        //     } else if (this.isFlowUserFunction) {
-        //       if (!this.userFunctionResourceObject) {
-        //         this.userFunctionResourceObject = new ResourceAdapter.Builder()
-        //           .byKeyInGraphs(this.functionName, this.getGraphByType)
-        //           .build();
-        //       }
-        //       return this.userFunctionResourceObject.propertiesArg;
-        //     } else if (this.isComponentInstance) {
-        //       if (!this.componentResourceObject) {
-        //         this.componentResourceObject = new ResourceAdapter.Builder()
-        //           .byKeyInGraphs(this.componentName, this.getGraphByType)
-        //           .build();
-        //       }
-        //       return this.componentResourceObject.propertiesArg;
-        //     }
-        //     return {};
-        //   }
-        // },
         'inputs': {
           get: function () {
             if (this.props) {
@@ -673,11 +637,6 @@ class ResourceAdapter {
         'isFlowUserFunction': {
           get: function () {
             return this.resource && this.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE;
-          }
-        },
-        'isFlowPage': {
-          get: function () {
-            return this.resource && this.type === constants.GRAPH_MODEL_FLOW_PAGE_TYPE;
           }
         },
         'isSettings': {

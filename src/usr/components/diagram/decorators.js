@@ -192,8 +192,7 @@ class DiagramDecorator {
         .text(item => {
           return item.data.props.functionName || item.data.props.componentName || item.data.props.pagePath;
         });
-      if (type === constants.FLOW_PAGE_IN_BASKET_TYPE
-        || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+      if (type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
         || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE) {
         nodeGroup
           .classed('inbasket', true)
@@ -253,18 +252,13 @@ class DiagramDecorator {
             .classed(
               'application',
               type === constants.FLOW_APPLICATION_STARTER_TYPE
-            )
-            .classed(
-              'page',
-              type === constants.FLOW_PAGE_TYPE || type === constants.FLOW_PAGE_IN_BASKET_TYPE
             );
         }
         selectThis
           .classed(
             'inbasket',
             type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE ||
-            type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE ||
-            type === constants.FLOW_PAGE_IN_BASKET_TYPE
+            type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
           )
           .classed('selected', isSelected);
       })
@@ -302,10 +296,6 @@ class DiagramDecorator {
             .classed(
               'application',
               type === constants.FLOW_APPLICATION_STARTER_TYPE
-            )
-            .classed(
-              'page',
-              type === constants.FLOW_PAGE_TYPE || type === constants.FLOW_PAGE_IN_BASKET_TYPE
             );
         }
         selectThis.classed('selected', isSelected);
@@ -594,10 +584,9 @@ class DiagramDecorator {
         return utils.diagonal({ x: startX, y: startY }, { x: endX, y: endY });
       })
       .each(function (item) {
-        const { isSelected, hasTransformScript } = item;
+        const { isSelected } = item;
         const link = d3.select(this);
         link.classed('selected', isSelected);
-        link.classed('transforming', hasTransformScript);
         // if (isSelected) {
         //   link.raise();
         // }

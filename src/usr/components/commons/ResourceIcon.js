@@ -93,7 +93,6 @@ class ResourceIcon extends React.Component {
         result = (<Wallpaper fontSize="inherit" color="disabled" />);
         break;
       case constants.GRAPH_MODEL_PAGE_TYPE:
-      case constants.GRAPH_MODEL_FLOW_PAGE_TYPE:
         result = isOutlined
           ? (<DashboardOutlined fontSize="inherit" style={{color: customColor || '#3F51B5'}} />)
           : (<Dashboard fontSize="inherit" style={{color: customColor || '#3F51B5'}} />);

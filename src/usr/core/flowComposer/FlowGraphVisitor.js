@@ -47,8 +47,7 @@ class FlowGraphVisitor {
             constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE,
             constants.GRAPH_MODEL_USER_FUNCTION_TYPE,
             constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE,
-            constants.GRAPH_MODEL_PAGE_TYPE,
-            constants.GRAPH_MODEL_FLOW_PAGE_TYPE,
+            constants.GRAPH_MODEL_PAGE_TYPE
           ]
         };
       } else {
@@ -57,8 +56,7 @@ class FlowGraphVisitor {
           acceptableTypes: [
             constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,
             constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE,
-            constants.GRAPH_MODEL_PAGE_TYPE,
-            constants.GRAPH_MODEL_FLOW_PAGE_TYPE,
+            constants.GRAPH_MODEL_PAGE_TYPE
           ]
         };
       }
@@ -139,14 +137,6 @@ class FlowGraphVisitor {
         flowParticleType: type,
         componentName: props.componentName,
         componentInstance: props.componentInstance,
-        inputs: props.inputs,
-        outputs: props.outputs
-      };
-    } else if (type === constants.FLOW_PAGE_TYPE) {
-      flowParticle = {
-        flowParticleType: type,
-        pageName: props.pageName,
-        pagePath: props.pagePath,
         inputs: props.inputs,
         outputs: props.outputs
       };

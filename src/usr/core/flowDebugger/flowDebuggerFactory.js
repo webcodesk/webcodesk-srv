@@ -36,69 +36,26 @@ function createFlowByEventTargets(event) {
     targets.forEach(target => {
       const {type, props, events} = target;
       if (type === constants.FRAMEWORK_ACTION_SEQUENCE_COMPONENT_TYPE) {
-        const {componentName, componentInstance, componentKey, propertyName, forwardPath, populatePath} = props;
-        if (forwardPath) {
-          let searchName;
-          const pagePathParts = forwardPath ? forwardPath.split(constants.FILE_SEPARATOR) : [];
-          if (pagePathParts.length > 1) {
-            searchName = pagePathParts[pagePathParts.length - 1];
-          } else {
-            searchName = forwardPath;
+        const { componentName, componentInstance, componentKey, propertyName } = props;
+        model = {
+          key: componentKey,
+          type: constants.FLOW_COMPONENT_INSTANCE_TYPE,
+          props: {
+            title: textUtils.cutText(componentInstance, 25),
+            searchName: componentInstance,
+            componentName: componentName,
+            componentInstance: componentInstance,
+            subtitle: '',
+            outputs: [],
+          },
+          children: [],
+        };
+        model.props.inputs = [
+          {
+            name: propertyName,
+            connectedTo: eventName,
           }
-          model = {
-            key: componentKey,
-            type: constants.FLOW_PAGE_TYPE,
-            props: {
-              title: textUtils.cutPagePath(forwardPath, 20, 2),
-              searchName,
-              forwardPath,
-              subtitle: '',
-              inputs: [
-                {
-                  name: 'forward',
-                  connectedTo: eventName,
-                }
-              ],
-              outputs: [
-                {
-                  name: 'queryParams',
-                }
-              ],
-            },
-            children: [],
-          };
-        } else {
-          model = {
-            key: componentKey,
-            type: constants.FLOW_COMPONENT_INSTANCE_TYPE,
-            props: {
-              title: textUtils.cutText(componentInstance, 25),
-              searchName: componentInstance,
-              componentName: componentName,
-              componentInstance: componentInstance,
-              // forwardPath,
-              populatePath,
-              subtitle: '',
-              outputs: [],
-            },
-            children: [],
-          };
-          if (populatePath) {
-            model.props.inputs = [
-              {
-                name: propertyName,
-                connectedTo: 'queryParams'
-              }
-            ];
-          } else {
-            model.props.inputs = [
-              {
-                name: propertyName,
-                connectedTo: eventName,
-              }
-            ];
-          }
-        }
+        ];
       } else if (type === constants.FRAMEWORK_ACTION_SEQUENCE_USER_FUNCTION_TYPE) {
         const {functionName, functionKey, isUsingTargetState} = props;
         let title;
@@ -156,7 +113,7 @@ function createFlowByEventTargets(event) {
 
 function createFlowBySequence(actionSequence) {
   if (actionSequence) {
-    const {events, componentName, componentInstance, componentKey, forwardPath} = actionSequence;
+    const {events, componentName, componentInstance, componentKey} = actionSequence;
     const model = {
       key: componentKey,
       props: {
@@ -175,32 +132,12 @@ function createFlowBySequence(actionSequence) {
       model.type = constants.FLOW_APPLICATION_STARTER_TYPE;
       model.props.title = 'Application';
     } else {
-      if (forwardPath) {
-        // this is the top level page
-        let searchName;
-        const pagePathParts = forwardPath ? forwardPath.split(constants.FILE_SEPARATOR) : [];
-        if (pagePathParts.length > 1) {
-          searchName = pagePathParts[pagePathParts.length - 1];
-        } else {
-          searchName = forwardPath;
-        }
-        model.type = constants.FLOW_PAGE_TYPE;
-        model.props.title = textUtils.cutPagePath(forwardPath, 20, 2);
-        model.props.searchName = searchName;
-        model.props.forwardPath = forwardPath;
-        model.props.outputs = [
-          {
-            name: 'queryParams',
-          }
-        ];
-      } else {
-        // this is the top level page component
-        model.type = constants.FLOW_COMPONENT_INSTANCE_TYPE;
-        model.props.title = textUtils.cutText(componentInstance, 35);
-        model.props.searchName = componentInstance;
-        model.props.componentName = componentName;
-        model.props.componentInstance = componentInstance;
-      }
+      // this is the top level page component
+      model.type = constants.FLOW_COMPONENT_INSTANCE_TYPE;
+      model.props.title = textUtils.cutText(componentInstance, 35);
+      model.props.searchName = componentInstance;
+      model.props.componentName = componentName;
+      model.props.componentInstance = componentInstance;
     }
     model.props.outputs = model.props.outputs.sort(propertiesComparator);
     return model;

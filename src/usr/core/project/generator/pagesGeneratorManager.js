@@ -109,7 +109,7 @@ export function createComponentsTree(model, rootModelProps) {
       || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
       if (rootModelProps) {
         if (propertyName) {
-          if (!isNil(propertyValue) && propertyName !== constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
+          if (!isNil(propertyValue)) {
             rootModelProps[propertyName] = propertyValue;
           }
         } else {

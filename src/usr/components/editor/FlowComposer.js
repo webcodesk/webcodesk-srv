@@ -21,12 +21,10 @@ import forOwn from 'lodash/forOwn';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import SplitPane from '../splitPane';
 import FlowComposerManager from '../../core/flowComposer/FlowComposerManager';
 import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import Diagram from '../diagram/Diagram';
 import ToolbarButton from '../commons/ToolbarButton';
-import FlowInputTransformEditor from './FlowInputTransformEditor';
 import globalStore from '../../core/config/globalStore';
 import constants from '../../../commons/constants';
 
@@ -85,7 +83,6 @@ class FlowComposer extends React.Component {
     draggedItem: PropTypes.object,
     isDraggingItem: PropTypes.bool,
     updateHistory: PropTypes.array,
-    transformScriptList: PropTypes.array,
     onUpdate: PropTypes.func,
     onErrorClick: PropTypes.func,
     onSearchRequest: PropTypes.func,
@@ -100,7 +97,6 @@ class FlowComposer extends React.Component {
     draggedItem: null,
     isDraggingItem: false,
     updateHistory: [],
-    transformScriptList: [],
     onUpdate: () => {
       console.info('FlowComposer.onUpdate is not set.');
     },
@@ -124,10 +120,7 @@ class FlowComposer extends React.Component {
     this.state = {
       selectedModels: null,
       updateCounter: 0,
-      showPanelCover: false,
-      showPropertyEditor: this.getViewFlag('showPropertyEditor', true),
       zoomK: this.getViewFlag('zoomK', 0.5),
-      propertyEditorSplitterSize: this.getViewFlag('propertyEditorSplitterSize', 250),
     };
     const { data } = this.props;
     if (data) {
@@ -151,10 +144,7 @@ class FlowComposer extends React.Component {
       localFlowTree,
       selectedModels,
       updateCounter,
-      showPanelCover,
-      showPropertyEditor,
       zoomK,
-      propertyEditorSplitterSize
     } = this.state;
     let dataIsChanged = nextProps.data && data !== nextProps.data;
     if (dataIsChanged) {
@@ -176,10 +166,7 @@ class FlowComposer extends React.Component {
       || localFlowTree !== nextState.localFlowTree
       || selectedModels !== nextState.selectedModels
       || updateCounter !== nextState.updateCounter
-      || showPanelCover !== nextState.showPanelCover
-      || showPropertyEditor !== nextState.showPropertyEditor
-      || zoomK !== nextState.zoomK
-      || propertyEditorSplitterSize !== nextState.propertyEditorSplitterSize;
+      || zoomK !== nextState.zoomK;
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
@@ -257,26 +244,6 @@ class FlowComposer extends React.Component {
     }
   };
 
-  handleSplitterOnDragStarted = () => {
-    this.setState({
-      showPanelCover: true,
-    });
-  };
-
-  handleSplitterOnDragFinished = (splitterName) => (newSplitterSize) => {
-    this.storeViewFlag(splitterName, newSplitterSize);
-    this.setState({
-      showPanelCover: false,
-    });
-  };
-
-  handleTogglePropertyEditor = () => {
-    this.storeViewFlag('showPropertyEditor', !this.state.showPropertyEditor);
-    this.setState({
-      showPropertyEditor: !this.state.showPropertyEditor,
-    });
-  };
-
   handleItemClick = (node) => {
     const { updateCounter } = this.state;
     this.flowComposerManager.setSelected(node);
@@ -342,17 +309,6 @@ class FlowComposer extends React.Component {
     });
   };
 
-  handleUpdateTransformScript = (selectedModelKey, selectedInputName, transformScript, testDataScript) => {
-    const { updateCounter } = this.state;
-    this.flowComposerManager.setTransformScript(
-      selectedModelKey, selectedInputName, transformScript, testDataScript
-    );
-    this.setState({
-      selectedModels: this.flowComposerManager.getSelected(),
-      updateCounter: updateCounter + 1,
-    });
-  };
-
   handleSearchRequest = (text) => () => {
     this.props.onSearchRequest(text);
   };
@@ -381,8 +337,6 @@ class FlowComposer extends React.Component {
           this.props.onOpen(nodeModel.props.componentName);
         } else if (nodeModel.props.functionName) {
           this.props.onOpen(nodeModel.props.functionName);
-        } else if (nodeModel.props.pagePath) {
-          this.props.onOpen(nodeModel.props.pagePath);
         }
       }
     }
@@ -424,28 +378,19 @@ class FlowComposer extends React.Component {
     const {
       localFlowTree,
       selectedModels,
-      showPanelCover,
-      showPropertyEditor,
       zoomK,
-      propertyEditorSplitterSize
     } = this.state;
     if (!localFlowTree) {
       return <h1>Flow tree is not specified</h1>
     }
-    const { classes, draggedItem, isDraggingItem, updateHistory, transformScriptList, isVisible } = this.props;
+    const { classes, draggedItem, isDraggingItem, updateHistory, isVisible } = this.props;
     let title;
     // let searchName;
     // let className;
     let openTitle = "Jump to";
     let selectedNode;
-    let parentSelectedNode;
-    let parentOutputModel;
-    let selectedInputModel;
     if (selectedModels) {
       selectedNode = selectedModels.nodeModel;
-      parentSelectedNode = selectedModels.parentModel;
-      parentOutputModel = selectedModels.outputModel;
-      selectedInputModel = selectedModels.inputModel;
       if (selectedNode && selectedNode.props.title !== 'Application') {
         title = selectedNode.props.title;
         // className = getComponentName(selectedNode.props.componentName);
@@ -459,42 +404,11 @@ class FlowComposer extends React.Component {
         }
       }
     }
-    // const menuItems = [];
-    // if (title) {
-    //   menuItems.push({
-    //     label: `By name: "${searchName || title}"`,
-    //     onClick: this.handleSearchRequest(searchName || title)
-    //   });
-    // }
-    // if (className) {
-    //   menuItems.push({
-    //     label: `By class: "${className}"`,
-    //     onClick: this.handleSearchRequest(className)
-    //   });
-    // }
 
     return (
       <div className={classes.root}>
         <div className={classes.topPane}>
           <CommonToolbar disableGutters={true} dense="true">
-            <ToolbarButton
-              switchedOn={showPropertyEditor}
-              onClick={this.handleTogglePropertyEditor}
-              title="Transformation Script"
-              iconType="Edit"
-              tooltip={showPropertyEditor
-                ? 'Close selection properties editor'
-                : 'Open selection properties editor'
-              }
-            />
-            <CommonToolbarDivider />
-            {/*<ToolbarButton*/}
-            {/*  disabled={!title}*/}
-            {/*  title="Search"*/}
-            {/*  iconType="Search"*/}
-            {/*  tooltip="Search in the project"*/}
-            {/*  menuItems={menuItems}*/}
-            {/*/>*/}
             <ToolbarButton
               disabled={!title}
               title={openTitle}
@@ -538,48 +452,22 @@ class FlowComposer extends React.Component {
           </CommonToolbar>
         </div>
         <div className={classes.centralPane}>
-          <SplitPane
-            split="horizontal"
-            primary="second"
-            defaultSize={propertyEditorSplitterSize}
-            minSize={130}
-            onDragStarted={this.handleSplitterOnDragStarted}
-            onDragFinished={this.handleSplitterOnDragFinished('propertyEditorSplitterSize')}
-            pane2Style={{display: showPropertyEditor ? 'block' : 'none'}}
-            resizerStyle={{display: showPropertyEditor ? 'block' : 'none'}}
-          >
-            <div className={classes.root}>
-              {showPanelCover && (
-                <div className={classes.root} style={{zIndex: 10}} />
-              )}
-              <Diagram
-                treeData={localFlowTree}
-                draggedItem={isDraggingItem ? draggedItem : null}
-                zoomK={zoomK}
-                isVisible={isVisible}
-                onItemClick={this.handleItemClick}
-                onErrorClick={this.handleErrorClick}
-                onDropNew={this.handleDropNew}
-                onConnectInput={this.handleConnectInput}
-                onItemDelete={this.handleDeleteItem}
-                onItemDragEnd={this.handleDragEndBasket}
-                onZoomed={this.handleZoomed}
-              />
-              <div className={classes.tooltip}>
-                <code className={classes.tooltipLabel}>Drag & drop here</code>
-              </div>
-            </div>
-            <div className={classes.editorPane}>
-              <FlowInputTransformEditor
-                parentNodeModel={parentSelectedNode}
-                parentOutputModel={parentOutputModel}
-                selectedInputModel={selectedInputModel}
-                selectedNodeModel={selectedNode}
-                transformScriptList={transformScriptList}
-                onUpdateTransformScript={this.handleUpdateTransformScript}
-              />
-            </div>
-          </SplitPane>
+          <Diagram
+            treeData={localFlowTree}
+            draggedItem={isDraggingItem ? draggedItem : null}
+            zoomK={zoomK}
+            isVisible={isVisible}
+            onItemClick={this.handleItemClick}
+            onErrorClick={this.handleErrorClick}
+            onDropNew={this.handleDropNew}
+            onConnectInput={this.handleConnectInput}
+            onItemDelete={this.handleDeleteItem}
+            onItemDragEnd={this.handleDragEndBasket}
+            onZoomed={this.handleZoomed}
+          />
+          <div className={classes.tooltip}>
+            <code className={classes.tooltipLabel}>Drag & drop here</code>
+          </div>
         </div>
       </div>
     );

@@ -92,26 +92,6 @@ class FlowDebuggerManager {
     }
   };
 
-  setQueryParamsVisitor = (forwardPath, recordId) =>
-    ({ nodeModel, parentModel }) => {
-    if (nodeModel && nodeModel.props) {
-      const {
-        type,
-        props: {
-          forwardPath: modelForwardPath,
-          outputs,
-        }
-      } = nodeModel;
-      if (type === constants.FLOW_PAGE_TYPE && forwardPath === modelForwardPath) {
-        const foundOutput = outputs.find(i => i.name === 'queryParams');
-        if (foundOutput) {
-          foundOutput.recordIds = foundOutput.recordIds || [];
-          foundOutput.recordIds.push(recordId);
-        }
-      }
-    }
-  };
-
   setDataFromLog = (actionsLog) => {
     if (actionsLog && actionsLog.length > 0) {
       let orderedLog = cloneDeep(actionsLog.sort((a, b) => {
@@ -189,12 +169,6 @@ class FlowDebuggerManager {
             this.graphModel.traverse(this.setRecordIdsVisitor(componentName, componentInstance, logRecordId));
             logRecord.recordId = logRecordId;
           } else if (eventType === constants.DEBUG_MSG_CREATE_CONTAINER_EVENT) {
-            // set record id to any component that may receive properties from the request parameters
-            this.graphModel.traverse(
-              this.setQueryParamsVisitor(
-                populatePath, logRecordId
-              )
-            );
             this.graphModel.traverse(
               this.setPopulatedPropsVisitor(
                 componentName, componentInstance, propertyName, populatePath, logRecordId

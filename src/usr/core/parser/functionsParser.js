@@ -92,17 +92,18 @@ function testAnnotationsInComments(leadingComments, importSpecifiers, declaratio
         wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
       }
     });
-    if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
-      if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES].length === 3) {
-        const annotationParts = wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-        const externalProperties = getExternalPropTypesImport(annotationParts[0], importSpecifiers);
-        if (externalProperties) {
-          declaration.externalProperties = externalProperties;
-        }
-      }
-      // we don't need this annotation any more - we resolve prop types for the argument
-      delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-    }
+    // todo: add compatibility paths from annotations
+    // if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
+    //   if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES].length === 3) {
+    //     const annotationParts = wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
+    //     const externalProperties = getExternalPropTypesImport(annotationParts[0], importSpecifiers);
+    //     if (externalProperties) {
+    //       declaration.externalProperties = externalProperties;
+    //     }
+    //   }
+    //   // we don't need this annotation any more - we resolve prop types for the argument
+    //   delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
+    // }
   }
   declaration.wcdAnnotations = wcdAnnotations;
   return declaration;
@@ -173,10 +174,11 @@ export const getFunctionDeclarations = (ast, importSpecifiers) => {
                     //     name: varInitParam.name,
                     //   });
                     // });
-                    if (varInitParams.length > 1) {
-                      // the user wants to use the target state in the function
-                      functionDeclaration.isUsingTargetState = true;
-                    }
+                    // todo: removing isUsingTargetState
+                    // if (varInitParams.length > 1) {
+                    //   // the user wants to use the target state in the function
+                    //   functionDeclaration.isUsingTargetState = true;
+                    // }
                   }
                   // add comments if there are some
                   functionDeclaration =

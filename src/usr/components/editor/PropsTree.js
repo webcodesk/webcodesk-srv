@@ -112,12 +112,6 @@ const propertyComparator = (aModel, bModel) => {
   } else if (!aPropertyName && !bPropertyName) {
     return 0;
   } else {
-    if (aPropertyName === constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
-      return -1;
-    }
-    if (bPropertyName === constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
-      return 1;
-    }
     if (aType === constants.COMPONENT_PROPERTY_SHAPE_TYPE || aType === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
       return 1;
     }

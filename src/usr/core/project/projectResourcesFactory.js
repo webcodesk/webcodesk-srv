@@ -34,7 +34,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
     children: [],
   };
   declarationsInFile.declarations.forEach(functionDeclaration => {
-    const { functionName, isUsingTargetState, dispatches, wcdAnnotations, externalProperties } = functionDeclaration;
+    const { functionName, dispatches, wcdAnnotations } = functionDeclaration;
     const canonicalFunctionName = makeResourceModelCanonicalKey(modelKey, functionName);
     let sortedDispatches = [];
     if (dispatches && dispatches.length > 0) {
@@ -61,9 +61,10 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         parentFunctionsKey: modelKey,
         dispatches: cloneDeep(sortedDispatches),
         // parameters: cloneDeep(parameters),
-        // todo: I'd like to change the entity type to another function type instead of using just a isUsingTargetState flag....
-        isUsingTargetState,
-        externalProperties,
+        // todo: removing isUsingTargetState
+        // isUsingTargetState,
+        // todo: removing externalProperties
+        //externalProperties,
       }
     });
   });
@@ -238,23 +239,6 @@ export function createFlowModels(modelKey, declarationsInFile) {
               displayName: componentInstance,
               componentName: componentName,
               componentInstance: componentInstance,
-              connectedToName,
-              connectedToOutput,
-              isTest,
-              inputs: cloneDeep(inputs),
-              outputs: cloneDeep(outputs),
-            }
-          };
-          flowModel.children.push(particleModel);
-        } else if (flowParticleType === constants.FLOW_PAGE_TYPE) {
-          particleModel = {
-            key: `${makeResourceModelCanonicalKey(modelKey, pagePath)}-${particleIndex}`,
-            type: constants.GRAPH_MODEL_FLOW_PAGE_TYPE,
-            props: {
-              resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
-              displayName: pageName,
-              pageName,
-              pagePath,
               connectedToName,
               connectedToOutput,
               isTest,

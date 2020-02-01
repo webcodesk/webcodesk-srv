@@ -14,7 +14,6 @@
  *    limitations under the License.
  */
 
-import cloneDeep from 'lodash/cloneDeep';
 import keyBy from 'lodash/keyBy';
 import remove from 'lodash/remove';
 import constants from '../../../../commons/constants';
@@ -61,34 +60,24 @@ class FlowModelCompiler {
             let foundItemInput;
             let foundItemOutput;
             propertiesRef.forEach(propertyRef => {
-              const { type: componentPropertyType, props: { propertyName, propertiesArg } } = propertyRef;
+              const { type: componentPropertyType, props: { propertyName } } = propertyRef;
               if (componentPropertyType === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
                 foundItemOutput = flowItemOutputs[propertyName];
                 if (!foundItemOutput) {
                   // output is missing
                   nodeModel.props.outputs.push({
                     name: propertyName,
-                    properties: propertiesArg ? cloneDeep(propertiesArg) : {},
                   });
                   this.changesCount++;
-                } else {
-                  // update input props
-                  foundItemOutput.properties = propertiesArg ? cloneDeep(propertiesArg) : {};
                 }
               } else {
                 foundItemInput = flowItemInputs[propertyName];
                 if (!foundItemInput) {
                   // input is missing
-                  if (propertyName !== constants.COMPONENT_PROPERTY_DO_NOT_USE_IN_FLOWS_NAME) {
-                    nodeModel.props.inputs.push({
-                      name: propertyName,
-                      properties: propertyRef ? cloneDeep(propertyRef) : {},
-                    });
-                    this.changesCount++;
-                  }
-                } else {
-                  // update input props
-                  foundItemInput.properties = propertyRef ? cloneDeep(propertyRef) : {};
+                  nodeModel.props.inputs.push({
+                    name: propertyName,
+                  });
+                  this.changesCount++;
                 }
               }
             });
@@ -277,26 +266,6 @@ class FlowModelCompiler {
           this.errorsCount++;
         }
 
-        // todo: how to find that the components instance is on the forwarded page?
-        // need to know if the passed parameters to the correct page's component instance
-        // if (parentModel && parentModel.type === constants.FLOW_PAGE_TYPE) {
-        //   if (foundComponentInstance.props.pagePath === parentModel.props.pagePath) {
-        //     // remove error if it is here
-        //     if (newFlowItemModel.props.errors && newFlowItemModel.props.errors['doesNotBelongToPage']) {
-        //       delete newFlowItemModel.props.errors['doesNotBelongToPage'];
-        //       changesCount++;
-        //     }
-        //   } else {
-        //     // add error if it is not here
-        //     if (!newFlowItemModel.props.errors || !newFlowItemModel.props.errors['doesNotBelongToPage']) {
-        //       newFlowItemModel.props.errors = newFlowItemModel.props.errors || {};
-        //       newFlowItemModel.props.errors['doesNotBelongToPage'] =
-        //         `The ${componentInstance} component instance does not belong to the page.`;
-        //       changesCount++;
-        //     }
-        //   }
-        // }
-
       } else if (
         nodeModel.type === constants.FLOW_USER_FUNCTION_TYPE
         || nodeModel.type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
@@ -306,15 +275,7 @@ class FlowModelCompiler {
         const functionModel = this.userFunctionsGraphModel.getNode(functionName);
         if (functionModel) {
           const { props: { inputs, outputs } } = nodeModel;
-          const { props: { propertiesArg, dispatches, isUsingTargetState } } = functionModel;
-
-          // Keep flag about the second parameter in the function that is used for getting
-          // the global state from React App Framework
-          nodeModel.props.isUsingTargetState = isUsingTargetState;
-
-          if (inputs && inputs.length > 0) {
-            nodeModel.props.inputs[0].properties = propertiesArg ? cloneDeep(propertiesArg) : {};
-          }
+          const { props: { dispatches } } = functionModel;
 
           const functionDispatchesMap = keyBy(dispatches, 'name');
 
@@ -326,14 +287,9 @@ class FlowModelCompiler {
               if (!foundItemOutput) {
                 // output is missing
                 nodeModel.props.outputs.push({
-                  name: functionDispatch.name,
-                  properties: functionDispatch.propertiesArg ? cloneDeep(functionDispatch.propertiesArg) : {}
+                  name: functionDispatch.name
                 });
                 this.changesCount++;
-              } else {
-                // update found output
-                foundItemOutput.properties =
-                  functionDispatch.propertiesArg ? cloneDeep(functionDispatch.propertiesArg) : {};
               }
             });
           }
@@ -427,117 +383,16 @@ class FlowModelCompiler {
           }
           this.errorsCount++;
         }
-      } else if (nodeModel.type === constants.FLOW_PAGE_TYPE) {
-        // add default properties to input and output of the page
-        const { props: { title, pagePath, inputs, outputs } } = nodeModel;
-        const forwardInput = inputs && inputs.length > 0
-          ? inputs.find(i => i.name === 'forward')
-          : null;
-        if (forwardInput) {
-          forwardInput.properties = {
-            type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-            props: {},
-            children: [],
-          };
-        } else {
-          nodeModel.props.inputs = [
-            {
-              name: 'forward',
-              properties: {
-                type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-                props: {},
-                children: [],
-              },
-            }
-          ];
-        }
-        const queryParamsOutput = outputs && outputs.length > 0
-          ? outputs.find(i => i.name === 'queryParams')
-          : null;
-        if (queryParamsOutput) {
-          queryParamsOutput.properties = {
-            type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-            props: {},
-            children: [],
-          };
-        } else {
-          nodeModel.props.outputs = [
-            {
-              name: 'queryParams',
-              properties: {
-                type: constants.COMPONENT_PROPERTY_SHAPE_TYPE,
-                props: {},
-                children: [],
-              },
-            }
-          ];
-        }
-        const foundPageModel = this.pagesGraphModel.getNode(pagePath);
-        if (!foundPageModel) {
-          // add error if it is not here
-          if (
-            !nodeModel.props.errors ||
-            !nodeModel.props.errors[constants.COMPILER_ERROR_PAGE_NOT_FOUND]
-          ) {
-            nodeModel.props.errors = nodeModel.props.errors || {};
-            nodeModel.props.errors[constants.COMPILER_ERROR_PAGE_NOT_FOUND] =
-              `The "${title}" page was not found`;
-            this.changesCount++;
-          }
-          this.errorsCount++;
-        } else {
-          if (parentModel) {
-            const findConnectedInput = inputs && inputs.length > 0
-              ? inputs.find(i => !!i.connectedTo)
-              : null;
-            if (!findConnectedInput) {
-              if (
-                !nodeModel.props.errors ||
-                !nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS]
-              ) {
-                nodeModel.props.errors = nodeModel.props.errors || {};
-                nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS] =
-                  `The "${title}" page is not connected`;
-                this.changesCount++;
-              }
-              this.errorsCount++;
-            } else {
-              if (
-                nodeModel.props.errors &&
-                nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS]
-              ) {
-                delete nodeModel.props.errors[constants.COMPILER_ERROR_NO_INPUT_CONNECTIONS];
-                this.changesCount++;
-              }
-            }
-          }
-          // remove error if it is here
-          if (nodeModel.props.errors && nodeModel.props.errors[constants.COMPILER_ERROR_PAGE_NOT_FOUND]) {
-            delete nodeModel.props.errors[constants.COMPILER_ERROR_PAGE_NOT_FOUND];
-            this.changesCount++;
-          }
-        }
       } else if (nodeModel.type === constants.FLOW_APPLICATION_STARTER_TYPE) {
         // add default properties to output of the application start
         const { props: { outputs } } = nodeModel;
         const applicationStartOutput = outputs && outputs.length > 0
           ? outputs.find(i => i.name === 'onApplicationStart')
           : null;
-        if (applicationStartOutput) {
-          applicationStartOutput.properties = {
-            type: constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
-            props: {},
-            children: [],
-          };
-        } else {
+        if (!applicationStartOutput) {
           nodeModel.props.outputs = [
             {
-              name: 'onApplicationStart',
-              properties: {
-                type: constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
-                props: {},
-                children: [],
-              }
+              name: 'onApplicationStart'
             }
           ];
         }

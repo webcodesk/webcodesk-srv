@@ -477,37 +477,3 @@ export function clearClipboard () {
     }
   }
 }
-
-function flowVisitorLookingForTransformScripts ({ nodeModel, parentModel }) {
-  let result = [];
-  const { key, type, props } = nodeModel;
-  if (
-    props
-    && (
-      type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE
-      || type === constants.GRAPH_MODEL_FLOW_PAGE_TYPE
-      || type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE
-    )
-  ) {
-    if (props.inputs && props.inputs.length > 0) {
-      const foundConnectedInput = props.inputs.find(i => !!i.connectedTo);
-      if (foundConnectedInput && foundConnectedInput.transformScript && parentModel && parentModel.props) {
-        result.push({
-          id: key,
-          connectedToName: props.connectedToName,
-          connectedToOutput: props.connectedToOutput,
-          elementName: props.displayName,
-          inputName: foundConnectedInput.name,
-          flowName: parentModel.props.displayName,
-          testScriptText: foundConnectedInput.testDataScript,
-          scriptText: foundConnectedInput.transformScript
-        });
-      }
-    }
-  }
-  return result;
-}
-
-export function getTransformScriptList() {
-  return flowsGraphModel.traverse(flowVisitorLookingForTransformScripts);
-}

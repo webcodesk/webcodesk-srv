@@ -17,20 +17,17 @@
 import {
   createDefaultFlowModel,
   createFlowModelForComponent,
-  createFlowModelForFunction,
-  createFlowModelForPage
+  createFlowModelForFunction
 } from './flowModelCreators';
 
 const DEFAULT_MODEL = 'DEFAULT_MODEL';
 const COMPONENT_MODEL = 'COMPONENT_MODEL';
 const USER_FUNCTION_MODEL = 'USER_FUNCTION_MODEL';
-const PAGE_MODEL = 'PAGE_MODEL';
 
 const creators = {
   [DEFAULT_MODEL]: createDefaultFlowModel,
   [COMPONENT_MODEL]: createFlowModelForComponent,
   [USER_FUNCTION_MODEL]: createFlowModelForFunction,
-  [PAGE_MODEL]: createFlowModelForPage,
 };
 
 export function createDefaultModel() {
@@ -49,8 +46,6 @@ export function createFlowModel(resourceObject, inBasket) {
       throw Error('FlowComposerFactory.createFlowModel: the dropped user function misses name');
     }
     return creators[USER_FUNCTION_MODEL](resourceObject, inBasket);
-  } else if (resourceObject.isPage || resourceObject.isFlowPage) {
-    return creators[PAGE_MODEL](resourceObject, inBasket);
   }
   return null;
 }

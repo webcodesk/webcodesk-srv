@@ -358,8 +358,7 @@ export const decorateNodeUpdate = (node, nodeEnter) => {
       } else {
         selectThis
           .classed('component', type === constants.FLOW_COMPONENT_INSTANCE_TYPE && hasData)
-          .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE && hasData)
-          .classed('page', type === constants.FLOW_PAGE_TYPE && hasData);
+          .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE && hasData);
       }
       selectThis
         .classed('selected', isSelected)
@@ -385,8 +384,7 @@ export const decorateNodeUpdate = (node, nodeEnter) => {
       } else {
         selectThis
           .classed('component', type === constants.FLOW_COMPONENT_INSTANCE_TYPE)
-          .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE)
-          .classed('page', type === constants.FLOW_PAGE_TYPE)
+          .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE);
       }
       selectThis
         .classed('selected', isSelected);

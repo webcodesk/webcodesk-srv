@@ -21,10 +21,6 @@ import * as composerFactory from './flowComposerFactory';
 import FlowGraphVisitor from './FlowGraphVisitor';
 
 const inBasketTypes = [
-  constants.FLOW_PAGE_IN_BASKET_TYPE,
-  constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE,
-  constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE,
-  constants.FLOW_PAGE_IN_BASKET_TYPE,
   constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE,
   constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE,
 ];
@@ -118,10 +114,6 @@ class FlowComposerManager {
           if (foundIndexNewInputWithConnectTo >= 0) {
             model.props.inputs[foundIndexNewInputWithConnectTo].connectedTo =
               foundDestInputWithConnectTo.connectedTo;
-            model.props.inputs[foundIndexNewInputWithConnectTo].testDataScript =
-              foundDestInputWithConnectTo.testDataScript;
-            model.props.inputs[foundIndexNewInputWithConnectTo].transformScript =
-              foundDestInputWithConnectTo.transformScript;
           }
         }
       }
@@ -188,14 +180,6 @@ class FlowComposerManager {
         }
         const { type: childType, props: { inputs } } = childModel;
         const { type: parentType, props: { outputs } } = parentModel;
-        if (
-          (childType === constants.FLOW_USER_FUNCTION_TYPE && parentType === constants.FLOW_PAGE_TYPE) ||
-          (parentType === constants.FLOW_PAGE_TYPE &&
-            (childType === constants.FLOW_PAGE_TYPE || childType === constants.FLOW_PAGE_IN_BASKET_TYPE)
-          )
-        ) {
-          return;
-        }
         if (outputs.findIndex(i => i.name === outputName) < 0) {
           console.error('FlowComposerManager.connectInput: wrong output name.');
         }
@@ -211,8 +195,6 @@ class FlowComposerManager {
           childModel.type = constants.FLOW_COMPONENT_INSTANCE_TYPE;
         } else if (childModel.type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE) {
           childModel.type = constants.FLOW_USER_FUNCTION_TYPE;
-        } else if (childModel.type === constants.FLOW_PAGE_IN_BASKET_TYPE) {
-          childModel.type = constants.FLOW_PAGE_TYPE;
         }
         try {
           this.graphModel.setParentKey(inputKey, outputKey);
@@ -251,21 +233,6 @@ class FlowComposerManager {
             if (!foundParentOutput) {
               delete inputs[i].connectedTo;
             }
-          }
-        }
-      }
-    }
-  };
-
-  setTransformScript = (key, inputName, transformScript, testDataScript) => {
-    const model = this.graphModel.getNode(key);
-    if (model) {
-      const { props: { inputs } } = model;
-      if (inputs && inputs.length > 0) {
-        for(let i = 0; i < inputs.length; i++) {
-          if (inputs[i].name === inputName) {
-            inputs[i].transformScript = transformScript;
-            inputs[i].testDataScript = testDataScript;
           }
         }
       }

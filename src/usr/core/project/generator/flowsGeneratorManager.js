@@ -45,23 +45,9 @@ function createFlow (model, level = 0) {
       localRoot.type = 'userFunction';
       localRoot.props = {
         functionName: model.props.functionName,
-        isUsingTargetState: model.props.isUsingTargetState,
       };
-    } else if (type === constants.FLOW_PAGE_TYPE) {
-      localRoot.type = 'component';
-      localRoot.props = {
-        forwardPath: model.props.pagePath
-      };
-      if (children && children.length > 0) {
-        children.forEach(childOfPage => {
-          if (childOfPage) {
-            // have to implicit set populated props for it was found in the next iteration for each child
-            childOfPage.props = childOfPage.props || {};
-            childOfPage.props.populatePath = model.props.pagePath;
-          }
-        });
-      }
-    } else {
+    }
+    else {
       localRoot.type = 'unknown';
     }
 
@@ -98,9 +84,6 @@ function createFlow (model, level = 0) {
         if (input.connectedTo && input.connectedTo.length > 0) {
           if (type === constants.FLOW_COMPONENT_INSTANCE_TYPE) {
             localRoot.props.propertyName = input.name;
-          }
-          if (input.transformScript) {
-            localRoot.props.transformScript = input.transformScript;
           }
           targetsPerEvents.push({
             eventName: input.connectedTo,
