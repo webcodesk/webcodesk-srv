@@ -47,6 +47,7 @@ class Diagram extends Component {
     onItemDelete: PropTypes.func,
     onItemDragEnd: PropTypes.func,
     onZoomed: PropTypes.func,
+    onNewFlowConnection: PropTypes.func,
   };
 
   static defaultProps = {
@@ -74,6 +75,9 @@ class Diagram extends Component {
     },
     onZoomed: () => {
       console.info('Diagram.onZoomed is not set');
+    },
+    onNewFlowConnection: () => {
+      console.info('Diagram.onNewFlowConnection is not set');
     },
   };
 
@@ -176,6 +180,7 @@ class Diagram extends Component {
     this.diagramContext.setHandleDropNew(this.dropNew);
     this.diagramContext.setHandleErrorClick(this.errorClick);
     this.diagramContext.setHandleDragEnd(this.dragEnded);
+    this.diagramContext.setHandleOutputClick(this.handleNewFlowConnection);
 
     const { root, rootNode, rootLink } = manager.createRoots(rootSelection, flare);
     // Enter any new nodes at the parent's previous position.
@@ -395,6 +400,10 @@ class Diagram extends Component {
   //     }
   //   }
   // };
+
+  handleNewFlowConnection = () => {
+    this.props.onNewFlowConnection();
+  };
 
   render() {
     const { classes } = this.props;

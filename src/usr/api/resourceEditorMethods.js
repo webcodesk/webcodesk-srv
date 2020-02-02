@@ -287,3 +287,7 @@ export const pushItemToClipboard = (newItem) => (dispatch) => {
 export const clearClipboard = () => (dispatch) => {
   projectResourcesManager.clearClipboard();
 };
+
+export const openNewFlowConnectionDialog = () => (dispatch) => {
+  dispatch({isOpen: true});
+};

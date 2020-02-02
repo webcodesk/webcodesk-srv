@@ -100,6 +100,7 @@ class ResourceEditor extends React.Component {
     onPushToClipboard: PropTypes.func,
     onSaveAsTemplate: PropTypes.func,
     onUpdateSettings: PropTypes.func,
+    onNewFlowConnection: PropTypes.func,
   };
 
   static defaultProps = {
@@ -143,6 +144,9 @@ class ResourceEditor extends React.Component {
     },
     onUpdateSettings: () => {
       console.info('ResourceEditor.onUpdateSettings is not set');
+    },
+    onNewFlowConnection: () => {
+      console.info('ResourceEditor.onNewFlowConnection is not set');
     },
   };
 
@@ -218,6 +222,10 @@ class ResourceEditor extends React.Component {
 
   handleUpdateSettings = (settings) => {
     this.props.onUpdateSettings(settings);
+  };
+
+  handleNewFlowConnection = () => {
+    this.props.onNewFlowConnection();
   };
 
   render () {
@@ -431,6 +439,7 @@ class ResourceEditor extends React.Component {
                       onSearchRequest={this.handleSearchRequest}
                       onUndo={this.handleUndo(index)}
                       onOpen={this.handleOpenResource}
+                      onNewFlowConnection={this.handleNewFlowConnection}
                     />
                   </div>
                 );

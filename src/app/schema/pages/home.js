@@ -123,6 +123,10 @@ export default {
     {
       type: 'usr.components.dialogs.InstallPackageDialog.InstallPackageDialog',
       instance: 'installPackageDialog1'
-    }
+    },
+    {
+      type: 'usr.components.dialogs.NewFlowConnectionDialog.NewFlowConnectionDialog',
+      instance: 'newFlowConnectionDialog1'
+    },
   ]
 };

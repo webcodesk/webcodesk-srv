@@ -26,6 +26,7 @@ import ExportAppStatusDialog from './ExportAppStatusDialog';
 import FunctionsScaffoldDialog from './FunctionsScaffoldDialog';
 import InstallPackageDialog from './InstallPackageDialog';
 import MarketBoardDialog from './MarketBoardDialog';
+import NewFlowConnectionDialog from './NewFlowConnectionDialog';
 import NewFlowDialog from './NewFlowDialog';
 import NewPageDialog from './NewPageDialog';
 import NewTemplateDialog from './NewTemplateDialog';
@@ -46,6 +47,7 @@ export default {
   FunctionsScaffoldDialog,
   InstallPackageDialog,
   MarketBoardDialog,
+  NewFlowConnectionDialog,
   NewFlowDialog,
   NewPageDialog,
   NewTemplateDialog,

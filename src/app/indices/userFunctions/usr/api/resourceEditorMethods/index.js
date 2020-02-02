@@ -29,7 +29,8 @@ import {
   pushItemToClipboard,
   clearClipboard,
   writeResourceSourceCode,
-  updateSettings
+  updateSettings,
+  openNewFlowConnectionDialog
 } from "usr/api/resourceEditorMethods";
 
 export default {
@@ -47,5 +48,6 @@ export default {
   pushItemToClipboard,
   clearClipboard,
   writeResourceSourceCode,
-  updateSettings
+  updateSettings,
+  openNewFlowConnectionDialog
 };

@@ -415,6 +415,8 @@ class DiagramDecorator {
               if (item.error && item.error.length > 0) {
                 d3.event.preventDefault();
                 self.diagramContext.getHandleErrorClick()(item.error);
+              } else {
+                self.diagramContext.getHandleOutputClick()();
               }
             });
 

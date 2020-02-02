@@ -88,6 +88,7 @@ class FlowComposer extends React.Component {
     onSearchRequest: PropTypes.func,
     onUndo: PropTypes.func,
     onOpen: PropTypes.func,
+    onNewFlowConnection: PropTypes.func,
   };
 
   static defaultProps = {
@@ -111,6 +112,9 @@ class FlowComposer extends React.Component {
     },
     onOpen: () => {
       console.info('FlowComposer.onOpen is not set.');
+    },
+    onNewFlowConnection: () => {
+      console.info('FlowComposer.onNewFlowConnection is not set.');
     },
   };
 
@@ -374,6 +378,10 @@ class FlowComposer extends React.Component {
     });
   };
 
+  handleNewFlowConnection = () => {
+    this.props.onNewFlowConnection();
+  };
+
   render () {
     const {
       localFlowTree,
@@ -464,6 +472,7 @@ class FlowComposer extends React.Component {
             onItemDelete={this.handleDeleteItem}
             onItemDragEnd={this.handleDragEndBasket}
             onZoomed={this.handleZoomed}
+            onNewFlowConnection={this.handleNewFlowConnection}
           />
           <div className={classes.tooltip}>
             <code className={classes.tooltipLabel}>Drag & drop here</code>
