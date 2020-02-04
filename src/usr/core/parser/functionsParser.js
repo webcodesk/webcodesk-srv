@@ -46,20 +46,20 @@ function testAnnotationsInComments(leadingComments, {rootDirPath, filePath}, dec
         wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
         const connectReferences = wcdAnnotations[constants.ANNOTATION_CONNECT];
         if (connectReferences && connectReferences.length > 0) {
-          declaration.possibleConnectionTargets = declaration.possibleConnectionTargets || {};
+          declaration.possibleConnectionTargetsMap = declaration.possibleConnectionTargetsMap || {};
           let absoluteImportPath;
           for(let i = 0; i < connectReferences.length; i++) {
             const { connectName, connectTarget, connectTargetFilePath } = connectReferences[i];
             absoluteImportPath = getAbsoluteImportPath(connectTargetFilePath, rootDirPath, filePath);
             if (absoluteImportPath) {
-              declaration.possibleConnectionTargets[connectName] =
-                declaration.possibleConnectionTargets[connectName] || [];
+              declaration.possibleConnectionTargetsMap[connectName] =
+                declaration.possibleConnectionTargetsMap[connectName] || [];
               if (connectTarget) {
-                declaration.possibleConnectionTargets[connectName].push(
+                declaration.possibleConnectionTargetsMap[connectName].push(
                   makeResourceModelCanonicalKey(makeResourceModelKey(absoluteImportPath), connectTarget)
                 );
               } else {
-                declaration.possibleConnectionTargets[connectName].push(
+                declaration.possibleConnectionTargetsMap[connectName].push(
                   makeResourceModelKey(absoluteImportPath)
                 );
               }
@@ -160,17 +160,17 @@ export const getFunctionDeclarations = (ast, pathsSpecifiers) => {
                           functionDeclaration.dispatches = getFunctionBodyDispatches(varInitBodyBody);
                           // add possible connections to each dispatch
                           if (
-                            functionDeclaration.possibleConnectionTargets
+                            functionDeclaration.possibleConnectionTargetsMap
                             && functionDeclaration.dispatches
                             && functionDeclaration.dispatches.length > 0
                           ) {
                             for (let i = 0; i < functionDeclaration.dispatches.length; i++) {
                               functionDeclaration.dispatches[i].possibleConnectionTargets =
-                                functionDeclaration.possibleConnectionTargets[functionDeclaration.dispatches[i].name];
+                                functionDeclaration.possibleConnectionTargetsMap[functionDeclaration.dispatches[i].name];
                             }
                           }
                           // we don't need connection targets in the function declaration any more
-                          delete functionDeclaration.possibleConnectionTargets;
+                          delete functionDeclaration.possibleConnectionTargetsMap;
                           // that's valid function declaration - we add it the list of user functions
                           result.push(functionDeclaration);
                         }

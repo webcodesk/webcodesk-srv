@@ -186,6 +186,7 @@ export function createPropertiesAndLinks(item) {
           // x has to be assigned to y because d3 tree's x and y is exchanged
           x: 0,
           name: output.name,
+          possibleConnectionTargets: output.possibleConnectionTargets,
           pointX: rectWidth,
           pointY: 15,
           textX: rectWidth - 10,

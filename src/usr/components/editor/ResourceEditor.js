@@ -224,8 +224,8 @@ class ResourceEditor extends React.Component {
     this.props.onUpdateSettings(settings);
   };
 
-  handleNewFlowConnection = () => {
-    this.props.onNewFlowConnection();
+  handleNewFlowConnection = (options) => {
+    this.props.onNewFlowConnection(options);
   };
 
   render () {

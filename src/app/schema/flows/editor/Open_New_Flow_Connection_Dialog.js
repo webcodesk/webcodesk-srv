@@ -58,6 +58,19 @@ export default [
                     ]
                   }
                 ]
+              },
+              {
+                name: 'outputConnectionTargets',
+                targets: [
+                  {
+                    type: 'component',
+                    props: {
+                      componentName: 'usr.components.dialogs.NewFlowConnectionDialog.NewFlowConnectionDialog',
+                      componentInstance: 'newFlowConnectionDialog1',
+                      propertyName: 'outputConnectionTargets',
+                    }
+                  }
+                ]
               }
             ]
           }

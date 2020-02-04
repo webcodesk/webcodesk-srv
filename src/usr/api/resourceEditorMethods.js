@@ -288,6 +288,10 @@ export const clearClipboard = () => (dispatch) => {
   projectResourcesManager.clearClipboard();
 };
 
-export const openNewFlowConnectionDialog = () => (dispatch) => {
+export const openNewFlowConnectionDialog = (options) => (dispatch) => {
+  if (options) {
+    const { possibleConnectionTargets } = options;
+    dispatch({outputConnectionTargets: possibleConnectionTargets});
+  }
   dispatch({isOpen: true});
 };

@@ -49,7 +49,6 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         'The output payload has the Error type.'
       }
     });
-    console.info('Function dispatches: ', functionName, sortedDispatches);
     functionsModel.children.push({
       key: canonicalFunctionName,
       type: constants.GRAPH_MODEL_USER_FUNCTION_TYPE,
@@ -95,7 +94,6 @@ export function createPropTypesModels (modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(componentDeclaration => {
     const { name, properties } = componentDeclaration;
-    console.info('Props properties: ', name, properties);
     const canonicalPropTypesName = makeResourceModelCanonicalKey(modelKey, name);
     result.push({
       key: canonicalPropTypesName,

@@ -415,9 +415,11 @@ class DiagramDecorator {
               if (item.error && item.error.length > 0) {
                 d3.event.preventDefault();
                 self.diagramContext.getHandleErrorClick()(item.error);
-              } else {
-                self.diagramContext.getHandleOutputClick()();
               }
+              // todo: fix all events -> move them into update phase
+              // else {
+              //   self.diagramContext.getHandleOutputClick()(item.possibleConnectionTargets);
+              // }
             });
 
           nodeGroup
@@ -548,6 +550,10 @@ class DiagramDecorator {
           .classed('error', error && error.length > 0);
 
         if (!isInBasket && isOut) {
+         circle.on('click', function (item) {
+             d3.event.preventDefault();
+            self.diagramContext.getHandleOutputClick()(item.possibleConnectionTargets);
+          });
           circle.call(self.dragContext.dragProperty);
         }
 

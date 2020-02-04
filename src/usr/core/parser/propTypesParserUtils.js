@@ -221,21 +221,16 @@ function testObjectProperty (node, importSpecifiers, pathsSpecifiers, propTypesD
           });
 
           const connectReferences = wcdAnnotations[constants.ANNOTATION_CONNECT];
-          console.info('connectReferences: ', connectReferences);
-          console.info('wcdAnnotations: ', key.name, wcdAnnotations);
           if (pathsSpecifiers && connectReferences && connectReferences.length > 0) {
-            propTypesDeclaration.possibleConnectionTargets =
-              propTypesDeclaration.possibleConnectionTargets || {};
+            propTypesDeclaration.possibleConnectionTargets = [];
             let absoluteImportPath;
             const { rootDirPath, filePath } = pathsSpecifiers;
             for(let i = 0; i < connectReferences.length; i++) {
               const { connectTarget, connectTargetFilePath } = connectReferences[i];
               absoluteImportPath = getAbsoluteImportPath(connectTargetFilePath, rootDirPath, filePath);
               if (absoluteImportPath) {
-                propTypesDeclaration.possibleConnectionTargets[key.name] =
-                  propTypesDeclaration.possibleConnectionTargets[key.name] || [];
                 if (connectTarget) {
-                  propTypesDeclaration.possibleConnectionTargets[key.name].push(
+                  propTypesDeclaration.possibleConnectionTargets.push(
                     makeResourceModelCanonicalKey(makeResourceModelKey(absoluteImportPath), connectTarget)
                   );
                 }
@@ -394,7 +389,6 @@ export function getPropTypesObject (node, importSpecifiers, pathsSpecifiers, pro
     const { type, name } = node;
     if (type === 'ObjectExpression') {
       propTypesDeclaration = testObjectExpression(node, importSpecifiers, pathsSpecifiers, propTypesDeclaration);
-      console.info('testObjectExpression: ', propTypesDeclaration);
     } else if (type === 'CallExpression') {
       propTypesDeclaration.properties = [testCallExpression(node, importSpecifiers, pathsSpecifiers)];
     } else if (type === 'Identifier') {

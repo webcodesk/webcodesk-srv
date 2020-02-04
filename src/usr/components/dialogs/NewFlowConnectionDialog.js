@@ -20,17 +20,18 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 
 class NewFlowConnectionDialog extends React.Component {
   static propTypes = {
     isOpen: PropTypes.bool,
+    outputConnectionTargets: PropTypes.array,
     onClose: PropTypes.func,
     onSubmit: PropTypes.func,
   };
 
   static defaultProps = {
     isOpen: false,
+    outputConnectionTargets: null,
     onClose: () => {
       console.info('NewFlowConnectionDialog.onClose is not set');
     },
@@ -64,7 +65,7 @@ class NewFlowConnectionDialog extends React.Component {
   };
 
   render () {
-    const { isOpen } = this.props;
+    const { isOpen, outputConnectionTargets } = this.props;
     if (!isOpen) {
       return null;
     }
@@ -73,17 +74,25 @@ class NewFlowConnectionDialog extends React.Component {
         aria-labelledby="NewFlowConnectionDialog-dialog-title"
         onClose={this.handleClose}
         open={isOpen}
-        maxWidth="sm"
-        fullWidth={true}
+        maxWidth="lg"
+        fullWidth={false}
       >
         <DialogContent>
           <div style={{ height: '150px', width: '100%', overflow: 'auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridGap: '1em' }}>
-              <div>
-                <h3>Possible connection variants</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, auto)', gridGap: '1em' }}>
+              <div style={{border: '1px solid #cdcdcd'}}>
+                <div>Possible connection variants</div>
+                <pre>
+                  <code>
+                    {JSON.stringify(outputConnectionTargets, null, 4)}
+                  </code>
+                </pre>
               </div>
               <div>
                 <h3>Outputs in the variant</h3>
+              </div>
+              <div>
+                <h3>Further variants</h3>
               </div>
             </div>
           </div>

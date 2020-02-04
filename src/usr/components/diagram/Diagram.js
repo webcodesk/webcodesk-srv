@@ -401,8 +401,8 @@ class Diagram extends Component {
   //   }
   // };
 
-  handleNewFlowConnection = () => {
-    this.props.onNewFlowConnection();
+  handleNewFlowConnection = (possibleConnectionTargets) => {
+    this.props.onNewFlowConnection({possibleConnectionTargets});
   };
 
   render() {

@@ -222,6 +222,5 @@ const findAllPossibleComponentDeclarations = (ast, componentName, importSpecifie
 export const findComponentDeclarations = (sourceCode, rootDirPath, filePath, componentName) => {
   const ast = getSourceAst(sourceCode);
   const importSpecifiers = getImportSpecifiers(ast, rootDirPath, filePath);
-  console.info('importSpecifiers: ', importSpecifiers);
   return findAllPossibleComponentDeclarations(ast, componentName, importSpecifiers, {rootDirPath, filePath});
 };

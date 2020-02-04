@@ -378,8 +378,8 @@ class FlowComposer extends React.Component {
     });
   };
 
-  handleNewFlowConnection = () => {
-    this.props.onNewFlowConnection();
+  handleNewFlowConnection = (options) => {
+    this.props.onNewFlowConnection(options);
   };
 
   render () {

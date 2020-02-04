@@ -59,15 +59,22 @@ class FlowModelCompiler {
           if (propertiesRef && propertiesRef.length > 0) {
             let foundItemOutput;
             propertiesRef.forEach(propertyRef => {
-              const { type: componentPropertyType, props: { propertyName } } = propertyRef;
+              const {
+                type: componentPropertyType,
+                props: { propertyName, possibleConnectionTargets }
+              } = propertyRef;
               if (componentPropertyType === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
                 foundItemOutput = flowItemOutputs[propertyName];
                 if (!foundItemOutput) {
                   // output is missing
                   nodeModel.props.outputs.push({
                     name: propertyName,
+                    possibleConnectionTargets: cloneDeep(possibleConnectionTargets)
                   });
                   this.changesCount++;
+                } else {
+                  // todo: check if possibleConnectionTargets are equal to the reference property
+                  foundItemOutput.possibleConnectionTargets = cloneDeep(possibleConnectionTargets);
                 }
               }
             });
@@ -251,10 +258,19 @@ class FlowModelCompiler {
               foundItemOutput = flowItemOutputs[functionDispatch.name];
               if (!foundItemOutput) {
                 // output is missing
-                nodeModel.props.outputs.push({
-                  name: functionDispatch.name
-                });
+                foundItemOutput = {
+                  name: functionDispatch.name,
+                };
+                if (functionDispatch.possibleConnectionTargets) {
+                  foundItemOutput.possibleConnectionTargets = cloneDeep(functionDispatch.possibleConnectionTargets);
+                }
+                nodeModel.props.outputs.push(foundItemOutput);
                 this.changesCount++;
+              } else {
+                if (functionDispatch.possibleConnectionTargets) {
+                  // todo: check if the possibleConnectionTargets are equal to functionDispatch.possibleConnectionTargets
+                  foundItemOutput.possibleConnectionTargets = cloneDeep(functionDispatch.possibleConnectionTargets);
+                }
               }
             });
           }
