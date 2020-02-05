@@ -80,6 +80,10 @@ export function getGraphByResourceType(resourceType) {
   return graphModel;
 }
 
+export function setFlowConnectionsMap (newFlowConnectionsMap) {
+  return globalStore.set('flowConnectionsMap', newFlowConnectionsMap);
+}
+
 // export function getResourceKeysByFilePath (filePath) {
 //   let innerResourcePath = filePath.replace(`${config.projectRootSourceDir}${constants.FILE_SEPARATOR}`, '');
 //   const pathParts = innerResourcePath.split(constants.FILE_SEPARATOR);

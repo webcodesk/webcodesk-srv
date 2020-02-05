@@ -262,14 +262,14 @@ class FlowModelCompiler {
                   name: functionDispatch.name,
                 };
                 if (functionDispatch.possibleConnectionTargets) {
-                  foundItemOutput.possibleConnectionTargets = cloneDeep(functionDispatch.possibleConnectionTargets);
+                  foundItemOutput.possibleConnectionTargets = [].concat(functionDispatch.possibleConnectionTargets);
                 }
                 nodeModel.props.outputs.push(foundItemOutput);
                 this.changesCount++;
               } else {
                 if (functionDispatch.possibleConnectionTargets) {
                   // todo: check if the possibleConnectionTargets are equal to functionDispatch.possibleConnectionTargets
-                  foundItemOutput.possibleConnectionTargets = cloneDeep(functionDispatch.possibleConnectionTargets);
+                  foundItemOutput.possibleConnectionTargets = [].concat(functionDispatch.possibleConnectionTargets);
                 }
               }
             });

@@ -368,4 +368,6 @@ export function enrichResources () {
     settingsConfGraphModel.traverse(settingsConfEnrichVisitor);
   }
 
+
+
 }

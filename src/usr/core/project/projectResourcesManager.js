@@ -37,6 +37,8 @@ let templatesGraphModel = globalStore.get('templatesGraphModel');
 let settingsConfGraphModel = globalStore.get('settingsConfGraphModel');
 let settingsGraphModel = globalStore.get('settingsGraphModel');
 
+let flowConnectionsMap = globalStore.get('flowConnectionsMap');
+
 const CLIPBOARD_ITEM_LIST_SIZE_LIMIT = 5;
 
 export let projectDisplayName;
@@ -138,6 +140,8 @@ export function initNewResourcesTrees () {
     }
   });
   //
+  flowConnectionsMap = new Map();
+  //
   globalStore.set('pagesGraphModel', pagesGraphModel);
   globalStore.set('templatesGraphModel', templatesGraphModel);
   globalStore.set('flowsGraphModel', flowsGraphModel);
@@ -148,6 +152,8 @@ export function initNewResourcesTrees () {
   globalStore.set('clipboardGraphModel', clipboardGraphModel);
   globalStore.set('settingsConfGraphModel', settingsConfGraphModel);
   globalStore.set('settingsGraphModel', settingsGraphModel);
+  //
+  globalStore.set('flowConnectionsMap', flowConnectionsMap);
   //
 }
 
@@ -434,6 +440,10 @@ export function getClipboardGraphModel () {
 
 export function getSettingsConfGraphModel () {
   return settingsConfGraphModel;
+}
+
+export function getFlowConnectionsMap () {
+  return flowConnectionsMap;
 }
 
 export function getClipboardItemList () {
