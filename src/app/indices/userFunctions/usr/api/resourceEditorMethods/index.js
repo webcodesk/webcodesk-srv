@@ -30,7 +30,6 @@ import {
   clearClipboard,
   writeResourceSourceCode,
   updateSettings,
-  openNewFlowConnectionDialog
 } from "usr/api/resourceEditorMethods";
 
 export default {
@@ -49,5 +48,4 @@ export default {
   clearClipboard,
   writeResourceSourceCode,
   updateSettings,
-  openNewFlowConnectionDialog
 };

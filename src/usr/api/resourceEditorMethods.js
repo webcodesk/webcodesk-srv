@@ -60,6 +60,7 @@ export const openTabWithResourceByKey = (resourceKey) => (dispatch) => {
         timestamp: Date.now(),
         projectSettingsObject: projectManager.getProjectSettings(),
         clipboardItems: projectResourcesManager.getClipboardItemList(),
+        flowConnectionsMap: projectResourcesManager.getFlowConnectionsMap(),
       });
       activeEditorTabIndex = resourceEditorTabs.length - 1;
       resourceEditorTabs = [...resourceEditorTabs];
@@ -134,6 +135,7 @@ export const updateAllTabs = () => (dispatch) => {
             resourceObject: resourceEditorTabObject,
             projectSettingsObject: projectManager.getProjectSettings(),
             clipboardItems: projectResourcesManager.getClipboardItemList(),
+            flowConnectionsMap: projectResourcesManager.getFlowConnectionsMap(),
             timestamp: Date.now(),
           });
         }
@@ -286,12 +288,4 @@ export const pushItemToClipboard = (newItem) => (dispatch) => {
 
 export const clearClipboard = () => (dispatch) => {
   projectResourcesManager.clearClipboard();
-};
-
-export const openNewFlowConnectionDialog = (options) => (dispatch) => {
-  if (options) {
-    const { possibleConnectionTargets } = options;
-    dispatch({outputConnectionTargets: possibleConnectionTargets});
-  }
-  dispatch({isOpen: true});
 };

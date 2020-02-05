@@ -443,7 +443,7 @@ export function getSettingsConfGraphModel () {
 }
 
 export function getFlowConnectionsMap () {
-  return flowConnectionsMap;
+  return globalStore.get('flowConnectionsMap');
 }
 
 export function getClipboardItemList () {

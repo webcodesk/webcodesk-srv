@@ -213,7 +213,7 @@ const userFunctionsVisitorForFlowConnections = ({flowConnectionsMap}) => ({ node
     nodeModel.type === constants.GRAPH_MODEL_USER_FUNCTION_TYPE &&
     nodeModel.props
   ) {
-    const { functionName, dispatches } = nodeModel.props;
+    const { functionName, functionComment, dispatches } = nodeModel.props;
     const outputs = [];
     if (dispatches && dispatches.length > 0) {
       let output;
@@ -231,6 +231,7 @@ const userFunctionsVisitorForFlowConnections = ({flowConnectionsMap}) => ({ node
     }
     flowConnectionsMap.set(functionName, {
       functionName,
+      functionComment,
       outputs,
     });
   }

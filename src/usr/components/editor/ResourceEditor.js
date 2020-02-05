@@ -33,6 +33,7 @@ import FlowComposer from './FlowComposer';
 import FunctionsFileView from './FunctionsFileView';
 import ReadmePreview from './ReadmePreview';
 import { cutText } from '../../core/utils/textUtils';
+import * as projectResourcesManager from '../../core/project/projectResourcesManager';
 
 const styles = theme => ({
   root: {
@@ -100,7 +101,6 @@ class ResourceEditor extends React.Component {
     onPushToClipboard: PropTypes.func,
     onSaveAsTemplate: PropTypes.func,
     onUpdateSettings: PropTypes.func,
-    onNewFlowConnection: PropTypes.func,
   };
 
   static defaultProps = {
@@ -144,9 +144,6 @@ class ResourceEditor extends React.Component {
     },
     onUpdateSettings: () => {
       console.info('ResourceEditor.onUpdateSettings is not set');
-    },
-    onNewFlowConnection: () => {
-      console.info('ResourceEditor.onNewFlowConnection is not set');
     },
   };
 
@@ -222,10 +219,6 @@ class ResourceEditor extends React.Component {
 
   handleUpdateSettings = (settings) => {
     this.props.onUpdateSettings(settings);
-  };
-
-  handleNewFlowConnection = (options) => {
-    this.props.onNewFlowConnection(options);
   };
 
   render () {
@@ -349,7 +342,8 @@ class ResourceEditor extends React.Component {
               readmePreviewObject,
               resourceObject,
               projectSettingsObject,
-              clipboardItems
+              clipboardItems,
+              flowConnectionsMap
             } = resource;
             if (resourceObject) {
               if (resourceObject.isComponent) {
@@ -434,12 +428,12 @@ class ResourceEditor extends React.Component {
                       updateHistory={updateResourceHistory[resourceObject.key]}
                       isVisible={index === activeEditorTabIndex}
                       data={resourceObject}
+                      flowConnectionsMap={flowConnectionsMap}
                       onUpdate={this.handleUpdateTab(index)}
                       onErrorClick={this.handleErrorClick}
                       onSearchRequest={this.handleSearchRequest}
                       onUndo={this.handleUndo(index)}
                       onOpen={this.handleOpenResource}
-                      onNewFlowConnection={this.handleNewFlowConnection}
                     />
                   </div>
                 );
