@@ -51,7 +51,6 @@ function getPropertiesRef(properties) {
         propertyComment,
         propertyLabel,
         propertyValueVariants,
-        possibleConnectionTargets
       } = props;
       if (type === constants.COMPONENT_PROPERTY_STRING_TYPE
         || type === constants.COMPONENT_PROPERTY_OBJECT_TYPE
@@ -101,9 +100,6 @@ function getPropertiesRef(properties) {
             isRequired,
           },
         };
-        if (possibleConnectionTargets) {
-          newPropertyRef.props.possibleConnectionTargets = cloneDeep(possibleConnectionTargets);
-        }
         result.push(newPropertyRef);
       } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
         const newPropertyRef = {

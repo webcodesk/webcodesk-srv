@@ -14,7 +14,6 @@
  *    limitations under the License.
  */
 
-import cloneDeep from 'lodash/cloneDeep';
 import keyBy from 'lodash/keyBy';
 import remove from 'lodash/remove';
 import constants from '../../../../commons/constants';
@@ -61,7 +60,7 @@ class FlowModelCompiler {
             propertiesRef.forEach(propertyRef => {
               const {
                 type: componentPropertyType,
-                props: { propertyName, possibleConnectionTargets }
+                props: { propertyName }
               } = propertyRef;
               if (componentPropertyType === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
                 foundItemOutput = flowItemOutputs[propertyName];
@@ -69,12 +68,8 @@ class FlowModelCompiler {
                   // output is missing
                   nodeModel.props.outputs.push({
                     name: propertyName,
-                    possibleConnectionTargets: cloneDeep(possibleConnectionTargets)
                   });
                   this.changesCount++;
-                } else {
-                  // todo: check if possibleConnectionTargets are equal to the reference property
-                  foundItemOutput.possibleConnectionTargets = cloneDeep(possibleConnectionTargets);
                 }
               }
             });
@@ -261,16 +256,8 @@ class FlowModelCompiler {
                 foundItemOutput = {
                   name: functionDispatch.name,
                 };
-                if (functionDispatch.possibleConnectionTargets) {
-                  foundItemOutput.possibleConnectionTargets = [].concat(functionDispatch.possibleConnectionTargets);
-                }
                 nodeModel.props.outputs.push(foundItemOutput);
                 this.changesCount++;
-              } else {
-                if (functionDispatch.possibleConnectionTargets) {
-                  // todo: check if the possibleConnectionTargets are equal to functionDispatch.possibleConnectionTargets
-                  foundItemOutput.possibleConnectionTargets = [].concat(functionDispatch.possibleConnectionTargets);
-                }
               }
             });
           }

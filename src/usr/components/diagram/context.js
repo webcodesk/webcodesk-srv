@@ -25,7 +25,6 @@ class DiagramContext {
   handleDropNew = () => { console.error('handleDropNew is not set'); };
   handleErrorClick = () => { console.error('handleErrorClick is not set'); };
   handleDragEnd = () => { console.error('handleDragEnd is not set'); };
-  handleOutputClick = () => { console.error('handleOutputClick is not set'); };
 
   setDraggedItem(item) {
     this.draggedItem = item;
@@ -73,14 +72,6 @@ class DiagramContext {
 
   getHandleDragEnd() {
     return this.handleDragEnd;
-  }
-
-  setHandleOutputClick(value) {
-    this.handleOutputClick = value;
-  }
-
-  getHandleOutputClick() {
-    return this.handleOutputClick;
   }
 
   onDragOver() {

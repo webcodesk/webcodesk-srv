@@ -18,25 +18,7 @@ import isEqual from 'lodash/isEqual';
 import uniqWith from 'lodash/uniqWith';
 import { getSourceAst } from '../utils/babelParser';
 import { traverse } from '../utils/astUtils';
-import path from 'path-browserify';
 import { getWcdAnnotations } from '../utils/commentsUtils';
-import constants from '../../../commons/constants';
-import { makeResourceModelCanonicalKey, makeResourceModelKey } from '../utils/resourceUtils';
-import { repairPath } from "../utils/fileUtils";
-
-function getAbsoluteImportPath (sourceImportPath, rootDirPath, currentFilePath) {
-  let absoluteImportPath = repairPath(sourceImportPath);
-  if (absoluteImportPath.charAt(0) === '.') {
-    // we have relative import path
-    const fileDirPath = path.dirname(currentFilePath);
-    // need to resolve it to the absolute path
-    absoluteImportPath = repairPath(path.resolve(fileDirPath, absoluteImportPath));
-    // remove project root dir path part from the absolute path
-    absoluteImportPath = absoluteImportPath
-      .replace(`${rootDirPath}${constants.FILE_SEPARATOR}`, '');
-  }
-  return absoluteImportPath;
-}
 
 function testAnnotationsInComments(leadingComments, {rootDirPath, filePath}, declaration) {
   let wcdAnnotations = {};
@@ -44,29 +26,6 @@ function testAnnotationsInComments(leadingComments, {rootDirPath, filePath}, dec
     leadingComments.forEach(leadingComment => {
       if (leadingComment && leadingComment.value) {
         wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
-        const connectReferences = wcdAnnotations[constants.ANNOTATION_CONNECT];
-        if (connectReferences && connectReferences.length > 0) {
-          declaration.possibleConnectionTargetsMap = declaration.possibleConnectionTargetsMap || {};
-          let absoluteImportPath;
-          for(let i = 0; i < connectReferences.length; i++) {
-            const { connectName, connectTarget, connectTargetFilePath } = connectReferences[i];
-            absoluteImportPath = getAbsoluteImportPath(connectTargetFilePath, rootDirPath, filePath);
-            if (absoluteImportPath) {
-              declaration.possibleConnectionTargetsMap[connectName] =
-                declaration.possibleConnectionTargetsMap[connectName] || [];
-              if (connectTarget) {
-                declaration.possibleConnectionTargetsMap[connectName].push(
-                  makeResourceModelCanonicalKey(makeResourceModelKey(absoluteImportPath), connectTarget)
-                );
-              } else {
-                declaration.possibleConnectionTargetsMap[connectName].push(
-                  makeResourceModelKey(absoluteImportPath)
-                );
-              }
-            }
-          }
-          delete wcdAnnotations[constants.ANNOTATION_CONNECT];
-        }
       }
     });
   }
@@ -158,19 +117,6 @@ export const getFunctionDeclarations = (ast, pathsSpecifiers) => {
                         if (varInitBodyParams[0].type === 'Identifier' && varInitBodyParams[0].name === 'dispatch') {
                           // get dispatches inside the function body
                           functionDeclaration.dispatches = getFunctionBodyDispatches(varInitBodyBody);
-                          // add possible connections to each dispatch
-                          if (
-                            functionDeclaration.possibleConnectionTargetsMap
-                            && functionDeclaration.dispatches
-                            && functionDeclaration.dispatches.length > 0
-                          ) {
-                            for (let i = 0; i < functionDeclaration.dispatches.length; i++) {
-                              functionDeclaration.dispatches[i].possibleConnectionTargets =
-                                functionDeclaration.possibleConnectionTargetsMap[functionDeclaration.dispatches[i].name];
-                            }
-                          }
-                          // we don't need connection targets in the function declaration any more
-                          delete functionDeclaration.possibleConnectionTargetsMap;
                           // that's valid function declaration - we add it the list of user functions
                           result.push(functionDeclaration);
                         }

@@ -30,7 +30,6 @@ export function traverseProperties(properties, defaults) {
         variants,
         wcdAnnotations,
         externalProperties,
-        possibleConnectionTargets,
         properties: childProperties
       } = property;
       const newChildItem = {
@@ -88,10 +87,6 @@ export function traverseProperties(properties, defaults) {
         newChildItem.props.componentName = '__PlaceHolder';
         result.push(newChildItem);
       } else if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {
-        // set possible connection targets for this function
-        if (possibleConnectionTargets && possibleConnectionTargets.length > 0) {
-          newChildItem.props.possibleConnectionTargets = [].concat(possibleConnectionTargets);
-        }
         result.push(newChildItem);
       } else if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         if (name) {

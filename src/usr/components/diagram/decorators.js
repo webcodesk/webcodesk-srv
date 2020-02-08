@@ -410,17 +410,7 @@ class DiagramDecorator {
             .attr('class', 'property out')
             .attr('cx', item => item.pointX)
             .attr('cy', item => item.pointY)
-            .attr('r', 8)
-            .on('click', function () {
-              if (item.error && item.error.length > 0) {
-                d3.event.preventDefault();
-                self.diagramContext.getHandleErrorClick()(item.error);
-              }
-              // todo: fix all events -> move them into update phase
-              // else {
-              //   self.diagramContext.getHandleOutputClick()(item.possibleConnectionTargets);
-              // }
-            });
+            .attr('r', 8);
 
           nodeGroup
             .append('text')
@@ -468,13 +458,7 @@ class DiagramDecorator {
             .attr('class', 'property')
             .attr('cx', item => item.pointX)
             .attr('cy', item => item.pointY)
-            .attr('r', 8)
-            .on('click', function () {
-              if (item.error && item.error.length > 0) {
-                d3.event.preventDefault();
-                self.diagramContext.getHandleErrorClick()(item.error);
-              }
-            });
+            .attr('r', 8);
 
           nodeGroup
             .append('text')
@@ -482,13 +466,7 @@ class DiagramDecorator {
             .attr('x', item => item.textX)
             .attr('y', item => item.textY)
             .attr('text-anchor', 'start')
-            .text(item => item.name)
-            .on('click', function () {
-              if (item.error && item.error.length > 0) {
-                d3.event.preventDefault();
-                self.diagramContext.getHandleErrorClick()(item.error);
-              }
-            });
+            .text(item => item.name);
 
           // In property should be acceptable when the drag line is
           nodeGroup
@@ -551,8 +529,10 @@ class DiagramDecorator {
 
         if (!isInBasket && isOut) {
          circle.on('click', function (item) {
+           if (item.error && item.error.length > 0) {
              d3.event.preventDefault();
-            self.diagramContext.getHandleOutputClick()(item.possibleConnectionTargets);
+             self.diagramContext.getHandleErrorClick()(item.error);
+           }
           });
           circle.call(self.dragContext.dragProperty);
         }

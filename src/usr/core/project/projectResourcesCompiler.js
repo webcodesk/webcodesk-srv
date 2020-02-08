@@ -157,86 +157,6 @@ function componentInstancesResourceVisitor ({ nodeModel, parentModel }) {
   return result;
 }
 
-const componentsVisitorForFlowConnections = ({flowConnectionsMap}) => ({ nodeModel, parentModel }) => {
-  if (
-    nodeModel &&
-    nodeModel.type === constants.GRAPH_MODEL_COMPONENT_TYPE &&
-    nodeModel.props
-  ) {
-    const { componentName, propertiesRef } = nodeModel.props;
-    const outputs = [];
-    if (propertiesRef && propertiesRef.length > 0) {
-      propertiesRef.forEach(propertyRef => {
-        if (propertyRef && propertyRef.type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE && propertyRef.props) {
-          outputs.push({
-            name: propertyRef.props.propertyName,
-            possibleConnectionTargets: [].concat(propertyRef.props.possibleConnectionTargets),
-          });
-        }
-      });
-    }
-    flowConnectionsMap.set(componentName, {
-      componentName,
-      outputs,
-    });
-  }
-};
-
-const componentInstancesVisitorForFlowConnections = ({flowConnectionsMap}) => ({ nodeModel, parentModel }) => {
-  if (
-    nodeModel &&
-    nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE &&
-    nodeModel.props
-  ) {
-    const { componentName, pagePath, componentInstance } = nodeModel.props;
-    let foundFlowConnection = flowConnectionsMap.get(componentName);
-    if (foundFlowConnection) {
-      if (foundFlowConnection)
-      foundFlowConnection.instances = foundFlowConnection.instances || [];
-      let foundInstance = foundFlowConnection.instances.find(i => i.componentInstance === componentInstance);
-      if (foundInstance) {
-        foundInstance.pagePaths = foundInstance.pagePaths || [];
-        foundInstance.pagePaths.push(pagePath);
-      } else {
-        foundFlowConnection.instances.push({
-          componentInstance,
-          pagePaths: [pagePath],
-        });
-      }
-    }
-  }
-};
-
-const userFunctionsVisitorForFlowConnections = ({flowConnectionsMap}) => ({ nodeModel, parentModel }) => {
-  if (
-    nodeModel &&
-    nodeModel.type === constants.GRAPH_MODEL_USER_FUNCTION_TYPE &&
-    nodeModel.props
-  ) {
-    const { functionName, functionComment, dispatches } = nodeModel.props;
-    const outputs = [];
-    if (dispatches && dispatches.length > 0) {
-      let output;
-      dispatches.forEach(dispatch => {
-        if (dispatch) {
-          output = {
-            name: dispatch.name,
-          };
-          if (dispatch.possibleConnectionTargets && dispatch.possibleConnectionTargets.length > 0) {
-            output.possibleConnectionTargets = [].concat(dispatch.possibleConnectionTargets);
-          }
-          outputs.push(output);
-        }
-      });
-    }
-    flowConnectionsMap.set(functionName, {
-      functionName,
-      functionComment,
-      outputs,
-    });
-  }
-};
-
 export function compileResources () {
 
   const pagesGraphModel =
@@ -367,20 +287,6 @@ export function compileResources () {
   }
   // set error flag on the root key of the flows tree
   flowsGraphModel.mergeNode(flowsGraphModel.getRootKey(), { props: { hasErrors: flowsErrorsCount > 0 } });
-
-  /**
-   * Set up flow connections map
-   */
-  const flowConnectionsMap = new Map();
-
-  componentsGraphModel.traverse(componentsVisitorForFlowConnections({flowConnectionsMap}));
-  pagesGraphModel.traverse(componentInstancesVisitorForFlowConnections({flowConnectionsMap}));
-  userFunctionsGraphModel.traverse(userFunctionsVisitorForFlowConnections({flowConnectionsMap}));
-
-  projectResourcesUtils.setFlowConnectionsMap(flowConnectionsMap);
-
-  console.info('componentsForFlowConnections: ', flowConnectionsMap.entries());
-
 
   componentInstanceModelsMap.clear();
 

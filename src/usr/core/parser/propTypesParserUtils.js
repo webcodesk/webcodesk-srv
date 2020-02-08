@@ -18,9 +18,7 @@ import path from 'path-browserify';
 import constants from '../../../commons/constants';
 import { makeResourceModelCanonicalKey, makeResourceModelKey } from '../utils/resourceUtils';
 import { getWcdAnnotations } from '../utils/commentsUtils';
-import { traverse } from '../utils/astUtils';
 import { repairPath } from "../utils/fileUtils";
-import * as config from '../config/config';
 
 const identifierTypeMap = {
   'func': constants.COMPONENT_PROPERTY_FUNCTION_TYPE,
@@ -219,38 +217,6 @@ function testObjectProperty (node, importSpecifiers, pathsSpecifiers, propTypesD
               wcdAnnotations = { ...wcdAnnotations, ...getWcdAnnotations(leadingComment.value) };
             }
           });
-
-          const connectReferences = wcdAnnotations[constants.ANNOTATION_CONNECT];
-          if (pathsSpecifiers && connectReferences && connectReferences.length > 0) {
-            propTypesDeclaration.possibleConnectionTargets = [];
-            let absoluteImportPath;
-            const { rootDirPath, filePath } = pathsSpecifiers;
-            for(let i = 0; i < connectReferences.length; i++) {
-              const { connectTarget, connectTargetFilePath } = connectReferences[i];
-              absoluteImportPath = getAbsoluteImportPath(connectTargetFilePath, rootDirPath, filePath);
-              if (absoluteImportPath) {
-                if (connectTarget) {
-                  propTypesDeclaration.possibleConnectionTargets.push(
-                    makeResourceModelCanonicalKey(makeResourceModelKey(absoluteImportPath), connectTarget)
-                  );
-                }
-              }
-            }
-            delete wcdAnnotations[constants.ANNOTATION_CONNECT];
-          }
-
-          // if (wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES]) {
-          //   const annotationParts =
-          //     wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-          //   if (annotationParts.length === 3 || annotationParts.length === 1) {
-          //     const externalProperties =
-          //       getExternalPropTypesImport(annotationParts[0], importSpecifiers);
-          //     if (externalProperties) {
-          //       propTypesDeclaration.externalProperties = externalProperties;
-          //     }
-          //   }
-          //   delete wcdAnnotations[constants.ANNOTATION_FUNCTION_ARGUMENT_PROP_TYPES];
-          // }
         }
         propTypesDeclaration.wcdAnnotations = wcdAnnotations;
         propTypesDeclaration = testObjectPropertyValue(

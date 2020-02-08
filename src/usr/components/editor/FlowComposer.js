@@ -27,7 +27,6 @@ import Diagram from '../diagram/Diagram';
 import ToolbarButton from '../commons/ToolbarButton';
 import globalStore from '../../core/config/globalStore';
 import constants from '../../../commons/constants';
-import NewFlowConnectionDialog from '../dialogs/NewFlowConnectionDialog';
 
 const styles = theme => ({
   root: {
@@ -84,7 +83,6 @@ class FlowComposer extends React.Component {
     draggedItem: PropTypes.object,
     isDraggingItem: PropTypes.bool,
     updateHistory: PropTypes.array,
-    flowConnectionsMap: PropTypes.object,
     onUpdate: PropTypes.func,
     onErrorClick: PropTypes.func,
     onSearchRequest: PropTypes.func,
@@ -99,7 +97,6 @@ class FlowComposer extends React.Component {
     draggedItem: null,
     isDraggingItem: false,
     updateHistory: [],
-    flowConnectionsMap: null,
     onUpdate: () => {
       console.info('FlowComposer.onUpdate is not set.');
     },
@@ -124,8 +121,6 @@ class FlowComposer extends React.Component {
       selectedModels: null,
       updateCounter: 0,
       zoomK: this.getViewFlag('zoomK', 0.5),
-      showNewFlowConnectionDialog: false,
-      possibleConnectionTargets: null,
     };
     const { data } = this.props;
     if (data) {
@@ -149,9 +144,7 @@ class FlowComposer extends React.Component {
       localFlowTree,
       selectedModels,
       updateCounter,
-      zoomK,
-      showNewFlowConnectionDialog,
-      possibleConnectionTargets
+      zoomK
     } = this.state;
     let dataIsChanged = nextProps.data && data !== nextProps.data;
     if (dataIsChanged) {
@@ -174,9 +167,7 @@ class FlowComposer extends React.Component {
       || localFlowTree !== nextState.localFlowTree
       || selectedModels !== nextState.selectedModels
       || updateCounter !== nextState.updateCounter
-      || zoomK !== nextState.zoomK
-      || showNewFlowConnectionDialog !== nextState.showNewFlowConnectionDialog
-      || possibleConnectionTargets !== nextState.possibleConnectionTargets;
+      || zoomK !== nextState.zoomK;
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
@@ -384,36 +375,16 @@ class FlowComposer extends React.Component {
     });
   };
 
-  handleOpenNewFlowConnectionDialog = ({possibleConnectionTargets}) => {
-    this.setState({
-      showNewFlowConnectionDialog: true,
-      possibleConnectionTargets,
-    });
-  };
-
-  handleCloseNewFlowConnectionDialog = () => {
-    this.setState({
-      showNewFlowConnectionDialog: false,
-      possibleConnectionTargets: null,
-    });
-  };
-
-  handleSubmitNewFlowConnectionDialog = () => {
-    this.handleCloseNewFlowConnectionDialog();
-  };
-
   render () {
     const {
       localFlowTree,
       selectedModels,
-      zoomK,
-      showNewFlowConnectionDialog,
-      possibleConnectionTargets
+      zoomK
     } = this.state;
     if (!localFlowTree) {
       return <h1>Flow tree is not specified</h1>
     }
-    const { classes, draggedItem, isDraggingItem, updateHistory, flowConnectionsMap, isVisible } = this.props;
+    const { classes, draggedItem, isDraggingItem, updateHistory, isVisible } = this.props;
     let title;
     // let searchName;
     // let className;
@@ -494,19 +465,11 @@ class FlowComposer extends React.Component {
             onItemDelete={this.handleDeleteItem}
             onItemDragEnd={this.handleDragEndBasket}
             onZoomed={this.handleZoomed}
-            onNewFlowConnection={this.handleOpenNewFlowConnectionDialog}
           />
           <div className={classes.tooltip}>
             <code className={classes.tooltipLabel}>Drag & drop here</code>
           </div>
         </div>
-        <NewFlowConnectionDialog
-          isOpen={showNewFlowConnectionDialog}
-          outputConnectionTargets={possibleConnectionTargets}
-          flowConnectionsMap={flowConnectionsMap}
-          onClose={this.handleCloseNewFlowConnectionDialog}
-          onSubmit={this.handleSubmitNewFlowConnectionDialog}
-        />
       </div>
     );
   }
