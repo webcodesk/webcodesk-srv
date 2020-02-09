@@ -251,6 +251,11 @@ class PageComposerManager {
     }
     return null;
   };
+
+  generateInstanceState = (componentInstanceModel) => {
+
+  };
+
 }
 
 export default PageComposerManager;

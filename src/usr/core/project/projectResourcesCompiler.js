@@ -19,6 +19,7 @@ import constants from '../../../commons/constants';
 import PageModelCompiler from './compiler/PageModelCompiler';
 import FlowModelCompiler from './compiler/FlowModelCompiler';
 import SettingsModelCompiler from './compiler/SettingsModelCompiler';
+import PageModelReducer from './compiler/PageModelReducer';
 
 const componentInstanceModelsMap = new Map();
 
@@ -67,17 +68,18 @@ const flowsResourceVisitor = ({flowModelCompiler, flowsGraphModel}) => ({ nodeMo
   return result;
 };
 
-const pagesResourceVisitor = ({pageModelCompiler, pagesGraphModel}) => ({ nodeModel, parentModel }) => {
+const pagesResourceVisitor = ({compiler, pagesGraphModel}) => ({ nodeModel, parentModel }) => {
+
   const result = [];
   if (nodeModel && nodeModel.props) {
     if (
       nodeModel.type === constants.GRAPH_MODEL_PAGE_TYPE
       && nodeModel.props.componentsTree
     ) {
-      pageModelCompiler.resetCounters();
-      nodeModel.props.componentsTree = pageModelCompiler.compile(nodeModel.props.componentsTree);
-      const errorsCount = pageModelCompiler.getErrorsCount();
-      const changesCount = pageModelCompiler.getChangesCount();
+      compiler.resetCounters();
+      nodeModel.props.componentsTree = compiler.compile(nodeModel.props.componentsTree);
+      const errorsCount = compiler.getErrorsCount();
+      const changesCount = compiler.getChangesCount();
       if (errorsCount > 0 || changesCount > 0) {
         // set error flag on each item in the hierarchy: root -> dir -> page
         // this is done to indicate the error on the UI resource tree
@@ -98,7 +100,7 @@ const pagesResourceVisitor = ({pageModelCompiler, pagesGraphModel}) => ({ nodeMo
   return result;
 };
 
-const templatesResourceVisitor = ({templateModelCompiler, templatesGraphModel}) => ({ nodeModel, parentModel }) => {
+const templatesResourceVisitor = ({compiler, templatesGraphModel}) => ({ nodeModel, parentModel }) => {
   const result = [];
   if (
     nodeModel &&
@@ -106,10 +108,10 @@ const templatesResourceVisitor = ({templateModelCompiler, templatesGraphModel}) 
     nodeModel.props &&
     nodeModel.props.componentsTree
   ) {
-    templateModelCompiler.resetCounters();
-    nodeModel.props.componentsTree = templateModelCompiler.compile(nodeModel.props.componentsTree);
-    const errorsCount = templateModelCompiler.getErrorsCount();
-    const changesCount = templateModelCompiler.getChangesCount();
+    compiler.resetCounters();
+    nodeModel.props.componentsTree = compiler.compile(nodeModel.props.componentsTree);
+    const errorsCount = compiler.getErrorsCount();
+    const changesCount = compiler.getChangesCount();
     if (errorsCount > 0 || changesCount > 0) {
       // set error flag on each item in the hierarchy: root -> dir -> page
       // this is done to indicate the error on the UI resource tree
@@ -127,6 +129,22 @@ const templatesResourceVisitor = ({templateModelCompiler, templatesGraphModel}) 
     });
   }
   return result;
+};
+
+const pagesResourceVisitorWithReducer = ({reducer}) => ({ nodeModel, parentModel }) => {
+  if (nodeModel && nodeModel.props) {
+    if (nodeModel.type === constants.GRAPH_MODEL_PAGE_TYPE && nodeModel.props.componentsTree) {
+      nodeModel.props.componentsTree = reducer.reduce(nodeModel.props.componentsTree);
+    }
+  }
+};
+
+const templatesResourceVisitorWithReducer = ({reducer}) => ({ nodeModel, parentModel }) => {
+  if (nodeModel && nodeModel.props) {
+    if (nodeModel.type === constants.GRAPH_MODEL_TEMPLATE_TYPE && nodeModel.props.componentsTree) {
+      nodeModel.props.componentsTree = reducer.reduce(nodeModel.props.componentsTree);
+    }
+  }
 };
 
 const settingsResourceVisitor = ({settingsModelCompiler}) => ({ nodeModel, parentModel }) => {
@@ -209,15 +227,16 @@ export function compileResources () {
     });
   }
 
+  const pageModelCompiler = new PageModelCompiler({ componentsGraphModel });
+
   /**
    * Compile all pages
    *
    */
   let pagesErrorsCount = 0;
-  const pageModelCompiler = new PageModelCompiler({ componentsGraphModel });
   const pagesCompilationResults =
     pagesGraphModel.traverse(
-      pagesResourceVisitor({pageModelCompiler, pagesGraphModel})
+      pagesResourceVisitor({compiler: pageModelCompiler, pagesGraphModel})
     );
   if (pagesCompilationResults && pagesCompilationResults.length > 0) {
     pagesCompilationResults.forEach(pagesCompilationResult => {
@@ -239,10 +258,9 @@ export function compileResources () {
    *
    */
   let templatesErrorsCount = 0;
-  const templateModelCompiler = new PageModelCompiler({ componentsGraphModel });
   const templatesCompilationResults =
     templatesGraphModel.traverse(
-      templatesResourceVisitor({templateModelCompiler, templatesGraphModel})
+      templatesResourceVisitor({compiler: pageModelCompiler, templatesGraphModel})
     );
   if (templatesCompilationResults && templatesCompilationResults.length > 0) {
     templatesCompilationResults.forEach(templatesCompilationResult => {
@@ -289,6 +307,16 @@ export function compileResources () {
   flowsGraphModel.mergeNode(flowsGraphModel.getRootKey(), { props: { hasErrors: flowsErrorsCount > 0 } });
 
   componentInstanceModelsMap.clear();
+
+  // const reducer = new PageModelReducer({componentInstancesState: {
+  //   'usr.page.BottomNavigation_bottomNavigation': {
+  //     properties: {
+  //       items: [{ 'active': true, 'id': 'navItem1', 'label': 'Test From Global' }]
+  //     }
+  //   }
+  // }});
+  // pagesGraphModel.traverse(pagesResourceVisitorWithReducer({reducer}));
+  // templatesGraphModel.traverse(templatesResourceVisitorWithReducer({reducer}));
 
   return changesCounter > 0;
 }
