@@ -469,10 +469,12 @@ class PageComposer extends React.Component {
       this.pageComposerManager = new PageComposerManager(
         reduceComponentTree(selectedComponentModel, componentsTree)
       );
+
       // const { selectedComponentModel } = this.state;
       // if (selectedComponentModel) {
       //   this.pageComposerManager.selectCell(selectedComponentModel.key);
       // }
+
       this.updateLocalState(true);
     }
   };

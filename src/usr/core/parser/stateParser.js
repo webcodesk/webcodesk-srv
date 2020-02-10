@@ -14,26 +14,19 @@
  *    limitations under the License.
  */
 
-import {
-  processMainWindowMessage,
-  readResource,
-  removeResource,
-  updateResource,
-  updateMultipleResources,
-  writeEtcFile,
-  writeMultipleEtcFiles,
-  deleteEtcFile,
-  getSyslog
-} from "usr/api/mainWindowMessageMethods";
+import isString from 'lodash/isString';
 
-export default {
-  processMainWindowMessage,
-  readResource,
-  removeResource,
-  updateResource,
-  updateMultipleResources,
-  writeEtcFile,
-  writeMultipleEtcFiles,
-  deleteEtcFile,
-  getSyslog
-};
+export function findStateDeclarations (sourceCode) {
+  const declarations = [];
+  try {
+    const pageJSON = isString(sourceCode) ? JSON.parse(sourceCode) : sourceCode;
+    const stateDeclaration = {
+      componentInstancesState: pageJSON || {},
+    };
+    declarations.push(stateDeclaration);
+  } catch (e) {
+    console.error('Parsing the state source code: ', e);
+    // do nothing...
+  }
+  return declarations;
+}

@@ -36,6 +36,7 @@ const possibleResourceTypes = [
   constants.RESOURCE_IN_TEMPLATES_TYPE,
   constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
   constants.RESOURCE_IN_SETTINGS_TYPE,
+  constants.RESOURCE_IN_STATE_TYPE,
 ];
 
 class ResourceAdapter {
@@ -558,6 +559,14 @@ class ResourceAdapter {
           get: function () {
             if (this.props) {
               return this.props.itemModel;
+            }
+            return undefined;
+          }
+        },
+        'componentInstancesState': {
+          get: function () {
+            if (this.props) {
+              return this.props.componentInstancesState;
             }
             return undefined;
           }

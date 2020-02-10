@@ -20,6 +20,7 @@ import PageModelCompiler from './compiler/PageModelCompiler';
 import FlowModelCompiler from './compiler/FlowModelCompiler';
 import SettingsModelCompiler from './compiler/SettingsModelCompiler';
 import PageModelReducer from './compiler/PageModelReducer';
+import * as projectResourcesManager from './projectResourcesManager';
 
 const componentInstanceModelsMap = new Map();
 
@@ -308,15 +309,14 @@ export function compileResources () {
 
   componentInstanceModelsMap.clear();
 
-  // const reducer = new PageModelReducer({componentInstancesState: {
-  //   'usr.page.BottomNavigation_bottomNavigation': {
-  //     properties: {
-  //       items: [{ 'active': true, 'id': 'navItem1', 'label': 'Test From Global' }]
-  //     }
-  //   }
-  // }});
-  // pagesGraphModel.traverse(pagesResourceVisitorWithReducer({reducer}));
-  // templatesGraphModel.traverse(templatesResourceVisitorWithReducer({reducer}));
+  // reduce properties to the global state
+  const stateIndexResource = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_STATE_KEY);
+  if (stateIndexResource) {
+    console.info('componentInstancesState: ', stateIndexResource.componentInstancesState);
+    const reducer = new PageModelReducer({componentInstancesState: stateIndexResource.componentInstancesState});
+    pagesGraphModel.traverse(pagesResourceVisitorWithReducer({reducer}));
+    // templatesGraphModel.traverse(templatesResourceVisitorWithReducer({reducer}));
+  }
 
   return changesCounter > 0;
 }

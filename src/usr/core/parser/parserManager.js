@@ -26,6 +26,7 @@ import { findTemplateDeclarations } from './templatesParser';
 import { findMarkdownDeclarations } from './markdownParser';
 import { findSettingsDeclarations } from './settingsParser';
 import { findSettingsConfigDeclarations } from './settingsConfigParser';
+import { findStateDeclarations } from './stateParser';
 import * as config from '../config/config';
 import constants  from '../../../commons/constants';
 import { isFile } from '../utils/fileUtils';
@@ -85,6 +86,11 @@ export const createEmptyResource = (filePath) => {
     ),
     new DeclarationsInFile(
       constants.RESOURCE_IN_SETTINGS_TYPE,
+      [],
+      filePath
+    ),
+    new DeclarationsInFile(
+      constants.RESOURCE_IN_STATE_TYPE,
       [],
       filePath
     ),
@@ -164,6 +170,12 @@ const parseFileData = (filePath, fileData) => {
         findSettingsDeclarations(fileData),
         filePath
       ));
+    } else if (filePath.indexOf(config.etcStateSourceDir) === 0) {
+      result.push(new DeclarationsInFile(
+        constants.RESOURCE_IN_STATE_TYPE,
+        findStateDeclarations(fileData),
+        filePath
+      ));
     }
   }
   return result;
@@ -224,6 +236,32 @@ export const parseResource = async (resourcePath, resourceFileData = null) => {
       declarationsInFiles = await parseFile(validResourcePath);
     } else {
       declarationsInFiles = await parseDir(validResourcePath);
+    }
+  }
+  return declarationsInFiles;
+};
+
+export const parseMultipleResources = async (fileObjects) => {
+  let declarationsInFiles = null;
+  if (fileObjects && fileObjects.length > 0) {
+    declarationsInFiles = [];
+    let declarations;
+    for (let i = 0; i < fileObjects.length; i++) {
+      const {filePath, fileData} = fileObjects[i];
+      const validResourcePath = repairPath(filePath);
+      if (fileData) {
+        declarations = parseFileData(validResourcePath, fileData);
+      } else {
+        const isFileResource = await isFile(validResourcePath);
+        if (isFileResource) {
+          declarations = await parseFile(validResourcePath);
+        } else {
+          declarations = await parseDir(validResourcePath);
+        }
+      }
+      if (declarations && declarations.length > 0) {
+        declarationsInFiles = declarationsInFiles.concat(declarations);
+      }
     }
   }
   return declarationsInFiles;

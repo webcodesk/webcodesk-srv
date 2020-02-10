@@ -36,6 +36,7 @@ let clipboardGraphModel = globalStore.get('clipboardGraphModel');
 let templatesGraphModel = globalStore.get('templatesGraphModel');
 let settingsConfGraphModel = globalStore.get('settingsConfGraphModel');
 let settingsGraphModel = globalStore.get('settingsGraphModel');
+let stateGraphModel = globalStore.get('stateGraphModel');
 
 const CLIPBOARD_ITEM_LIST_SIZE_LIMIT = 5;
 
@@ -137,6 +138,15 @@ export function initNewResourcesTrees () {
       resourceType: constants.RESOURCE_IN_SETTINGS_TYPE,
     }
   });
+  stateGraphModel = new GraphModel();
+  stateGraphModel.initModel({
+    key: constants.GRAPH_MODEL_STATE_ROOT_KEY,
+    type: constants.GRAPH_MODEL_STATE_ROOT_TYPE,
+    props: {
+      displayName: 'State',
+      resourceType: constants.RESOURCE_IN_STATE_TYPE,
+    }
+  });
   //
   globalStore.set('pagesGraphModel', pagesGraphModel);
   globalStore.set('templatesGraphModel', templatesGraphModel);
@@ -148,6 +158,7 @@ export function initNewResourcesTrees () {
   globalStore.set('clipboardGraphModel', clipboardGraphModel);
   globalStore.set('settingsConfGraphModel', settingsConfGraphModel);
   globalStore.set('settingsGraphModel', settingsGraphModel);
+  globalStore.set('stateGraphModel', stateGraphModel);
   //
 }
 
@@ -376,32 +387,32 @@ export function getProjectReadmeContent () {
   return projectReadmeResource.markdownContent;
 }
 
-export function pushUpdateToResourceHistory (resource, fileObject) {
+export function pushUpdateToResourceHistory (resource, fileObjects) {
   if (!resourcesUpdateHistory) {
     resourcesUpdateHistory = {};
   }
   resourcesUpdateHistory[resource.key] = resourcesUpdateHistory[resource.key] || [];
-  resourcesUpdateHistory[resource.key].push(fileObject);
+  resourcesUpdateHistory[resource.key].push(fileObjects);
   return getResourcesUpdateHistory();
 }
 
 export function getResourcesUpdateHistory () {
   const portableResourcesUpdateHistory = {};
   forOwn(resourcesUpdateHistory, (value, key) => {
-    portableResourcesUpdateHistory[key] = value ? value.map(i => i.filePath) : [];
+    portableResourcesUpdateHistory[key] = value && value.length > 0 ? value.map(i => i.length) : [];
   });
   return portableResourcesUpdateHistory;
 }
 
 export function popUpdateFromResourceHistory (resource) {
-  let fileObject = null;
+  let fileObjects = null;
   if (resourcesUpdateHistory) {
     const resourceHistory = resourcesUpdateHistory[resource.key];
     if (resourceHistory && resourceHistory.length > 0) {
-      fileObject = resourceHistory.pop();
+      fileObjects = resourceHistory.pop();
     }
   }
-  return fileObject;
+  return fileObjects;
 }
 
 export function getComponentsGraphModel () {

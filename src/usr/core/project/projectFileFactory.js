@@ -90,44 +90,69 @@ export function createCopyFlowFileObject (source, name, directoryName) {
  * @param resource
  * @param data
  */
-export function createFileObjectWithNewData (resource, data) {
-  let fileObject = {};
+export function createFileObjectsWithNewData (resource, data) {
+  let fileObjects = [];
   if (resource.isPage) {
-    const { componentsTree: dataComponentsTree } = data;
+    const { componentsTree: dataComponentsTree, componentInstancesState } = data;
     const parentKeys = resource.allParentKeys;
     if (parentKeys && parentKeys.length > 1) {
       const pageFileResource = projectResourcesManager.getResourceByKey(parentKeys[0]);
-      fileObject.filePath = pageFileResource.absolutePath;
-      fileObject.fileData = JSON.stringify({
-        pageName: resource.pageName,
-        pagePath: resource.pagePath,
-        isTest: resource.isTest,
-        componentsTree: dataComponentsTree
+      fileObjects.push({
+        filePath: pageFileResource.absolutePath,
+        fileData: JSON.stringify({
+          pageName: resource.pageName,
+          pagePath: resource.pagePath,
+          isTest: resource.isTest,
+          componentsTree: dataComponentsTree
+        })
       });
     }
+
+    if (componentInstancesState) {
+      const stateIndexResource = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_STATE_KEY);
+      if (stateIndexResource) {
+        const stateIndexParentKeys = stateIndexResource.allParentKeys;
+        if (stateIndexParentKeys && stateIndexParentKeys.length > 1) {
+          const stateIndexFileResource = projectResourcesManager.getResourceByKey(stateIndexParentKeys[0]);
+          fileObjects.push({
+            filePath: stateIndexFileResource.absolutePath,
+            fileData: JSON.stringify(
+              stateIndexResource.componentInstancesState
+                ? { ...stateIndexResource.componentInstancesState, ...componentInstancesState }
+                : componentInstancesState
+            )
+          });
+        }
+      }
+    }
+
   } else if (resource.isTemplate) {
     const { componentsTree: dataComponentsTree } = data;
     const parentKeys = resource.allParentKeys;
     if (parentKeys && parentKeys.length > 1) {
       const pageFileResource = projectResourcesManager.getResourceByKey(parentKeys[0]);
-      fileObject.filePath = pageFileResource.absolutePath;
-      fileObject.fileData = JSON.stringify({
-        templateName: resource.templateName,
-        componentsTree: dataComponentsTree
+      fileObjects.push({
+        filePath: pageFileResource.absolutePath,
+        fileData: JSON.stringify({
+          templateName: resource.templateName,
+          componentsTree: dataComponentsTree
+        })
       });
     }
   } else if (resource.isFlow) {
     const { flowTree } = data;
     const parentResource = projectResourcesManager.getResourceByKey(resource.parentKey);
-    fileObject.filePath = parentResource.absolutePath;
-    fileObject.fileData = JSON.stringify({
-      isDisabled: resource.isDisabled,
-      isTest: resource.isTest,
-      flowName: resource.displayName,
-      model: flowTree,
+    fileObjects.push({
+      filePath: parentResource.absolutePath,
+      fileData: JSON.stringify({
+        isDisabled: resource.isDisabled,
+        isTest: resource.isTest,
+        flowName: resource.displayName,
+        model: flowTree,
+      })
     });
   }
-  return fileObject;
+  return fileObjects;
 }
 
 export function createFileObjectWithNewSourceCode (resource, script) {
@@ -164,6 +189,50 @@ export function createFileObject (resource, fileDataOptions = {}) {
     });
   }
   return fileObject;
+}
+
+export function createBackupFileObjects (resource) {
+  let fileObjects = [];
+  if (resource.isPage) {
+    const parentKeys = resource.allParentKeys;
+    if (parentKeys && parentKeys.length > 1) {
+      const pageFileResource = projectResourcesManager.getResourceByKey(parentKeys[0]);
+      fileObjects.push({
+        filePath: pageFileResource.absolutePath,
+        fileData: JSON.stringify({
+          isTest: resource.isTest,
+          pageName: resource.pageName,
+          pagePath: resource.pagePath,
+          componentsTree: resource.componentsTree
+        })
+      });
+    }
+    const stateIndexResource = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_STATE_KEY);
+    if (stateIndexResource) {
+      const stateIndexParentKeys = stateIndexResource.allParentKeys;
+      if (stateIndexParentKeys && stateIndexParentKeys.length > 1) {
+        const stateIndexFileResource = projectResourcesManager.getResourceByKey(stateIndexParentKeys[0]);
+        fileObjects.push({
+          filePath: stateIndexFileResource.absolutePath,
+          fileData: JSON.stringify({
+            componentInstancesState: stateIndexResource.componentInstancesState || {}
+          })
+        });
+      }
+    }
+
+  } else if (resource.isFlow) {
+    const parentResource = projectResourcesManager.getResourceByKey(resource.parentKey);
+    fileObjects.push({
+      filePath: parentResource.absolutePath,
+      fileData: JSON.stringify({
+        isTest: resource.isTest,
+        flowName: resource.displayName,
+        model: resource.flowTree,
+      })
+    });
+  }
+  return fileObjects;
 }
 
 export function createSettingsFileObject (settings) {

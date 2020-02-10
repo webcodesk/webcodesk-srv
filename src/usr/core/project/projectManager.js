@@ -130,6 +130,22 @@ export async function updateResource (resourcePath, resourceFileData) {
   return {};
 }
 
+export async function updateMultipleResources (fileObjects) {
+  if (fileObjects && fileObjects.length > 0) {
+    // optimistic update of the declarations in files
+    const declarationsInFiles = await parserManager.parseMultipleResources(fileObjects);
+    if (declarationsInFiles && declarationsInFiles.length > 0) {
+      // Update resource in the graphs
+      const { updatedResources, deletedResources, doUpdateAll } =
+        projectResourcesManager.updateResources(declarationsInFiles);
+      // try to generate all needed files
+      await projectGenerator.generateFiles();
+      return { updatedResources, deletedResources, doUpdateAll };
+    }
+  }
+  return {};
+}
+
 export async function checkResourceExists (resourcePath) {
   const validResourcePath = repairPath(resourcePath);
   try {
@@ -145,7 +161,8 @@ export async function writeEtcFile (filePath, fileData) {
   if (validResourcePath.indexOf(config.etcPagesSourceDir) === 0
     || validResourcePath.indexOf(config.etcFlowsSourceDir) === 0
     || validResourcePath.indexOf(config.etcTemplatesSourceDir) === 0
-    || validResourcePath.indexOf(config.etcSettingsSourceDir) === 0) {
+    || validResourcePath.indexOf(config.etcSettingsSourceDir) === 0
+    || validResourcePath.indexOf(config.etcStateSourceDir) === 0) {
     await fileUtils.ensureFilePath(validResourcePath);
     await fileUtils.writeFile(validResourcePath, fileData);
   } else {

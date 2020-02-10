@@ -125,6 +125,8 @@ export async function checkProjectPaths() {
     repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_TEMPLATES));
   const testEtcSettingsSourceDir =
     repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_SETTINGS));
+  const testEtcStateSourceDir =
+    repairPath(path.join(testEtcSourceDir, constants.DIR_NAME_STATE));
 
   // check yarn lock file existing
   let testProjectYarnLockFile =
@@ -165,6 +167,7 @@ export async function checkProjectPaths() {
     testEtcFlowsSourceDir,
     testEtcTemplatesSourceDir,
     testEtcSettingsSourceDir,
+    testEtcStateSourceDir,
     testProjectTSConfigFile,
     testProjectYarnLockFile,
     startScriptPath,

@@ -15,7 +15,6 @@
  */
 
 import cloneDeep from 'lodash/cloneDeep';
-import orderBy from 'lodash/orderBy';
 import constants from '../../../../commons/constants';
 import isUndefined from 'lodash/isUndefined';
 
@@ -50,8 +49,6 @@ class PageModelReducer {
               defaultValue = defaults;
             }
           }
-          console.info('In simple prop: ', propertyName);
-          console.info('In simple prop ( default value ): ', defaultValue);
           if (!isUndefined(defaultValue)) {
             if (type === constants.COMPONENT_PROPERTY_ANY_TYPE
               || constants.COMPONENT_PROPERTY_ARRAY_TYPE
@@ -67,15 +64,11 @@ class PageModelReducer {
           if (propertyName) {
             // we have the named object property
             const defaultValue = defaults ? defaults[propertyName] : {};
-            console.info('In shape prop: ', propertyName);
-            console.info('In shape prop ( default value ): ', defaultValue);
             if (children && children.length > 0) {
               this.traversePropertiesWithDefaultValues(children, defaultValue || {});
             }
           } else {
             // we have the unnamed object that is the item of the array
-            console.info('In shape prop no name: ');
-            console.info('In shape prop ( default value ): ', defaults);
             this.traversePropertiesWithDefaultValues(children, defaults || {});
           }
         } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
@@ -88,8 +81,6 @@ class PageModelReducer {
           // named array field in the defaults
           if (defaultValue && defaultValue.length > 0) {
             if (props.defaultChildren && props.defaultChildren[0]) {
-              console.info('In array prop: ', propertyName);
-              console.info('In array prop ( default value ): ', defaultValue);
               const prevChildren = property.children;
               property.children = [];
               let newChild;
@@ -104,7 +95,23 @@ class PageModelReducer {
               });
             }
           } else {
-            property.children = [];
+            // empty default value for the array may indicate there is components
+            // we have to check each child if it is not a component or node
+            if (property.children && property.children.length > 0) {
+              const prevChildren = property.children;
+              property.children = [];
+              for (let i = 0; i < prevChildren.length; i++) {
+                const { type } = prevChildren[i];
+                if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE
+                  || type === constants.COMPONENT_PROPERTY_NODE_TYPE) {
+                  property.children.push(prevChildren[i]);
+                }
+                if (type === constants.PAGE_COMPONENT_TYPE || type === constants.PAGE_NODE_TYPE) {
+                  property.children.push(prevChildren[i]);
+                  this.testComponentModel(prevChildren[i]);
+                }
+              }
+            }
           }
         } else if (type === constants.PAGE_COMPONENT_TYPE || type === constants.PAGE_NODE_TYPE) {
           this.testComponentModel(property)
@@ -123,105 +130,6 @@ class PageModelReducer {
     }
     return instanceModel;
   }
-
-  // testArray (arrayChildren, modelDefaultChildren, instancePropertyState) {
-  //   if (modelDefaultChildren && modelDefaultChildren.length > 0) {
-  //     // we take the first default item as the testing reference
-  //     const defaultArrayItemModel = modelDefaultChildren[0];
-  //     if (instancePropertyState) {
-  //       const newArrayChildren = [];
-  //       if (instancePropertyState && instancePropertyState.length > 0) {
-  //         let newItem;
-  //         instancePropertyState.forEach((instancePropertyStateItem, itemIdx) => {
-  //           let existingItem;
-  //           if (arrayChildren && arrayChildren.length > 0) {
-  //             existingItem = arrayChildren[itemIdx];
-  //           }
-  //           if (!existingItem) {
-  //             existingItem = defaultArrayItemModel;
-  //           }
-  //           newItem = this.testProperty(existingItem, instancePropertyStateItem);
-  //           newArrayChildren.push(newItem);
-  //         });
-  //       }
-  //       arrayChildren = newArrayChildren;
-  //     }
-  //   }
-  //   return arrayChildren;
-  // }
-  //
-  // testProperty(instanceProperty, instancePropertyState) {
-  //
-  //   if (instanceProperty) {
-  //
-  //     const {
-  //       type: instancePropertyType,
-  //       props: {
-  //         propertyName,
-  //         defaultChildren
-  //       }
-  //     } = instanceProperty;
-  //
-  //     if (
-  //       instancePropertyType === constants.PAGE_COMPONENT_TYPE
-  //       || instancePropertyType === constants.PAGE_NODE_TYPE
-  //     ) {
-  //       instanceProperty = this.testComponentModel(instanceProperty);
-  //     } else if (instancePropertyType === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
-  //       let propertyState;
-  //       if (instancePropertyState) {
-  //         if (propertyName) {
-  //           propertyState = instancePropertyState[propertyName];
-  //         } else {
-  //           propertyState = instancePropertyState;
-  //         }
-  //       }
-  //       console.info('testProperty SHAPE (propertyState): ', propertyName, instancePropertyState,  propertyState);
-  //       instanceProperty.children =
-  //         this.testProperties(instanceProperty.children || [], propertyState);
-  //     } else if (instancePropertyType === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
-  //       let propertyState;
-  //       if (instancePropertyState) {
-  //         if (propertyName) {
-  //           propertyState = instancePropertyState[propertyName];
-  //         } else {
-  //           propertyState = instancePropertyState;
-  //         }
-  //       }
-  //       console.info('testProperty ARRAY (propertyState): ', propertyName, instancePropertyState,  propertyState);
-  //       instanceProperty.children =
-  //         this.testArray(instanceProperty.children, defaultChildren, propertyState);
-  //     } else {
-  //       if (instancePropertyState && instancePropertyState[propertyName]) {
-  //         instanceProperty.props.propertyValue = instancePropertyState[propertyName];
-  //       }
-  //     }
-  //   }
-  //   return instanceProperty;
-  // }
-  //
-  // testProperties(instanceProperties, instanceState) {
-  //   if (instanceProperties && instanceProperties.length > 0) {
-  //     const newInstanceProperties = [];
-  //     instanceProperties.forEach(instancePropertyItem => {
-  //       if (
-  //         instancePropertyItem
-  //         && instancePropertyItem.props
-  //       ) {
-  //         const { type, props: {propertyName} } = instancePropertyItem;
-  //         if (propertyName) {
-  //           // init instance property state if it is undefined
-  //           const propertyState = instanceState && instanceState[propertyName];
-  //           console.info('testProperties (propertyState): ', propertyName, instanceState,  propertyState);
-  //           let newInstancePropertyItem = this.testProperty(instancePropertyItem, propertyState);
-  //           newInstanceProperties.push(newInstancePropertyItem);
-  //         }
-  //       }
-  //     });
-  //     instanceProperties = newInstanceProperties;
-  //   }
-  //   return instanceProperties;
-  // }
 
   reduce(nodeModel) {
     if (

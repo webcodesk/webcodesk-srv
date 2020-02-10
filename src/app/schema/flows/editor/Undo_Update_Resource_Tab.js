@@ -32,12 +32,12 @@ export default [
             },
             events: [
               {
-                name: 'fileObject',
+                name: 'fileObjects',
                 targets: [
                   {
                     type: 'userFunction',
                     props: {
-                      functionName: 'usr.api.mainWindowMessageMethods.updateResource',
+                      functionName: 'usr.api.mainWindowMessageMethods.updateMultipleResources',
                     },
                     events: [
                       {
@@ -92,7 +92,7 @@ export default [
                   {
                     type: 'userFunction',
                     props: {
-                      functionName: 'usr.api.mainWindowMessageMethods.writeEtcFile',
+                      functionName: 'usr.api.mainWindowMessageMethods.writeMultipleEtcFiles',
                     },
                     events: [
                       {

@@ -39,6 +39,8 @@ export let etcFlowsSourceDir;
 export let etcTemplatesSourceDir;
 export let etcSettingsSourceDir;
 export let etcSettingsFile;
+export let etcStateSourceDir;
+export let etcStateFile;
 
 export let appSchemaSourceDir;
 export let appSchemaPagesFile;
@@ -96,8 +98,10 @@ export const initProjectPaths = async () => {
   etcFlowsSourceDir = validPaths.testEtcFlowsSourceDir;
   etcTemplatesSourceDir = validPaths.testEtcTemplatesSourceDir;
   etcSettingsSourceDir = validPaths.testEtcSettingsSourceDir;
+  etcStateSourceDir = validPaths.testEtcStateSourceDir;
 
   etcSettingsFile = repairPath(path.join(etcSettingsSourceDir, `${constants.FILE_NAME_SETTINGS_ETC}.json`));
+  etcStateFile = repairPath(path.join(etcStateSourceDir, `${constants.FILE_NAME_STATE_ETC}.json`));
 
   projectTSConfigFile = validPaths.testProjectTSConfigFile;
   projectYarnLockFile = validPaths.testProjectYarnLockFile;

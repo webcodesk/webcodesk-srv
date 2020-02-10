@@ -82,6 +82,11 @@ class DeclarationsInFile {
           return this.resourceType === constants.RESOURCE_IN_SETTINGS_TYPE;
         }
       },
+      'isInState': {
+        get: function() {
+          return this.resourceType === constants.RESOURCE_IN_STATE_TYPE;
+        }
+      }
     });
   }
 

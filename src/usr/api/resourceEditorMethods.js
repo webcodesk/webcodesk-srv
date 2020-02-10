@@ -237,24 +237,24 @@ export const resourceItemDragEnd = () => (dispatch) => {
 };
 
 export const updateResourceByTab = ({resource, data}) => async (dispatch) => {
-  const fileObject = projectFileFactory.createFileObjectWithNewData(resource, data);
-  if (fileObject && fileObject.filePath && fileObject.fileData) {
-    const oldFileObject = projectFileFactory.createFileObject(resource);
-    if (oldFileObject && oldFileObject.filePath && oldFileObject.fileData) {
-      const updateResourceHistory = projectResourcesManager.pushUpdateToResourceHistory(resource, oldFileObject);
-      dispatch({updateResourceHistory: updateResourceHistory});
+  const fileObjects = projectFileFactory.createFileObjectsWithNewData(resource, data);
+  if (fileObjects.length > 0) {
+    const oldFileObjects = projectFileFactory.createBackupFileObjects(resource);
+    if (oldFileObjects.length > 0) {
+      const updateResourceHistory = projectResourcesManager.pushUpdateToResourceHistory(resource, oldFileObjects);
+      dispatch({ updateResourceHistory: updateResourceHistory });
     }
-    dispatch({fileObject: fileObject});
+    dispatch({ fileObjects: fileObjects });
   }
 };
 
 export const undoUpdateResourceByTab = (resource) => async (dispatch) => {
-  const fileObject = projectResourcesManager.popUpdateFromResourceHistory(resource);
-  if (fileObject && fileObject.filePath && fileObject.fileData) {
+  const fileObjects = projectResourcesManager.popUpdateFromResourceHistory(resource);
+  if (fileObjects && fileObjects.length > 0) {
     const updateResourceHistory = projectResourcesManager.getResourcesUpdateHistory();
     dispatch({
       updateResourceHistory: updateResourceHistory,
-      fileObject: fileObject
+      fileObjects: fileObjects,
     });
   }
 };

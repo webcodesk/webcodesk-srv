@@ -39,6 +39,7 @@ export const possibleResourceTypes = [
   constants.RESOURCE_IN_TEMPLATES_TYPE,
   constants.RESOURCE_IN_SETTINGS_CONF_TYPE,
   constants.RESOURCE_IN_SETTINGS_TYPE,
+  constants.RESOURCE_IN_STATE_TYPE,
 ];
 
 export function getGraphByResourceType(resourceType) {
@@ -73,6 +74,9 @@ export function getGraphByResourceType(resourceType) {
       break;
     case constants.RESOURCE_IN_SETTINGS_TYPE:
       graphModel = globalStore.get('settingsGraphModel');
+      break;
+    case constants.RESOURCE_IN_STATE_TYPE:
+      graphModel = globalStore.get('stateGraphModel');
       break;
     default:
       throw Error('Cannot find graph model. Wrong resource type.');
@@ -210,6 +214,12 @@ export function updateResourceTree (declarationsInFile) {
           resourceFileModel.children =
             resourceFileModel.children.concat(
               projectResourceFactory.createSettingsModels(modelKey, declarationsInFile)
+            );
+        }
+        if (declarationsInFile.isInState) {
+          resourceFileModel.children =
+            resourceFileModel.children.concat(
+              projectResourceFactory.createStateModels(modelKey, declarationsInFile)
             );
         }
       }

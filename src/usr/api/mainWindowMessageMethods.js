@@ -71,7 +71,25 @@ export const removeResource = (resourcePath) => async (dispatch) => {
 export const updateResource = (fileObject) => async (dispatch) => {
   taskQueue.push(async () => {
     try {
+      console.info('update resource: ', fileObject.filePath);
       const update = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
+      if (update.updatedResources && update.updatedResources.length > 0) {
+        dispatch({success: true});
+      }
+      if (update.doUpdateAll) {
+        dispatch({changedByCompilation: true});
+      }
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
+};
+
+export const updateMultipleResources = (fileObjects) => async (dispatch) => {
+  taskQueue.push(async () => {
+    try {
+      console.info('update multiple resources: ', fileObjects);
+      const update = await projectManager.updateMultipleResources(fileObjects);
       if (update.updatedResources && update.updatedResources.length > 0) {
         dispatch({success: true});
       }
@@ -94,6 +112,23 @@ export const writeEtcFile = ({filePath, fileData}) => async (dispatch) => {
       dispatch({exception: e});
     }
   });
+};
+
+export const writeMultipleEtcFiles = (fileObjects) => async (dispatch) => {
+  if (fileObjects && fileObjects.length > 0) {
+    for (let i = 0; i < fileObjects.length; i++) {
+      const {filePath, fileData} = fileObjects[i];
+      taskQueue.push(async () => {
+        try {
+          await projectManager.writeEtcFile(filePath, fileData);
+          dispatch({success: {filePath, fileData}});
+        } catch (e) {
+          console.error(`Writing etc file ${filePath}.`, e.message);
+          dispatch({exception: e});
+        }
+      });
+    }
+  }
 };
 
 export const deleteEtcFile = (filePath) => async (dispatch) => {

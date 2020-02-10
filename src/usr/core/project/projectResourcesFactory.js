@@ -292,6 +292,23 @@ export function createSettingsModels (modelKey, declarationsInFile) {
   return result;
 }
 
+export function createStateModels (modelKey, declarationsInFile) {
+  const result = [];
+  declarationsInFile.declarations.forEach(settingsDeclaration => {
+    const { componentInstancesState } = settingsDeclaration;
+    console.info('State instances key: ', modelKey);
+    result.push({
+      key: modelKey,
+      type: constants.GRAPH_MODEL_STATE_TYPE,
+      props: {
+        resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
+        componentInstancesState: cloneDeep(componentInstancesState),
+      }
+    });
+  });
+  return result;
+}
+
 export function createClipboardModel(clipboardItemModel) {
   let newClipboardItemModel = clipboardItemModel ? cloneDeep(clipboardItemModel) : {};
   newClipboardItemModel.props = newClipboardItemModel.props || {};
