@@ -312,10 +312,9 @@ export function compileResources () {
   // reduce properties to the global state
   const stateIndexResource = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_STATE_KEY);
   if (stateIndexResource) {
-    console.info('componentInstancesState: ', stateIndexResource.componentInstancesState);
     const reducer = new PageModelReducer({componentInstancesState: stateIndexResource.componentInstancesState});
     pagesGraphModel.traverse(pagesResourceVisitorWithReducer({reducer}));
-    // templatesGraphModel.traverse(templatesResourceVisitorWithReducer({reducer}));
+    templatesGraphModel.traverse(templatesResourceVisitorWithReducer({reducer}));
   }
 
   return changesCounter > 0;

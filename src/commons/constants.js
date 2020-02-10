@@ -355,7 +355,6 @@ module.exports = {
   DEBUG_MSG_FUNCTION_CALL_EVENT: 'callFunction',
   DEBUG_MSG_REDUCE_DATA_EVENT: 'reduceData',
   DEBUG_MSG_NEW_PROPS_EVENT: 'receiveNewProps',
-  DEBUG_MSG_FORWARD_EVENT: 'forwardToPath',
   DEBUG_MSG_CREATE_CONTAINER_EVENT: 'createContainer',
 
   PROJECT_SETTINGS_DEFAULTS: {

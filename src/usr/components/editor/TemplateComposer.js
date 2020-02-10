@@ -24,12 +24,14 @@ import { withStyles } from '@material-ui/core/styles';
 import SplitPane from '../splitPane';
 import constants from '../../../commons/constants';
 import PageComposerManager from '../../core/pageComposer/PageComposerManager';
-import { CommonToolbar, CommonToolbarDivider, CommonTab, CommonTabs } from '../commons/Commons.parts';
+import { CommonToolbar, CommonToolbarDivider } from '../commons/Commons.parts';
 import IFrame from './IFrame';
 import PageTree from './PageTree';
 import ToolbarButton from '../commons/ToolbarButton';
 import ComponentPropsTree from './ComponentPropsTree';
 import globalStore from '../../core/config/globalStore';
+import { reduceComponentTree } from '../../core/pageComposer/pageComposerReducer';
+import { createState } from '../../core/pageComposer/pageComposerState';
 
 const LAYOUT_MODE_VERTICAL = 'LAYOUT_MODE_VERTICAL';
 const LAYOUT_MODE_HORIZONTAL = 'LAYOUT_MODE_HORIZONTAL';
@@ -290,13 +292,15 @@ class TemplateComposer extends React.Component {
   };
 
   sendUpdate = () => {
-    this.setState({
-      sendUpdateCounter: 0,
-      recentUpdateHistory: [],
-    });
+    const { localComponentsTree } = this.state;
     const { onUpdate } = this.props;
     onUpdate({
       componentsTree: this.pageComposerManager.getSerializableModel(),
+      componentInstancesState: createState(localComponentsTree),
+    });
+    this.setState({
+      sendUpdateCounter: 0,
+      recentUpdateHistory: [],
     });
     // if (this.iFrameRef.current) {
     //   this.iFrameRef.current.setFocus();
@@ -457,6 +461,12 @@ class TemplateComposer extends React.Component {
       const { selectedComponentModel } = this.state;
       if (selectedComponentModel) {
         this.pageComposerManager.renameComponentInstance(selectedComponentModel.key, newComponentInstance);
+        const prevComponentsTree = this.pageComposerManager.getModel();
+        const prevSelectedComponentModel = this.pageComposerManager.getSelectedNode();
+        delete this.pageComposerManager;
+        this.pageComposerManager = new PageComposerManager(
+          reduceComponentTree(prevSelectedComponentModel, prevComponentsTree)
+        );
         this.updateLocalState(true);
       }
     }
@@ -465,37 +475,68 @@ class TemplateComposer extends React.Component {
   handleUpdateComponentProperty = (newComponentPropertyModel) => {
     if (newComponentPropertyModel) {
       this.pageComposerManager.updateComponentProperty(newComponentPropertyModel);
-      const { selectedComponentModel } = this.state;
-      if (selectedComponentModel) {
-        this.pageComposerManager.selectCell(selectedComponentModel.key);
-      }
+      const componentsTree = this.pageComposerManager.getModel();
+      const selectedComponentModel = this.pageComposerManager.getSelectedNode();
+      delete this.pageComposerManager;
+      this.pageComposerManager = new PageComposerManager(
+        reduceComponentTree(selectedComponentModel, componentsTree)
+      );
+
+      // const { selectedComponentModel } = this.state;
+      // if (selectedComponentModel) {
+      //   this.pageComposerManager.selectCell(selectedComponentModel.key);
+      // }
       this.updateLocalState(true);
     }
   };
 
   handleIncreaseComponentPropertyArray = (propertyKey) => {
     this.pageComposerManager.increaseComponentPropertyArray(propertyKey);
+    const componentsTree = this.pageComposerManager.getModel();
+    const selectedComponentModel = this.pageComposerManager.getSelectedNode();
+    delete this.pageComposerManager;
+    this.pageComposerManager = new PageComposerManager(
+      reduceComponentTree(selectedComponentModel, componentsTree)
+    );
     this.updateLocalState(true);
   };
 
   handleDeleteComponentProperty = (propertyKey) => {
     this.pageComposerManager.deleteComponentProperty(propertyKey);
+    const componentsTree = this.pageComposerManager.getModel();
+    const selectedComponentModel = this.pageComposerManager.getSelectedNode();
+    delete this.pageComposerManager;
+    this.pageComposerManager = new PageComposerManager(
+      reduceComponentTree(selectedComponentModel, componentsTree)
+    );
     this.updateLocalState(true);
   };
 
   handleUpdateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
     if (newComponentPropertyModel) {
       this.pageComposerManager.updateComponentPropertyArrayOrder(newComponentPropertyModel);
-      const { selectedComponentModel } = this.state;
-      if (selectedComponentModel) {
-        this.pageComposerManager.selectCell(selectedComponentModel.key);
-      }
+      const componentsTree = this.pageComposerManager.getModel();
+      const selectedComponentModel = this.pageComposerManager.getSelectedNode();
+      delete this.pageComposerManager;
+      this.pageComposerManager = new PageComposerManager(
+        reduceComponentTree(selectedComponentModel, componentsTree)
+      );
+      // const { selectedComponentModel } = this.state;
+      // if (selectedComponentModel) {
+      //   this.pageComposerManager.selectCell(selectedComponentModel.key);
+      // }
       this.updateLocalState(true);
     }
   };
 
   handleDuplicateComponentPropertyArrayItem = (propertyKey, groupPropertyKey, itemIndex) => {
     this.pageComposerManager.duplicateComponentPropertyArrayItem(propertyKey, groupPropertyKey, itemIndex);
+    const componentsTree = this.pageComposerManager.getModel();
+    const selectedComponentModel = this.pageComposerManager.getSelectedNode();
+    delete this.pageComposerManager;
+    this.pageComposerManager = new PageComposerManager(
+      reduceComponentTree(selectedComponentModel, componentsTree)
+    );
     this.updateLocalState(true);
   };
 

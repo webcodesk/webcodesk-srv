@@ -46,6 +46,7 @@ class FlowDebuggerManager {
   constructor (actionSequences) {
     this.graphModel = new GraphModel({globallyUniqueKeys: false});
     if (actionSequences) {
+      console.info('actionSequences: ', actionSequences);
        this.graphModel.initModel(flowDebuggerFactory.createFlowModelByActionSequences(actionSequences));
     }
   }
@@ -68,29 +69,29 @@ class FlowDebuggerManager {
     }
   };
 
-  setPopulatedPropsVisitor = (componentName, componentInstance, propertyName, populatePath, recordId) =>
-    ({ nodeModel, parentModel }) => {
-    if (nodeModel && nodeModel.props) {
-      const {
-        props: {
-          componentName: modelComponentName,
-          componentInstance: modelComponentInstance,
-          populatePath: modelPopulatePath,
-          inputs
-        }
-      } = nodeModel;
-      if (componentName === modelComponentName &&
-        componentInstance === modelComponentInstance &&
-        populatePath === modelPopulatePath) {
-
-        const foundInput = inputs.find(i => i.name === propertyName);
-        if (foundInput) {
-          foundInput.recordIds = foundInput.recordIds || [];
-          foundInput.recordIds.push(recordId);
-        }
-      }
-    }
-  };
+  // setPopulatedPropsVisitor = (componentName, componentInstance, propertyName, populatePath, recordId) =>
+  //   ({ nodeModel, parentModel }) => {
+  //   if (nodeModel && nodeModel.props) {
+  //     const {
+  //       props: {
+  //         componentName: modelComponentName,
+  //         componentInstance: modelComponentInstance,
+  //         populatePath: modelPopulatePath,
+  //         inputs
+  //       }
+  //     } = nodeModel;
+  //     if (componentName === modelComponentName &&
+  //       componentInstance === modelComponentInstance &&
+  //       populatePath === modelPopulatePath) {
+  //
+  //       const foundInput = inputs.find(i => i.name === propertyName);
+  //       if (foundInput) {
+  //         foundInput.recordIds = foundInput.recordIds || [];
+  //         foundInput.recordIds.push(recordId);
+  //       }
+  //     }
+  //   }
+  // };
 
   setDataFromLog = (actionsLog) => {
     if (actionsLog && actionsLog.length > 0) {
@@ -111,7 +112,7 @@ class FlowDebuggerManager {
       let flowNode;
       let logRecordId;
       orderedLog.forEach(logRecord => {
-        const { eventType, key, eventName, propertyName, componentName, componentInstance, populatePath } = logRecord;
+        const { eventType, key, eventName, componentName, componentInstance, populatePath } = logRecord;
         flowNode = key ? this.graphModel.getNode(key) : flowNode;
         if (flowNode) {
           logRecordId = uniqueId('logRecord');
@@ -150,15 +151,8 @@ class FlowDebuggerManager {
               });
               logRecord.recordId = logRecordId;
             }
-          } else if (eventType === constants.DEBUG_MSG_FORWARD_EVENT) {
-            logRecord.recordId = logRecordId;
-            const foundInput = flowNode.props.inputs.find(i => i.name === 'forward');
-            if (foundInput) {
-              foundInput.recordIds = foundInput.recordIds || [];
-              foundInput.recordIds.push(logRecordId);
-            }
           } else if (eventType === constants.DEBUG_MSG_REDUCE_DATA_EVENT) {
-            const foundInput = flowNode.props.inputs.find(i => i.name === propertyName);
+            const foundInput = flowNode.props.inputs.find(i => i.name === 'props');
             if (foundInput) {
               foundInput.recordIds = foundInput.recordIds || [];
               logRecord.recordId = logRecordId;
@@ -169,11 +163,11 @@ class FlowDebuggerManager {
             this.graphModel.traverse(this.setRecordIdsVisitor(componentName, componentInstance, logRecordId));
             logRecord.recordId = logRecordId;
           } else if (eventType === constants.DEBUG_MSG_CREATE_CONTAINER_EVENT) {
-            this.graphModel.traverse(
-              this.setPopulatedPropsVisitor(
-                componentName, componentInstance, propertyName, populatePath, logRecordId
-              )
-            );
+            // this.graphModel.traverse(
+            //   this.setPopulatedPropsVisitor(
+            //     componentName, componentInstance, propertyName, populatePath, logRecordId
+            //   )
+            // );
             logRecord.recordId = logRecordId;
           }
           this.graphModel.mergeNode(flowNode.key, {...flowNode});

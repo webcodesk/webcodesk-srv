@@ -127,7 +127,7 @@ export function createFileObjectsWithNewData (resource, data) {
     }
 
   } else if (resource.isTemplate) {
-    const { componentsTree: dataComponentsTree } = data;
+    const { componentsTree: dataComponentsTree, componentInstancesState } = data;
     const parentKeys = resource.allParentKeys;
     if (parentKeys && parentKeys.length > 1) {
       const pageFileResource = projectResourcesManager.getResourceByKey(parentKeys[0]);
@@ -139,6 +139,25 @@ export function createFileObjectsWithNewData (resource, data) {
         })
       });
     }
+
+    if (componentInstancesState) {
+      const stateIndexResource = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_STATE_KEY);
+      if (stateIndexResource) {
+        const stateIndexParentKeys = stateIndexResource.allParentKeys;
+        if (stateIndexParentKeys && stateIndexParentKeys.length > 1) {
+          const stateIndexFileResource = projectResourcesManager.getResourceByKey(stateIndexParentKeys[0]);
+          fileObjects.push({
+            filePath: stateIndexFileResource.absolutePath,
+            fileData: JSON.stringify(
+              stateIndexResource.componentInstancesState
+                ? { ...stateIndexResource.componentInstancesState, ...componentInstancesState }
+                : componentInstancesState
+            )
+          });
+        }
+      }
+    }
+
   } else if (resource.isFlow) {
     const { flowTree } = data;
     const parentResource = projectResourcesManager.getResourceByKey(resource.parentKey);

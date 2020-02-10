@@ -36,7 +36,7 @@ function createFlowByEventTargets(event) {
     targets.forEach(target => {
       const {type, props, events} = target;
       if (type === constants.FRAMEWORK_ACTION_SEQUENCE_COMPONENT_TYPE) {
-        const { componentName, componentInstance, componentKey, propertyName } = props;
+        const { componentName, componentInstance, componentKey } = props;
         model = {
           key: componentKey,
           type: constants.FLOW_COMPONENT_INSTANCE_TYPE,
@@ -47,15 +47,15 @@ function createFlowByEventTargets(event) {
             componentInstance: componentInstance,
             subtitle: '',
             outputs: [],
+            inputs: [
+              {
+                name: 'props',
+                connectedTo: eventName,
+              }
+            ]
           },
           children: [],
         };
-        model.props.inputs = [
-          {
-            name: propertyName,
-            connectedTo: eventName,
-          }
-        ];
       } else if (type === constants.FRAMEWORK_ACTION_SEQUENCE_USER_FUNCTION_TYPE) {
         const {functionName, functionKey, isUsingTargetState} = props;
         let title;
@@ -95,7 +95,7 @@ function createFlowByEventTargets(event) {
           model.children = model.children.concat(createFlowByEventTargets(event));
         });
       }
-      model.props.inputs = model.props.inputs.sort((a, b) => a.name.localeCompare(b.name));
+      // model.props.inputs = model.props.inputs.sort((a, b) => a.name.localeCompare(b.name));
       // add extra output for caught error if there were assigned output
       if (model.type === constants.FLOW_USER_FUNCTION_TYPE) {
         if (model.props.outputs.findIndex(i => i.name === constants.FUNCTION_OUTPUT_ERROR_NAME) < 0) {

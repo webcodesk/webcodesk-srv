@@ -203,12 +203,6 @@ class ActionsLogViewer extends React.Component {
           populate props
         </TableCell>
       );
-    } else if (eventType === constants.DEBUG_MSG_FORWARD_EVENT) {
-      return (
-        <TableCell>
-          forward
-        </TableCell>
-      );
     } else if (eventType === constants.DEBUG_MSG_FUNCTION_FIRE_EVENT) {
       return (
         <TableCell>
@@ -246,10 +240,7 @@ class ActionsLogViewer extends React.Component {
         <TableCell>
           <div className={classes.cellContent}>
             <div className={classes.cellContentIcon}>
-              reduce prop
-            </div>
-            <div className={classes.cellContentText}>
-              <ActionsLogChip label={propertyName}/>
+              reduce props
             </div>
           </div>
         </TableCell>

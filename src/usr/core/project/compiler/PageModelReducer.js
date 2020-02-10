@@ -124,7 +124,6 @@ class PageModelReducer {
     const { props: {componentName, componentInstance}, children } = instanceModel;
     const componentInstanceKey = `${componentName}_${componentInstance}`;
     const currentInstanceState = this.componentInstancesState[componentInstanceKey];
-    console.info('Start testing component instance: ', componentName, componentInstance, currentInstanceState);
     if (children && children.length > 0) {
       this.traversePropertiesWithDefaultValues(children, currentInstanceState);
     }
