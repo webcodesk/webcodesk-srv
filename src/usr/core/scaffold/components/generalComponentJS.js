@@ -219,30 +219,15 @@ export const <%= componentName %>Types = {
   /* 
    * Triggered when the text is changed in the input control
    *
-   * @functionTypes {<%= componentName %>InputTextTypes}
    */
   onInputTextChange: PropTypes.func,
   /*
    * Submits the entered value
    *
-   * @functionTypes {<%= componentName %>SubmitTypes}
    */
   onSubmit: PropTypes.func,
 };
 
-export const <%= componentName %>InputTextTypes = {
-  argument: PropTypes.shape({
-    // changed text in the input control
-    enteredText: PropTypes.string,
-  }),
-};
-
-export const <%= componentName %>SubmitTypes = {
-  argument: PropTypes.shape({
-    // entered text into the input control
-    enteredText: PropTypes.string,
-  }),
-};
 `;
 
 const templateContentReadme = `

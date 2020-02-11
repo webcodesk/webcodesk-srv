@@ -57,7 +57,7 @@ function createFlowByEventTargets(event) {
           children: [],
         };
       } else if (type === constants.FRAMEWORK_ACTION_SEQUENCE_USER_FUNCTION_TYPE) {
-        const {functionName, functionKey, isUsingTargetState} = props;
+        const {functionName, functionKey} = props;
         let title;
         let searchName;
         const nameParts = functionName ? functionName.split(constants.MODEL_KEY_SEPARATOR) : [];
@@ -75,7 +75,6 @@ function createFlowByEventTargets(event) {
             title,
             searchName,
             functionName,
-            isUsingTargetState,
             inputs: [
               {
                 name: 'callFunction',

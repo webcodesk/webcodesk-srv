@@ -46,7 +46,6 @@ class FlowDebuggerManager {
   constructor (actionSequences) {
     this.graphModel = new GraphModel({globallyUniqueKeys: false});
     if (actionSequences) {
-      console.info('actionSequences: ', actionSequences);
        this.graphModel.initModel(flowDebuggerFactory.createFlowModelByActionSequences(actionSequences));
     }
   }

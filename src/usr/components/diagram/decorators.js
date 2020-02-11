@@ -227,34 +227,21 @@ class DiagramDecorator {
     decoratedNode
       .select('rect.node')
       .each(function (item) {
-        const { data: { type, props: { isSelected, isUsingTargetState } } } = item;
+        const { data: { type, props: { isSelected } } } = item;
         const selectThis = d3.select(this);
-        if (type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE) {
-          if (isUsingTargetState) {
-            selectThis
-              .classed(
-                'target-function',
-                true
-              );
-          } else {
-            selectThis
-              .classed(
-                'function',
-                true
-              );
-          }
-        } else {
-          selectThis
-            .classed(
-              'component',
-              type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
-            )
-            .classed(
-              'application',
-              type === constants.FLOW_APPLICATION_STARTER_TYPE
-            );
-        }
         selectThis
+          .classed(
+            'function',
+            type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
+          )
+          .classed(
+            'component',
+            type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+          )
+          .classed(
+            'application',
+            type === constants.FLOW_APPLICATION_STARTER_TYPE
+          )
           .classed(
             'inbasket',
             type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE ||
@@ -271,34 +258,22 @@ class DiagramDecorator {
     decoratedNode
       .select('path.header')
       .each(function (item) {
-        const { data: { type, props: { isSelected, isUsingTargetState } } } = item;
+        const { data: { type, props: { isSelected } } } = item;
         const selectThis = d3.select(this);
-        if (type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE) {
-          if (isUsingTargetState) {
-            selectThis
-              .classed(
-                'target-function',
-                true
-              );
-          } else {
-            selectThis
-              .classed(
-                'function',
-                true
-              );
-          }
-        } else {
-          selectThis
-            .classed(
-              'component',
-              type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
-            )
-            .classed(
-              'application',
-              type === constants.FLOW_APPLICATION_STARTER_TYPE
-            );
-        }
-        selectThis.classed('selected', isSelected);
+        selectThis
+          .classed(
+            'function',
+            type === constants.FLOW_USER_FUNCTION_TYPE || type === constants.FLOW_USER_FUNCTION_IN_BASKET_TYPE
+          )
+          .classed(
+            'component',
+            type === constants.FLOW_COMPONENT_INSTANCE_TYPE || type === constants.FLOW_COMPONENT_INSTANCE_IN_BASKET_TYPE
+          )
+          .classed(
+            'application',
+            type === constants.FLOW_APPLICATION_STARTER_TYPE
+          )
+          .classed('selected', isSelected);
       });
 
     // update header text

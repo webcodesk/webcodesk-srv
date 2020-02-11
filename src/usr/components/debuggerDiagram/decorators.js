@@ -347,20 +347,12 @@ export const decorateNodeUpdate = (node, nodeEnter) => {
   decoratedNode
     .select('rect.node_debug')
     .each(function(item) {
-      const { data:{ type, hasData, props: {isSelected, isUsingTargetState} } } = item;
+      const { data:{ type, hasData, props: {isSelected} } } = item;
       const selectThis = d3.select(this);
-      if (type === constants.FLOW_USER_FUNCTION_TYPE) {
-        if (isUsingTargetState) {
-          selectThis.classed('target-function', hasData);
-        } else {
-          selectThis.classed('function', hasData);
-        }
-      } else {
-        selectThis
-          .classed('component', type === constants.FLOW_COMPONENT_INSTANCE_TYPE && hasData)
-          .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE && hasData);
-      }
       selectThis
+        .classed('component', type === constants.FLOW_COMPONENT_INSTANCE_TYPE && hasData)
+        .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE && hasData)
+        .classed('function', type === constants.FLOW_USER_FUNCTION_TYPE && hasData)
         .classed('selected', isSelected)
         .classed('blank', !hasData);
     })
@@ -371,22 +363,12 @@ export const decorateNodeUpdate = (node, nodeEnter) => {
   decoratedNode
     .select('path.header_debug')
     .each(function(item) {
-      const { data:{ type, props: {isSelected, isUsingTargetState} } } = item;
+      const { data:{ type, props: {isSelected} } } = item;
       const selectThis = d3.select(this);
-      if (type === constants.FLOW_USER_FUNCTION_TYPE) {
-        if (isUsingTargetState) {
-          selectThis
-            .classed('target-function', true);
-        } else {
-          selectThis
-            .classed('function', true);
-        }
-      } else {
-        selectThis
-          .classed('component', type === constants.FLOW_COMPONENT_INSTANCE_TYPE)
-          .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE);
-      }
       selectThis
+        .classed('function', type === constants.FLOW_USER_FUNCTION_TYPE)
+        .classed('component', type === constants.FLOW_COMPONENT_INSTANCE_TYPE)
+        .classed('application', type === constants.FLOW_APPLICATION_STARTER_TYPE)
         .classed('selected', isSelected);
     });
 

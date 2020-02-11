@@ -775,11 +775,6 @@ class ResourcesTreeView extends React.Component {
                   <ResourceListItemIcon>
                     <ResourceIcon
                       resourceType={type}
-                      resourceSubtype={
-                        props.isUsingTargetState
-                          ? constants.GRAPH_MODEL_TARGET_FUNCTION_TYPE
-                          : ''
-                      }
                     />
                   </ResourceListItemIcon>
                 </div>
@@ -1183,8 +1178,48 @@ class ResourcesTreeView extends React.Component {
               </div>
             );
           }
+        } else if (type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE) {
+          list.push(
+            <ResourceListItem
+              key={elementKey}
+              dense={true}
+              component="div"
+              disableGutters={true}
+            >
+              <div className={classes.listItemContainer}>
+                <div className={classes.listItemPrefixSector}>
+                  <ResourceListItemExpandedIcon>
+                    <span>&nbsp;</span>
+                  </ResourceListItemExpandedIcon>
+                  <ResourceListItemIcon>
+                    <ResourceIcon
+                      resourceType={type}
+                    />
+                  </ResourceListItemIcon>
+                </div>
+                <div className={classes.listItemButtonWrapper}>
+                  <div className={classes.listItemTextContainerDraggable}>
+                    <DraggableWrapper
+                      onDragStart={this.handleItemDragStart}
+                      onDragEnd={this.handleItemDragEnd}
+                      key={elementKey}
+                      resourceKey={key}
+                    >
+                      <ResourceListItemText
+                        title="Drag & drop into the page or into the flow."
+                        primary={
+                          highlightedResourceKeys[key]
+                            ? <span className={classes.highlightedText}>{props.displayName}</span>
+                            : props.displayName
+                        }
+                      />
+                    </DraggableWrapper>
+                  </div>
+                </div>
+              </div>
+            </ResourceListItem>
+          );
         } else if (type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE) {
-          const isUsingTargetState = props.isUsingTargetState;
           list.push(
             <ResourceListItem
               key={elementKey}
@@ -1200,11 +1235,6 @@ class ResourcesTreeView extends React.Component {
                   <ResourceListItemIcon>
                     <ResourceIcon
                         resourceType={type}
-                        resourceSubtype={
-                          isUsingTargetState
-                            ? constants.GRAPH_MODEL_FLOW_TARGET_FUNCTION_TYPE
-                            : ''
-                        }
                     />
                   </ResourceListItemIcon>
                 </div>
@@ -1318,10 +1348,10 @@ class ResourcesTreeView extends React.Component {
     // sort roots in the custom order
     [
       { object: clipboardItems, count: clipboardItemsCount },
+      { object: userComponents, count: userComponentsCount },
       { object: templates, count: templatesCount },
       { object: pages, count: pagesCount },
       { object: flows, count: flowsCount },
-      { object: userComponents, count: userComponentsCount },
       { object: userFunctions, count: userFunctionsCount }
     ].forEach(resourceObject => {
       if (resourceObject.object) {
