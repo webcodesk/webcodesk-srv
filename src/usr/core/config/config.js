@@ -14,8 +14,9 @@
  *    limitations under the License.
  */
 
+import get from 'lodash/get';
 import path from 'path-browserify';
-import { default as fileUtils, repairPath } from '../utils/fileUtils';
+import { repairPath } from '../utils/fileUtils';
 import constants from '../../../commons/constants';
 import { invokeServer } from '../utils/serverUtils';
 
@@ -24,6 +25,7 @@ export let projectDirPath;
  * Project src directory
  */
 export let packageConfig;
+export let wcdAppMode;
 
 export let projectName;
 export let projectRootSourceDir;
@@ -128,6 +130,7 @@ export const initProjectPaths = async () => {
   projectSettings = validPaths.projectSettings;
 
   packageConfig = validPaths.packageConfig;
+  wcdAppMode = get(packageConfig, 'wcd.appMode', constants.APP_MODE_RELEASE);
 
   projectName = validPaths.projectName;
 

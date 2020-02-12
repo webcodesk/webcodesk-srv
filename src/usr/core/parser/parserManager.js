@@ -16,7 +16,7 @@
 
 import path from 'path-browserify';
 import { readDir } from 'usr/core/utils/dirUtils';
-import { repairPath, readFile } from 'usr/core/utils/fileUtils';
+import { repairPath, readFile, writeJson } from 'usr/core/utils/fileUtils';
 import { findFunctionDeclarations } from './functionsParser';
 import { findComponentDeclarations } from './componentsParser';
 import { findPropTypesDeclarations } from './propTypesParser';
@@ -31,6 +31,7 @@ import * as config from '../config/config';
 import constants  from '../../../commons/constants';
 import { isFile } from '../utils/fileUtils';
 import DeclarationsInFile from './DeclarationsInFile';
+import isString from 'lodash/isString';
 
 const validFileExtensions = {
   '.js': true, '.jsx': true, '.ts': true, '.tsx': true, '.json': true, '.md': true,
@@ -222,7 +223,7 @@ const parseFile = (filePath) => {
     .then(declarationsInFile => {
       return declarationsInFile;
     })
-    .catch(err => console.error(`Error parsing of the file ${filePath}: `, err));
+    .catch(err => console.error(`Error parsing file ${filePath}: `, err));
 };
 
 export const parseResource = async (resourcePath, resourceFileData = null) => {
@@ -265,4 +266,53 @@ export const parseMultipleResources = async (fileObjects) => {
     }
   }
   return declarationsInFiles;
+};
+
+export const parseResourceAndWrite = async (resourcePath) => {
+  const validResourcePath = repairPath(resourcePath);
+  let declarationsInFiles = null;
+  const isFileResource = await isFile(validResourcePath);
+  if (isFileResource) {
+    declarationsInFiles = await parseFile(validResourcePath);
+  } else {
+    declarationsInFiles = await parseDir(validResourcePath);
+  }
+  if (declarationsInFiles && declarationsInFiles.length > 0) {
+    const declarationsInFilesArray = [];
+    for (let i = 0; i < declarationsInFiles.length; i++) {
+      declarationsInFilesArray.push({
+        filePath: declarationsInFiles[i].filePath.replace(config.projectDirPath, 'DEMO'),
+        declarations: declarationsInFiles[i].declarations,
+        resourceType: declarationsInFiles[i].resourceType
+      });
+    }
+    await writeJson(repairPath(path.join(config.projectPublicDir, 'declarationsInFileArray.json')), declarationsInFilesArray);
+  }
+};
+
+export const readDirAndWrite = async (dirPath) => {
+  let foundFiles;
+  try {
+    foundFiles = await readDir(dirPath);
+  } catch (e) {
+    console.error(`Error reading directory ${dirPath}. `, e);
+  }
+  const resultFileObjects = [];
+  const parseFileTasks = [];
+  if (foundFiles && foundFiles.length > 0) {
+    foundFiles.forEach(foundFile => {
+      parseFileTasks.push(
+        readFile(repairPath(foundFile))
+          .then(fileData => {
+            resultFileObjects.push({
+              filePath: repairPath(foundFile).replace(config.projectDirPath, 'DEMO'),
+              fileData,
+            })
+          })
+          .catch(err => console.error(`Error reading file ${foundFile}: `, err))
+      );
+    });
+  }
+  await Promise.all(parseFileTasks);
+  await writeJson(repairPath(path.join(config.projectPublicDir, 'etcFiles.json')), resultFileObjects);
 };

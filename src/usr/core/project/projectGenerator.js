@@ -25,8 +25,8 @@ import * as settingsGeneratorManager from './generator/settingsGeneratorManager'
 
 async function generateSchema () {
   // generate schema index just for the sake it is missing
-  await schemaIndexGeneratorManager.generateSchemaIndex(config.appSchemaSourceDir); // development
-  await schemaIndexGeneratorManager.generateSchemaIndex(config.appSchemaProdSourceDir); // production
+  await schemaIndexGeneratorManager.generateSchemaIndex(config.appSchemaSourceDir, config.wcdAppMode); // development
+  await schemaIndexGeneratorManager.generateSchemaIndex(config.appSchemaProdSourceDir, config.wcdAppMode); // production
 
   // omit root keys
   const pagesStarterKey =

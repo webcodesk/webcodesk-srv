@@ -62,6 +62,8 @@ module.exports = {
   NODE_MODULES_DIR_NAME: 'node_modules',
   REACT_SCRIPTS_NAME: 'react-scripts',
   REACT_APP_FRAMEWORK: '@webcodesk/react-app-framework',
+  APP_MODE_RELEASE: 'release',
+  APP_MODE_DEMO: 'demo',
 
   RESOURCE_IN_COMPONENTS_TYPE: 'RESOURCE_IN_COMPONENTS_TYPE',
   RESOURCE_IN_USER_FUNCTIONS_TYPE: 'RESOURCE_IN_USER_FUNCTIONS_TYPE',

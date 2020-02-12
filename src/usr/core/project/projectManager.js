@@ -20,7 +20,7 @@ import * as config from '../config/config';
 import * as projectResourcesManager from './projectResourcesManager';
 import * as projectGenerator from './projectGenerator';
 import { invokeServer, sendAppWidowMessage } from '../utils/serverUtils';
-
+import constants  from '../../../commons/constants';
 import appWindowMessages from '../../../commons/appWindowMessages';
 import { getConsoleErrors } from '../../core/config/storage';
 import { repairPath } from '../utils/fileUtils';
@@ -82,6 +82,11 @@ export async function watchUsrSourceDir () {
   await readResource(config.usrSourceDir);
   // read the entire etc directory after a while
   await readResource(config.etcSourceDir);
+  //
+  if (config.wcdAppMode === constants.APP_MODE_DEMO) {
+    await parserManager.parseResourceAndWrite(config.usrSourceDir);
+    await parserManager.readDirAndWrite(config.etcSourceDir);
+  }
 }
 
 export async function readResource (resourcePath) {

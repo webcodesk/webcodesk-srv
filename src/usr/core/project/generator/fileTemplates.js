@@ -37,6 +37,7 @@ export default {
   <%= flowsFileName %>,
   <%= pagesFileName %>,
   <%= routerFileName %>,
+  appMode: '<%= appMode %>', 
 };
 `;
 

@@ -19,12 +19,13 @@ import { repairPath, writeFileWhenDifferent } from '../../utils/fileUtils';
 import constants from '../../../../commons/constants';
 import { getSchemaIndexFileText } from './fileTemplates';
 
-export async function generateSchemaIndex(destDir) {
+export async function generateSchemaIndex(destDir, appMode) {
   const indexFilePath = repairPath(path.join(destDir, 'index.js'));
   const indexFileText = getSchemaIndexFileText({
     flowsFileName: constants.FILE_NAME_FLOWS,
     pagesFileName: constants.FILE_NAME_PAGES,
-    routerFileName: constants.FILE_NAME_ROUTER
+    routerFileName: constants.FILE_NAME_ROUTER,
+    appMode
   });
   return writeFileWhenDifferent(indexFilePath, indexFileText)
     .catch(error => {
