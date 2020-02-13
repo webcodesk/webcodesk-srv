@@ -281,12 +281,15 @@ export const parseResourceAndWrite = async (resourcePath) => {
     const declarationsInFilesArray = [];
     for (let i = 0; i < declarationsInFiles.length; i++) {
       declarationsInFilesArray.push({
-        filePath: declarationsInFiles[i].filePath.replace(config.projectDirPath, 'DEMO'),
+        filePath: declarationsInFiles[i].filePath.replace(config.projectDirPath, constants.APP_DEMO_PROJECT_ROOT),
         declarations: declarationsInFiles[i].declarations,
         resourceType: declarationsInFiles[i].resourceType
       });
     }
-    await writeJson(repairPath(path.join(config.projectPublicDir, 'declarationsInFileArray.json')), declarationsInFilesArray);
+    await writeJson(
+      repairPath(path.join(config.projectPublicDir, constants.APP_DEMO_DECLARATION_BUNDLE_NAME)),
+      declarationsInFilesArray
+    );
   }
 };
 
@@ -305,7 +308,7 @@ export const readDirAndWrite = async (dirPath) => {
         readFile(repairPath(foundFile))
           .then(fileData => {
             resultFileObjects.push({
-              filePath: repairPath(foundFile).replace(config.projectDirPath, 'DEMO'),
+              filePath: repairPath(foundFile).replace(config.projectDirPath, constants.APP_DEMO_PROJECT_ROOT),
               fileData,
             })
           })
@@ -314,5 +317,8 @@ export const readDirAndWrite = async (dirPath) => {
     });
   }
   await Promise.all(parseFileTasks);
-  await writeJson(repairPath(path.join(config.projectPublicDir, 'etcFiles.json')), resultFileObjects);
+  await writeJson(
+    repairPath(path.join(config.projectPublicDir, constants.APP_DEMO_ETC_BUNDLE_NAME)),
+    resultFileObjects
+  );
 };

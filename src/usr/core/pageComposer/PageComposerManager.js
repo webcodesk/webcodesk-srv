@@ -47,12 +47,15 @@ class PageComposerManager {
       && nodeModel.props
       && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
     ) {
-      const { props } = nodeModel;
+      const { key, props } = nodeModel;
+      const extractedModel = this.graphModel.extractModel(key, true);
       if (props) {
         result.push({
           componentName: props.componentName,
           componentInstance: props.componentInstance,
+          properties: extractedModel.children,
         });
+        extractedModel.children = undefined;
       }
     }
     return result;

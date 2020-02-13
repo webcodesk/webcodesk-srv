@@ -129,7 +129,7 @@ export function createPageModels(modelKey, declarationsInFile) {
     let componentInstanceModel;
     if (componentInstances && componentInstances.length > 0) {
       componentInstances.forEach((componentInstanceItem, instanceIndex) => {
-        const { componentName, componentInstance } = componentInstanceItem;
+        const { componentName, componentInstance, properties } = componentInstanceItem;
         componentInstanceModel = {
           key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${instanceIndex}`,
           type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,
@@ -139,6 +139,7 @@ export function createPageModels(modelKey, declarationsInFile) {
             displayName: componentInstance,
             componentName: componentName,
             componentInstance: componentInstance,
+            properties: cloneDeep(properties),
             pageName,
             pagePath,
             isTest,
