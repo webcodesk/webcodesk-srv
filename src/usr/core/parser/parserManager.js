@@ -31,7 +31,6 @@ import * as config from '../config/config';
 import constants  from '../../../commons/constants';
 import { isFile } from '../utils/fileUtils';
 import DeclarationsInFile from './DeclarationsInFile';
-import isString from 'lodash/isString';
 
 const validFileExtensions = {
   '.js': true, '.jsx': true, '.ts': true, '.tsx': true, '.json': true, '.md': true,
