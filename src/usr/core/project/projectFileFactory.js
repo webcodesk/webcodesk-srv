@@ -233,13 +233,10 @@ export function createBackupFileObjects (resource) {
         const stateIndexFileResource = projectResourcesManager.getResourceByKey(stateIndexParentKeys[0]);
         fileObjects.push({
           filePath: stateIndexFileResource.absolutePath,
-          fileData: JSON.stringify({
-            componentInstancesState: stateIndexResource.componentInstancesState || {}
-          })
+          fileData: JSON.stringify(stateIndexResource.componentInstancesState || {})
         });
       }
     }
-
   } else if (resource.isFlow) {
     const parentResource = projectResourcesManager.getResourceByKey(resource.parentKey);
     fileObjects.push({

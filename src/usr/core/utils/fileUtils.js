@@ -14,6 +14,8 @@
  *    limitations under the License.
  */
 
+import isArray from 'lodash/isArray';
+import isObject from 'lodash/isObject';
 import { invokeServer } from './serverUtils';
 import constants from '../../../commons/constants';
 
@@ -127,4 +129,24 @@ export function repairPath (filePath) {
     return newFilePath.substr(1);
   }
   return filePath;
+}
+
+export function excludeFields(obj2, fields) {
+  let obj1 = null;
+  if (isArray(obj2)) {
+    obj1 = [];
+    for (let i = 0; i < obj2.length; i++) {
+      obj1.push(excludeFields(obj2[i], fields));
+    }
+  } else if (isObject(obj2)) {
+    obj1 = {};
+    for (let item in obj2) {
+      if (obj2.hasOwnProperty(item) && !fields[item]) {
+        obj1[item] = excludeFields(obj2[item], fields);
+      }
+    }
+  } else {
+    obj1 = obj2;
+  }
+  return obj1;
 }

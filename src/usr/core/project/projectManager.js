@@ -24,6 +24,7 @@ import constants  from '../../../commons/constants';
 import appWindowMessages from '../../../commons/appWindowMessages';
 import { getConsoleErrors } from '../../core/config/storage';
 import { repairPath } from '../utils/fileUtils';
+import { excludeFields } from '../utils/fileUtils';
 
 export async function testProjectConfiguration () {
    return config.checkProjectPaths();
@@ -168,6 +169,21 @@ export async function writeEtcFile (filePath, fileData) {
     || validResourcePath.indexOf(config.etcTemplatesSourceDir) === 0
     || validResourcePath.indexOf(config.etcSettingsSourceDir) === 0
     || validResourcePath.indexOf(config.etcStateSourceDir) === 0) {
+    if (
+      validResourcePath.indexOf(config.etcPagesSourceDir) === 0
+      || validResourcePath.indexOf(config.etcTemplatesSourceDir) === 0
+    ) {
+      // reduce the JSON in files
+      try {
+        fileData = JSON.stringify(excludeFields(JSON.parse(fileData), {
+          defaultChildren: true,
+          propertyComment: true,
+          propertyValueVariants: true,
+        }));
+      } catch (e) {
+        // what?
+      }
+    }
     await fileUtils.ensureFilePath(validResourcePath);
     await fileUtils.writeFile(validResourcePath, fileData);
   } else {
