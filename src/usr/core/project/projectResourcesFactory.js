@@ -38,19 +38,19 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
   declarationsInFile.declarations.forEach(functionDeclaration => {
     const { functionName, dispatches, wcdAnnotations } = functionDeclaration;
     const canonicalFunctionName = makeResourceModelCanonicalKey(modelKey, functionName);
-    let sortedDispatches = [];
-    if (dispatches && dispatches.length > 0) {
-      sortedDispatches = dispatches.sort((a, b) => a.name.localeCompare(b.name));
-    }
-    sortedDispatches.push({
-      name: constants.FUNCTION_OUTPUT_ERROR_NAME,
-      wcdAnnotations: {
-        [constants.ANNOTATION_COMMENT]:
-        'A dispatch is added automatically to each function. ' +
-        'The dispatch is triggered when an error is not caught in the function body. ' +
-        'The output payload has the Error type.'
-      }
-    });
+    // let sortedDispatches = [];
+    // if (dispatches && dispatches.length > 0) {
+    //   sortedDispatches = dispatches.sort((a, b) => a.name.localeCompare(b.name));
+    // }
+    // sortedDispatches.push({
+    //   name: constants.FUNCTION_OUTPUT_ERROR_NAME,
+    //   wcdAnnotations: {
+    //     [constants.ANNOTATION_COMMENT]:
+    //     'A dispatch is added automatically to each function. ' +
+    //     'The dispatch is triggered when an error is not caught in the function body. ' +
+    //     'The output payload has the Error type.'
+    //   }
+    // });
     functionsModel.children.push({
       key: canonicalFunctionName,
       type: constants.GRAPH_MODEL_USER_FUNCTION_TYPE,
@@ -61,7 +61,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         functionName: canonicalFunctionName,
         functionComment: wcdAnnotations[constants.ANNOTATION_COMMENT],
         parentFunctionsKey: modelKey,
-        dispatches: sortedDispatches,
+        dispatches: dispatches,
       }
     });
   });
