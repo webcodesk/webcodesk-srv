@@ -292,7 +292,7 @@ export function createSettingsModels (modelKey, declarationsInFile) {
       type: constants.GRAPH_MODEL_SETTINGS_TYPE,
       props: {
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
-        settingsProperties: cloneDeep(model),
+        settingsProperties: model,
       }
     });
   });
