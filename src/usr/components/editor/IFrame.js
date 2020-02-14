@@ -42,6 +42,7 @@ const webViewStyle = {
   width: '100%',
   backgroundColor: '#ffffff',
   border: 0,
+  zIndex: 0,
 };
 
 class IFrame extends React.Component {

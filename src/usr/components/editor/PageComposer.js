@@ -920,17 +920,6 @@ class PageComposer extends React.Component {
                   resizerStyle={{ display: showPropertyEditor ? 'block' : 'none' }}
                 >
                   <div className={classes.root}>
-                    {showPanelCover && (
-                      <div className={classes.root} style={{ zIndex: 10 }}/>
-                    )}
-                    {showIframeDropPanelCover && (
-                      <div
-                        className={classes.root}
-                        style={{ zIndex: 10 }}
-                        onDragOver={this.handleDragOver}
-                        onDragLeave={this.handleDragLeave}
-                      />
-                    )}
                     {serverPort > 0 && (
                       <IFrame
                         ref={this.iFrameRef}
@@ -942,6 +931,17 @@ class PageComposer extends React.Component {
                         }
                         onIFrameReady={this.handleIFrameReady}
                         onIFrameMessage={this.handleIFrameMessage}
+                      />
+                    )}
+                    {showPanelCover && (
+                      <div className={classes.root} style={{ zIndex: 10 }}/>
+                    )}
+                    {showIframeDropPanelCover && (
+                      <div
+                        className={classes.root}
+                        style={{ zIndex: 10 }}
+                        onDragOver={this.handleDragOver}
+                        onDragLeave={this.handleDragLeave}
                       />
                     )}
                   </div>
@@ -979,17 +979,6 @@ class PageComposer extends React.Component {
                   resizerStyle={{ display: showTreeView ? 'block' : 'none' }}
                 >
                   <div className={classes.root}>
-                    {showPanelCover && (
-                      <div className={classes.root} style={{ zIndex: 10 }}/>
-                    )}
-                    {showIframeDropPanelCover && (
-                      <div
-                        className={classes.root}
-                        style={{ zIndex: 10 }}
-                        onDragOver={this.handleDragOver}
-                        onDragLeave={this.handleDragLeave}
-                      />
-                    )}
                     {serverPort > 0 && (
                       <IFrame
                         ref={this.iFrameRef}
@@ -1001,6 +990,17 @@ class PageComposer extends React.Component {
                         }
                         onIFrameReady={this.handleIFrameReady}
                         onIFrameMessage={this.handleIFrameMessage}
+                      />
+                    )}
+                    {showPanelCover && (
+                      <div className={classes.root} style={{ zIndex: 10 }}/>
+                    )}
+                    {showIframeDropPanelCover && (
+                      <div
+                        className={classes.root}
+                        style={{ zIndex: 10 }}
+                        onDragOver={this.handleDragOver}
+                        onDragLeave={this.handleDragLeave}
                       />
                     )}
                   </div>

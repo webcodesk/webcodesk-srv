@@ -678,6 +678,11 @@ class TemplateComposer extends React.Component {
     this.debouncedSendMessage({ x: e.pageX, y: e.pageY });
   };
 
+  handleDragLeave = (e) => {
+    e.preventDefault();
+    this.debouncedSendMessage();
+  };
+
   handleTogglePreviewMode = (e) => {
     if (e) {
       e.stopPropagation();
@@ -901,16 +906,6 @@ class TemplateComposer extends React.Component {
                   resizerStyle={{ display: showPropertyEditor ? 'block' : 'none' }}
                 >
                   <div className={classes.root}>
-                    {showPanelCover && (
-                      <div className={classes.root} style={{ zIndex: 10 }}/>
-                    )}
-                    {showIframeDropPanelCover && (
-                      <div
-                        className={classes.root}
-                        style={{ zIndex: 10 }}
-                        onDragOver={this.handleDragOver}
-                      />
-                    )}
                     {serverPort > 0 && (
                       <IFrame
                         ref={this.iFrameRef}
@@ -922,6 +917,17 @@ class TemplateComposer extends React.Component {
                         }
                         onIFrameReady={this.handleIFrameReady}
                         onIFrameMessage={this.handleIFrameMessage}
+                      />
+                    )}
+                    {showPanelCover && (
+                      <div className={classes.root} style={{ zIndex: 10 }}/>
+                    )}
+                    {showIframeDropPanelCover && (
+                      <div
+                        className={classes.root}
+                        style={{ zIndex: 10 }}
+                        onDragOver={this.handleDragOver}
+                        onDragLeave={this.handleDragLeave}
                       />
                     )}
                   </div>
@@ -960,16 +966,6 @@ class TemplateComposer extends React.Component {
                   resizerStyle={{ display: showTreeView ? 'block' : 'none' }}
                 >
                   <div className={classes.root}>
-                    {showPanelCover && (
-                      <div className={classes.root} style={{ zIndex: 10 }}/>
-                    )}
-                    {showIframeDropPanelCover && (
-                      <div
-                        className={classes.root}
-                        style={{ zIndex: 10 }}
-                        onDragOver={this.handleDragOver}
-                      />
-                    )}
                     {serverPort > 0 && (
                       <IFrame
                         ref={this.iFrameRef}
@@ -981,6 +977,17 @@ class TemplateComposer extends React.Component {
                         }
                         onIFrameReady={this.handleIFrameReady}
                         onIFrameMessage={this.handleIFrameMessage}
+                      />
+                    )}
+                    {showPanelCover && (
+                      <div className={classes.root} style={{ zIndex: 10 }}/>
+                    )}
+                    {showIframeDropPanelCover && (
+                      <div
+                        className={classes.root}
+                        style={{ zIndex: 10 }}
+                        onDragOver={this.handleDragOver}
+                        onDragLeave={this.handleDragLeave}
                       />
                     )}
                   </div>
