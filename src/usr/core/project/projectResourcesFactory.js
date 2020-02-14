@@ -61,7 +61,7 @@ export function createFunctionsModels (modelKey, declarationsInFile, displayName
         functionName: canonicalFunctionName,
         functionComment: wcdAnnotations[constants.ANNOTATION_COMMENT],
         parentFunctionsKey: modelKey,
-        dispatches: cloneDeep(sortedDispatches),
+        dispatches: sortedDispatches,
       }
     });
   });
@@ -82,8 +82,8 @@ export function createComponentsModels (modelKey, declarationsInFile) {
         name: componentName,
         displayName: componentName,
         componentName: canonicalComponentName,
-        properties: cloneDeep(properties),
-        defaultProps: cloneDeep(defaultProps),
+        properties: properties,
+        defaultProps: defaultProps,
         externalProperties: externalProperties,
         componentComment: wcdAnnotations[constants.ANNOTATION_COMMENT],
       }
@@ -104,7 +104,7 @@ export function createPropTypesModels (modelKey, declarationsInFile) {
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
         name,
         displayName: name,
-        properties: cloneDeep(properties),
+        properties: properties,
       }
     });
   });
