@@ -40,13 +40,9 @@ let stateGraphModel = globalStore.get('stateGraphModel');
 
 const CLIPBOARD_ITEM_LIST_SIZE_LIMIT = 5;
 
-export let projectDisplayName;
 let resourcesUpdateHistory;
 
 export function initNewResourcesTrees () {
-  // get the directory name as a project name
-  const pathParts = config.projectDirPath.split(constants.FILE_SEPARATOR);
-  projectDisplayName = pathParts[pathParts.length - 1];
   // initialize new graph objects
   pagesGraphModel = new GraphModel();
   pagesGraphModel.initModel({
@@ -208,6 +204,10 @@ export function getResourceByKey (resourceKey, specificResourceType = null) {
   return projectResourcesUtils.getResource(resourceKey, specificResourceType);
 }
 
+export function getUserFunctionsNavigationTree (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE, startKey);
+}
+
 export function getUserFunctionsTree (startKey = null) {
   return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE, startKey);
 }
@@ -257,6 +257,10 @@ export function getUserFunctionsTreeProd (startKey = null) {
 
 export function getUserFunctionsCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_USER_FUNCTIONS_TYPE);
+}
+
+export function getUserComponentsNavigationTree (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_COMPONENTS_TYPE, startKey);
 }
 
 export function getUserComponentsTree (startKey = null) {
@@ -310,8 +314,28 @@ export function getUserComponentsCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_COMPONENTS_TYPE);
 }
 
+export function getPagesNavigationTree (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_PAGES_TYPE, startKey, (model) => {
+    if (model && model.props) {
+      if (model.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
+        delete model.props.componentsTreeBranch;
+      } else if (model.type === constants.GRAPH_MODEL_PAGE_TYPE) {
+        delete model.props.componentsTree;
+      }
+    }
+    // this is an unknown resource model or does not fit
+    return false;
+  });
+}
+
 export function getPagesTree (startKey = null) {
-  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_PAGES_TYPE, startKey);
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_PAGES_TYPE, startKey, (model) => {
+    if (model && model.props && model.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
+      delete model.props.componentsTreeBranch;
+    }
+    // this is an unknown resource model or does not fit
+    return false;
+  });
 }
 
 export function getPagesTreeProd (startKey = null) {
@@ -319,6 +343,9 @@ export function getPagesTreeProd (startKey = null) {
     if (model && model.props && model.props.isTest) {
       // exclude the resource with isTest in the properties
       return true;
+    }
+    if (model && model.props && model.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
+      delete model.props.componentsTreeBranch;
     }
     return false;
   });
@@ -328,16 +355,51 @@ export function getPagesCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_PAGES_TYPE);
 }
 
-export function getTemplatesTree (startKey = null) {
-  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_TEMPLATES_TYPE, startKey);
+export function getTemplatesNavigationTree (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_TEMPLATES_TYPE, startKey, (model) => {
+    if (model.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
+      delete model.props.componentsTreeBranch;
+    } else if (model.type === constants.GRAPH_MODEL_TEMPLATE_TYPE) {
+      delete model.props.componentsTree;
+    }
+    // this is an unknown resource model or does not fit
+    return false;
+  });
 }
 
 export function getTemplatesCount () {
   return projectResourcesUtils.getResourceTreeItemCount(constants.RESOURCE_IN_TEMPLATES_TYPE);
 }
 
+export function getFlowsNavigationTree (startKey = null) {
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_FLOWS_TYPE, startKey, (model) => {
+    if (
+      model && model.props
+    ) {
+      if (model.type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE || model.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE) {
+        delete model.props.inputs;
+        delete model.props.outputs;
+      } else if (model.type === constants.GRAPH_MODEL_FLOW_TYPE) {
+        delete model.props.flowTree;
+      }
+    }
+    // this is an unknown resource model or does not fit
+    return false;
+  });
+}
+
 export function getFlowsTree (startKey = null) {
-  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_FLOWS_TYPE, startKey);
+  return projectResourcesUtils.getResourceTree(constants.RESOURCE_IN_FLOWS_TYPE, startKey, (model) => {
+    if (
+      model && model.props &&
+      (model.type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE || model.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE)
+    ) {
+      delete model.props.inputs;
+      delete model.props.outputs;
+    }
+    // this is an unknown resource model or does not fit
+    return false;
+  });
 }
 
 export function getFlowsTreeProd (startKey = null) {
@@ -345,6 +407,13 @@ export function getFlowsTreeProd (startKey = null) {
     if (model && model.props && model.props.isTest) {
       // exclude the resource with isTest in the properties
       return true;
+    }
+    if (
+      model && model.props &&
+      (model.type === constants.GRAPH_MODEL_FLOW_COMPONENT_INSTANCE_TYPE || model.type === constants.GRAPH_MODEL_FLOW_USER_FUNCTION_TYPE)
+    ) {
+      delete model.props.inputs;
+      delete model.props.outputs;
     }
     return false;
   });

@@ -70,8 +70,8 @@ export function createFlowModelForComponent(resourceObject, inBasket) {
       name: 'props',
     }];
     flowModel.props.outputs = [];
-    if (resourceObject.properties && resourceObject.properties.length > 0) {
-      resourceObject.properties.forEach(property => {
+    if (resourceObject.instanceProperties && resourceObject.instanceProperties.length > 0) {
+      resourceObject.instanceProperties.forEach(property => {
         const {type, props} = property;
         // const propertyRef = resourceObject.propertiesRefMap[props.propertyName];
         if (type === constants.COMPONENT_PROPERTY_FUNCTION_TYPE) {

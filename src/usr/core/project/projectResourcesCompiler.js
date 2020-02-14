@@ -96,6 +96,12 @@ const pagesResourceVisitor = ({compiler, pagesGraphModel}) => ({ nodeModel, pare
         errorsCount,
         changesCount,
       });
+    } else if (
+      nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE
+      && nodeModel.props.componentsTreeBranch
+    ) {
+      compiler.resetCounters();
+      nodeModel.props.componentsTreeBranch = compiler.compile(nodeModel.props.componentsTreeBranch);
     }
   }
   return result;
@@ -128,6 +134,12 @@ const templatesResourceVisitor = ({compiler, templatesGraphModel}) => ({ nodeMod
       errorsCount,
       changesCount,
     });
+  } else if (
+    nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE
+    && nodeModel.props.componentsTreeBranch
+  ) {
+    compiler.resetCounters();
+    nodeModel.props.componentsTreeBranch = compiler.compile(nodeModel.props.componentsTreeBranch);
   }
   return result;
 };
@@ -136,6 +148,8 @@ const pagesResourceVisitorWithReducer = ({reducer}) => ({ nodeModel, parentModel
   if (nodeModel && nodeModel.props) {
     if (nodeModel.type === constants.GRAPH_MODEL_PAGE_TYPE && nodeModel.props.componentsTree) {
       nodeModel.props.componentsTree = reducer.reduce(nodeModel.props.componentsTree);
+    } else if (nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE && nodeModel.props.componentsTreeBranch) {
+      nodeModel.props.componentsTreeBranch = reducer.reduce(nodeModel.props.componentsTreeBranch);
     }
   }
 };
@@ -144,6 +158,8 @@ const templatesResourceVisitorWithReducer = ({reducer}) => ({ nodeModel, parentM
   if (nodeModel && nodeModel.props) {
     if (nodeModel.type === constants.GRAPH_MODEL_TEMPLATE_TYPE && nodeModel.props.componentsTree) {
       nodeModel.props.componentsTree = reducer.reduce(nodeModel.props.componentsTree);
+    } else if (nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE && nodeModel.props.componentsTreeBranch) {
+      nodeModel.props.componentsTreeBranch = reducer.reduce(nodeModel.props.componentsTreeBranch);
     }
   }
 };

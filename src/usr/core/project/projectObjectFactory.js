@@ -23,35 +23,35 @@ export function createResourcesTreeViewObject() {
   const userFunctionsRoot = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_USER_FUNCTIONS_ROOT_KEY);
 
   const userFunctions = {...userFunctionsRoot.model};
-  const userFunctionsBranch = projectResourcesManager.getUserFunctionsTree(constants.GRAPH_MODEL_DIR_USR_KEY);
+  const userFunctionsBranch = projectResourcesManager.getUserFunctionsNavigationTree(constants.GRAPH_MODEL_DIR_USR_KEY);
   if (userFunctionsBranch && userFunctionsBranch.children) {
     userFunctions.children = userFunctionsBranch.children;
   }
   // UserComponents tree starts from "usr" directory we may omit that key on the tree view
   const userComponentsRoot = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_COMPONENTS_ROOT_KEY);
   const userComponents = {...userComponentsRoot.model};
-  const userComponentsBranch = projectResourcesManager.getUserComponentsTree(constants.GRAPH_MODEL_DIR_USR_KEY);
+  const userComponentsBranch = projectResourcesManager.getUserComponentsNavigationTree(constants.GRAPH_MODEL_DIR_USR_KEY);
   if (userComponentsBranch && userComponentsBranch.children) {
     userComponents.children = userComponentsBranch.children;
   }
   // Pages tree starts from "etc/pages" directory we may omit that key on the tree view
   const pagesRoot = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_PAGES_ROOT_KEY);
   const pages = {...pagesRoot.model};
-  const pagesBranch = projectResourcesManager.getPagesTree(constants.GRAPH_MODEL_DIR_ETC_PAGES_KEY);
+  const pagesBranch = projectResourcesManager.getPagesNavigationTree(constants.GRAPH_MODEL_DIR_ETC_PAGES_KEY);
   if (pagesBranch && pagesBranch.children) {
     pages.children = pagesBranch.children;
   }
   // Templates tree starts from "etc/templates" directory we may omit that key on the tree view
   const templatesRoot = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_TEMPLATES_ROOT_KEY);
   const templates = {...templatesRoot.model};
-  const templatesBranch = projectResourcesManager.getTemplatesTree(constants.GRAPH_MODEL_DIR_ETC_TEMPLATES_KEY);
+  const templatesBranch = projectResourcesManager.getTemplatesNavigationTree(constants.GRAPH_MODEL_DIR_ETC_TEMPLATES_KEY);
   if (templatesBranch && templatesBranch.children) {
     templates.children = templatesBranch.children;
   }
   // Flows tree starts from "etc/flows" directory
   const flowsRoot = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_FLOWS_ROOT_KEY);
   const flows = {...flowsRoot.model};
-  const flowsBranch = projectResourcesManager.getFlowsTree(constants.GRAPH_MODEL_DIR_ETC_FLOWS_KEY);
+  const flowsBranch = projectResourcesManager.getFlowsNavigationTree(constants.GRAPH_MODEL_DIR_ETC_FLOWS_KEY);
   if (flowsBranch && flowsBranch.children) {
     flows.children = flowsBranch.children;
   }

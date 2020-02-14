@@ -36,7 +36,7 @@ export function createPageComponentModel(resourceObject, targetPropertyName) {
         componentInstance: resourceObject.componentInstance,
         propertyName: targetPropertyName,
       },
-      children: cloneDeep(resourceObject.properties),
+      children: cloneDeep(resourceObject.instanceProperties),
     };
   } else if (resourceObject.isTemplate) {
     const newPageComponentModel = cloneDeep(resourceObject.componentsTree);

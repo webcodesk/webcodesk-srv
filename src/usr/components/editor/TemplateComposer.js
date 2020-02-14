@@ -173,10 +173,12 @@ class TemplateComposer extends React.Component {
     const { data } = this.props;
     if (iFrameReadyCounter > 0 && iFrameReadyCounter !== prevState.iFrameReadyCounter) {
       // send message to iframe only when it is ready
-      this.updateLocalState(false);
-      if (this.iFrameRef.current) {
-        this.iFrameRef.current.setFocus();
-      }
+      setTimeout(() => {
+        this.updateLocalState(false);
+        if (this.iFrameRef.current) {
+          this.iFrameRef.current.setFocus();
+        }
+      }, 500);
     } else if (data !== prevProps.data && sendUpdateCounter === 0) {
       const componentsTree = data ? data.componentsTree : {};
       if (

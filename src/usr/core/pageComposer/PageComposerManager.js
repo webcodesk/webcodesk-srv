@@ -53,9 +53,8 @@ class PageComposerManager {
         result.push({
           componentName: props.componentName,
           componentInstance: props.componentInstance,
-          properties: extractedModel.children,
+          componentsTreeBranch: extractedModel,
         });
-        extractedModel.children = undefined;
       }
     }
     return result;

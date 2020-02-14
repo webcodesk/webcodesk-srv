@@ -51,8 +51,8 @@ class PageModelReducer {
           }
           if (!isUndefined(defaultValue)) {
             if (type === constants.COMPONENT_PROPERTY_ANY_TYPE
-              || constants.COMPONENT_PROPERTY_ARRAY_TYPE
-              || constants.COMPONENT_PROPERTY_OBJECT_TYPE) {
+              || type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
+              || type === constants.COMPONENT_PROPERTY_OBJECT_TYPE) {
               property.props.propertyValue = cloneDeep(defaultValue);
             } else {
               property.props.propertyValue = defaultValue;

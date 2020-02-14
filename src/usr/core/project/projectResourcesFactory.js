@@ -19,6 +19,8 @@ import uniqueId from 'lodash/uniqueId';
 import constants from '../../../commons/constants';
 import { getParticleName } from '../utils/textUtils';
 import { makeResourceModelCanonicalKey } from '../utils/resourceUtils';
+import PageComposerManager from '../pageComposer/PageComposerManager';
+import FlowComposerManager from '../flowComposer/FlowComposerManager';
 
 export function createFunctionsModels (modelKey, declarationsInFile, displayName) {
   const result = [];
@@ -112,7 +114,7 @@ export function createPropTypesModels (modelKey, declarationsInFile) {
 export function createPageModels(modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(pageDeclaration => {
-    const { pageName, pagePath, componentsTree, isTest, componentInstances } = pageDeclaration;
+    const { pageName, pagePath, componentsTree, isTest } = pageDeclaration;
     const pageModel = {
       key: pagePath, // set page path as a key in order to find the resource from any place
       type: constants.GRAPH_MODEL_PAGE_TYPE,
@@ -122,14 +124,16 @@ export function createPageModels(modelKey, declarationsInFile) {
         pagePath,
         isTest,
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
-        componentsTree: cloneDeep(componentsTree),
+        componentsTree: componentsTree,
       },
       children: [],
     };
+    const pageComposerManager = new PageComposerManager(componentsTree);
+    const componentInstances = pageComposerManager.getInstancesListUniq();
     let componentInstanceModel;
     if (componentInstances && componentInstances.length > 0) {
       componentInstances.forEach((componentInstanceItem, instanceIndex) => {
-        const { componentName, componentInstance, properties } = componentInstanceItem;
+        const { componentName, componentInstance, componentsTreeBranch } = componentInstanceItem;
         componentInstanceModel = {
           key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${instanceIndex}`,
           type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,
@@ -139,7 +143,7 @@ export function createPageModels(modelKey, declarationsInFile) {
             displayName: componentInstance,
             componentName: componentName,
             componentInstance: componentInstance,
-            properties: cloneDeep(properties),
+            componentsTreeBranch: componentsTreeBranch,
             pageName,
             pagePath,
             isTest,
@@ -164,7 +168,7 @@ export function createTemplateModels(modelKey, declarationsInFile) {
         displayName: templateName,
         templateName,
         resourceType: declarationsInFile.resourceType,
-        componentsTree: cloneDeep(componentsTree),
+        componentsTree: componentsTree,
       },
       children: [],
     };
@@ -176,7 +180,7 @@ export function createTemplateModels(modelKey, declarationsInFile) {
 export function createFlowModels(modelKey, declarationsInFile) {
   const result = [];
   declarationsInFile.declarations.forEach(declaration => {
-    const { flowName, model, isDisabled, isTest, flowParticles } = declaration;
+    const { flowName, model, isDisabled, isTest } = declaration;
     const flowModel = {
       key: modelKey,
       type: constants.GRAPH_MODEL_FLOW_TYPE,
@@ -186,10 +190,12 @@ export function createFlowModels(modelKey, declarationsInFile) {
         isDisabled,
         isTest,
         displayName: flowName,
-        flowTree: cloneDeep(model),
+        flowTree: model,
       },
       children: [],
     };
+    const flowComposerManager = new FlowComposerManager(model);
+    const flowParticles = flowComposerManager.getFlowParticles();
     if (flowParticles && flowParticles.length > 0) {
       let particleModel;
       let particleDisplayName;
@@ -213,8 +219,8 @@ export function createFlowModels(modelKey, declarationsInFile) {
               isTest,
               displayName: particleDisplayName,
               functionName: functionName,
-              inputs: cloneDeep(inputs),
-              outputs: cloneDeep(outputs),
+              inputs: inputs,
+              outputs: outputs,
             }
           };
           flowModel.children.push(particleModel);
@@ -229,8 +235,8 @@ export function createFlowModels(modelKey, declarationsInFile) {
               componentName: componentName,
               componentInstance: componentInstance,
               isTest,
-              inputs: cloneDeep(inputs),
-              outputs: cloneDeep(outputs),
+              inputs: inputs,
+              outputs: outputs,
             }
           };
           flowModel.children.push(particleModel);
@@ -269,8 +275,8 @@ export function createSettingsConfigModels (modelKey, declarationsInFile) {
       type: constants.GRAPH_MODEL_SETTINGS_CONF_TYPE,
       props: {
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
-        settingsConfProperties: cloneDeep(properties),
-        defaultProps: cloneDeep(defaultProps),
+        settingsConfProperties: properties,
+        defaultProps: defaultProps,
       }
     });
   });
@@ -302,7 +308,7 @@ export function createStateModels (modelKey, declarationsInFile) {
       type: constants.GRAPH_MODEL_STATE_TYPE,
       props: {
         resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
-        componentInstancesState: cloneDeep(componentInstancesState),
+        componentInstancesState: componentInstancesState,
       }
     });
   });

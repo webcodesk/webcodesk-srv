@@ -155,7 +155,9 @@ class ComponentView extends React.Component {
       }
     }
     if (iFrameReadyCounter > 0 && iFrameReadyCounter !== prevState.iFrameReadyCounter) {
-      this.updateLocalState();
+      setTimeout(() => {
+        this.updateLocalState();
+      }, 500);
     } else if (data && data !== prevProps.data) {
       if (sourceCodeUpdateCounter === 0) {
         data.sourceCode.then(sourceCodeData => {

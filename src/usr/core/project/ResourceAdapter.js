@@ -415,14 +415,14 @@ class ResourceAdapter {
             return undefined;
           }
         },
-        // 'componentsTreeChunk': {
-        //   get: function () {
-        //     if (this.props) {
-        //       return this.props.componentsTreeChunk;
-        //     }
-        //     return undefined;
-        //   }
-        // },
+        'instanceProperties': {
+          get: function () {
+            if (this.props && this.props.componentsTreeBranch) {
+              return this.props.componentsTreeBranch.children;
+            }
+            return undefined;
+          }
+        },
         'properties': {
           get: function () {
             if (this.props) {
