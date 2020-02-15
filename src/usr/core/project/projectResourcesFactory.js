@@ -172,6 +172,26 @@ export function createTemplateModels(modelKey, declarationsInFile) {
       },
       children: [],
     };
+    const pageComposerManager = new PageComposerManager(componentsTree);
+    const componentInstances = pageComposerManager.getInstancesListUniq();
+    let componentInstanceModel;
+    if (componentInstances && componentInstances.length > 0) {
+      componentInstances.forEach((componentInstanceItem, instanceIndex) => {
+        const { componentName, componentInstance, componentsTreeBranch } = componentInstanceItem;
+        componentInstanceModel = {
+          key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${instanceIndex}`,
+          type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,
+          props: {
+            resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
+            name: componentInstance,
+            displayName: componentInstance,
+            componentName: componentName,
+            componentInstance: componentInstance,
+          }
+        };
+        templateModel.children.push(componentInstanceModel);
+      });
+    }
     result.push(templateModel);
   });
   return result;

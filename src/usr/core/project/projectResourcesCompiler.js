@@ -23,6 +23,7 @@ import PageModelReducer from './compiler/PageModelReducer';
 import * as projectResourcesManager from './projectResourcesManager';
 
 const componentInstanceModelsMap = new Map();
+const allComponentInstanceModelsMap = new Map();
 
 const flowsResourceVisitor = ({flowModelCompiler, flowsGraphModel}) => ({ nodeModel, parentModel }) => {
   const result = [];
@@ -184,6 +185,24 @@ const settingsResourceVisitor = ({settingsModelCompiler}) => ({ nodeModel, paren
   return result;
 };
 
+const stateResourceVisitorForCleaning = ({componentInstanceModelsMap}) => ({ nodeModel, parentModel }) => {
+  if (
+    nodeModel &&
+    nodeModel.type === constants.GRAPH_MODEL_STATE_TYPE &&
+    nodeModel.props &&
+    nodeModel.props.componentInstancesState
+  ) {
+    const newComponentInstancesState = {};
+    componentInstanceModelsMap.forEach((value, key) => {
+      if (nodeModel.props.componentInstancesState[key]) {
+        newComponentInstancesState[key] = nodeModel.props.componentInstancesState[key];
+      }
+    });
+    delete nodeModel.props.componentInstancesState;
+    nodeModel.props.componentInstancesState = newComponentInstancesState;
+  }
+};
+
 function componentInstancesResourceVisitor ({ nodeModel, parentModel }) {
   const result = [];
   if (nodeModel && nodeModel.type === constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE) {
@@ -209,9 +228,12 @@ export function compileResources () {
     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_SETTINGS_CONF_TYPE);
   const settingsGraphModel =
     projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_SETTINGS_TYPE);
+  const stateGraphModel =
+    projectResourcesUtils.getGraphByResourceType(constants.RESOURCE_IN_STATE_TYPE);
 
   // We have to gather all instances into a single map that let us check if there is such an instance
   componentInstanceModelsMap.clear();
+  allComponentInstanceModelsMap.clear();
   if (pagesGraphModel) {
     const componentInstanceModels = pagesGraphModel.traverse(componentInstancesResourceVisitor);
     if (componentInstanceModels && componentInstanceModels.length > 0) {
@@ -219,6 +241,18 @@ export function compileResources () {
         if (componentInstanceModel.props) {
           const { props: { componentName, componentInstance } } = componentInstanceModel;
           componentInstanceModelsMap.set(`${componentName}_${componentInstance}`, componentInstanceModel);
+          allComponentInstanceModelsMap.set(`${componentName}_${componentInstance}`, componentInstanceModel);
+        }
+      });
+    }
+  }
+  if (templatesGraphModel) {
+    const componentInstanceModels = templatesGraphModel.traverse(componentInstancesResourceVisitor);
+    if (componentInstanceModels && componentInstanceModels.length > 0) {
+      componentInstanceModels.forEach(componentInstanceModel => {
+        if (componentInstanceModel.props) {
+          const { props: { componentName, componentInstance } } = componentInstanceModel;
+          allComponentInstanceModelsMap.set(`${componentName}_${componentInstance}`, componentInstanceModel);
         }
       });
     }
@@ -323,15 +357,17 @@ export function compileResources () {
   // set error flag on the root key of the flows tree
   flowsGraphModel.mergeNode(flowsGraphModel.getRootKey(), { props: { hasErrors: flowsErrorsCount > 0 } });
 
-  componentInstanceModelsMap.clear();
-
   // reduce properties to the global state
   const stateIndexResource = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_STATE_KEY);
   if (stateIndexResource) {
     const reducer = new PageModelReducer({componentInstancesState: stateIndexResource.componentInstancesState});
     pagesGraphModel.traverse(pagesResourceVisitorWithReducer({reducer}));
     templatesGraphModel.traverse(templatesResourceVisitorWithReducer({reducer}));
+    stateGraphModel.traverse(stateResourceVisitorForCleaning({componentInstanceModelsMap: allComponentInstanceModelsMap}));
   }
+
+  componentInstanceModelsMap.clear();
+  allComponentInstanceModelsMap.clear();
 
   return changesCounter > 0;
 }
