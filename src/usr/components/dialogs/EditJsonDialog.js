@@ -114,9 +114,15 @@ class EditJsonDialog extends React.Component {
     }
     const { objectToEditLocal, hasErrors } = this.state;
     if (!hasErrors) {
-      this.props.onSubmit({
-        objectAfterEdit: objectToEditLocal
-      });
+      if (objectToEditLocal) {
+        this.props.onSubmit({
+          objectAfterEdit: objectToEditLocal
+        });
+      } else {
+        this.props.onSubmit({
+          objectAfterEdit: this.props.objectToEdit
+        });
+      }
     }
   };
 
