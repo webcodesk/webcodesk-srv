@@ -33,14 +33,35 @@ export function createNewPageFileObject (name, directoryName) {
   return { filePath, fileData: JSON.stringify(pageFileDataObject) };
 }
 
-export function createNewTemplateFileObject (name, templateModel, directoryName) {
+export function createNewTemplateFileObjects (name, templateModel, directoryName, componentInstancesState) {
+  const fileObjects = [];
   directoryName = directoryName || '';
   const filePath = repairPath(path.join(config.etcTemplatesSourceDir, directoryName, `${name}.json`));
   const templateFileDataObject = {
     templateName: name,
     componentsTree: templateModel || pageComposerFactory.createDefaultModel(),
   };
-  return { filePath, fileData: JSON.stringify(templateFileDataObject) };
+  fileObjects.push({ filePath, fileData: JSON.stringify(templateFileDataObject) });
+
+  if (componentInstancesState) {
+    const stateIndexResource = projectResourcesManager.getResourceByKey(constants.GRAPH_MODEL_STATE_KEY);
+    if (stateIndexResource) {
+      const stateIndexParentKeys = stateIndexResource.allParentKeys;
+      if (stateIndexParentKeys && stateIndexParentKeys.length > 1) {
+        const stateIndexFileResource = projectResourcesManager.getResourceByKey(stateIndexParentKeys[0]);
+        fileObjects.push({
+          filePath: stateIndexFileResource.absolutePath,
+          fileData: JSON.stringify(
+            stateIndexResource.componentInstancesState
+              ? { ...stateIndexResource.componentInstancesState, ...componentInstancesState }
+              : componentInstancesState
+          )
+        });
+      }
+    }
+  }
+
+  return fileObjects;
 }
 
 export function createNewFlowFileObject (name, directoryName) {

@@ -444,7 +444,7 @@ class ComponentView extends React.Component {
   };
 
   handleSaveAsTemplate = () => {
-    this.props.onSaveAsTemplate(this.state.localComponentsTree);
+    this.props.onSaveAsTemplate(this.state.localComponentsTree, true);
   };
 
   render () {

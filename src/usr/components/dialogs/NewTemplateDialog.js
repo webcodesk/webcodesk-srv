@@ -25,12 +25,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ResourceIcon from '../commons/ResourceIcon';
 import constants from '../../../commons/constants';
+import { createState } from '../../core/pageComposer/pageComposerState';
 
 class NewTemplateDialog extends React.Component {
   static propTypes = {
     isOpen: PropTypes.bool,
     dirPath: PropTypes.string,
     templateModel: PropTypes.object,
+    isNewInstance: PropTypes.bool,
     onClose: PropTypes.func,
     onSubmit: PropTypes.func,
   };
@@ -39,6 +41,7 @@ class NewTemplateDialog extends React.Component {
     isOpen: false,
     dirPath: '',
     templateModel: null,
+    isNewInstance: false,
     onClose: () => {
       console.info('NewTemplateDialog.onClose is not set');
     },
@@ -50,6 +53,8 @@ class NewTemplateDialog extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
+      instanceNameText: '',
+      instanceNameError: false,
       templateNameText: '',
       templateNameError: false,
       directoryNameText: this.props.dirPath,
@@ -58,18 +63,28 @@ class NewTemplateDialog extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
-    const {isOpen, dirPath, templateModel} = this.props;
-    const { templateNameText, templateNameError, directoryNameText, directoryNameError } = this.state;
+    const { isOpen, dirPath, templateModel, isNewInstance } = this.props;
+    const {
+      templateNameText,
+      templateNameError,
+      directoryNameText,
+      directoryNameError,
+      instanceNameText,
+      instanceNameError
+    } = this.state;
     return isOpen !== nextProps.isOpen
       || dirPath !== nextProps.dirPath
       || templateModel !== nextProps.templateModel
+      || isNewInstance !== nextProps.isNewInstance
       || templateNameText !== nextState.templateNameText
       || templateNameError !== nextState.templateNameError
       || directoryNameText !== nextState.directoryNameText
-      || directoryNameError !== nextState.directoryNameError;
+      || directoryNameError !== nextState.directoryNameError
+      || instanceNameText !== nextState.instanceNameText
+      || instanceNameError !== nextState.instanceNameError;
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate (prevProps, prevState, snapshot) {
     const { dirPath, isOpen } = this.props;
     if (dirPath !== prevProps.dirPath || isOpen !== prevProps.isOpen) {
       this.setState({
@@ -91,30 +106,47 @@ class NewTemplateDialog extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const { templateNameText, directoryNameText } = this.state;
-    const { templateNameError, directoryNameError } = this.validateTexts({
+    const { templateNameText, directoryNameText, instanceNameText } = this.state;
+    const { templateNameError, directoryNameError, instanceNameError } = this.validateTexts({
       directoryNameText,
-      templateNameText
+      templateNameText,
+      instanceNameText
     });
-    if (!templateNameError && !directoryNameError) {
-      const { onSubmit, templateModel } = this.props;
+    if (!templateNameError && !directoryNameError && !instanceNameError) {
+      const { onSubmit, templateModel, isNewInstance } = this.props;
+      let validTemplateModel = templateModel;
+      let componentInstancesState;
+      if (isNewInstance && validTemplateModel.props) {
+        validTemplateModel = {...validTemplateModel};
+        validTemplateModel.props.componentInstance = instanceNameText;
+        componentInstancesState = createState(validTemplateModel);
+      }
       onSubmit({
         templateName: templateNameText,
         directoryName: directoryNameText,
-        templateModel,
+        templateModel: validTemplateModel,
+        componentInstancesState,
       });
     } else {
       this.setState({
+        instanceNameError,
         templateNameError,
         directoryNameError
       });
     }
   };
 
-  validateTexts = ({templateNameText, directoryNameText}) => {
+  validateTexts = ({ templateNameText, directoryNameText, instanceNameText }) => {
+    const { isNewInstance } = this.props;
+    let instanceNameError = false;
+    if (isNewInstance) {
+      const instanceNameMatches = constants.FILE_NAME_VALID_REGEXP.exec(instanceNameText);
+      instanceNameError = !instanceNameText || !instanceNameMatches;
+    }
     const templateNameMatches = constants.FILE_NAME_VALID_REGEXP.exec(templateNameText);
     const directoryNameMatches = constants.FILE_PATH_VALID_REGEXP.exec(directoryNameText);
     return {
+      instanceNameError,
       pageNameError: !templateNameText || !templateNameMatches,
       directoryNameError: !!(directoryNameText && !directoryNameMatches),
     };
@@ -124,7 +156,11 @@ class NewTemplateDialog extends React.Component {
     const templateNameText = e.target.value;
     const newState = {
       templateNameText,
-      ...this.validateTexts({templateNameText, directoryNameText: this.state.directoryNameText})
+      ...this.validateTexts({
+        templateNameText,
+        directoryNameText: this.state.directoryNameText,
+        instanceNameText: this.state.instanceNameText,
+      })
     };
     this.setState(newState);
   };
@@ -133,17 +169,41 @@ class NewTemplateDialog extends React.Component {
     const directoryNameText = e.target.value;
     const newState = {
       directoryNameText,
-      ...this.validateTexts({templateNameText: this.state.templateNameText, directoryNameText})
+      ...this.validateTexts({
+        templateNameText: this.state.templateNameText,
+        instanceNameText: this.state.instanceNameText,
+        directoryNameText
+      })
+    };
+    this.setState(newState);
+  };
+
+  handleInstanceNameChange = (e) => {
+    const instanceNameText = e.target.value;
+    const newState = {
+      instanceNameText,
+      ...this.validateTexts({
+        templateNameText: this.state.templateNameText,
+        directoryNameText: this.state.directoryNameText,
+        instanceNameText,
+      })
     };
     this.setState(newState);
   };
 
   render () {
-    const { isOpen } = this.props;
+    const { isOpen, isNewInstance } = this.props;
     if (!isOpen) {
       return null;
     }
-    const { templateNameText, templateNameError, directoryNameText, directoryNameError } = this.state;
+    const {
+      templateNameText,
+      templateNameError,
+      directoryNameText,
+      directoryNameError,
+      instanceNameText,
+      instanceNameError
+    } = this.state;
     return (
       <Dialog
         aria-labelledby="NewTemplateDialog-dialog-title"
@@ -160,8 +220,29 @@ class NewTemplateDialog extends React.Component {
             Create New Template
           </DialogTitle>
           <DialogContent>
+            {isNewInstance && (
+              <TextField
+                autoFocus={true}
+                margin="dense"
+                id="instanceName"
+                label="Instance Name"
+                type="text"
+                fullWidth={true}
+                required={true}
+                value={instanceNameText}
+                error={instanceNameError}
+                onChange={this.handleInstanceNameChange}
+                InputProps={{
+                  startAdornment:
+                    <InputAdornment position="start">
+                      <ResourceIcon resourceType={constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE}/>
+                    </InputAdornment>,
+                }}
+                helperText="Enter the name on the new instance. Use alphanumeric characters."
+              />
+            )}
             <TextField
-              autoFocus={true}
+              autoFocus={!isNewInstance}
               margin="dense"
               id="templateName"
               label="Template Name"
@@ -174,7 +255,7 @@ class NewTemplateDialog extends React.Component {
               InputProps={{
                 startAdornment:
                   <InputAdornment position="start">
-                    <ResourceIcon resourceType={constants.GRAPH_MODEL_TEMPLATE_TYPE} />
+                    <ResourceIcon resourceType={constants.GRAPH_MODEL_TEMPLATE_TYPE}/>
                   </InputAdornment>,
               }}
               helperText="Enter the name on the new template. Use alphanumeric characters and '_' character."

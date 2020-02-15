@@ -177,12 +177,12 @@ export default [
                 ]
               },
               {
-                name: 'fileObject',
+                name: 'fileObjects',
                 targets: [
                   {
                     type: 'userFunction',
                     props: {
-                      functionName: 'usr.api.mainWindowMessageMethods.writeEtcFile'
+                      functionName: 'usr.api.mainWindowMessageMethods.writeMultipleEtcFiles'
                     },
                     events: [
                       {

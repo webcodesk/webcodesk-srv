@@ -19,77 +19,72 @@ import constants from '../../../commons/constants';
 import isUndefined from 'lodash/isUndefined';
 import isNil from 'lodash/isNil';
 
-export function createSingleInstanceState(model, rootModelProps = {}) {
-  if (model && model.props) {
-    const {
-      type,
-      children,
-      props: {propertyName, propertyValue}
-    } = model;
-    if (type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
-      || type === constants.COMPONENT_PROPERTY_OBJECT_TYPE) {
-      if (rootModelProps) {
-        if (propertyName) {
-          if (propertyValue) {
-            rootModelProps[propertyName] = cloneDeep(propertyValue);
+export function createSingleInstanceState (properties, rootModelProps = {}) {
+  if (properties && properties.length > 0) {
+    let model;
+    for (let p = 0; p < properties.length; p++) {
+      model = properties[p];
+      if (model && model.props) {
+        const {
+          type,
+          children,
+          props: { propertyName, propertyValue }
+        } = model;
+        if (type === constants.COMPONENT_PROPERTY_ARRAY_TYPE
+          || type === constants.COMPONENT_PROPERTY_OBJECT_TYPE) {
+          if (rootModelProps) {
+            if (propertyName) {
+              if (propertyValue) {
+                rootModelProps[propertyName] = cloneDeep(propertyValue);
+              }
+            } else {
+              if (propertyValue) {
+                rootModelProps.push(cloneDeep(propertyValue));
+              }
+            }
           }
-        } else {
-          if (propertyValue) {
-            rootModelProps.push(cloneDeep(propertyValue));
+        } else if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
+          let newObjectModel = {};
+          if (children && children.length > 0) {
+            newObjectModel = createSingleInstanceState(children, newObjectModel);
+          }
+          if (rootModelProps) {
+            if (propertyName) {
+              rootModelProps[propertyName] = newObjectModel;
+            } else {
+              rootModelProps.push(newObjectModel);
+            }
+          }
+        } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
+          let newArrayModel = [];
+          if (children && children.length > 0) {
+            newArrayModel = createSingleInstanceState(children, newArrayModel);
+          }
+          if (rootModelProps) {
+            if (propertyName) {
+              rootModelProps[propertyName] = newArrayModel;
+            } else {
+              rootModelProps.push(newArrayModel);
+            }
+          }
+        } else if (type === constants.COMPONENT_PROPERTY_STRING_TYPE
+          || type === constants.COMPONENT_PROPERTY_ONE_OF_TYPE
+          || type === constants.COMPONENT_PROPERTY_SYMBOL_TYPE
+          || type === constants.COMPONENT_PROPERTY_BOOL_TYPE
+          || type === constants.COMPONENT_PROPERTY_ANY_TYPE
+          || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
+          if (rootModelProps) {
+            if (propertyName) {
+              if (!isNil(propertyValue)) {
+                rootModelProps[propertyName] = propertyValue;
+              }
+            } else {
+              if (!isNil(propertyValue)) {
+                rootModelProps.push(propertyValue);
+              }
+            }
           }
         }
-      }
-    } else if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
-      let newObjectModel = {};
-      if (children && children.length > 0) {
-        children.forEach(child => {
-          newObjectModel = createSingleInstanceState(child, newObjectModel);
-        });
-      }
-      if (rootModelProps) {
-        if (propertyName) {
-          rootModelProps[propertyName] = newObjectModel;
-        } else {
-          rootModelProps.push(newObjectModel);
-        }
-      }
-    } else if (type === constants.COMPONENT_PROPERTY_ARRAY_OF_TYPE) {
-      let newArrayModel = [];
-      if (children && children.length > 0) {
-        children.forEach(child => {
-          newArrayModel = createSingleInstanceState(child, newArrayModel);
-        });
-      }
-      if (rootModelProps) {
-        if (propertyName) {
-          rootModelProps[propertyName] = newArrayModel;
-        } else {
-          rootModelProps.push(newArrayModel);
-        }
-      }
-    } else if (type === constants.COMPONENT_PROPERTY_STRING_TYPE
-      || type === constants.COMPONENT_PROPERTY_ONE_OF_TYPE
-      || type === constants.COMPONENT_PROPERTY_SYMBOL_TYPE
-      || type === constants.COMPONENT_PROPERTY_BOOL_TYPE
-      || type === constants.COMPONENT_PROPERTY_ANY_TYPE
-      || type === constants.COMPONENT_PROPERTY_NUMBER_TYPE) {
-      if (rootModelProps) {
-        if (propertyName) {
-          if (!isNil(propertyValue)) {
-            rootModelProps[propertyName] = propertyValue;
-          }
-        } else {
-          if (!isNil(propertyValue)) {
-            rootModelProps.push(propertyValue);
-          }
-        }
-      }
-    } else if (children && children.length > 0) {
-      for (let i = 0; i < children.length; i++) {
-        rootModelProps = {
-          ...rootModelProps,
-          ...createSingleInstanceState(children[i], rootModelProps)
-        };
       }
     }
   }
@@ -216,7 +211,7 @@ function traverseProperties (properties) {
 }
 
 function testComponentModel (componentsTree) {
-  const { props: {componentName, componentInstance}, children } = componentsTree;
+  const { props: { componentName, componentInstance }, children } = componentsTree;
   if (children && children.length > 0) {
     if (currentComponentName === componentName && currentComponentInstance === componentInstance) {
       traversePropertiesWithDefaultValues(children, currentInstanceState);
@@ -236,7 +231,7 @@ export function reduceComponentTree (refModel, componentsTree) {
     const { componentName, componentInstance } = refModel.props;
     currentComponentName = componentName;
     currentComponentInstance = componentInstance;
-    currentInstanceState = createSingleInstanceState(refModel);
+    currentInstanceState = createSingleInstanceState(refModel.children);
     if (
       componentsTree
       && (componentsTree.type === constants.PAGE_COMPONENT_TYPE || componentsTree.type === constants.PAGE_NODE_TYPE)

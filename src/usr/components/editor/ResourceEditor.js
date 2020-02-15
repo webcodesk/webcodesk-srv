@@ -213,8 +213,8 @@ class ResourceEditor extends React.Component {
     this.props.onPushToClipboard(newItem);
   };
 
-  handleSaveAsTemplate = (item) => {
-    this.props.onSaveAsTemplate({templateModel: item});
+  handleSaveAsTemplate = (item, isNewInstance) => {
+    this.props.onSaveAsTemplate({templateModel: item, isNewInstance});
   };
 
   handleUpdateSettings = (settings) => {

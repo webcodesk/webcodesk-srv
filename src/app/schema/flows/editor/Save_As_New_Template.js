@@ -69,6 +69,19 @@ export default [
                     },
                   }
                 ]
+              },
+              {
+                name: 'isNewInstance',
+                targets: [
+                  {
+                    type: 'component',
+                    props: {
+                      componentName: 'usr.components.dialogs.NewTemplateDialog.NewTemplateDialog',
+                      componentInstance: 'newTemplateDialog1',
+                      propertyName: 'isNewInstance'
+                    },
+                  }
+                ]
               }
             ]
           }

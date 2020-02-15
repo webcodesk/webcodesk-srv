@@ -165,27 +165,28 @@ export const createNewPageSubmit = (options) => async (dispatch) => {
   });
 };
 
-export const createNewTemplateStart = ({ virtualPath, templateModel }) => (dispatch) => {
+export const createNewTemplateStart = ({ virtualPath, templateModel, isNewInstance }) => (dispatch) => {
   dispatch({
     dirPath: virtualPath,
     templateModel: templateModel || null,
+    isNewInstance: isNewInstance,
     isDialogOpen: true
   });
 };
 
 export const createNewTemplateSubmit = (options) => async (dispatch) => {
-  const { templateName, templateModel, directoryName } = options;
+  const { templateName, templateModel, directoryName, componentInstancesState } = options;
   if (testReservedName(templateName)) {
     throw Error(`${templateName} is a reserved name.`);
   }
-  const fileObject =
-    projectFileFactory.createNewTemplateFileObject(templateName, templateModel, directoryName);
+  const fileObjects =
+    projectFileFactory.createNewTemplateFileObjects(templateName, templateModel, directoryName, componentInstancesState);
   const isAlreadyExists =
-    await projectManager.checkResourceExists(fileObject.filePath);
+    await projectManager.checkResourceExists(fileObjects[0].filePath);
   if (isAlreadyExists) {
     throw Error('The template with the equal file path already exists.');
   }
-  const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
+  const newResources = await projectManager.updateMultipleResources(fileObjects);
   if (newResources.updatedResources && newResources.updatedResources.length > 0) {
     const newResource = newResources.updatedResources[0];
     dispatch({resourceUpdatedSuccessfully: true});
@@ -210,7 +211,7 @@ export const createNewTemplateSubmit = (options) => async (dispatch) => {
   }
   dispatch({
     isDialogOpen: false,
-    fileObject: fileObject
+    fileObjects: fileObjects
   });
 };
 
