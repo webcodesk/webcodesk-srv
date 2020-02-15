@@ -136,4 +136,5 @@ export async function generateFiles () {
 
 export async function generateDefaultFiles () {
   await settingsGeneratorManager.generateInitialSettingsEtc(config.etcSettingsFile);
+  await settingsGeneratorManager.generateInitialStateEtc(config.etcStateFile);
 }

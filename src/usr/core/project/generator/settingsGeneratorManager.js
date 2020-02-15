@@ -132,3 +132,19 @@ export async function generateInitialSettingsEtc(destFilePath) {
       });
   }
 }
+
+export async function generateInitialStateEtc(destFilePath) {
+  try {
+    await fileUtils.isExisting(destFilePath);
+    // cool, we don't have to do anything
+  } catch (e) {
+    // need to create the file in the ect dir
+    return fileUtils.ensureFilePath(destFilePath)
+      .then(() => {
+        return fileUtils.writeFile(destFilePath, JSON.stringify({}));
+      })
+      .catch(error => {
+        console.error(`Error writing ${destFilePath} file. `, error);
+      });
+  }
+}
