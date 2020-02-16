@@ -132,6 +132,8 @@ class PropsTreeGroup extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     parentKey: PropTypes.string,
+    itemSignature: PropTypes.string,
+    parentItemSignature: PropTypes.string,
     arrayIndex: PropTypes.number,
     propertyModel: PropTypes.object,
     paddingLeft: PropTypes.string,
@@ -146,6 +148,8 @@ class PropsTreeGroup extends React.Component {
   static defaultProps = {
     name: null,
     parentKey: null,
+    itemSignature: null,
+    parentItemSignature: null,
     arrayIndex: null,
     propertyModel: {},
     paddingLeft: '0px',
@@ -183,9 +187,9 @@ class PropsTreeGroup extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const { onIncreaseComponentPropertyArray, propertyModel, parentKey } = this.props;
+    const { onIncreaseComponentPropertyArray, propertyModel, itemSignature, parentItemSignature } = this.props;
     if (propertyModel) {
-      onIncreaseComponentPropertyArray(propertyModel.key, parentKey);
+      onIncreaseComponentPropertyArray(propertyModel.key, itemSignature, parentItemSignature);
     }
   };
 
@@ -194,9 +198,9 @@ class PropsTreeGroup extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const { onDeleteComponentProperty, propertyModel } = this.props;
+    const { onDeleteComponentProperty, propertyModel, itemSignature } = this.props;
     if (propertyModel) {
-      onDeleteComponentProperty(propertyModel.key);
+      onDeleteComponentProperty(propertyModel.key, itemSignature);
     }
   };
 
@@ -216,9 +220,9 @@ class PropsTreeGroup extends React.Component {
       e.stopPropagation();
       e.preventDefault();
     }
-    const { onToggleExpandItem, propertyModel, parentKey } = this.props;
-    if (propertyModel) {
-      onToggleExpandItem(propertyModel.key, parentKey);
+    const { onToggleExpandItem, itemSignature, parentItemSignature } = this.props;
+    if (itemSignature) {
+      onToggleExpandItem(itemSignature, parentItemSignature);
     }
   };
 

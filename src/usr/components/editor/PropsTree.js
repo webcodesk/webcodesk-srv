@@ -126,7 +126,7 @@ function omitParentKey(expandedGroupKeys, parentKey) {
   let result = {};
   const nestedKeys = [];
   forOwn(expandedGroupKeys, (value, key) => {
-      if (value.parentKey !== parentKey) {
+      if (value.parentItemSignature !== parentKey) {
         result[key] = value;
       } else {
         nestedKeys.push(key);
@@ -213,12 +213,12 @@ class PropsTree extends React.Component {
     this.props.onUpdateComponentPropertyModel(newComponentPropertyModel);
   };
 
-  handleIncreaseComponentPropertyArray = (propertyKey, parentKey) => {
+  handleIncreaseComponentPropertyArray = (propertyKey, itemSignature, parentItemSignature) => {
     this.props.onIncreaseComponentPropertyArray(propertyKey);
-    if (!this.state.expandedGroupKeys[propertyKey]) {
+    if (!this.state.expandedGroupKeys[itemSignature]) {
       const newExpandedGroupKeys = {...this.state.expandedGroupKeys};
-      newExpandedGroupKeys[propertyKey] = {
-        parentKey
+      newExpandedGroupKeys[itemSignature] = {
+        parentItemSignature
       };
       this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
       this.setState({
@@ -227,7 +227,12 @@ class PropsTree extends React.Component {
     }
   };
 
-  handleDeleteComponentProperty = (propertyKey) => {
+  handleDeleteComponentProperty = (propertyKey, itemSignature) => {
+    if (itemSignature) {
+      const newExpandedGroupKeys = { ...this.state.expandedGroupKeys };
+      delete newExpandedGroupKeys[itemSignature];
+      this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
+    }
     this.props.onDeleteComponentProperty(propertyKey);
   };
 
@@ -250,14 +255,14 @@ class PropsTree extends React.Component {
     this.props.onSelectComponent(componentKey);
   };
 
-  handleToggleExpandItem = (groupKey, parentKey) => {
+  handleToggleExpandItem = (itemSignature, parentItemSignature) => {
     let newExpandedGroupKeys = {...this.state.expandedGroupKeys};
-    if (newExpandedGroupKeys[groupKey]) {
-      newExpandedGroupKeys = omitParentKey(newExpandedGroupKeys, groupKey);
-      delete newExpandedGroupKeys[groupKey];
+    if (newExpandedGroupKeys[itemSignature]) {
+      newExpandedGroupKeys = omitParentKey(newExpandedGroupKeys, itemSignature);
+      delete newExpandedGroupKeys[itemSignature];
     } else {
-      newExpandedGroupKeys[groupKey] = {
-        parentKey,
+      newExpandedGroupKeys[itemSignature] = {
+        parentItemSignature,
       };
     }
     this.storeExpandedKeys(this.props.dataId, newExpandedGroupKeys);
@@ -341,7 +346,7 @@ class PropsTree extends React.Component {
     }
   };
 
-  createList = (node, parentNode = null, level = 0, arrayIndex = null) => {
+  createList = (node, itemSignature = '', parentNode = null, level = 0, arrayIndex = null) => {
     const { classes } = this.props;
     let result = [];
     let isArrayItem = false;
@@ -366,28 +371,32 @@ class PropsTree extends React.Component {
         // } else {
         // }
       }
+      const parentItemSignature = itemSignature;
+      itemSignature += `.${listItemLabelName}`;
       if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         result.push(
           <PropsTreeGroup
             key={key}
             name={listItemLabelName}
             parentKey={parentKey}
+            itemSignature={itemSignature}
+            parentItemSignature={parentItemSignature}
             arrayIndex={arrayIndex}
             propertyModel={node}
             type={type}
-            isExpanded={!!this.state.expandedGroupKeys[key]}
+            isExpanded={!!this.state.expandedGroupKeys[itemSignature]}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
             onToggleExpandItem={this.handleToggleExpandItem}
             onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
-        if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
+        if (this.state.expandedGroupKeys[itemSignature] && children && children.length > 0) {
           result.push(
             <div key={`${key}_container`} className={classes.listItemContainer}>
               <div className={classes.listContainer}>
                 {children.reduce(
-                  (acc, child) => acc.concat(this.createList(child, node, level + 1, null)),
+                  (acc, child) => acc.concat(this.createList(child, itemSignature, node, level + 1, null)),
                   []
                 )}
               </div>
@@ -400,10 +409,12 @@ class PropsTree extends React.Component {
             key={key}
             name={listItemLabelName}
             parentKey={parentKey}
+            itemSignature={itemSignature}
+            parentItemSignature={parentItemSignature}
             arrayIndex={arrayIndex}
             propertyModel={node}
             type={type}
-            isExpanded={!!this.state.expandedGroupKeys[key]}
+            isExpanded={!!this.state.expandedGroupKeys[itemSignature]}
             onIncreaseComponentPropertyArray={this.handleIncreaseComponentPropertyArray}
             onDeleteComponentProperty={this.handleDeleteComponentProperty}
             onErrorClick={this.handleErrorClick}
@@ -411,14 +422,14 @@ class PropsTree extends React.Component {
             onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
           />
         );
-        if (this.state.expandedGroupKeys[key] && children && children.length > 0) {
+        if (this.state.expandedGroupKeys[itemSignature] && children && children.length > 0) {
           result.push(
             <div key={`${key}_container`} className={classes.listItemContainer}>
               <SortableTreeList
                 classes={classes}
                 useDragHandle={true}
                 items={children.reduce(
-                  (acc, child, childIdx) => acc.concat(this.createList(child, node, level + 1, childIdx)),
+                  (acc, child, childIdx) => acc.concat(this.createList(child, itemSignature, node, level + 1, childIdx)),
                   []
                 )}
                 onSortEnd={this.handleUpdateComponentPropertyArrayOrder(node)}
