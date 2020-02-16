@@ -150,7 +150,7 @@ class ComponentPropsTree extends React.Component {
     const { classes, componentModel, isSampleComponent } = this.props;
     if (componentModel && componentModel.props) {
       const { type, props: { componentInstance, componentName }, children } = componentModel;
-      const propsTreeDataId = componentName;
+      const propsTreeDataId = `${componentName}_${componentInstance}`;
       if (type === constants.COMPONENT_PROPERTY_ELEMENT_TYPE) {
         return (
           <div className={classes.root}>
