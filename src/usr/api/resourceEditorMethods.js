@@ -85,10 +85,13 @@ export const openTabWithResourceByKey = (resourceKey) => (dispatch) => {
  */
 export const openTabWithResourceByIndex = (selectedIndex) => (dispatch) => {
   let resourceEditorTabs = globalStore.get('resourceEditorTabs') || [];
-  resourceEditorTabs[selectedIndex].timestamp = Date.now();
-  globalStore.set('activeEditorTabIndex', selectedIndex);
-  globalStore.set('resourceEditorTabs', resourceEditorTabs);
-  dispatch({activeEditorTabIndex: selectedIndex});
+  const foundEditorTab = resourceEditorTabs[selectedIndex];
+  if (foundEditorTab) {
+    resourceEditorTabs[selectedIndex].timestamp = Date.now();
+    globalStore.set('activeEditorTabIndex', selectedIndex);
+    globalStore.set('resourceEditorTabs', resourceEditorTabs);
+    dispatch({activeEditorTabIndex: selectedIndex});
+  }
 };
 
 /**
