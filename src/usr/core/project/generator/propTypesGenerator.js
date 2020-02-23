@@ -350,11 +350,11 @@ export function generateComponentMarkDownSpecification(properties, componentComm
   resultMarkdownText += componentComment ? `${componentComment}\n\n` : '';
   if (inputs.length > 0) {
     let inputText = inputs.join('\n');
-    resultMarkdownText += `*Inputs*\n\n${inputText}\n\n`;
+    resultMarkdownText += `*Properties*\n\n${inputText}\n\n`;
   }
   if (outputs.length > 0) {
     let outputText = outputs.join('\n');
-    resultMarkdownText += `*Outputs*\n\n${outputText}\n\n`;
+    resultMarkdownText += `*Events (functions)*\n\n${outputText}\n\n`;
   }
   return resultMarkdownText;
 }
