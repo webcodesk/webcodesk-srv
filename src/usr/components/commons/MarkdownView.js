@@ -48,6 +48,8 @@ class MarkdownView extends React.Component {
   constructor (props) {
     super(props);
     this.markdown = new MarkdownIt({
+      html: true,
+      typographer: true,
       linkify: true,
       highlight: markdownHighlight,
     });
