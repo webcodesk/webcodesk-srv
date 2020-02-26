@@ -38,6 +38,8 @@ http://localhost:7070
 
 ### License
 
-GNU GPLv3 [COPYING](COPYING.txt)
+GNU GPLv3 
 
-Copyright (c) 2019, Oleksandr (Alex) Pustovalov
+Copyright (c) 2019 Oleksandr (Alex) Pustovalov
+
+[COPYING](COPYING.txt)
