@@ -1,4 +1,4 @@
-## Webcodesk (server)
+# Webcodesk (server)
 
 A Web Application Builder.
 
@@ -30,9 +30,11 @@ http://localhost:7070
 > Please read the instruction about how to this in the article
 > [Adding an existing project to GitHub using the command line](https://help.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
 
+### [User Guide](docs/README.md)
+
 ### Resources
 
-* [User Guide](docs/README.md)
+
 
 ### License
 
