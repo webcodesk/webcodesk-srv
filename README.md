@@ -1,6 +1,6 @@
 ## Webcodesk (server)
 
-A low-code visual development environment for the rapid Web application development.
+A Web Application Builder.
 
 ### Installation
 
@@ -30,12 +30,12 @@ http://localhost:7070
 > Please read the instruction about how to this in the article
 > [Adding an existing project to GitHub using the command line](https://help.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
 
-### User Guide
+### Resources
 
-to be continued...
+* [User Guide](docs/README.md)
 
 ### License
 
-Apache 2.0
+GNU GPLv3 [COPYING](COPYING.txt)
 
-Copyright (c) 2019-2020, Alex Pustovalov
+Copyright (c) 2019, Oleksandr (Alex) Pustovalov

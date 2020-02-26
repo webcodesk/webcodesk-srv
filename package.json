@@ -9,8 +9,8 @@
     "type": "git",
     "url": "https://github.com/webcodesk/webcodesk-srv.git"
   },
-  "version": "2.0.0-beta.8",
-  "license": "Apache-2.0",
+  "version": "2.0.0",
+  "license": "GNU GPLv3",
   "dependencies": {
     "@babel/runtime": "7.7.1",
     "body-parser": "1.19.0",
@@ -83,7 +83,7 @@
     "build": "yarn run cross-env GENERATE_SOURCEMAP=false react-scripts build && yarn run build-server",
     "build-server": "gulp --gulpfile ./gulpfile.js build",
     "eject": "cross-env react-scripts eject",
-    "server": "cross-env node ./webcodesk-srv.js -p 7070 -d ../wcd-todo-tutorial-demo",
+    "server": "cross-env node ./webcodesk-srv.js -p 7070 -d ../wcd-todo-tutorial",
     "start": "cross-env BROWSER=none react-scripts start",
     "test": "cross-env react-scripts test --env=jsdom --modulePaths=src"
   },
