@@ -61,6 +61,9 @@ http://localhost:7070
 > [Adding an existing project to GitHub using the command line](https://help.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
 
 ## Documentation
+
+In the User Guide, you will find technical details on how to create components and functions and how to use them to build an application.
+
  * [User Guide](docs/README.md)
  
 ## Contribution
