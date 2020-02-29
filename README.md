@@ -73,14 +73,12 @@ But let's discuss the feature in a new issue with the detailed description befor
 
 * [CODE OF CONDUCT](CODE_OF_CONDUCT.md)
 
-You can ask questions at [Webcodesk subreddit](https://www.reddit.com/r/webcodesk/).
+## Community
 
 If you need any help or want someone to set up the workspace with you and get you stepping through code in your IDE, 
 don't be afraid to speak up!
 
-## Community
-
-* [Webcodesk subreddit](https://www.reddit.com/r/webcodesk/)
+You can ask questions at [Webcodesk subreddit](https://www.reddit.com/r/webcodesk/).
 
 ## License
 
