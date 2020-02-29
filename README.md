@@ -15,7 +15,8 @@ Click on the link below.
 
 Your experience will tell you that you do not need any visual builders because they are limited in functionality, unreliable, and they all suck.
 
-But if you give Webcodesk a chance and try to create your own small SPA in it, I assure you, you won't ever want to write a ton of extra code without Webcodesk.
+But if you give Webcodesk a chance and try to create your own small SPA in it, I assure you, 
+you won't ever want to write a ton of extra code.
 
 ## How it works
 
@@ -86,4 +87,4 @@ GNU GPLv3
 
 Copyright (c) 2019 Alex Pustovalov
 
-[COPYING](COPYING.txt)
+* [COPYING](COPYING.txt)
