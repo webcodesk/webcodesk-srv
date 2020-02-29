@@ -248,23 +248,26 @@ The name of the file with functions should also have a double extension:
 
 > You can use any other file names without double extensions, then Webcodesk will ignore them.
 
-Functions in Webcodesk play the role of a link between components in flow charts.
+Functions in Webcodesk play the role of a link between components in flow diagram.
 
 Use the following template to declare a function in a file:
 
 ```javascript
 /**
- * A valuable description of the function. This description you will see in the Function set README in Webcodesk
+ * A valuable description of the function. 
+ * This description you will see in the Function set README in Webcodesk
  */
 export const functionName = (options, {stateByDispatch, history}) => dispatch => {
 };
 ```
 
-Let's take a closer look at the real example of a function declaration below.
+Let's take a closer look at the real example of the function declaration below.
 
 ```javascript
 /**
- * A valuable description of the function. This description you will see in the Function set README in Webcodesk
+ * Performs the navigation to the page specified in the `pageRoutePath` property 
+ * of the associated instance of the `PageRouteAnchor` component.
+ * There's no incoming argument.
  */
 export const goToPage = (options, {stateByDispatch, history}) => dispatch => {
   if (stateByDispatch && history) {
@@ -285,20 +288,22 @@ This is a callback function that is invoked by the React App Framework engine wh
 In this example, you see the declaration of a single `dispatch` function call. 
 The `dispatch` argument of the function must be an object. The names of the object fields will be used as output connection points on the diagram.
 
-> That is, if you want to transfer data at some point in the function, you just call `dispatch` with the declaration of the object and the field in it. 
-  And you put the data into this field of the object.
+> That is, if you want to transfer data at some stage in the function, you just call `dispatch` with the declaration of the object and the field in it. 
+  And you put the data into the field of the object.
 
 In the example, you can see that `dispatch` is called for an object with `pageRouteAnchorProps` field. 
 So when you place the function on the flow diagram, you will see `pageRouteAnchorProps` output in the function element.
 
+Now about the arguments.
+
 * **options** - the argument that is passed from the incoming connection in the flow diagram. 
 For example, if you connect the `onClick` output of a component that passes a string, then the value of that string will be in `options`.
 
-* **stateByDispatch** - the object used to get the state of component instance properties at runtime of the `goToPage` function
+* **stateByDispatch** - the object used to get the state of component instance properties at runtime.
 For example, if you connect the `pageRouteAnchorProps` output to the `props` input of a component instance, then there will be a state of that component instance in the `pageRouteAnchorProps` field of the `stateByDispatch` object.
 
 So, if you want to change the properties of a component instance, you can get a reference to its state and create a new object.
-Then you can change the values of the fields of the new state object and pass it to `dispatch`.
+Then you can change the values in the fields of the new state object and pass it to `dispatch`.
 
 ```javascript
 export const setError = (options, {stateByDispatch}) => dispatch => {
