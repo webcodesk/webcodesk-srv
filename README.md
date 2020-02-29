@@ -2,8 +2,6 @@
   <img src="https://raw.githubusercontent.com/webcodesk/webcodesk-srv/master/docs/icon_1024x1024.png" width="200" alt="Webcodesk logo" />
 </p>
 
-<p align="center">A Web Application Builder</p>
-
 ## Introduction
 
 The best way to tell about Webcodesk is to let you try it in action.
