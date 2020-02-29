@@ -224,6 +224,7 @@ Input props
 * `PropTypes.string`
 * `PropTypes.bool`
 * `PropTypes.number`
+* `PropTypes.array`
 * `PropTypes.object`
 * `PropTypes.oneOf(['', 'val1', 'val2'])` - use only text or numeric values. Use it for the dropdown in the property editor.
 * `PropTypes.node` - using for component composition. Use `node` if you want to show the placeholder in the page tree, but not in the page.
@@ -313,6 +314,10 @@ export const setError = (options, {stateByDispatch}) => dispatch => {
   }
 };
 ``` 
+
+**Be careful when rewriting values in arrays. 
+For example, if you want to change an array with shapes that have properties like Node or Element, those properties will be reset to zero. 
+So distinguish Node or Element arrays from other property types.**
 
 > Each function output, which is connected to a component instance, is mapped to the `stateByDispatch` object.
 
