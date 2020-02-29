@@ -2,8 +2,7 @@
   <img src="https://raw.githubusercontent.com/webcodesk/webcodesk-srv/master/docs/icon_1024x1024.png" width="200" alt="Webcodesk logo" />
 </p>
 
-<h1 align="center">WEBCODESK</h1>
-<p align="center">Web Application Builder</p>
+<p align="center">A Web Application Builder</p>
 
 ## Introduction
 
@@ -65,6 +64,18 @@ http://localhost:7070
 
 ## Documentation
  * [User Guide](docs/README.md)
+ 
+## Contribution
+
+I'm quite open to new feature requests, or any work you want to do. 
+But let's discuss the feature in a new issue with the detailed description before creating new PR.
+
+* [CODE OF CONDUCT](CODE_OF_CONDUCT.md)
+
+You can ask questions at [Webcodesk subreddit](https://www.reddit.com/r/webcodesk/).
+
+If you need any help or want someone to set up the workspace with you and get you stepping through code in your IDE, 
+don't be afraid to speak up!
 
 ## Community
 
