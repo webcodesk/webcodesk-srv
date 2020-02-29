@@ -235,6 +235,9 @@ Output props
 
 * `PropTypes.func` - each function property corresponds to the output point of the component instance in the flow diagram.     
 
+File name pattern for external PropTypes file:
+* For JS `*.props.js`
+* For TS `*.props.ts`
 
 ## The function source code
 
