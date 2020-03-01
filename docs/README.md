@@ -1,6 +1,6 @@
 # Webcodesk User Guide
 
-This User Guide assumes that you have completed tutorial in the online version of Webcodesk.
+This User Guide assumes that you have completed [tutorial](https://webcodesk.com/tutorial) in [the online version of Webcodesk](https://ide.webcodesk.com/?appDemo=https://wcd-todo-tutorial-demo.web.app/).
 
 Although, you have the ability to complete the tutorial in the local version as well. 
 Install Webcodesk locally and make a copy of the `Beginner tutorial` project.
@@ -315,11 +315,12 @@ export const setError = (options, {stateByDispatch}) => dispatch => {
 };
 ``` 
 
+> Each function output, which is connected to a component instance, is mapped to the `stateByDispatch` object.
+
 **Be careful when rewriting values in arrays. 
 For example, if you want to change an array with shapes that have properties like Node or Element, those properties will be reset to zero. 
 So distinguish Node or Element arrays from other property types.**
 
-> Each function output, which is connected to a component instance, is mapped to the `stateByDispatch` object.
 
 * **history** - React Router history, you can use it when you want to navigate to other application pages.
 
@@ -344,13 +345,13 @@ export const goToPage = (options, {stateByDispatch, history}) => dispatch => {
 
 Use the command `yarn build` to create a distribution of your application.
 
-If you have components or features that have not been included in the pages or flow diagrams, they will not be included in the application build.
+If you have components or functions that have not been included in the pages or flow diagrams, they will not be included in the application build as well.
 
 Find all distribution files in the `build` directory.
 
 ## Ask questions
 
-Visit the forum []():
+Visit the forum at [Webcodesk subreddit](https://www.reddit.com/r/webcodesk/):
 
 * If you have questions about application development in Webcodesk
 * If you have any suggestions for improving this document
