@@ -12,7 +12,8 @@ Click on the link below.
 * <a href="https://ide.webcodesk.com/?appDemo=https://wcd-todo-tutorial-demo.web.app/" target="_blank">Start Online Demo</a>
 
 Here you can see the first part of creating a ToDo application in Webcodesk.
-[Timelapse Video](https://youtu.be/5b2MAk95W8s)
+
+* [Timelapse Video](https://youtu.be/5b2MAk95W8s)
 
 ## To React developers
 
