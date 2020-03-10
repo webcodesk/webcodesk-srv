@@ -1,12 +1,14 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/webcodesk/webcodesk-srv/master/docs/icon_1024x1024.png" width="200" alt="Webcodesk logo" />
+  <img src="https://raw.githubusercontent.com/webcodesk/webcodesk-srv/master/docs/hero.png" width="70%" alt="Webcodesk Screenshot" />
 </p>
 
 ## Introduction
 
 The best way to tell about Webcodesk is to let you try it in action.
 
-So instead of an introduction, I would recommend you to complete the tutorial in the online version of Webcodesk. 
+So instead of an introduction please read the article about Webcodesk: [Getting started with Webcodesk](https://medium.com/@alex_pustovalov/getting-started-with-webcodesk-53ada5b0dc1c)
+
+Also, I would recommend you to complete the tutorial in the online version of Webcodesk. 
 Click on the link below.
 
 * <a href="https://ide.webcodesk.com/?appDemo=https://wcd-todo-tutorial-demo.web.app/" target="_blank">Start Online Demo</a>
