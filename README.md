@@ -9,7 +9,11 @@ The best way to tell about Webcodesk is to let you try it in action.
 So instead of an introduction, I would recommend you to complete the tutorial in the online version of Webcodesk. 
 Click on the link below.
 
-* <a href="https://ide.webcodesk.com/?appDemo=https://wcd-todo-tutorial-demo.web.app/" target="_blank">Start Online Tutorial</a>
+* <a href="https://ide.webcodesk.com/?appDemo=https://wcd-todo-tutorial-demo.web.app/" target="_blank">Start Online Demo</a>
+
+Here you can see the first part of creating a ToDo application in Webcodesk.
+
+* [Timelapse Video](https://youtu.be/5b2MAk95W8s)
 
 ## To React developers
 
