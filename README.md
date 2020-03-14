@@ -18,14 +18,17 @@ Here you can see the first part of creating a ToDo application in Webcodesk.
 
 ## To React developers
 
-Your experience will tell you that you do not need any visual builders because they are limited in functionality, unreliable, and they all suck.
+* Your experience will tell you that you do not need any visual builders because they are limited in functionality, unreliable, and they all suck.
 
-But if you give Webcodesk a chance and try to create your own small SPA in it, I assure you, 
-you won't ever want to write a ton of extra code.
+* You don't have to learn anything new. Rather, you will not write any unnecessary code for Redux.
+
+* Webcodesk does not generate code. It uses a small framework that is reliable. The proof of reliability is the fact that the framework is used inside Webcodesk itself.
+
+**Give Webcodesk a chance and try to create your own small single-page application, I assure you, you won't ever want to write a ton of extra code.**
 
 ## How it works
 
-Each project for Webcodesk is generated using the create-react-app. 
+Each project for Webcodesk is bootstrapped by create-react-app. 
 Additionally, [react-app-framework](https://github.com/webcodesk/react-app-framework), a library designed for Webcodesk, is added to the project code.
 
 The project contains configuration files that are fed to the React App Framework. 
