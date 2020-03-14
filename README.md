@@ -37,7 +37,7 @@ The Framework in its turn creates pages, routes, and makes containers for Redux 
 Then the Framework connects the containers into chains of actions, exactly as you do it using Redux actions.
 
 The configuration of the Framework is complex enough to write it manually. 
-So Webcodesk lets you create and edit it with:
+So Webcodesk lets you create and edit it with visual editors:
 * the page editor
 * the flow diagram editor 
 
