@@ -7,7 +7,7 @@ Install Webcodesk locally and make a copy of the `Beginner tutorial` project.
 
 ## Start/stop project server
 
-#### Star Webcodesk Server
+#### Start Webcodesk Server
 
 Webcodesk server is run by command `yarn wcd` from the project directory.
 
@@ -18,7 +18,7 @@ After you have chosen a project, the project source code is downloaded from the 
 
 The next time Webcodesk will open the project, which is in the current directory.
 
-#### Webpack Dev Server
+#### Webpack
 
 Webcodesk, in turn, launches Webpack Dev Server using scripts in the `react-scripts` module, that should be installed while copying the project template.
 
@@ -27,7 +27,7 @@ In the window that appears, you can change the Dev port of the server, stop it o
 
 Dev server will stop automatically if you stop Webcodesk server.
 
-#### Stop Webcodesk Server
+#### Shutdown Webcodesk Server
 
 Press `Ctrl + C` / `Command + C` key combination in the command line to stop Webcodesk Server.
 
