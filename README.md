@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Read article on Hackernoon about why Webcodesk was created:
+Read the article on Hackernoon about why Webcodesk was created:
 
 * [I Developed A Visual Development Tool For Web Applications with React](https://hackernoon.com/i-developed-a-visual-development-tool-for-web-applications-with-react-gmbr3280)
 
