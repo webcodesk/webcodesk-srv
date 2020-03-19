@@ -18,7 +18,7 @@
 
 module.exports = {
 
-  CURRENT_APPLICATION_VERSION: '2.0.0',
+  CURRENT_APPLICATION_VERSION: '2.0.1',
   AUTHOR_COPYRIGHT: 'Alex Pustovalov',
   DATE_COPYRIGHT: '2019',
 
