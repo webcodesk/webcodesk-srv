@@ -43,6 +43,14 @@ export const restoreExpandedResourceKeys = () => async (dispatch) => {
     const expandedResourceKeys = await globalStore.restore(constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS);
     if (expandedResourceKeys) {
       dispatch({expandedResourceKeys: expandedResourceKeys});
+    } else {
+      dispatch({expandedResourceKeys: {
+        [constants.GRAPH_MODEL_FLOWS_ROOT_KEY]: true,
+        [constants.GRAPH_MODEL_PAGES_ROOT_KEY]: true,
+        [constants.GRAPH_MODEL_COMPONENTS_ROOT_KEY]: true,
+        [constants.GRAPH_MODEL_USER_FUNCTIONS_ROOT_KEY]: true,
+        [constants.GRAPH_MODEL_TEMPLATES_ROOT_KEY]: true,
+      }});
     }
   } catch (e) {
     // do nothing;
