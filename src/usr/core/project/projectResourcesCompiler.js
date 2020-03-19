@@ -23,6 +23,7 @@ import FlowModelCompiler from './compiler/FlowModelCompiler';
 import SettingsModelCompiler from './compiler/SettingsModelCompiler';
 import PageModelReducer from './compiler/PageModelReducer';
 import * as projectResourcesManager from './projectResourcesManager';
+import globalStore from '../config/globalStore';
 
 const componentInstanceModelsMap = new Map();
 const allComponentInstanceModelsMap = new Map();
@@ -236,6 +237,16 @@ export function compileResources () {
   // We have to gather all instances into a single map that let us check if there is such an instance
   componentInstanceModelsMap.clear();
   allComponentInstanceModelsMap.clear();
+
+  // init global instance counter map
+  let globalInstanceCounterMap = globalStore.get(constants.STORAGE_INSTANCE_COUNTER_KEY);
+  if (!globalInstanceCounterMap) {
+    globalInstanceCounterMap = new Map();
+    globalStore.set(constants.STORAGE_INSTANCE_COUNTER_KEY, globalInstanceCounterMap);
+  }
+  let globalInstanceCounterValue;
+  globalInstanceCounterMap.clear();
+
   if (pagesGraphModel) {
     const componentInstanceModels = pagesGraphModel.traverse(componentInstancesResourceVisitor);
     if (componentInstanceModels && componentInstanceModels.length > 0) {
@@ -244,6 +255,13 @@ export function compileResources () {
           const { props: { componentName, componentInstance } } = componentInstanceModel;
           componentInstanceModelsMap.set(`${componentName}_${componentInstance}`, componentInstanceModel);
           allComponentInstanceModelsMap.set(`${componentName}_${componentInstance}`, componentInstanceModel);
+          // keep counter for component instances names in the global store
+          globalInstanceCounterValue = globalInstanceCounterMap.get(componentName);
+          if (globalInstanceCounterValue >= 0) {
+            globalInstanceCounterMap.set(componentName, ++globalInstanceCounterValue);
+          } else {
+            globalInstanceCounterMap.set(componentName, 0);
+          }
         }
       });
     }
@@ -255,6 +273,13 @@ export function compileResources () {
         if (componentInstanceModel.props) {
           const { props: { componentName, componentInstance } } = componentInstanceModel;
           allComponentInstanceModelsMap.set(`${componentName}_${componentInstance}`, componentInstanceModel);
+          // keep counter for component instances names in the global store
+          globalInstanceCounterValue = globalInstanceCounterMap.get(componentName);
+          if (globalInstanceCounterValue >= 0) {
+            globalInstanceCounterMap.set(componentName, ++globalInstanceCounterValue);
+          } else {
+            globalInstanceCounterMap.set(componentName, 0);
+          }
         }
       });
     }
