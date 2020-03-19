@@ -4,7 +4,9 @@
 
 ## Introduction
 
-* [Getting started with Webcodesk](https://medium.com/@alex_pustovalov/getting-started-with-webcodesk-53ada5b0dc1c)
+Read the article on Hackernoon about why Webcodesk was created:
+
+* [I Developed A Visual Development Tool For Web Applications with React](https://hackernoon.com/i-developed-a-visual-development-tool-for-web-applications-with-react-gmbr3280)
 
 The best way to tell about Webcodesk is to let you try it in action.
 So I would recommend you to complete the tutorial in the online version of Webcodesk. 

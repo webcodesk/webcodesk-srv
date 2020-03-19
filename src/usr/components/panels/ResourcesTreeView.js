@@ -21,13 +21,8 @@ import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import FastForward from '@material-ui/icons/FastForward';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import Divider from '@material-ui/core/Divider';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import Badge from '@material-ui/core/Badge';
 import green from '@material-ui/core/colors/green';
 import ResourceIcon from '../commons/ResourceIcon';
 import {

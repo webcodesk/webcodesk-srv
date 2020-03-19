@@ -26,6 +26,7 @@ import {
   generateComponentMarkDownSpecification,
   generateFunctionsMarkDownSpecification
 } from './generator/propTypesGenerator';
+import globalStore from '../config/globalStore';
 
 const possibleResourceTypes = [
   constants.RESOURCE_IN_COMPONENTS_TYPE,
@@ -247,9 +248,22 @@ class ResourceAdapter {
         'componentInstance': {
           get: function () {
             if (this.isComponent) {
+              // init global instance counter map
+              let globalInstanceCounterMap = globalStore.get(constants.STORAGE_INSTANCE_COUNTER_KEY);
+              if (!globalInstanceCounterMap) {
+                globalInstanceCounterMap = new Map();
+                globalStore.set(constants.STORAGE_INSTANCE_COUNTER_KEY, globalInstanceCounterMap);
+              }
+              let instanceCounter = globalInstanceCounterMap.get(this.componentName);
+              if (instanceCounter >= 0) {
+                instanceCounter += 1
+              } else {
+                instanceCounter = 1;
+              }
+              globalInstanceCounterMap.set(this.componentName, instanceCounter);
               // then return possible default instance name as per the component name
               // and dont keep it
-              return lowerFirst(this.displayName);
+              return `${lowerFirst(this.displayName)}${instanceCounter}`;
             } else if (this.isComponentInstance || this.isFlowComponentInstance) {
               if (this.props) {
                 return this.props.componentInstance;
