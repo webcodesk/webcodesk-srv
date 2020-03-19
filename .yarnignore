@@ -1,5 +1,6 @@
 .git
 .idea
+docs/hero.png
 node_modules
 public
 src
