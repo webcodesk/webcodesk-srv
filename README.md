@@ -71,6 +71,17 @@ http://localhost:7070
 > For example, please read the instruction about how to do this for GitHub repo:
 > [Adding an existing project to GitHub using the command line](https://help.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
 
+## Upgrade
+
+* Go to the project dir and run commands in the command line one by one.
+
+```
+> yarn remove @webcodesk/webcodesk-srv
+
+> yarn add @webcodesk/webcodesk-srv -D -E
+
+```
+
 ## Documentation
 
 In the User Guide, you will find technical details on how to create components and functions and how to use them to build an application.
