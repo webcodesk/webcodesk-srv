@@ -495,7 +495,9 @@ export function removeFileAndEmptyDir (filePath, stopDirPath) {
 export function writeFileWhenDifferent (filePath, fileBody) {
   return readFile(filePath)
     .then(existingFileBody => {
-      if (existingFileBody !== fileBody) {
+      const existingFileBuffer = Buffer.from(existingFileBody);
+      const newFileBuffer = Buffer.from(fileBody);
+      if (!existingFileBuffer.equals(newFileBuffer)) {
         return ensureFilePath(filePath)
           .then(() => {
             return writeFile(filePath, fileBody);

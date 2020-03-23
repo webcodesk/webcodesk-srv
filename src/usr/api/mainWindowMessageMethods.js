@@ -116,9 +116,9 @@ export const writeEtcFile = ({filePath, fileData}) => async (dispatch) => {
 
 export const writeMultipleEtcFiles = (fileObjects) => async (dispatch) => {
   if (fileObjects && fileObjects.length > 0) {
-    for (let i = 0; i < fileObjects.length; i++) {
-      const {filePath, fileData} = fileObjects[i];
+    fileObjects.forEach(fileObject => {
       taskQueue.push(async () => {
+        const {filePath, fileData} = fileObject;
         try {
           await projectManager.writeEtcFile(filePath, fileData);
           dispatch({success: {filePath, fileData}});
@@ -127,7 +127,7 @@ export const writeMultipleEtcFiles = (fileObjects) => async (dispatch) => {
           dispatch({exception: e});
         }
       });
-    }
+    });
   }
 };
 
