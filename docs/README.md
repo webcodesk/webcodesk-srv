@@ -349,6 +349,10 @@ If you have components or functions that have not been included in the pages or 
 
 Find all distribution files in the `build` directory.
 
+## Troubleshooting
+
+* Review the Webpack Dev Server log: click on the 3d button (tooltip: "Show development server log") on the top-left corner of the project workspace.
+
 ## Ask questions
 
 Visit the forum at [Webcodesk subreddit](https://www.reddit.com/r/webcodesk/):
