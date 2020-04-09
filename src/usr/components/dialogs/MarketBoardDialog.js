@@ -102,11 +102,12 @@ class MarketBoardDialog extends React.Component {
 
   handleOpen = ({searchValues, searchLang}) => {
     const {onSearch, projectsType} = this.props;
-    const validSearchValues = searchValues.map(i => {
-      if (i && i.value) {
-        return i.value;
+    let validSearchValues = [];
+    for (let i = 0; i < searchValues.length; i++) {
+      if (searchValues[i] && searchValues[i].value) {
+        validSearchValues.push(searchValues[i].value);
       }
-    });
+    }
     onSearch({projectsType, searchValues: validSearchValues, searchLang});
   };
 
