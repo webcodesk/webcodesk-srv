@@ -28,7 +28,7 @@ import { getUserFunctionByName } from './sequences';
 function dispatchToComponent (props, payload, dispatch, helpers) {
   if (props) {
     const {
-      componentName, componentInstance, propertyName, forwardPath, componentKey
+      componentName, componentInstance, propertyName, forwardPath
     } = props;
     try {
       if (forwardPath && helpers) {

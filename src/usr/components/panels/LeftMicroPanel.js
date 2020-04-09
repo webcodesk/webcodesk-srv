@@ -20,8 +20,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ToolbarButton from '../commons/ToolbarButton';
-import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 
 const styles = theme => ({
   root: {

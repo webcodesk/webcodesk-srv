@@ -40,7 +40,6 @@ import ToolbarButton from '../commons/ToolbarButton';
 
 import constants from '../../../commons/constants';
 import DraggableWrapper from './DraggableWrapper';
-import ScriptView from '../commons/ScriptView';
 import ScrollSlider from '../commons/ScrollSlider';
 
 const TREE_VIEW_INDENT = '18px';

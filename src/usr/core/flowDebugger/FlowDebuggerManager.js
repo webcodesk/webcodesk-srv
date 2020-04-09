@@ -113,7 +113,7 @@ class FlowDebuggerManager {
       let flowNode;
       let logRecordId;
       orderedLog.forEach(logRecord => {
-        const { eventType, key, eventName, componentName, componentInstance, populatePath } = logRecord;
+        const { eventType, key, eventName, componentName, componentInstance } = logRecord;
         flowNode = key ? this.graphModel.getNode(key) : flowNode;
         if (flowNode) {
           logRecordId = uniqueId('logRecord');

@@ -34,7 +34,6 @@ import {
 } from './ActionsLogViewer.parts';
 import AutoScrollPanel from '../commons/AutoScrollPanel';
 import ToolbarButton from '../commons/ToolbarButton';
-import { CommonToolbar } from '../commons/Commons.parts';
 
 const styles = theme => ({
   root: {

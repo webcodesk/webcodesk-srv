@@ -35,7 +35,6 @@ import FlowComposer from './FlowComposer';
 import FunctionsFileView from './FunctionsFileView';
 import ReadmePreview from './ReadmePreview';
 import { cutText } from '../../core/utils/textUtils';
-import * as projectResourcesManager from '../../core/project/projectResourcesManager';
 
 const styles = theme => ({
   root: {

@@ -22,21 +22,21 @@ import isUndefined from 'lodash/isUndefined';
 import * as projectResourcesManager from './projectResourcesManager';
 import constants from '../../../commons/constants';
 
-function getPropertyByName(properties, propertyName) {
-  let result = null;
-  if (properties && properties.length > 0) {
-    result = properties.find(property => {
-      return property && property.props && property.props.propertyName === propertyName;
-    });
-    // properties.forEach(property => {
-    //   const { props } = property;
-    //   if (props && props.propertyName === propertyName) {
-    //     result = property;
-    //   }
-    // });
-  }
-  return result;
-}
+// function getPropertyByName(properties, propertyName) {
+//   let result = null;
+//   if (properties && properties.length > 0) {
+//     result = properties.find(property => {
+//       return property && property.props && property.props.propertyName === propertyName;
+//     });
+//     // properties.forEach(property => {
+//     //   const { props } = property;
+//     //   if (props && props.propertyName === propertyName) {
+//     //     result = property;
+//     //   }
+//     // });
+//   }
+//   return result;
+// }
 
 function getPropertiesRef(properties) {
   let result = [];

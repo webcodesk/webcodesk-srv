@@ -716,7 +716,6 @@ class PageComposer extends React.Component {
       localComponentsTree,
       recentUpdateHistory,
       iFrameWidthIndex,
-      iFrameScaleIndex,
       treeViewSplitterSize,
       treeViewHorizontalSplitterSize,
       propertyEditorSplitterSize,

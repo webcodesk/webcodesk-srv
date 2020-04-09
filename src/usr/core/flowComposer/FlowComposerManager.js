@@ -180,8 +180,8 @@ class FlowComposerManager {
         if (childModel.props && childModel.props.position) {
           delete childModel.props.position;
         }
-        const { type: childType, props: { inputs } } = childModel;
-        const { type: parentType, props: { outputs } } = parentModel;
+        const { props: { inputs } } = childModel;
+        const { props: { outputs } } = parentModel;
         if (outputs.findIndex(i => i.name === outputName) < 0) {
           console.error('FlowComposerManager.connectInput: wrong output name.');
         }

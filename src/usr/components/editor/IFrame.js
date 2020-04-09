@@ -173,6 +173,7 @@ class IFrame extends React.Component {
       <div style={containerStyle}>
         <div style={innerContainerStyle}>
           <iframe
+            title={url}
             ref={this.frameWindow}
             style={iFrameStyle}
             src={url}

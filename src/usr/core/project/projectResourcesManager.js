@@ -20,7 +20,6 @@ import forOwn from 'lodash/forOwn';
 import orderBy from 'lodash/orderBy';
 import globalStore from '../../core/config/globalStore';
 import GraphModel from '../graph/GraphModel';
-import * as config from '../config/config';
 import constants from '../../../commons/constants';
 import * as projectResourcesUtils from './projectResourcesUtils';
 import * as projectResourcesCompiler from './projectResourcesCompiler';

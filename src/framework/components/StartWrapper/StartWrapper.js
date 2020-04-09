@@ -33,11 +33,9 @@ class StartWrapper extends React.Component {
   componentDidMount () {
     const { actionSequences, store } = this.props;
     let containerHandlers = [];
-    let componentKey;
     const actionSequence = actionSequences[containerKey];
     if (actionSequence) {
       containerHandlers = actionSequence.events;
-      componentKey = actionSequence.componentKey;
     }
     if (containerHandlers.length > 0) {
       const actions = createContainerActions(containerKey, containerHandlers);

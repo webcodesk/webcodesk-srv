@@ -232,22 +232,22 @@ export const <%= componentName %>Types = {
 
 `;
 
-const templateContentReadme = `
-### <%= componentName %>
-
-It's a template for a new React component.
-
-> Find in the source code the properties of the component written in the correct format for Webcodesk. 
-> Add comments to the properties if you want to see hints in the properties editor of the component.
-
-#### Files
-
-* \`<%= componentName %>.comp.js\` - the source code of the component.
-* \`<%= componentName %>.props.js\` - the source code of the PropTypes definitions.
-* \`<%= componentName %>.md\` - the source of the current file
-
-> Don't remove the suffix before file extensions (\`*.comp.js\`, \`*.props.js\`)
-`;
+// const templateContentReadme = `
+// ### <%= componentName %>
+//
+// It's a template for a new React component.
+//
+// > Find in the source code the properties of the component written in the correct format for Webcodesk.
+// > Add comments to the properties if you want to see hints in the properties editor of the component.
+//
+// #### Files
+//
+// * \`<%= componentName %>.comp.js\` - the source code of the component.
+// * \`<%= componentName %>.props.js\` - the source code of the PropTypes definitions.
+// * \`<%= componentName %>.md\` - the source of the current file
+//
+// > Don't remove the suffix before file extensions (\`*.comp.js\`, \`*.props.js\`)
+// `;
 
 export async function createFiles (componentName, dirName, destDirPath, fileExtension) {
   const fileObjects = [];

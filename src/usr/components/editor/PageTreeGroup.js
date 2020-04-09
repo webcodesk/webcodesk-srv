@@ -29,7 +29,6 @@ import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 import ExposurePlus1 from '@material-ui/icons/ExposurePlus1';
 import FileCopy from '@material-ui/icons/FileCopy';
 import Close from '@material-ui/icons/Close';
-import PanoramaFishEye from '@material-ui/icons/PanoramaFishEye';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 
 const styles = theme => ({

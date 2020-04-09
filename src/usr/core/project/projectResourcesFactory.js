@@ -179,7 +179,7 @@ export function createTemplateModels(modelKey, declarationsInFile) {
     let componentInstanceModel;
     if (componentInstances && componentInstances.length > 0) {
       componentInstances.forEach((componentInstanceItem, instanceIndex) => {
-        const { componentName, componentInstance, componentsTreeBranch } = componentInstanceItem;
+        const { componentName, componentInstance } = componentInstanceItem;
         componentInstanceModel = {
           key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${instanceIndex}`,
           type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,

@@ -69,7 +69,7 @@ class PageComposerManager {
       && nodeModel.props
       && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
     ) {
-      const { key, props } = nodeModel;
+      const { props } = nodeModel;
       if (props) {
         result.push({
           componentName: props.componentName,
