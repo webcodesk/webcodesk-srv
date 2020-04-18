@@ -150,7 +150,10 @@ export function createPageModels(modelKey, declarationsInFile) {
         }
       };
     });
-    pageModel.children.push(componentInstancesTree);
+    if (componentInstancesTree && componentInstancesTree.type) {
+      // test if the tree is not empty
+      pageModel.children.push(componentInstancesTree);
+    }
     result.push(pageModel);
   });
   return result;
