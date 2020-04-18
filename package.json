@@ -1,6 +1,6 @@
 {
   "name": "@webcodesk/webcodesk-srv",
-  "description": "Web Application Builder",
+  "description": "Web Application Builder for React",
   "author": {
     "name": "Alex Pustovalov",
     "email": "apustovalov@gmail.com"
@@ -103,5 +103,13 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": "http://localhost:7070"
+  "proxy": "http://localhost:7070",
+  "keywords": [
+    "react",
+    "ui",
+    "builder",
+    "ide",
+    "visual",
+    "components"
+  ]
 }
