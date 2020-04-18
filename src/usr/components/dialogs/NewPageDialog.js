@@ -27,6 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ResourceIcon from '../commons/ResourceIcon';
 import constants from '../../../commons/constants';
+import { validateFileNameAndDirectoryName } from '../commons/utils';
 
 class NewPageDialog extends React.Component {
   static propTypes = {
@@ -110,11 +111,10 @@ class NewPageDialog extends React.Component {
   };
 
   validateTexts = ({pageNameText, directoryNameText}) => {
-    const pageNameMatches = constants.FILE_NAME_VALID_REGEXP.exec(pageNameText);
-    const directoryNameMatches = constants.FILE_PATH_VALID_REGEXP.exec(directoryNameText);
+    const validationResult = validateFileNameAndDirectoryName(pageNameText, directoryNameText);
     return {
-      pageNameError: !pageNameText || !pageNameMatches,
-      directoryNameError: !!(directoryNameText && !directoryNameMatches),
+      pageNameError: validationResult.fileNameHasError,
+      directoryNameError: validationResult.directoryNameHasError,
     };
   };
 
@@ -175,7 +175,7 @@ class NewPageDialog extends React.Component {
                     <ResourceIcon resourceType={constants.GRAPH_MODEL_PAGE_TYPE} />
                   </InputAdornment>,
               }}
-              helperText="Enter the name on the new page. Use alphanumeric characters and '_' character."
+              helperText="Enter the name on the new page. Use alphanumeric characters and '_', '-' characters."
             />
             <TextField
               margin="dense"

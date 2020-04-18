@@ -32,6 +32,9 @@ import NewFlowDialog from './NewFlowDialog';
 import NewPageDialog from './NewPageDialog';
 import NewTemplateDialog from './NewTemplateDialog';
 import ProjectServerDialog from "./ProjectServerDialog";
+import RenameFlowDialog from "./RenameFlowDialog";
+import RenamePageDialog from "./RenamePageDialog";
+import RenameTemplateDialog from "./RenameTemplateDialog";
 import SyslogDialog from "./SyslogDialog";
 import WelcomeDialog from "./WelcomeDialog";
 
@@ -52,6 +55,9 @@ export default {
   NewPageDialog,
   NewTemplateDialog,
   ProjectServerDialog,
+  RenameFlowDialog,
+  RenamePageDialog,
+  RenameTemplateDialog,
   SyslogDialog,
   WelcomeDialog
 };

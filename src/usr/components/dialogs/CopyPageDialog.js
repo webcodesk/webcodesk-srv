@@ -27,6 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ResourceIcon from '../commons/ResourceIcon';
 import constants from '../../../commons/constants';
+import { validateFileNameAndDirectoryName } from '../commons/utils';
 
 class CopyPageDialog extends React.Component {
   static propTypes = {
@@ -120,11 +121,10 @@ class CopyPageDialog extends React.Component {
   };
 
   validateTexts = ({nameText, directoryNameText}) => {
-    const nameMatches = constants.FILE_NAME_VALID_REGEXP.exec(nameText);
-    const directoryNameMatches = constants.FILE_PATH_VALID_REGEXP.exec(directoryNameText);
+    const validationResult = validateFileNameAndDirectoryName(nameText, directoryNameText);
     return {
-      nameError: !nameText || !nameMatches,
-      directoryNameError: !!(directoryNameText && !directoryNameMatches),
+      nameError: validationResult.fileNameHasError,
+      directoryNameError: validationResult.directoryNameHasError,
     };
   };
 
@@ -185,7 +185,7 @@ class CopyPageDialog extends React.Component {
                     <ResourceIcon resourceType={constants.GRAPH_MODEL_PAGE_TYPE} />
                   </InputAdornment>,
               }}
-              helperText="Enter the name of the new page. Use alphanumeric characters and '_' character."
+              helperText="Enter the name of the new page. Use alphanumeric characters and '_', '-' characters."
             />
             <TextField
               margin="dense"

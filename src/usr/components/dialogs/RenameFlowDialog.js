@@ -29,10 +29,11 @@ import ResourceIcon from '../commons/ResourceIcon';
 import constants from '../../../commons/constants';
 import { validateFileNameAndDirectoryName } from '../commons/utils';
 
-class NewFlowDialog extends React.Component {
+class RenameFlowDialog extends React.Component {
   static propTypes = {
     isOpen: PropTypes.bool,
     dirPath: PropTypes.string,
+    flowResource: PropTypes.object,
     onClose: PropTypes.func,
     onSubmit: PropTypes.func,
   };
@@ -40,29 +41,32 @@ class NewFlowDialog extends React.Component {
   static defaultProps = {
     isOpen: false,
     dirPath: '',
+    flowResource: null,
     onClose: () => {
-      console.info('NewFlowDialog.onClose is not set');
+      console.info('RenameFlowDialog.onClose is not set');
     },
     onSubmit: (options) => {
-      console.info('NewFlowDialog.onSubmit is not set: ', options);
+      console.info('RenameFlowDialog.onSubmit is not set: ', options);
     },
   };
 
   constructor (props) {
     super(props);
+    const {dirPath, flowResource} = this.props;
     this.state = {
-      nameText: '',
+      nameText: flowResource ? flowResource.displayName : dirPath,
       nameError: false,
-      directoryNameText: this.props.dirPath,
+      directoryNameText: dirPath,
       directoryNameError: false,
     };
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
-    const {isOpen, dirPath} = this.props;
+    const {isOpen, dirPath, flowResource} = this.props;
     const { nameText, nameError, directoryNameText, directoryNameError } = this.state;
     return isOpen !== nextProps.isOpen
       || dirPath !== nextProps.dirPath
+      || flowResource !== nextProps.flowResource
       || nameText !== nextState.nameText
       || nameError !== nextState.nameError
       || directoryNameText !== nextState.directoryNameText
@@ -70,10 +74,15 @@ class NewFlowDialog extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const {dirPath, isOpen} = this.props;
-    if (dirPath !== prevProps.dirPath || isOpen !== prevProps.isOpen) {
+    const {dirPath, isOpen, flowResource} = this.props;
+    if (dirPath !== prevProps.dirPath  || isOpen !== prevProps.isOpen) {
       this.setState({
         directoryNameText: dirPath,
+      });
+    }
+    if (flowResource && flowResource !== prevProps.flowResource) {
+      this.setState({
+        nameText: flowResource.displayName,
       });
     }
   }
@@ -97,10 +106,11 @@ class NewFlowDialog extends React.Component {
       nameText
     });
     if (!nameError && !directoryNameError) {
-      const { onSubmit } = this.props;
+      const { onSubmit, flowResource } = this.props;
       onSubmit({
         name: nameText,
         directoryName: directoryNameText,
+        resource: flowResource
       });
     } else {
       this.setState({
@@ -137,14 +147,14 @@ class NewFlowDialog extends React.Component {
   };
 
   render () {
-    const { isOpen } = this.props;
+    const { isOpen, flowResource } = this.props;
     if (!isOpen) {
       return null;
     }
     const { nameText, nameError, directoryNameText, directoryNameError } = this.state;
     return (
       <Dialog
-        aria-labelledby="NewFlowDialog-dialog-title"
+        aria-labelledby="CopyFlowDialog-dialog-title"
         onClose={this.handleClose}
         open={isOpen}
         maxWidth="sm"
@@ -152,16 +162,16 @@ class NewFlowDialog extends React.Component {
       >
         <form onSubmit={this.handleSubmit}>
           <DialogTitle
-            id="NewFlowDialog-dialog-title"
+            id="CopyFlowDialog-dialog-title"
             disableTypography={true}
           >
-            Create New Flow
+            {flowResource ? `Rename "${flowResource.displayName}" Flow` : 'Rename Flow'}
           </DialogTitle>
           <DialogContent>
             <TextField
               autoFocus={true}
               margin="dense"
-              id="pageName"
+              id="flowName"
               label="Flow Name"
               type="text"
               fullWidth={true}
@@ -201,7 +211,7 @@ class NewFlowDialog extends React.Component {
               Cancel
             </Button>
             <Button type="submit" onClick={this.handleSubmit} color="primary">
-              Create
+              Rename
             </Button>
           </DialogActions>
         </form>
@@ -210,4 +220,4 @@ class NewFlowDialog extends React.Component {
   }
 }
 
-export default NewFlowDialog;
+export default RenameFlowDialog;

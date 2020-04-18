@@ -28,6 +28,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import ResourceIcon from '../commons/ResourceIcon';
 import constants from '../../../commons/constants';
 import { createState } from '../../core/pageComposer/pageComposerState';
+import { validateFileNameAndDirectoryName } from '../commons/utils';
 
 class NewTemplateDialog extends React.Component {
   static propTypes = {
@@ -145,12 +146,11 @@ class NewTemplateDialog extends React.Component {
       const instanceNameMatches = constants.FILE_NAME_VALID_REGEXP.exec(instanceNameText);
       instanceNameError = !instanceNameText || !instanceNameMatches;
     }
-    const templateNameMatches = constants.FILE_NAME_VALID_REGEXP.exec(templateNameText);
-    const directoryNameMatches = constants.FILE_PATH_VALID_REGEXP.exec(directoryNameText);
+    const validationResult = validateFileNameAndDirectoryName(templateNameText, directoryNameText);
     return {
       instanceNameError,
-      pageNameError: !templateNameText || !templateNameMatches,
-      directoryNameError: !!(directoryNameText && !directoryNameMatches),
+      pageNameError: validationResult.fileNameHasError,
+      directoryNameError: validationResult.directoryNameHasError,
     };
   };
 
@@ -260,7 +260,7 @@ class NewTemplateDialog extends React.Component {
                     <ResourceIcon resourceType={constants.GRAPH_MODEL_TEMPLATE_TYPE}/>
                   </InputAdornment>,
               }}
-              helperText="Enter the name on the new template. Use alphanumeric characters and '_' character."
+              helperText="Enter the name on the new template. Use alphanumeric characters and '_', '-' characters."
             />
             <TextField
               margin="dense"

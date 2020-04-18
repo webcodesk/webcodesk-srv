@@ -293,12 +293,15 @@ class ResourcesTreeView extends React.Component {
     onItemDragEnd: PropTypes.func,
     onCreatePage: PropTypes.func,
     onCopyPage: PropTypes.func,
+    onRenamePage: PropTypes.func,
     onEditPage: PropTypes.func,
     onCreateTemplate: PropTypes.func,
     onCopyTemplate: PropTypes.func,
+    onRenameTemplate: PropTypes.func,
     onEditTemplate: PropTypes.func,
     onCreateFlow: PropTypes.func,
     onCopyFlow: PropTypes.func,
+    onRenameFlow: PropTypes.func,
     onEditFlow: PropTypes.func,
     onToggleFlow: PropTypes.func,
     onToggleIsTest: PropTypes.func,
@@ -338,6 +341,9 @@ class ResourcesTreeView extends React.Component {
     onCopyPage: () => {
       console.info('ResourcesTreeView.onCopyPage is not set');
     },
+    onRenamePage: () => {
+      console.info('ResourcesTreeView.onRenamePage is not set');
+    },
     onEditPage: () => {
       console.info('ResourcesTreeView.onEditPage is not set');
     },
@@ -347,6 +353,9 @@ class ResourcesTreeView extends React.Component {
     onCopyTemplate: () => {
       console.info('ResourcesTreeView.onCopyTemplate is not set');
     },
+    onRenameTemplate: () => {
+      console.info('ResourcesTreeView.onRenameTemplate is not set');
+    },
     onEditTemplate: () => {
       console.info('ResourcesTreeView.onEditTemplate is not set');
     },
@@ -355,6 +364,9 @@ class ResourcesTreeView extends React.Component {
     },
     onCopyFlow: () => {
       console.info('ResourcesTreeView.onCopyFlow is not set');
+    },
+    onRenameFlow: () => {
+      console.info('ResourcesTreeView.onRenameFlow is not set');
     },
     onEditFlow: () => {
       console.info('ResourcesTreeView.onEditFlow is not set');
@@ -481,6 +493,21 @@ class ResourcesTreeView extends React.Component {
       onCopyFlow({ resourceKey, virtualPath });
     } else if (resourceType === constants.RESOURCE_IN_TEMPLATES_TYPE) {
       onCopyTemplate({ resourceKey, virtualPath });
+    }
+  };
+
+  handleRenameResource = (resourceKey, resourceType, virtualPath) => (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { onRenameFlow, onRenamePage, onRenameTemplate } = this.props;
+    if (resourceType === constants.RESOURCE_IN_PAGES_TYPE) {
+      onRenamePage({ resourceKey, virtualPath });
+    } else if (resourceType === constants.RESOURCE_IN_FLOWS_TYPE) {
+      onRenameFlow({ resourceKey, virtualPath });
+    } else if (resourceType === constants.RESOURCE_IN_TEMPLATES_TYPE) {
+      onRenameTemplate({ resourceKey, virtualPath });
     }
   };
 
@@ -918,6 +945,10 @@ class ResourcesTreeView extends React.Component {
                         onClick: this.handleCopyResource(key, resourceType, virtualPath),
                       },
                       {
+                        label: 'Rename page',
+                        onClick: this.handleRenameResource(key, resourceType, virtualPath),
+                      },
+                      {
                         label: 'divider'
                       },
                       {
@@ -1008,6 +1039,10 @@ class ResourcesTreeView extends React.Component {
                       {
                         label: 'Copy template',
                         onClick: this.handleCopyResource(key, resourceType, virtualPath),
+                      },
+                      {
+                        label: 'Rename template',
+                        onClick: this.handleRenameResource(key, resourceType, virtualPath),
                       },
                       {
                         label: 'divider'
@@ -1136,6 +1171,10 @@ class ResourcesTreeView extends React.Component {
                       {
                         label: 'Copy flow',
                         onClick: this.handleCopyResource(key, resourceType, virtualPath),
+                      },
+                      {
+                        label: 'Rename flow',
+                        onClick: this.handleRenameResource(key, resourceType, virtualPath),
                       },
                       {
                         label: 'divider'

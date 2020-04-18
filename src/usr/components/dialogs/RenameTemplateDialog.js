@@ -29,10 +29,11 @@ import ResourceIcon from '../commons/ResourceIcon';
 import constants from '../../../commons/constants';
 import { validateFileNameAndDirectoryName } from '../commons/utils';
 
-class NewFlowDialog extends React.Component {
+class RenameTemplateDialog extends React.Component {
   static propTypes = {
     isOpen: PropTypes.bool,
     dirPath: PropTypes.string,
+    pageResource: PropTypes.object,
     onClose: PropTypes.func,
     onSubmit: PropTypes.func,
   };
@@ -40,29 +41,32 @@ class NewFlowDialog extends React.Component {
   static defaultProps = {
     isOpen: false,
     dirPath: '',
+    pageResource: null,
     onClose: () => {
-      console.info('NewFlowDialog.onClose is not set');
+      console.info('RenameTemplateDialog.onClose is not set');
     },
     onSubmit: (options) => {
-      console.info('NewFlowDialog.onSubmit is not set: ', options);
+      console.info('RenameTemplateDialog.onSubmit is not set: ', options);
     },
   };
 
   constructor (props) {
     super(props);
+    const {dirPath, pageResource} = this.props;
     this.state = {
-      nameText: '',
+      nameText: pageResource ? pageResource.displayName : '',
       nameError: false,
-      directoryNameText: this.props.dirPath,
+      directoryNameText: dirPath,
       directoryNameError: false,
     };
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
-    const {isOpen, dirPath} = this.props;
+    const {isOpen, dirPath, pageResource} = this.props;
     const { nameText, nameError, directoryNameText, directoryNameError } = this.state;
     return isOpen !== nextProps.isOpen
       || dirPath !== nextProps.dirPath
+      || pageResource !== nextProps.pageResource
       || nameText !== nextState.nameText
       || nameError !== nextState.nameError
       || directoryNameText !== nextState.directoryNameText
@@ -70,10 +74,15 @@ class NewFlowDialog extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const {dirPath, isOpen} = this.props;
+    const {dirPath, isOpen, pageResource} = this.props;
     if (dirPath !== prevProps.dirPath || isOpen !== prevProps.isOpen) {
       this.setState({
         directoryNameText: dirPath,
+      });
+    }
+    if (pageResource && pageResource !== prevProps.pageResource) {
+      this.setState({
+        nameText: pageResource.displayName,
       });
     }
   }
@@ -97,10 +106,11 @@ class NewFlowDialog extends React.Component {
       nameText
     });
     if (!nameError && !directoryNameError) {
-      const { onSubmit } = this.props;
+      const { onSubmit, pageResource } = this.props;
       onSubmit({
         name: nameText,
         directoryName: directoryNameText,
+        resource: pageResource
       });
     } else {
       this.setState({
@@ -137,14 +147,14 @@ class NewFlowDialog extends React.Component {
   };
 
   render () {
-    const { isOpen } = this.props;
+    const { isOpen, pageResource } = this.props;
     if (!isOpen) {
       return null;
     }
     const { nameText, nameError, directoryNameText, directoryNameError } = this.state;
     return (
       <Dialog
-        aria-labelledby="NewFlowDialog-dialog-title"
+        aria-labelledby="CopyTemplateDialog-dialog-title"
         onClose={this.handleClose}
         open={isOpen}
         maxWidth="sm"
@@ -152,17 +162,17 @@ class NewFlowDialog extends React.Component {
       >
         <form onSubmit={this.handleSubmit}>
           <DialogTitle
-            id="NewFlowDialog-dialog-title"
+            id="CopyTemplateDialog-dialog-title"
             disableTypography={true}
           >
-            Create New Flow
+            {pageResource ? `Rename "${pageResource.displayName}" Template` : 'Rename Template'}
           </DialogTitle>
           <DialogContent>
             <TextField
               autoFocus={true}
               margin="dense"
               id="pageName"
-              label="Flow Name"
+              label="Template Name"
               type="text"
               fullWidth={true}
               required={true}
@@ -172,15 +182,15 @@ class NewFlowDialog extends React.Component {
               InputProps={{
                 startAdornment:
                   <InputAdornment position="start">
-                    <ResourceIcon resourceType={constants.GRAPH_MODEL_FLOW_TYPE} />
+                    <ResourceIcon resourceType={constants.GRAPH_MODEL_TEMPLATE_TYPE} />
                   </InputAdornment>,
               }}
-              helperText="Enter the name of the new flow. Use alphanumeric characters and '_', '-' characters."
+              helperText="Enter the name of the new template. Use alphanumeric characters and '_', '-' characters."
             />
             <TextField
               margin="dense"
               id="directory"
-              label="Directory (optional)"
+              label="Path (optional)"
               type="text"
               fullWidth={true}
               required={false}
@@ -193,7 +203,7 @@ class NewFlowDialog extends React.Component {
                     <ResourceIcon resourceType={constants.GRAPH_MODEL_DIR_TYPE} isMuted={true}/>
                   </InputAdornment>,
               }}
-              helperText="Enter the directory path. Use '/' as a separator of the nested directories."
+              helperText="Enter the path. Use '/' as a separator of the nested directories."
             />
           </DialogContent>
           <DialogActions>
@@ -201,7 +211,7 @@ class NewFlowDialog extends React.Component {
               Cancel
             </Button>
             <Button type="submit" onClick={this.handleSubmit} color="primary">
-              Create
+              Rename
             </Button>
           </DialogActions>
         </form>
@@ -210,4 +220,4 @@ class NewFlowDialog extends React.Component {
   }
 }
 
-export default NewFlowDialog;
+export default RenameTemplateDialog;

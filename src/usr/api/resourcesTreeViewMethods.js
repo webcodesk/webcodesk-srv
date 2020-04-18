@@ -274,6 +274,60 @@ export const copyPageSubmit = ({ resource, name, directoryName }) => async (disp
   });
 };
 
+export const renamePageStart = ({ resourceKey, virtualPath }) => (dispatch) => {
+  const resource = projectResourcesManager.getResourceByKey(resourceKey);
+  dispatch({
+    resource: resource,
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
+};
+
+export const renamePageSubmit = ({ resource, name, directoryName }) => async (dispatch) => {
+  if (testReservedName(name)) {
+    throw Error(`${name} is a reserved name.`);
+  }
+  const fileObject =
+    projectFileFactory.createCopyPageFileObject(resource, name, directoryName);
+  const isAlreadyExists =
+    await projectManager.checkResourceExists(fileObject.filePath);
+  if (isAlreadyExists) {
+    throw Error('The page with the equal path already exists.');
+  }
+  const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
+  if (newResources.updatedResources && newResources.updatedResources.length > 0) {
+    const newResource = newResources.updatedResources[0];
+    dispatch({resourceUpdatedSuccessfully: true});
+    if (newResource && newResource.hasChildren) {
+      const pageResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
+      dispatch({
+        selectedResourceKey: pageResource.key,
+        selectedResource: pageResource
+      });
+      const keysToExpand = {};
+      pageResource.allParentKeys.forEach(parentKey => {
+        keysToExpand[parentKey] = true;
+      });
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
+      dispatch({expandedResourceKeys: expandedResourceKeys});
+    }
+  }
+  // we can delete only file
+  const resourceToDelete = projectResourcesManager.getResourceByKey(resource.parentKey);
+  if (resourceToDelete && resourceToDelete.absolutePath) {
+    dispatch({deleteFilePath: resourceToDelete.absolutePath});
+  }
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
+};
+
 export const copyTemplateStart = ({ resourceKey, virtualPath }) => (dispatch) => {
   const resource = projectResourcesManager.getResourceByKey(resourceKey);
   dispatch({
@@ -316,6 +370,60 @@ export const copyTemplateSubmit = ({ resource, name, directoryName }) => async (
         );
       dispatch({expandedResourceKeys: expandedResourceKeys});
     }
+  }
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
+};
+
+export const renameTemplateStart = ({ resourceKey, virtualPath }) => (dispatch) => {
+  const resource = projectResourcesManager.getResourceByKey(resourceKey);
+  dispatch({
+    resource: resource,
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
+};
+
+export const renameTemplateSubmit = ({ resource, name, directoryName }) => async (dispatch) => {
+  if (testReservedName(name)) {
+    throw Error(`${name} is a reserved name.`);
+  }
+  const fileObject =
+    projectFileFactory.createCopyTemplateFileObject(resource, name, directoryName);
+  const isAlreadyExists =
+    await projectManager.checkResourceExists(fileObject.filePath);
+  if (isAlreadyExists) {
+    throw Error('The template with the equal path already exists.');
+  }
+  const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
+  if (newResources.updatedResources && newResources.updatedResources.length > 0) {
+    const newResource = newResources.updatedResources[0];
+    dispatch({resourceUpdatedSuccessfully: true});
+    if (newResource && newResource.hasChildren) {
+      const pageResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
+      dispatch({
+        selectedResourceKey: pageResource.key,
+        selectedResource: pageResource
+      });
+      const keysToExpand = {};
+      pageResource.allParentKeys.forEach(parentKey => {
+        keysToExpand[parentKey] = true;
+      });
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
+      dispatch({expandedResourceKeys: expandedResourceKeys});
+    }
+  }
+  // we can delete only file
+  const resourceToDelete = projectResourcesManager.getResourceByKey(resource.parentKey);
+  if (resourceToDelete && resourceToDelete.absolutePath) {
+    dispatch({deleteFilePath: resourceToDelete.absolutePath});
   }
   dispatch({
     isDialogOpen: false,
@@ -451,6 +559,59 @@ export const copyFlowSubmit = ({ resource, name, directoryName }) => async (disp
         );
       dispatch({expandedResourceKeys: expandedResourceKeys});
     }
+  }
+  dispatch({
+    isDialogOpen: false,
+    fileObject: fileObject
+  });
+};
+
+export const renameFlowStart = ({ resourceKey, virtualPath }) => (dispatch) => {
+  const resource = projectResourcesManager.getResourceByKey(resourceKey);
+  dispatch({
+    resource: resource,
+    dirPath: virtualPath,
+    isDialogOpen: true
+  });
+};
+
+export const renameFlowSubmit = ({ resource, name, directoryName }) => async (dispatch) => {
+  if (testReservedName(name)) {
+    throw Error(`${name} is a reserved name.`);
+  }
+  const fileObject = projectFileFactory.createCopyFlowFileObject(resource, name, directoryName);
+  const isAlreadyExists =
+    await projectManager.checkResourceExists(fileObject.filePath);
+  if (isAlreadyExists) {
+    throw Error('The page with the equal path already exists.');
+  }
+  const newResources = await projectManager.updateResource(fileObject.filePath, fileObject.fileData);
+  if (newResources.updatedResources && newResources.updatedResources.length > 0) {
+    const newResource = newResources.updatedResources[0];
+    dispatch({resourceUpdatedSuccessfully: true});
+    if (newResource.hasChildren) {
+      const flowResource = projectResourcesManager.getResourceByKey(newResource.childrenKeys[0]);
+      dispatch({
+        selectedResourceKey: flowResource.key,
+        selectedResource: flowResource
+      });
+      const keysToExpand = {};
+      flowResource.allParentKeys.forEach(parentKey => {
+        keysToExpand[parentKey] = true;
+      });
+      const expandedResourceKeys =
+        globalStore.merge(
+          constants.STORAGE_RECORD_EXPANDED_RESOURCE_KEYS,
+          keysToExpand,
+          true
+        );
+      dispatch({expandedResourceKeys: expandedResourceKeys});
+    }
+  }
+  // we can delete only file
+  const resourceToDelete = projectResourcesManager.getResourceByKey(resource.parentKey);
+  if (resourceToDelete && resourceToDelete.absolutePath) {
+    dispatch({deleteFilePath: resourceToDelete.absolutePath});
   }
   dispatch({
     isDialogOpen: false,

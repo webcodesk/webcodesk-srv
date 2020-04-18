@@ -31,6 +31,9 @@ import Delete_Template_Submit from './Delete_Template_Submit';
 import Drag_Resource_Item from './Drag_Resource_Item';
 import Get_Project_Server_Log from './Get_Project_Server_Log';
 import Get_Server_Status from './Get_Server_Status';
+import Rename_Flow_Submit from './Rename_Flow_Submit';
+import Rename_Page_Submit from './Rename_Page_Submit';
+import Rename_Template_Submit from './Rename_Template_Submit';
 import Search_Item_By_Editor_Request from './Search_Item_By_Editor_Request';
 import Search_Item_By_Text from './Search_Item_By_Text';
 import Select_Item_By_Click from './Select_Item_By_Click';
@@ -50,6 +53,9 @@ import TreeView_Create_New_Template from './TreeView_Create_New_Template';
 import TreeView_Delete_Flow from './TreeView_Delete_Flow';
 import TreeView_Delete_Page from './TreeView_Delete_Page';
 import TreeView_Delete_Template from './TreeView_Delete_Template';
+import TreeView_Rename_Flow from './TreeView_Rename_Flow';
+import TreeView_Rename_Page from './TreeView_Rename_Page';
+import TreeView_Rename_Template from './TreeView_Rename_Template';
 import TreeView_Toggle_Flow from './TreeView_Toggle_Flow';
 import TreeView_Toggle_Is_Test from './TreeView_Toggle_Is_Test';
 
@@ -69,6 +75,9 @@ export default {
   Drag_Resource_Item,
   Get_Project_Server_Log,
   Get_Server_Status,
+  Rename_Flow_Submit,
+  Rename_Page_Submit,
+  Rename_Template_Submit,
   Search_Item_By_Editor_Request,
   Restart_Project_Server,
   Search_Item_By_Text,
@@ -88,6 +97,9 @@ export default {
   TreeView_Delete_Flow,
   TreeView_Delete_Page,
   TreeView_Delete_Template,
+  TreeView_Rename_Flow,
+  TreeView_Rename_Page,
+  TreeView_Rename_Template,
   TreeView_Toggle_Flow,
   TreeView_Toggle_Is_Test,
 };
