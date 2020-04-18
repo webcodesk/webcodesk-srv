@@ -30,7 +30,6 @@ import { arrayMove } from '../../core/utils/arrayUtils';
 import DragIndicator from '@material-ui/icons/DragIndicator';
 import globalStore from '../../core/config/globalStore';
 import AutoScrollPanel from '../commons/AutoScrollPanel';
-import ToolbarButton from '../commons/ToolbarButton';
 
 const DragHandler = SortableHandle(({element}) => element);
 

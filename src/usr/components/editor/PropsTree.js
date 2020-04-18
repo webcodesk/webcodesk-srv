@@ -18,7 +18,6 @@
 
 import isNull from 'lodash/isNull';
 import cloneDeep from 'lodash/cloneDeep';
-import omitBy from 'lodash/omitBy';
 import forOwn from 'lodash/forOwn';
 import startCase from 'lodash/startCase';
 import React from 'react';

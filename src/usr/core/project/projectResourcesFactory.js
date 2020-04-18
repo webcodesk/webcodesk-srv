@@ -131,29 +131,26 @@ export function createPageModels(modelKey, declarationsInFile) {
       children: [],
     };
     const pageComposerManager = new PageComposerManager(componentsTree);
-    const componentInstances = pageComposerManager.getInstancesListUniq();
-    let componentInstanceModel;
-    if (componentInstances && componentInstances.length > 0) {
-      componentInstances.forEach((componentInstanceItem, instanceIndex) => {
-        const { componentName, componentInstance, componentsTreeBranch } = componentInstanceItem;
-        componentInstanceModel = {
-          key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${instanceIndex}`,
-          type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,
-          props: {
-            resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
-            name: componentInstance,
-            displayName: componentInstance,
-            componentName: componentName,
-            componentInstance: componentInstance,
-            componentsTreeBranch: componentsTreeBranch,
-            pageName,
-            pagePath,
-            isTest,
-          }
-        };
-        pageModel.children.push(componentInstanceModel);
-      });
-    }
+    let componentInstanceIndex = 0;
+    const componentInstancesTree = pageComposerManager.getInstancesTree((nodeModelProps, componentsTreeBranch) => {
+      const { componentName, componentInstance } = nodeModelProps;
+      return {
+        key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${componentInstanceIndex++}`,
+        type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,
+        props: {
+          resourceType: declarationsInFile.resourceType, // the resource type can be obtained from adapter, so we don't need keep resource type here
+          name: componentInstance,
+          displayName: componentInstance,
+          componentName: componentName,
+          componentInstance: componentInstance,
+          componentsTreeBranch: componentsTreeBranch,
+          pageName,
+          pagePath,
+          isTest,
+        }
+      };
+    });
+    pageModel.children.push(componentInstancesTree);
     result.push(pageModel);
   });
   return result;
@@ -179,7 +176,7 @@ export function createTemplateModels(modelKey, declarationsInFile) {
     let componentInstanceModel;
     if (componentInstances && componentInstances.length > 0) {
       componentInstances.forEach((componentInstanceItem, instanceIndex) => {
-        const { componentName, componentInstance, componentsTreeBranch } = componentInstanceItem;
+        const { componentName, componentInstance } = componentInstanceItem;
         componentInstanceModel = {
           key: `${makeResourceModelCanonicalKey(modelKey, componentInstance)}-${instanceIndex}`,
           type: constants.GRAPH_MODEL_COMPONENT_INSTANCE_TYPE,

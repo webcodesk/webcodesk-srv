@@ -198,7 +198,7 @@ class ActionsLogViewer extends React.Component {
 
   createEventCell = (record) => {
     const { classes } = this.props;
-    const { eventType, eventName, propertyName } = record;
+    const { eventType, eventName } = record;
     if (eventType === constants.DEBUG_MSG_CREATE_CONTAINER_EVENT) {
       return (
         <TableCell>

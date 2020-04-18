@@ -62,6 +62,27 @@ class PageComposerManager {
     return result;
   };
 
+  instanceVisitor2 = (nodeModelTransformFunc) => (accumulator, {nodeModel, parentModel}) => {
+    if (
+      nodeModel
+      && nodeModel.props
+      && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
+    ) {
+      const { key, props } = nodeModel;
+      const extractedModel = this.graphModel.extractModel(key, true);
+      if (props) {
+        const instanceModel = nodeModelTransformFunc(props, extractedModel);
+        if (parentModel) {
+          accumulator = accumulator || {};
+          accumulator.children = accumulator.children || [];
+          accumulator.children.push(instanceModel);
+        }
+        accumulator = instanceModel;
+      }
+    }
+    return accumulator;
+  };
+
   componentVisitor = ({ nodeModel }) => {
     const result = [];
     if (
@@ -69,7 +90,7 @@ class PageComposerManager {
       && nodeModel.props
       && (nodeModel.type === constants.PAGE_COMPONENT_TYPE || nodeModel.type === constants.PAGE_NODE_TYPE)
     ) {
-      const { key, props } = nodeModel;
+      const { props } = nodeModel;
       if (props) {
         result.push({
           componentName: props.componentName,
@@ -106,6 +127,11 @@ class PageComposerManager {
   getInstancesListUniq = () => {
     // get all instance references with the component tree chunks that belong to each instance
     return this.graphModel.traverse(this.instanceVisitor);
+  };
+
+  getInstancesTree = (nodeModelTransformFunc) => {
+    // get all instance references with the component tree chunks that belong to each instance
+    return this.graphModel.traverseWithAccumulator({}, this.instanceVisitor2(nodeModelTransformFunc));
   };
 
   getComponentsList = () => {

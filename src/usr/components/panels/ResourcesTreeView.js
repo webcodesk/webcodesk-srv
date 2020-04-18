@@ -40,7 +40,6 @@ import ToolbarButton from '../commons/ToolbarButton';
 
 import constants from '../../../commons/constants';
 import DraggableWrapper from './DraggableWrapper';
-import ScriptView from '../commons/ScriptView';
 import ScrollSlider from '../commons/ScrollSlider';
 
 const TREE_VIEW_INDENT = '18px';
@@ -294,12 +293,15 @@ class ResourcesTreeView extends React.Component {
     onItemDragEnd: PropTypes.func,
     onCreatePage: PropTypes.func,
     onCopyPage: PropTypes.func,
+    onRenamePage: PropTypes.func,
     onEditPage: PropTypes.func,
     onCreateTemplate: PropTypes.func,
     onCopyTemplate: PropTypes.func,
+    onRenameTemplate: PropTypes.func,
     onEditTemplate: PropTypes.func,
     onCreateFlow: PropTypes.func,
     onCopyFlow: PropTypes.func,
+    onRenameFlow: PropTypes.func,
     onEditFlow: PropTypes.func,
     onToggleFlow: PropTypes.func,
     onToggleIsTest: PropTypes.func,
@@ -339,6 +341,9 @@ class ResourcesTreeView extends React.Component {
     onCopyPage: () => {
       console.info('ResourcesTreeView.onCopyPage is not set');
     },
+    onRenamePage: () => {
+      console.info('ResourcesTreeView.onRenamePage is not set');
+    },
     onEditPage: () => {
       console.info('ResourcesTreeView.onEditPage is not set');
     },
@@ -348,6 +353,9 @@ class ResourcesTreeView extends React.Component {
     onCopyTemplate: () => {
       console.info('ResourcesTreeView.onCopyTemplate is not set');
     },
+    onRenameTemplate: () => {
+      console.info('ResourcesTreeView.onRenameTemplate is not set');
+    },
     onEditTemplate: () => {
       console.info('ResourcesTreeView.onEditTemplate is not set');
     },
@@ -356,6 +364,9 @@ class ResourcesTreeView extends React.Component {
     },
     onCopyFlow: () => {
       console.info('ResourcesTreeView.onCopyFlow is not set');
+    },
+    onRenameFlow: () => {
+      console.info('ResourcesTreeView.onRenameFlow is not set');
     },
     onEditFlow: () => {
       console.info('ResourcesTreeView.onEditFlow is not set');
@@ -485,6 +496,21 @@ class ResourcesTreeView extends React.Component {
     }
   };
 
+  handleRenameResource = (resourceKey, resourceType, virtualPath) => (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const { onRenameFlow, onRenamePage, onRenameTemplate } = this.props;
+    if (resourceType === constants.RESOURCE_IN_PAGES_TYPE) {
+      onRenamePage({ resourceKey, virtualPath });
+    } else if (resourceType === constants.RESOURCE_IN_FLOWS_TYPE) {
+      onRenameFlow({ resourceKey, virtualPath });
+    } else if (resourceType === constants.RESOURCE_IN_TEMPLATES_TYPE) {
+      onRenameTemplate({ resourceKey, virtualPath });
+    }
+  };
+
   handleDeleteSelected = (resourceKey, resourceType) => (e) => {
     if (e) {
       e.stopPropagation();
@@ -585,7 +611,7 @@ class ResourcesTreeView extends React.Component {
                 </div>
                 <div className={classes.listItemButtonWrapper}>
                   <div
-                    className={classes.listItemTextContainer}
+                    className={classes.listItemTextContainerClickable}
                     onClick={this.handleToggleExpandItem(key)}
                   >
                     {props.hasErrors
@@ -882,7 +908,7 @@ class ResourcesTreeView extends React.Component {
                 </div>
                 <div className={classes.listItemButtonWrapper}>
                   <div
-                    className={classes.listItemTextContainerDraggable}
+                    className={classes.listItemTextContainerClickable}
                     onClick={this.handleDoubleClickItem(key)}
                   >
                     <DraggableWrapper
@@ -917,6 +943,10 @@ class ResourcesTreeView extends React.Component {
                       {
                         label: 'Copy page',
                         onClick: this.handleCopyResource(key, resourceType, virtualPath),
+                      },
+                      {
+                        label: 'Rename page',
+                        onClick: this.handleRenameResource(key, resourceType, virtualPath),
                       },
                       {
                         label: 'divider'
@@ -1011,6 +1041,10 @@ class ResourcesTreeView extends React.Component {
                         onClick: this.handleCopyResource(key, resourceType, virtualPath),
                       },
                       {
+                        label: 'Rename template',
+                        onClick: this.handleRenameResource(key, resourceType, virtualPath),
+                      },
+                      {
                         label: 'divider'
                       },
                       {
@@ -1032,9 +1066,26 @@ class ResourcesTreeView extends React.Component {
               disableGutters={true}
             >
               <div className={classes.listItemContainer}>
-                <div className={classes.listItemPrefixSector}>
+                <div
+                  className={classes.listItemPrefixButtonSector}
+                  onClick={this.handleToggleExpandItem(key)}
+                  title="Click to expand the group"
+                >
                   <ResourceListItemExpandedIcon>
-                    <span>&nbsp;</span>
+                    {hasChildren
+                      ? (
+                        expandedResourceKeys[key]
+                          ? (
+                            <ExpandMore fontSize="small" color="disabled"/>
+                          )
+                          : (
+                            <ChevronRight fontSize="small" color="disabled"/>
+                          )
+                      )
+                      : (
+                        <span>&nbsp;</span>
+                      )
+                    }
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
                     <ResourceIcon
@@ -1062,6 +1113,15 @@ class ResourcesTreeView extends React.Component {
               </div>
             </ResourceListItem>
           );
+          if (expandedResourceKeys[key]) {
+            list.push(
+              <div key={`children_${elementKey}`} className={classes.listItemContainer}>
+                <div className={classes.listContainer}>
+                  {listItems}
+                </div>
+              </div>
+            );
+          }
         } else if (type === constants.GRAPH_MODEL_FLOW_TYPE) {
           let itemTextClassNames = '';
           if (props.isDisabled) {
@@ -1137,6 +1197,10 @@ class ResourcesTreeView extends React.Component {
                       {
                         label: 'Copy flow',
                         onClick: this.handleCopyResource(key, resourceType, virtualPath),
+                      },
+                      {
+                        label: 'Rename flow',
+                        onClick: this.handleRenameResource(key, resourceType, virtualPath),
                       },
                       {
                         label: 'divider'

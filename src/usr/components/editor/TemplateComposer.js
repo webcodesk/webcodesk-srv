@@ -710,7 +710,6 @@ class TemplateComposer extends React.Component {
       localComponentsTree,
       recentUpdateHistory,
       iFrameWidthIndex,
-      iFrameScaleIndex,
       isPreviewMode,
       treeViewSplitterSize,
       treeViewHorizontalSplitterSize,

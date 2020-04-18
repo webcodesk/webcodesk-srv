@@ -29,7 +29,6 @@ class Container extends React.Component {
     const {
       componentName,
       componentInstance,
-      componentKey,
     } = this.props;
     this.wrappedHandlers = {};
     const { containerEventHandlers, actions } = this.props;

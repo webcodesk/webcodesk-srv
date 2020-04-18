@@ -236,7 +236,6 @@ class PageTreeItem extends React.Component {
       componentName,
       componentInstance,
       name,
-      hasChildren,
       isPlaceholder,
       itemKey,
       errors,

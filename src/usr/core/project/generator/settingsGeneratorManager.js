@@ -17,7 +17,6 @@
  */
 
 import cloneDeep from 'lodash/cloneDeep';
-import path from 'path-browserify';
 import * as fileUtils from '../../utils/fileUtils';
 import * as constants from '../../../../commons/constants';
 import { getArrayDefaultExportFileText } from './fileTemplates';

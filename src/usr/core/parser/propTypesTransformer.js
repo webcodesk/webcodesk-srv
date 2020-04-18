@@ -79,6 +79,11 @@ export function traverseProperties(properties, defaults) {
         }
         if (variants && variants.length > 0) {
           newChildItem.props.propertyValueVariants = cloneDeep(variants);
+          // test if there is a value in the property with variants
+          if (isUndefined(newChildItem.props.propertyValue)) {
+            // if there is no value set the first variant as the value implicitly
+            newChildItem.props.propertyValue = variants[0].value;
+          }
         }
         result.push(newChildItem);
       } else if (

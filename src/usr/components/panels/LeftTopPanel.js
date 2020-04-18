@@ -16,15 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import debounce from 'lodash/debounce';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ToolbarButton from '../commons/ToolbarButton';
 import constants from '../../../commons/constants';
-import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import HelpOutline from '@material-ui/icons/HelpOutline';
 
 const styles = theme => ({
   root: {

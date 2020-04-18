@@ -379,7 +379,6 @@ class LivePreview extends React.Component {
     } = this.props;
     const {
       iFrameWidthIndex,
-      iFrameScaleIndex,
       isRecordingFrameworkMessages,
       isDebugFlowOpen,
       activePage,

@@ -111,6 +111,18 @@ export default {
       instance: 'projectServerDialog1'
     },
     {
+      type: 'usr.components.dialogs.RenameFlowDialog.RenameFlowDialog',
+      instance: 'renameFlowDialog1'
+    },
+    {
+      type: 'usr.components.dialogs.RenamePageDialog.RenamePageDialog',
+      instance: 'renamePageDialog1'
+    },
+    {
+      type: 'usr.components.dialogs.RenameTemplateDialog.RenameTemplateDialog',
+      instance: 'renameTemplateDialog1'
+    },
+    {
       type: 'usr.components.dialogs.SyslogDialog.SyslogDialog',
       instance: 'syslogDialog1'
     },

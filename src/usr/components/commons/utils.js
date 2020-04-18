@@ -76,3 +76,12 @@ export function cutFilePath(filePath, limit = 60, trimTo = 5) {
   }
   return result;
 }
+
+export function validateFileNameAndDirectoryName(fileName, directoryName) {
+  const nameMatches = constants.FILE_NAME_VALID_REGEXP.exec(fileName);
+  const directoryNameMatches = constants.FILE_PATH_VALID_REGEXP.exec(directoryName);
+  return {
+    fileNameHasError: !fileName || !nameMatches,
+    directoryNameHasError: !!(directoryName && !directoryNameMatches),
+  };
+}

@@ -177,14 +177,12 @@ class PageComposition extends Component {
       const propertiesObject = targetProperties[containerKey];
       const parameterValue = pageParams ? pageParams['parameter'] : undefined;
       const normalizedRoutePath = routePath.substr(1).replace('/:parameter?', '');
-      let propertyName = '';
       if (propertiesObject) {
         containerProperties = Object.keys(propertiesObject);
         if (!isUndefined(parameterValue) || (pageQuery && !isEmpty(pageQuery))) {
           forOwn(propertiesObject, (value, key) => {
             if (value && value.populatePath === normalizedRoutePath) {
               populatedProps[key] = parameterValue || pageQuery;
-              propertyName = key;
             }
           });
         }

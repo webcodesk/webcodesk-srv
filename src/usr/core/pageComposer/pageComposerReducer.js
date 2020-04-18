@@ -194,7 +194,6 @@ function traverseProperties (properties) {
     properties.forEach(property => {
       const {
         type,
-        props,
         children
       } = property;
       if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {

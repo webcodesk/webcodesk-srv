@@ -178,6 +178,23 @@ class GraphModel {
     return accumulator;
   }
 
+  traverseWithAccumulator(accumulator, visitor, rootNodeKey) {
+    if (!visitor) {
+      throw Error('GraphModel.traverseWithAccumulator: visitor function is not passed in.');
+    }
+    rootNodeKey = rootNodeKey || this.rootNodeKey;
+    const parentModel = this.getParentNode(rootNodeKey);
+    const nodeModel = this.getNode(rootNodeKey);
+    const _acc = visitor(accumulator, {nodeModel, parentModel});
+    const childrenKeys = this.graphInstance.children(rootNodeKey);
+    if (childrenKeys && childrenKeys.length > 0) {
+      childrenKeys.forEach(childKey => {
+        this.traverseWithAccumulator(_acc, visitor, childKey);
+      });
+    }
+    return _acc;
+  }
+
   replaceNode(nodeKey, model) {
     const parentNodeKey = this.graphInstance.parent(nodeKey);
     if (parentNodeKey) {

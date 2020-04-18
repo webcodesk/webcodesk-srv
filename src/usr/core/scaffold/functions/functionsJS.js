@@ -41,46 +41,46 @@ export const sampleFunction = (options, {stateByDispatch, history}) => dispatch 
 };
 `;
 
-const templateContentProps = `
-import PropTypes from 'prop-types';
+// const templateContentProps = `
+// import PropTypes from 'prop-types';
+//
+// export const SampleFunctionTypes = {
+//   /**
+//    * The first function argument.
+//    */
+//   argument: PropTypes.shape({
+//     // text value
+//     text: PropTypes.string,
+//     // extra specific logic options for some processing
+//     extraOptions: PropTypes.shape({
+//       extraFlag: PropTypes.bool,
+//     }),
+//   }),
+//   /**
+//    * The function dispatch
+//    */
+//   dispatch: PropTypes.shape({
+//     optionsFromInput: PropTypes.shape({
+//       // text value
+//       text: PropTypes.string,
+//       // extra options after some processing
+//       extraOptions: PropTypes.shape({
+//         extraFlag: PropTypes.bool,
+//       }),
+//     }),
+//   }),
+// };
+// `;
 
-export const SampleFunctionTypes = {
-  /**
-   * The first function argument.
-   */
-  argument: PropTypes.shape({
-    // text value
-    text: PropTypes.string,
-    // extra specific logic options for some processing
-    extraOptions: PropTypes.shape({
-      extraFlag: PropTypes.bool,
-    }),
-  }),
-  /**
-   * The function dispatch
-   */
-  dispatch: PropTypes.shape({
-    optionsFromInput: PropTypes.shape({
-      // text value
-      text: PropTypes.string,
-      // extra options after some processing
-      extraOptions: PropTypes.shape({
-        extraFlag: PropTypes.bool,
-      }),
-    }),
-  }),
-};
-`;
-
-const templateContentReadme = `
-## Description
-
-It's a template for a new list of the reusable functions.
-
-### __sampleFunction__
- 
-Tell here what this function is for and how to use it.
-`;
+// const templateContentReadme = `
+// ## Description
+//
+// It's a template for a new list of the reusable functions.
+//
+// ### __sampleFunction__
+//
+// Tell here what this function is for and how to use it.
+// `;
 
 export async function createFiles (fileName, dirName, destDirPath, fileExtension) {
   const fileObjects = [];
