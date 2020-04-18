@@ -611,7 +611,7 @@ class ResourcesTreeView extends React.Component {
                 </div>
                 <div className={classes.listItemButtonWrapper}>
                   <div
-                    className={classes.listItemTextContainer}
+                    className={classes.listItemTextContainerClickable}
                     onClick={this.handleToggleExpandItem(key)}
                   >
                     {props.hasErrors
@@ -908,7 +908,7 @@ class ResourcesTreeView extends React.Component {
                 </div>
                 <div className={classes.listItemButtonWrapper}>
                   <div
-                    className={classes.listItemTextContainerDraggable}
+                    className={classes.listItemTextContainerClickable}
                     onClick={this.handleDoubleClickItem(key)}
                   >
                     <DraggableWrapper
@@ -1066,9 +1066,26 @@ class ResourcesTreeView extends React.Component {
               disableGutters={true}
             >
               <div className={classes.listItemContainer}>
-                <div className={classes.listItemPrefixSector}>
+                <div
+                  className={classes.listItemPrefixButtonSector}
+                  onClick={this.handleToggleExpandItem(key)}
+                  title="Click to expand the group"
+                >
                   <ResourceListItemExpandedIcon>
-                    <span>&nbsp;</span>
+                    {hasChildren
+                      ? (
+                        expandedResourceKeys[key]
+                          ? (
+                            <ExpandMore fontSize="small" color="disabled"/>
+                          )
+                          : (
+                            <ChevronRight fontSize="small" color="disabled"/>
+                          )
+                      )
+                      : (
+                        <span>&nbsp;</span>
+                      )
+                    }
                   </ResourceListItemExpandedIcon>
                   <ResourceListItemIcon>
                     <ResourceIcon
@@ -1096,6 +1113,15 @@ class ResourcesTreeView extends React.Component {
               </div>
             </ResourceListItem>
           );
+          if (expandedResourceKeys[key]) {
+            list.push(
+              <div key={`children_${elementKey}`} className={classes.listItemContainer}>
+                <div className={classes.listContainer}>
+                  {listItems}
+                </div>
+              </div>
+            );
+          }
         } else if (type === constants.GRAPH_MODEL_FLOW_TYPE) {
           let itemTextClassNames = '';
           if (props.isDisabled) {
