@@ -2,7 +2,9 @@
   <img src="https://raw.githubusercontent.com/webcodesk/webcodesk-srv/master/docs/hero.png" width="70%" alt="Webcodesk Screenshot" />
 </p>
 
-Webcodesk is an application that installed as an npm module. It consists of two parts: a server part and a client part. The server part is a NodeJS application that should be started in the command line on the local computer. The client part runs in the web browser. Webcodesk helps the developer in creating Web applications with React UI components. It has a bunch of visual editors where the user can compose UI components on the pages, create data flow logic between UI components, and debug data flow visually.
+Webcodesk is an application that installed as an npm module. It consists of two parts: a server part and a client part. The server part is a NodeJS application that should be started in the command line on the local computer. The client part runs in the web browser. 
+
+Webcodesk helps the developer in creating Web applications with React UI components. It has a bunch of visual editors where the user can **compose UI components** on the pages, **create data flow logic** between UI components, and **debug data flow** visually.
 
 ## Introduction
 
