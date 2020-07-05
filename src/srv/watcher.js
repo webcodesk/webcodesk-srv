@@ -33,7 +33,7 @@ function stopWatchingFiles() {
     watcher.close();
     watcher = undefined;
   }
-  watcherIsReady = false;
+  // watcherIsReady = false;
 }
 
 function startWatchingFiles(filePaths, sendMainWindowMessage) {
@@ -46,36 +46,42 @@ function startWatchingFiles(filePaths, sendMainWindowMessage) {
     depth: 20,
   });
   watcher
-    .on('ready', () => {
-      watcherIsReady = true;
-      // console.info(watcher.getWatched());
-    })
+    // .on('ready', () => {
+    //   watcherIsReady = true;
+    //   console.info(watcher.getWatched());
+    // })
     .on('add', filePath => {
-      if (watcherIsReady) {
+      // console.info(`File ${filePath} was added.`);
+      // if (watcherIsReady) {
         const extName = path.extname(filePath);
+        // console.info(`Ext name: ${extName} `);
         if (validFileExtensions[extName]) {
-          // console.info(`File ${filePath} was added.`);
+          // console.info(`File ${filePath} was added 2.`);
           sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_ADDED, { path: filePath });
         }
-      }
+      // }
     })
     .on('change', filePath => {
-      if (watcherIsReady) {
+      // console.info(`File ${filePath} was changed`);
+      // if (watcherIsReady) {
         const extName = path.extname(filePath);
+        // console.info(`Ext name: ${extName} `);
         if (validFileExtensions[extName]) {
-          // console.info(`File ${filePath} was changed`);
+          // console.info(`File ${filePath} was changed 2`);
           sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_CHANGED, { path: filePath });
         }
-      }
+      // }
     })
     .on('unlink', filePath => {
-      if (watcherIsReady) {
+      // console.info(`File ${filePath} was removed`);
+      // if (watcherIsReady) {
+      //   console.info(`Ext name: ${extName} `);
         const extName = path.extname(filePath);
         if (validFileExtensions[extName]) {
-          // console.info(`File ${filePath} was removed`);
+          // console.info(`File ${filePath} was removed 2`);
           sendMainWindowMessage(appWindowMessages.WATCHER_FILE_WAS_REMOVED, { path: filePath });
         }
-      }
+      // }
     });
 }
 

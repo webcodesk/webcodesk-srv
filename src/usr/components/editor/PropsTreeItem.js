@@ -44,6 +44,7 @@ import PropertyNumericField from '../commons/PropertyNumericField';
 import PropertyTextField from '../commons/PropertyTextField';
 import PropertySelect from '../commons/PropertySelect';
 import PropertyCheckbox from '../commons/PropertyCheckbox';
+import MarkdownView from "../commons/MarkdownView";
 
 const styles = theme => ({
   listItemPrefixSector: {
@@ -109,6 +110,8 @@ const styles = theme => ({
   htmlTooltip: {
     backgroundColor: '#fff9c4',
     border: '1px solid #dddddd',
+    maxWidth: '100%',
+    width: '500px'
   },
 });
 
@@ -503,7 +506,7 @@ class PropsTreeItem extends React.Component {
                         title=
                           {propertyComment
                             ? (
-                              <Typography>{propertyComment}</Typography>
+                              <MarkdownView tiny={true} markdownContent={propertyComment} />
                             )
                             : (
                               <React.Fragment>

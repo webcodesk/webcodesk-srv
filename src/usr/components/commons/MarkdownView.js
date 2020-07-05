@@ -29,6 +29,11 @@ const styles = theme => ({
     minWidth: '150px',
     fontSize: '14px',
   },
+  descriptionTiny: {
+    padding: '1em 1em 1em 1em',
+    minWidth: '150px',
+    fontSize: '14px',
+  },
 });
 
 window.__openURLInExternalWindow = function (element) {
@@ -41,10 +46,12 @@ window.__openURLInExternalWindow = function (element) {
 class MarkdownView extends React.Component {
   static propTypes = {
     markdownContent: PropTypes.string,
+    tiny: PropTypes.bool,
   };
 
   static defaultProps = {
     markdownContent: '### Empty content',
+    tiny: false,
   };
 
   constructor (props) {
@@ -65,11 +72,11 @@ class MarkdownView extends React.Component {
   }
 
   render () {
-    const { markdownContent, classes } = this.props;
+    const { markdownContent, classes, tiny } = this.props;
     if (markdownContent) {
       return (
         <div
-          className={`${classes.description} markdown-body`}
+          className={`${tiny ? classes.descriptionTiny : classes.description} markdown-body`}
           dangerouslySetInnerHTML={{
             __html: this.markdown.render(markdownContent)
           }}

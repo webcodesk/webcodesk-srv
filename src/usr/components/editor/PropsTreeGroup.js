@@ -35,6 +35,7 @@ import Close from '@material-ui/icons/Close';
 import FileCopy from '@material-ui/icons/FileCopy';
 import Delete from '@material-ui/icons/Delete';
 import * as constants from '../../../commons/constants';
+import MarkdownView from "../commons/MarkdownView";
 
 const styles = theme => ({
   listItemPrefixSector: {
@@ -75,6 +76,8 @@ const styles = theme => ({
   htmlTooltip: {
     backgroundColor: '#fff9c4',
     border: '1px solid #dddddd',
+    maxWidth: '100%',
+    width: '500px'
   },
 });
 
@@ -286,7 +289,7 @@ class PropsTreeGroup extends React.Component {
                 title=
                   {propertyComment
                     ? (
-                      <Typography>{propertyComment}</Typography>
+                      <MarkdownView tiny={true} markdownContent={propertyComment} />
                     )
                     : (
                       <React.Fragment>
