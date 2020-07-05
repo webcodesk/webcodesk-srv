@@ -21,7 +21,6 @@ const chokidar = require('chokidar');
 const appWindowMessages = require('../commons/appWindowMessages');
 
 let watcher;
-let watcherIsReady;
 
 const validFileExtensions = {
   '.js': true, '.jsx': true, '.ts': true, '.tsx': true, '.json': true, '.md': true
@@ -33,7 +32,6 @@ function stopWatchingFiles() {
     watcher.close();
     watcher = undefined;
   }
-  watcherIsReady = false;
 }
 
 function startWatchingFiles(filePaths, sendMainWindowMessage) {
