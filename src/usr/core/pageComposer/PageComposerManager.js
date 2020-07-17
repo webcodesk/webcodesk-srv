@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 import GraphModel from '../graph/GraphModel';
 import * as constants from '../../../commons/constants';
 import * as pageComposerFactory from './pageComposerFactory';
@@ -138,8 +138,12 @@ class PageComposerManager {
     return this.graphModel.traverse(this.componentVisitor);
   };
 
-  getModel = () => {
-    return this.graphModel.getModel(false);
+  getModel = (fast) => {
+    if (fast) {
+      return this.graphModel.getModel(false);
+    } else {
+      return this.graphModel.getModel(false);
+    }
   };
 
   getModelWithoutKeys = (nodeKey) => {

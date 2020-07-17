@@ -18,7 +18,7 @@
 
 import omit from 'lodash/omit';
 import lowerFirst from 'lodash/lowerFirst';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 import constants from '../../../commons/constants';
 import { readFile } from '../utils/fileUtils';
 import { makeResourceModelCanonicalKey } from '../utils/resourceUtils';

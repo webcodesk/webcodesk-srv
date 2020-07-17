@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 import GraphModel from '../graph/GraphModel';
 import constants from '../../../commons/constants';
 import * as composerFactory from './flowComposerFactory';

@@ -54,7 +54,9 @@ export const openExistingProject = () => async (dispatch) => {
   }
   // dispatch('infoMessage', 'Reading source files. Please wait...');
   try {
+    console.time('projectManager.watchUsrSourceDir');
     await projectManager.watchUsrSourceDir();
+    console.timeEnd('projectManager.watchUsrSourceDir');
     dispatch({success: true});
     // dispatch('successMessage', 'Project initialised successfully');
   } catch (e) {

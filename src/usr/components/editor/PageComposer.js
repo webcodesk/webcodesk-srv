@@ -226,6 +226,7 @@ class PageComposer extends React.Component {
 
   updateLocalState = (doSendUpdate) => {
     this.setState((state) => {
+      // console.time('updateLocalState');
       const {
         sendMessageCounter,
         sendUpdateCounter,
@@ -233,7 +234,7 @@ class PageComposer extends React.Component {
         localComponentsTree,
       } = state;
       const newState = {
-        localComponentsTree: this.pageComposerManager.getModel(),
+        localComponentsTree: this.pageComposerManager.getModel(true),
         sendMessageCounter: sendMessageCounter + 1,
         selectedComponentModel: this.pageComposerManager.getSelectedNode(),
       };
@@ -249,6 +250,7 @@ class PageComposer extends React.Component {
         }
         newState.sendUpdateCounter = sendUpdateCounter + 1;
       }
+      // console.timeEnd('updateLocalState');
       return newState;
     });
   };
@@ -269,7 +271,7 @@ class PageComposer extends React.Component {
             lastRecentChanges.componentsTree
           );
         return {
-          localComponentsTree: this.pageComposerManager.getModel(),
+          localComponentsTree: this.pageComposerManager.getModel(true),
           selectedComponentModel: this.pageComposerManager.getSelectedNode(),
           sendMessageCounter: sendMessageCounter + 1,
           sendUpdateCounter: sendUpdateCounter - 1,
@@ -294,6 +296,7 @@ class PageComposer extends React.Component {
       sendUpdateCounter: 0,
       recentUpdateHistory: [],
     });
+    console.timeEnd('PageComposer send update 1');
     // if (this.iFrameRef.current) {
     //   this.iFrameRef.current.setFocus();
     // }
@@ -432,7 +435,9 @@ class PageComposer extends React.Component {
   };
 
   handleSelectComponent = (key) => {
+    console.time('this.pageComposerManager.selectCell(key)');
     this.pageComposerManager.selectCell(key);
+    console.timeEnd('this.pageComposerManager.selectCell(key)');
     this.updateLocalState();
   };
 
@@ -453,7 +458,7 @@ class PageComposer extends React.Component {
       const { selectedComponentModel } = this.state;
       if (selectedComponentModel) {
         this.pageComposerManager.renameComponentInstance(selectedComponentModel.key, newComponentInstance);
-        const prevComponentsTree = this.pageComposerManager.getModel();
+        const prevComponentsTree = this.pageComposerManager.getModel(true);
         const prevSelectedComponentModel = this.pageComposerManager.getSelectedNode();
         delete this.pageComposerManager;
         this.pageComposerManager = new PageComposerManager(
@@ -467,7 +472,7 @@ class PageComposer extends React.Component {
   handleUpdateComponentProperty = (newComponentPropertyModel) => {
     if (newComponentPropertyModel) {
       this.pageComposerManager.updateComponentProperty(newComponentPropertyModel);
-      const componentsTree = this.pageComposerManager.getModel();
+      const componentsTree = this.pageComposerManager.getModel(true);
       const selectedComponentModel = this.pageComposerManager.getSelectedNode();
       delete this.pageComposerManager;
       this.pageComposerManager = new PageComposerManager(
@@ -485,7 +490,7 @@ class PageComposer extends React.Component {
 
   handleIncreaseComponentPropertyArray = (propertyKey) => {
     this.pageComposerManager.increaseComponentPropertyArray(propertyKey);
-    const componentsTree = this.pageComposerManager.getModel();
+    const componentsTree = this.pageComposerManager.getModel(true);
     const selectedComponentModel = this.pageComposerManager.getSelectedNode();
     delete this.pageComposerManager;
     this.pageComposerManager = new PageComposerManager(
@@ -496,7 +501,7 @@ class PageComposer extends React.Component {
 
   handleDuplicateComponentPropertyArrayItem = (propertyKey, groupPropertyKey, itemIndex) => {
     this.pageComposerManager.duplicateComponentPropertyArrayItem(propertyKey, groupPropertyKey, itemIndex);
-    const componentsTree = this.pageComposerManager.getModel();
+    const componentsTree = this.pageComposerManager.getModel(true);
     const selectedComponentModel = this.pageComposerManager.getSelectedNode();
     delete this.pageComposerManager;
     this.pageComposerManager = new PageComposerManager(
@@ -507,7 +512,7 @@ class PageComposer extends React.Component {
 
   handleDeleteComponentProperty = (propertyKey) => {
     this.pageComposerManager.deleteComponentProperty(propertyKey);
-    const componentsTree = this.pageComposerManager.getModel();
+    const componentsTree = this.pageComposerManager.getModel(true);
     const selectedComponentModel = this.pageComposerManager.getSelectedNode();
     delete this.pageComposerManager;
     this.pageComposerManager = new PageComposerManager(
@@ -519,7 +524,7 @@ class PageComposer extends React.Component {
   handleUpdateComponentPropertyArrayOrder = (newComponentPropertyModel) => {
     if (newComponentPropertyModel) {
       this.pageComposerManager.updateComponentPropertyArrayOrder(newComponentPropertyModel);
-      const componentsTree = this.pageComposerManager.getModel();
+      const componentsTree = this.pageComposerManager.getModel(true);
       const selectedComponentModel = this.pageComposerManager.getSelectedNode();
       delete this.pageComposerManager;
       this.pageComposerManager = new PageComposerManager(
@@ -733,8 +738,10 @@ class PageComposer extends React.Component {
       dataId,
     } = this.props;
     let hasSelectedComponentErrors = false;
+    let selectedScrollKey = null;
     if (selectedComponentModel) {
-      const { props } = selectedComponentModel;
+      const { key, props } = selectedComponentModel;
+      selectedScrollKey = key;
       if (props && props.errors) {
         hasSelectedComponentErrors = !isEmpty(props.errors);
       }
@@ -892,6 +899,7 @@ class PageComposer extends React.Component {
                 <PageTree
                   dataId={dataId}
                   componentsTree={localComponentsTree}
+                  selectedKey={selectedScrollKey}
                   onItemClick={this.handleSelectComponent}
                   onItemDrop={this.handlePageTreeItemDrop}
                   onItemErrorClick={this.handleErrorClick}
@@ -1007,6 +1015,7 @@ class PageComposer extends React.Component {
                   </div>
                   <PageTree
                     componentsTree={localComponentsTree}
+                    selectedKey={selectedScrollKey}
                     onItemClick={this.handleSelectComponent}
                     onItemDrop={this.handlePageTreeItemDrop}
                     onItemErrorClick={this.handleErrorClick}

@@ -106,7 +106,9 @@ class IFrame extends React.Component {
 
   sendMessage (message) {
     if (this.frameWindow.current) {
-      this.frameWindow.current.contentWindow.postMessage(message, '*');
+      setTimeout(() => {
+        this.frameWindow.current.contentWindow.postMessage(message, '*');
+      }, 1);
     }
   }
 

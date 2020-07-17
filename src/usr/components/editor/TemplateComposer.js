@@ -727,8 +727,10 @@ class TemplateComposer extends React.Component {
       dataId,
     } = this.props;
     let hasSelectedComponentErrors = false;
+    let selectedScrollKey = null;
     if (selectedComponentModel) {
-      const { props } = selectedComponentModel;
+      const { key, props } = selectedComponentModel;
+      selectedScrollKey = key;
       if (props && props.errors) {
         hasSelectedComponentErrors = !isEmpty(props.errors);
       }
@@ -878,6 +880,7 @@ class TemplateComposer extends React.Component {
                 <PageTree
                   dataId={dataId}
                   componentsTree={localComponentsTree}
+                  selectedKey={selectedScrollKey}
                   onItemClick={this.handleSelectComponent}
                   onItemDrop={this.handlePageTreeItemDrop}
                   onItemErrorClick={this.handleErrorClick}
@@ -994,6 +997,7 @@ class TemplateComposer extends React.Component {
                   </div>
                   <PageTree
                     componentsTree={localComponentsTree}
+                    selectedKey={selectedScrollKey}
                     onItemClick={this.handleSelectComponent}
                     onItemDrop={this.handlePageTreeItemDrop}
                     onItemErrorClick={this.handleErrorClick}

@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 import * as constants from '../../../commons/constants';
 
 export function createPageComponentModel(resourceObject, targetPropertyName) {

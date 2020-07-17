@@ -17,7 +17,7 @@
  */
 
 import constants from '../../../commons/constants';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 
 const propertiesComparator = (a, b) => {
   if (a.name === constants.FUNCTION_OUTPUT_ERROR_NAME) {

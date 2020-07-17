@@ -242,9 +242,13 @@ export const resourceItemDragEnd = () => (dispatch) => {
 };
 
 export const updateResourceByTab = ({resource, data}) => async (dispatch) => {
+  console.time('projectFileFactory.createFileObjectsWithNewData(resource, data)');
   const fileObjects = projectFileFactory.createFileObjectsWithNewData(resource, data);
+  console.timeEnd('projectFileFactory.createFileObjectsWithNewData(resource, data)');
   if (fileObjects.length > 0) {
+    console.time('projectFileFactory.createBackupFileObjects(resource)');
     const oldFileObjects = projectFileFactory.createBackupFileObjects(resource);
+    console.timeEnd('projectFileFactory.createBackupFileObjects(resource)');
     if (oldFileObjects.length > 0) {
       const updateResourceHistory = projectResourcesManager.pushUpdateToResourceHistory(resource, oldFileObjects);
       dispatch({ updateResourceHistory: updateResourceHistory });

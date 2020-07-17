@@ -150,6 +150,7 @@ class PageTree extends React.Component {
   static propTypes = {
     dataId: PropTypes.string,
     componentsTree: PropTypes.object,
+    selectedKey: PropTypes.string,
     draggedItem: PropTypes.object,
     isDraggingItem: PropTypes.bool,
     onItemClick: PropTypes.func,
@@ -164,6 +165,7 @@ class PageTree extends React.Component {
   static defaultProps = {
     dataId: '',
     componentsTree: null,
+    selectedKey: null,
     draggedItem: null,
     isDraggingItem: false,
     onItemClick: () => {
@@ -201,29 +203,28 @@ class PageTree extends React.Component {
 
   componentDidMount () {
     if (this.autoScrollRef.current) {
-      this.autoScrollRef.current.scrollToElement(this.selectedKey);
+      this.autoScrollRef.current.scrollToElement(this.props.selectedKey);
     }
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
     const { componentsTree, draggedItem, isDraggingItem } = this.props;
-    const { collapsedGroupKeys, scrollCounter } = this.state;
+    const { collapsedGroupKeys } = this.state;
     return componentsTree !== nextProps.componentsTree
       || draggedItem !== nextProps.draggedItem
       || isDraggingItem !== nextProps.isDraggingItem
-      || collapsedGroupKeys !== nextState.collapsedGroupKeys
-      || scrollCounter !== nextState.scrollCounter;
+      || collapsedGroupKeys !== nextState.collapsedGroupKeys;
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
-    const {componentsTree} = this.props;
-    const {scrollCounter} = this.state;
+    const {componentsTree, selectedKey} = this.props;
     if (componentsTree !== prevProps.componentsTree) {
       this.setState({scrollCounter: this.state.scrollCounter + 1});
+      if (this.autoScrollRef.current) {
+        this.autoScrollRef.current.scrollToElement(selectedKey);
+      }
     }
-    if (scrollCounter !== prevState.scrollCounter && this.autoScrollRef.current) {
-      this.autoScrollRef.current.scrollToElement(this.selectedKey);
-    }
+
   }
 
   getStoredCollapsedKeys = (dataId) => {
@@ -312,12 +313,17 @@ class PageTree extends React.Component {
       if (type === constants.COMPONENT_PROPERTY_SHAPE_TYPE) {
         let childListItems = [];
         if (children && children.length > 0) {
-          childListItems = children.reduce(
-            (acc, child) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, node, level + 1)
-            ),
-            childListItems
-          );
+          for (let i = 0; i < childListItems.length; i++) {
+            childListItems = childListItems.concat(
+              this.createList(children[i], draggedItem, isDraggingItem, node, level + 1)
+            );
+          }
+          // childListItems = children.reduce(
+          //   (acc, child) => acc.concat(
+          //     this.createList(child, draggedItem, isDraggingItem, node, level + 1)
+          //   ),
+          //   childListItems
+          // );
         }
         if (childListItems.length > 0) {
           result.push(
@@ -351,12 +357,17 @@ class PageTree extends React.Component {
         }
         let childListItems = [];
         if (children && children.length > 0) {
-          childListItems = children.reduce(
-            (acc, child, idx) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, node, childLevel, idx)
-            ),
-            childListItems
-          );
+          for (let i = 0; i < children.length; i++) {
+            childListItems = childListItems.concat(
+              this.createList(children[i], draggedItem, isDraggingItem, node, childLevel, i)
+            );
+          }
+          // childListItems = children.reduce(
+          //   (acc, child, idx) => acc.concat(
+          //     this.createList(child, draggedItem, isDraggingItem, node, childLevel, idx)
+          //   ),
+          //   childListItems
+          // );
         }
         if (childListItems.length > 0) {
           if (propertyName) {
@@ -394,9 +405,9 @@ class PageTree extends React.Component {
         || type === constants.COMPONENT_PROPERTY_NODE_TYPE
       ) {
         const { isSelected } = props;
-        if (isSelected) {
-          this.selectedKey = key;
-        }
+        // if (isSelected) {
+        //   this.selectedKey = key;
+        // }
         result.push(
           <PageTreeItem
             key={key}
@@ -423,16 +434,19 @@ class PageTree extends React.Component {
         const { errors, componentName, componentInstance, isSelected } = props;
         let childListItems = [];
         if (children && children.length > 0) {
-          childListItems = children.reduce(
-            (acc, child) => acc.concat(
-              this.createList(child, draggedItem, isDraggingItem, node, level + 1)
-            ),
-            childListItems
-          );
+          for (let i = 0; i < children.length; i++) {
+            childListItems = childListItems.concat(this.createList(children[i], draggedItem, isDraggingItem, node, level + 1));
+          }
+          // childListItems = children.reduce(
+          //   (acc, child) => acc.concat(
+          //     this.createList(child, draggedItem, isDraggingItem, node, level + 1)
+          //   ),
+          //   childListItems
+          // );
         }
-        if (isSelected) {
-          this.selectedKey = key;
-        }
+        // if (isSelected) {
+        //   this.selectedKey = key;
+        // }
         result.push(
           <PageTreeItem
             key={key}

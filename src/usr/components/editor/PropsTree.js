@@ -17,7 +17,7 @@
  */
 
 import isNull from 'lodash/isNull';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../../core/utils/cloneDeep';
 import forOwn from 'lodash/forOwn';
 import startCase from 'lodash/startCase';
 import React from 'react';
@@ -393,13 +393,14 @@ class PropsTree extends React.Component {
           />
         );
         if (this.state.expandedGroupKeys[itemSignature] && children && children.length > 0) {
+          let containerContent = [];
+          for (let i = 0; i < children.length; i++) {
+            containerContent = containerContent.concat(this.createList(children[i], itemSignature, node, level + 1, null));
+          }
           result.push(
             <div key={`${key}_container`} className={classes.listItemContainer}>
               <div className={classes.listContainer}>
-                {children.reduce(
-                  (acc, child) => acc.concat(this.createList(child, itemSignature, node, level + 1, null)),
-                  []
-                )}
+                {containerContent}
               </div>
             </div>
           );
@@ -424,15 +425,16 @@ class PropsTree extends React.Component {
           />
         );
         if (this.state.expandedGroupKeys[itemSignature] && children && children.length > 0) {
+          let containerContent = [];
+          for (let i = 0; i < children.length; i++) {
+            containerContent = containerContent.concat(this.createList(children[i], itemSignature, node, level + 1, i));
+          }
           result.push(
             <div key={`${key}_container`} className={classes.listItemContainer}>
               <SortableTreeList
                 classes={classes}
                 useDragHandle={true}
-                items={children.reduce(
-                  (acc, child, childIdx) => acc.concat(this.createList(child, itemSignature, node, level + 1, childIdx)),
-                  []
-                )}
+                items={containerContent}
                 onSortEnd={this.handleUpdateComponentPropertyArrayOrder(node)}
               />
             </div>
@@ -514,6 +516,10 @@ class PropsTree extends React.Component {
         editJsonObject = editComponentPropertyModel.props.propertyValue;
         editJsonDialogTitle = `Edit property: ${editComponentPropertyModel.props.propertyName}`;
       }
+      let containerContent = [];
+      for (let i = 0; i < propertiesLocal.length; i++) {
+        containerContent = containerContent.concat(this.createList(propertiesLocal[i]));
+      }
       return (
         <div>
           <List
@@ -523,10 +529,7 @@ class PropsTree extends React.Component {
           >
             <div className={classes.listItemContainer}>
               <div className={classes.firstListContainer}>
-                {propertiesLocal.reduce(
-                  (acc, child) => acc.concat(this.createList(child)),
-                  []
-                )}
+                {containerContent}
               </div>
             </div>
           </List>

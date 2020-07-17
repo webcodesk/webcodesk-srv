@@ -123,7 +123,7 @@ class ComponentView extends React.Component {
       isSourceCodeOpen: false,
       isReadmeOpen: this.getViewFlag('isReadmeOpen', false),
       localComponentViewModel: null,
-      localComponentsTree: this.pageComposerManager.getModel(),
+      localComponentsTree: this.pageComposerManager.getModel(true),
       localSourceCode: '',
       markdownContent: data ? data.readmeText : '',
       sourceCodeUpdateCounter: 0,
@@ -244,7 +244,7 @@ class ComponentView extends React.Component {
     const { data } = this.props;
     this.setState({
       sendMessageCounter: sendMessageCounter + 1,
-      localComponentsTree: this.pageComposerManager.getModel(),
+      localComponentsTree: this.pageComposerManager.getModel(true),
       localComponentViewModel: data ? data.componentViewModel : {},
       recentUpdateHistory: newRecentUpdateHistory,
     });
@@ -265,7 +265,7 @@ class ComponentView extends React.Component {
         );
       this.setState({
         sendMessageCounter: sendMessageCounter + 1,
-        localComponentsTree: this.pageComposerManager.getModel(),
+        localComponentsTree: this.pageComposerManager.getModel(true),
         localComponentViewModel: lastRecentChanges.componentViewModel,
         recentUpdateHistory: newRecentUpdateHistory,
       });

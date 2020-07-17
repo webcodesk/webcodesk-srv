@@ -433,9 +433,9 @@ export function getResourceTreeOrderedByKey (resourceType, resourceKey = null, o
     ? resourceModelComparatorByKeyAsc
     : resourceModelComparatorByKeyDesc;
   if (resourceKey) {
-    return graphModel.extractModel(resourceKey, false, comparatorFunc);
+    return graphModel.extractModelFast(resourceKey, false, comparatorFunc);
   }
-  return graphModel.getModel(false, comparatorFunc);
+  return graphModel.getModelFast(false, comparatorFunc);
 }
 
 export function getResourceParents (resourceType, resourceKey) {

@@ -20,7 +20,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import isNull from 'lodash/isNull';
 import values from 'lodash/values';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../../core/utils/cloneDeep';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';

@@ -17,7 +17,7 @@
  */
 
 import orderBy from 'lodash/orderBy';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 import isUndefined from 'lodash/isUndefined';
 import constants from '../../../commons/constants';
 

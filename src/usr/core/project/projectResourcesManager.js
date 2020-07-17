@@ -195,9 +195,13 @@ export function updateResources (declarationsInFiles) {
     });
   }
   // enrich resources with the data that are related to the different graph trees
+  console.time('projectResourcesEnhancer.enrichResources()');
   projectResourcesEnhancer.enrichResources();
+  console.timeEnd('projectResourcesEnhancer.enrichResources()');
   // test if new resources do have the same structure as the instances in pages and flows
+  console.time('projectResourcesCompiler.compileResources()');
   let doUpdateAll = projectResourcesCompiler.compileResources();
+  console.timeEnd('projectResourcesCompiler.compileResources()');
   return { updatedResources, deletedResources, doUpdateAll };
 }
 

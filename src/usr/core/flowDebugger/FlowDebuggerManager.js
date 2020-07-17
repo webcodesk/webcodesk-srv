@@ -17,7 +17,7 @@
  */
 
 import uniqueId from 'lodash/uniqueId';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 import GraphModel from '../graph/GraphModel';
 import * as flowDebuggerFactory from './flowDebuggerFactory';
 import constants from '../../../commons/constants';

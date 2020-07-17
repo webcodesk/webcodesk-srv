@@ -82,9 +82,13 @@ export async function watchUsrSourceDir () {
   // generate all default files if they are missing
   await projectGenerator.generateDefaultFiles();
   // read the entire usr directory after a while
+  console.time('readResource(config.usrSourceDir)');
   await readResource(config.usrSourceDir);
+  console.timeEnd('readResource(config.usrSourceDir)');
   // read the entire etc directory after a while
+  console.time('readResource(config.etcSourceDir)');
   await readResource(config.etcSourceDir);
+  console.timeEnd('readResource(config.etcSourceDir)');
   //
   if (config.wcdAppMode === constants.APP_MODE_DEMO) {
     await parserManager.parseResourceAndWrite(config.usrSourceDir);
@@ -94,13 +98,19 @@ export async function watchUsrSourceDir () {
 
 export async function readResource (resourcePath) {
   const validResourcePath = repairPath(resourcePath);
+  console.time('await parserManager.parseResource(validResourcePath)');
   const declarationsInFiles = await parserManager.parseResource(validResourcePath);
+  console.timeEnd('await parserManager.parseResource(validResourcePath)');
   if (declarationsInFiles && declarationsInFiles.length > 0) {
     // Update resources in the graphs for updated files
+    console.time('projectResourcesManager.updateResources(declarationsInFiles)');
     const { updatedResources, deletedResources, doUpdateAll } =
       projectResourcesManager.updateResources(declarationsInFiles);
+    console.timeEnd('projectResourcesManager.updateResources(declarationsInFiles)');
     // try to generate all needed files
+    console.time('await projectGenerator.generateFiles()');
     await projectGenerator.generateFiles();
+    console.timeEnd('await projectGenerator.generateFiles()');
     // tell there are updated resources
     return { updatedResources, deletedResources, doUpdateAll };
   }

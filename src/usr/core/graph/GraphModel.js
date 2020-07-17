@@ -22,7 +22,7 @@ import merge from 'lodash/merge';
 import assign from 'lodash/assign';
 import isMatch from 'lodash/isMatch';
 import isArray from 'lodash/isArray';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../utils/cloneDeep';
 import graphlib from 'graphlib';
 
 const indexComparator = (a, b) => a.index - b.index;
@@ -106,7 +106,8 @@ class GraphModel {
 
   extractModel(rootNodeKey, noKeys = false, comparator = null, excludeTestCallback = null) {
     const nodeObject = this.graphInstance.node(rootNodeKey);
-    const model = nodeObject ? cloneDeep(pickBy(nodeObject, i => typeof i !== 'undefined')) : {};
+    const model = nodeObject ? JSON.parse(JSON.stringify(nodeObject)) : {};
+    // const model = nodeObject ? cloneDeep(pickBy(nodeObject, i => typeof i !== 'undefined')) : {};
     if (excludeTestCallback && excludeTestCallback(model)) {
       return null;
     }
@@ -128,6 +129,31 @@ class GraphModel {
     return model;
   }
 
+  extractModelFast(rootNodeKey, noKeys = false, comparator = null, excludeTestCallback = null) {
+    const nodeObject = this.graphInstance.node(rootNodeKey);
+    const model = nodeObject ? {...nodeObject} : {};
+    // const model = nodeObject ? cloneDeep(pickBy(nodeObject, i => typeof i !== 'undefined')) : {};
+    if (excludeTestCallback && excludeTestCallback(model)) {
+      return null;
+    }
+    if (noKeys) {
+      delete model.key;
+    }
+    const childrenKeys = this.graphInstance.children(rootNodeKey);
+    if (childrenKeys && childrenKeys.length > 0) {
+      const unOrderedChildren = [];
+      let childModel;
+      childrenKeys.forEach(childKey => {
+        childModel = this.extractModelFast(childKey, noKeys, comparator, excludeTestCallback);
+        if (childModel) {
+          unOrderedChildren.push(childModel);
+        }
+      });
+      model.children = unOrderedChildren.sort(comparator || indexComparator);
+    }
+    return model;
+  }
+
   initModel(jsonModel) {
     if (!jsonModel) {
       throw Error('GraphModel.initModel: missing json model definition');
@@ -137,7 +163,20 @@ class GraphModel {
 
   getModel(noKeys = false, comparator = null, excludeTestCallback = null) {
     if (this.rootNodeKey) {
-      return this.extractModel(this.rootNodeKey, noKeys, comparator, excludeTestCallback);
+      console.time('GraphModel.getModel');
+      const model = this.extractModel(this.rootNodeKey, noKeys, comparator, excludeTestCallback);
+      console.timeEnd('GraphModel.getModel');
+      return model;
+    }
+    throw Error('GraphModel.getModel: can not find root node key');
+  }
+
+  getModelFast(noKeys = false, comparator = null, excludeTestCallback = null) {
+    if (this.rootNodeKey) {
+      console.time('GraphModel.getModel');
+      const model = this.extractModelFast(this.rootNodeKey, noKeys, comparator, excludeTestCallback);
+      console.timeEnd('GraphModel.getModel');
+      return model;
     }
     throw Error('GraphModel.getModel: can not find root node key');
   }

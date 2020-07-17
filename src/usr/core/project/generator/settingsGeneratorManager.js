@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from '../../utils/cloneDeep';
 import * as fileUtils from '../../utils/fileUtils';
 import * as constants from '../../../../commons/constants';
 import { getArrayDefaultExportFileText } from './fileTemplates';
