@@ -33,6 +33,7 @@ import * as constants from '../../../commons/constants';
 import PropsTreeGroup from './PropsTreeGroup';
 import EditJsonDialog from '../dialogs/EditJsonDialog';
 import { arrayMove } from '../../core/utils/arrayUtils';
+import PropsTreeItemShaped from './PropsTreeItemShaped';
 
 const DragHandler = SortableHandle(({element}) => element);
 
@@ -357,7 +358,7 @@ class PropsTree extends React.Component {
     }
     if (node) {
       const { key, type, props, children } = node;
-      const { propertyName } = props;
+      const { propertyName, propertyComment } = props;
       let listItemLabelName;
       if (!isNull(arrayIndex) && arrayIndex >= 0) {
         listItemLabelName = `${arrayIndex} item`;
@@ -427,7 +428,25 @@ class PropsTree extends React.Component {
         if (this.state.expandedGroupKeys[itemSignature] && children && children.length > 0) {
           let containerContent = [];
           for (let i = 0; i < children.length; i++) {
-            containerContent = containerContent.concat(this.createList(children[i], itemSignature, node, level + 1, i));
+            if (propertyName && propertyName.indexOf('__') === 0) {
+              containerContent.push(
+                <PropsTreeItemShaped
+                  key={`${key}${i}`}
+                  name={`${listItemLabelName} Item`}
+                  comment={propertyComment}
+                  arrayIndex={i}
+                  parentKey={key}
+                  propertyModel={children[i]}
+                  onPropertyUpdate={this.handleUpdateComponentPropertyModel}
+                  onDeleteComponentProperty={this.handleDeleteComponentProperty}
+                  onErrorClick={this.handleErrorClick}
+                  onEditJson={this.handleOpenEditJsonDialog}
+                  onDuplicateComponentProperty={this.handleDuplicateComponentPropertyArrayItem}
+                />
+              );
+            } else {
+              containerContent = containerContent.concat(this.createList(children[i], itemSignature, node, level + 1, i));
+            }
           }
           result.push(
             <div key={`${key}_container`} className={classes.listItemContainer}>

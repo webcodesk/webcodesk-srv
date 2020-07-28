@@ -470,6 +470,7 @@ class ComponentView extends React.Component {
     } = this.state;
     let topPanelContent;
     let centralPaneContent;
+    console.info(JSON.stringify(localComponentsTree, null, 4));
     if (isSourceCodeOpen) {
       topPanelContent = (
         <CommonToolbar disableGutters={true} dense="true">
