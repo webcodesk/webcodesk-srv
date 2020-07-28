@@ -352,6 +352,7 @@ class PropsTreeItem extends React.Component {
         const {
           propertyName,
           propertyValue,
+          propertyComment,
           componentName,
           componentInstance,
           propertyValueVariants,
@@ -443,6 +444,7 @@ class PropsTreeItem extends React.Component {
                 key={`shapedItem${childIndex}`}
                 value={propertyValue}
                 name={propertyName}
+                comment={propertyComment}
                 onChange={this.handlePropertyValueChange(childIndex)}
               />
             );

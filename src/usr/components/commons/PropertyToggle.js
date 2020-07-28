@@ -19,6 +19,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import startCase from 'lodash/startCase';
+import Tooltip from '@material-ui/core/Tooltip';
+import MarkdownView from './MarkdownView';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   root: {
@@ -36,9 +40,15 @@ const styles = theme => ({
     borderRadius: '4px',
     color: '#fff',
     backgroundColor: '#cfd8dc',
+    border: '1px solid #cfd8dc',
     fontSize: '12px',
     marginRight: '3px',
-    marginBottom: '3px'
+    marginBottom: '3px',
+    cursor: 'pointer',
+    '&:hover': {
+      color: '#455a64',
+      borderColor: '#455a64',
+    },
   },
   unchecked: {
     display: 'flex',
@@ -46,24 +56,41 @@ const styles = theme => ({
     justifyContent: 'center',
     padding: '3px',
     borderRadius: '4px',
+    color: '#b7c0c4',
     border: '1px solid #cfd8dc',
     backgroundColor: theme.palette.background.paper,
     fontSize: '12px',
     marginRight: '3px',
-    marginBottom: '3px'
-  }
+    marginBottom: '3px',
+    cursor: 'pointer',
+    '&:hover': {
+      color: '#455a64',
+      borderColor: '#455a64',
+    },
+  },
+  htmlPopper: {
+    opacity: 1,
+  },
+  htmlTooltip: {
+    backgroundColor: '#fff9c4',
+    border: '1px solid #dddddd',
+    maxWidth: '100%',
+    width: '500px'
+  },
 });
 
 class PropertyToggle extends React.Component {
   static propTypes = {
     value: PropTypes.bool,
     name: PropTypes.string,
+    comment: PropTypes.string,
     onChange: PropTypes.func,
   };
 
   static defaultProps = {
     value: false,
     name: null,
+    comment: null,
     onChange: () => {
       console.info('PropertyToggle.onChange is not set');
     },
@@ -78,8 +105,12 @@ class PropertyToggle extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState, nextContext) {
+    const {name, comment} = this.props;
     const { inputValue } = this.state;
-    return inputValue !== nextProps.value || inputValue !== nextState.inputValue;
+    return inputValue !== nextProps.value
+      || inputValue !== nextState.inputValue
+      || name !== nextProps.name
+      || comment !== nextProps.comment;
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
@@ -100,25 +131,63 @@ class PropertyToggle extends React.Component {
   };
 
   render () {
-    const {classes, name} = this.props;
+    const {classes, name, comment} = this.props;
     const {inputValue} = this.state;
     if (inputValue) {
       return (
-        <div
-          onClick={this.handleOnChange}
-          className={classes.checked}
+        <Tooltip
+          enterDelay={800}
+          classes={{
+            popper: classes.htmlPopper,
+            tooltip: classes.htmlTooltip,
+          }}
+          title=
+            {comment
+              ? (
+                <MarkdownView tiny={true} markdownContent={comment} />
+              )
+              : (
+                <React.Fragment>
+                  <Typography variant="caption">There is no comment for this property.</Typography>
+                </React.Fragment>
+              )
+            }
         >
-          <span>{name}</span>
-        </div>
+          <div
+            onClick={this.handleOnChange}
+            className={classes.checked}
+          >
+            <span>{startCase(name)}</span>
+          </div>
+        </Tooltip>
       );
     }
     return (
-      <div
-        onClick={this.handleOnChange}
-        className={classes.unchecked}
+      <Tooltip
+        enterDelay={800}
+        classes={{
+          popper: classes.htmlPopper,
+          tooltip: classes.htmlTooltip,
+        }}
+        title=
+          {comment
+            ? (
+              <MarkdownView tiny={true} markdownContent={comment} />
+            )
+            : (
+              <React.Fragment>
+                <Typography variant="caption">There is no comment for this property.</Typography>
+              </React.Fragment>
+            )
+          }
       >
-        <span>{name}</span>
-      </div>
+        <div
+          onClick={this.handleOnChange}
+          className={classes.unchecked}
+        >
+          <span>{startCase(name)}</span>
+        </div>
+      </Tooltip>
     );
   }
 }
