@@ -31,8 +31,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import TextFields from '@material-ui/icons/TextFields';
-import Image from '@material-ui/icons/Image';
-import Wallpaper from '@material-ui/icons/Wallpaper';
+import Help from '@material-ui/icons/Help';
 import Delete from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
 import Close from '@material-ui/icons/Close';
@@ -44,7 +43,7 @@ import PropertyNumericField from '../commons/PropertyNumericField';
 import PropertyTextField from '../commons/PropertyTextField';
 import PropertySelect from '../commons/PropertySelect';
 import PropertyCheckbox from '../commons/PropertyCheckbox';
-import MarkdownView from "../commons/MarkdownView";
+import MarkdownView from '../commons/MarkdownView';
 import PropertyToggle from '../commons/PropertyToggle';
 
 const styles = theme => ({
@@ -86,15 +85,25 @@ const styles = theme => ({
     color: '#D50000',
     whiteSpace: 'nowrap'
   },
+  editorContainer: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: '5px',
+  },
   editorWrapper: {
     width: '100%',
     border: '1px solid #dcdcdc',
     borderRadius: '4px',
-    marginTop: '5px'
+    flexGrow: 1,
   },
-  selectWrapper: {
-    width: '100%',
-    marginTop: '5px'
+  editorQuestionArea: {
+    flexGrow: 0,
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '12px',
+    color: '#b7c0c4',
+    marginLeft: '7px'
   },
   propertyEditorContainer: {
     display: 'flex',
@@ -112,7 +121,7 @@ const styles = theme => ({
     backgroundColor: '#fff9c4',
     border: '1px solid #dddddd',
     maxWidth: '100%',
-    width: '500px'
+    width: '650px'
   },
 });
 
@@ -174,6 +183,21 @@ export const PropsTreeItemButton = withStyles(theme => ({
     backgroundColor: '#f5f5f5'
   }
 }))(Button);
+
+const QuestionMark = (props) => {
+  return (
+    <Tooltip
+      enterDelay={500}
+      classes={{
+        popper: props.classes.htmlPopper,
+        tooltip: props.classes.htmlTooltip,
+      }}
+      title={<MarkdownView tiny={true} markdownContent={props.comment || 'No comments'} />}
+    >
+      <Help style={{fontSize: '14px', cursor: 'pointer'}} />
+    </Tooltip>
+  );
+};
 
 class PropsTreeItem extends React.Component {
   static propTypes = {
@@ -253,7 +277,7 @@ class PropsTreeItem extends React.Component {
 
   handlePropertyValueChange = (childIndex) => (value) => {
     let newPropertyModel = { ...this.state.localPropertyModel };
-    let newChildPropertyModel = {...newPropertyModel.children[childIndex]};
+    let newChildPropertyModel = { ...newPropertyModel.children[childIndex] };
     newChildPropertyModel.props = newChildPropertyModel.props || {};
     newChildPropertyModel.props.propertyValue = value;
     newPropertyModel.children[childIndex] = newChildPropertyModel;
@@ -411,14 +435,19 @@ class PropsTreeItem extends React.Component {
             editorElements.push(
               <div
                 key={`shapedItem${childIndex}`}
-                className={classes.editorWrapper}
+                className={classes.editorContainer}
               >
-                <div style={{ marginLeft: '5px' }}>
-                  <PropertySelect
-                    value={propertyValue}
-                    values={propertyValueVariants ? propertyValueVariants.map(variant => variant.value) : []}
-                    onChange={this.handlePropertyValueChange(childIndex)}
-                  />
+                <div className={classes.editorWrapper}>
+                  <div style={{ marginLeft: '5px' }}>
+                    <PropertySelect
+                      value={propertyValue}
+                      values={propertyValueVariants ? propertyValueVariants.map(variant => variant.value) : []}
+                      onChange={this.handlePropertyValueChange(childIndex)}
+                    />
+                  </div>
+                </div>
+                <div className={classes.editorQuestionArea}>
+                  <QuestionMark classes={classes} comment={propertyComment} />
                 </div>
               </div>
             );
@@ -427,13 +456,18 @@ class PropsTreeItem extends React.Component {
             editorElements.push(
               <div
                 key={`shapedItem${childIndex}`}
-                className={classes.editorWrapper}
+                className={classes.editorContainer}
               >
-                <div style={{ marginLeft: '5px' }}>
-                  <PropertyNumericField
-                    value={propertyValue}
-                    onChange={this.handlePropertyValueChange(childIndex)}
-                  />
+                <div className={classes.editorWrapper}>
+                  <div style={{ marginLeft: '5px' }}>
+                    <PropertyNumericField
+                      value={propertyValue}
+                      onChange={this.handlePropertyValueChange(childIndex)}
+                    />
+                  </div>
+                </div>
+                <div className={classes.editorQuestionArea}>
+                  <QuestionMark classes={classes} comment={propertyComment} />
                 </div>
               </div>
             );
@@ -453,13 +487,18 @@ class PropsTreeItem extends React.Component {
             editorElements.push(
               <div
                 key={`shapedItem${childIndex}`}
-                className={classes.editorWrapper}
+                className={classes.editorContainer}
               >
-                <div style={{ marginLeft: '5px' }}>
-                  <PropertyTextField
-                    text={propertyValue}
-                    onChange={this.handlePropertyValueChange}
-                  />
+                <div className={classes.editorWrapper}>
+                  <div style={{ marginLeft: '5px' }}>
+                    <PropertyTextField
+                      text={propertyValue}
+                      onChange={this.handlePropertyValueChange}
+                    />
+                  </div>
+                </div>
+                <div className={classes.editorQuestionArea}>
+                  <QuestionMark classes={classes} comment={propertyComment} />
                 </div>
               </div>
             );
@@ -498,7 +537,7 @@ class PropsTreeItem extends React.Component {
                         title=
                           {comment
                             ? (
-                              <MarkdownView tiny={true} markdownContent={comment} />
+                              <MarkdownView tiny={true} markdownContent={comment}/>
                             )
                             : (
                               <React.Fragment>
@@ -520,7 +559,7 @@ class PropsTreeItem extends React.Component {
                           title="Duplicate this item in the array"
                           onClick={this.handleDuplicateComponentProperty}
                         >
-                          <FileCopy className={classes.buttonIcon} />
+                          <FileCopy className={classes.buttonIcon}/>
                         </PropsTreeItemExtraButton>
                       )}
                       {!isNull(arrayIndex) && arrayIndex >= 0 && (
@@ -528,7 +567,7 @@ class PropsTreeItem extends React.Component {
                           title="Remove this item from the array"
                           onClick={this.handleDeleteComponentProperty}
                         >
-                          <Close className={classes.buttonIcon} />
+                          <Close className={classes.buttonIcon}/>
                         </PropsTreeItemExtraButton>
                       )}
                       {isError && (
@@ -537,7 +576,7 @@ class PropsTreeItem extends React.Component {
                           className={classes.errorText}
                           onClick={this.handleDeleteComponentProperty}
                         >
-                          <Delete className={classes.buttonIcon} />
+                          <Delete className={classes.buttonIcon}/>
                         </PropsTreeItemExtraButton>
                       )}
                     </React.Fragment>
@@ -545,9 +584,9 @@ class PropsTreeItem extends React.Component {
                 />
               </div>
             )}
-            <div style={{display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'flex-start'}}>
+            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'flex-start' }}>
               {editorElements}
-              <div style={{marginTop: '0.5em', display: 'flex', flexWrap: 'wrap'}}>
+              <div style={{ marginTop: '0.5em', display: 'flex', flexWrap: 'wrap' }}>
                 {consolidatedCheckboxes}
               </div>
             </div>
