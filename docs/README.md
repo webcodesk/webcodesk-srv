@@ -1,8 +1,5 @@
 # Webcodesk User Guide
 
-This User Guide assumes that you have completed [tutorial](https://webcodesk.com/tutorial) in [the online version of Webcodesk](https://ide.webcodesk.com/?appDemo=https://wcd-todo-tutorial-demo.web.app/).
-
-Although, you have the ability to complete the tutorial in the local version as well. 
 Install Webcodesk locally and make a copy of the `Beginner tutorial` project.
 
 ## Start/stop project server
