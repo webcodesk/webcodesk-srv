@@ -104,11 +104,6 @@ But let's discuss the feature in a new issue with the detailed description befor
 If you need any help or want someone to set up the workspace with you and get you stepping through code in your IDE, 
 don't be afraid to speak up!
 
-You can ask questions or talk about Webcodesk at:
-* [Spectrum chat](https://spectrum.chat/webcodesk)
-* [Facebook group](https://www.facebook.com/groups/webcodesk) 
-* [Webcodesk subreddit](https://www.reddit.com/r/webcodesk/).
-
 ## License
 
 GNU GPLv3 
