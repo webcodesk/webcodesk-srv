@@ -12,16 +12,6 @@ Read the article on Hackernoon about why Webcodesk was created:
 
 * [I Developed A Visual Development Tool For Web Applications with React](https://hackernoon.com/i-developed-a-visual-development-tool-for-web-applications-with-react-gmbr3280)
 
-The best way to tell about Webcodesk is to let you try it in action.
-So I would recommend you to complete the tutorial in the online version of Webcodesk. 
-Click on the link below.
-
-* <a href="https://ide.webcodesk.com/?appDemo=https://wcd-todo-tutorial-demo.web.app/" target="_blank">Start Online Demo</a>
-
-Here you can see the first part of creating a ToDo application in Webcodesk.
-
-* [Timelapse Video](https://youtu.be/5b2MAk95W8s)
-
 ## To React developers
 
 Your experience will tell you that you do not need any visual builders because they are limited in functionality, unreliable, and they all suck.
